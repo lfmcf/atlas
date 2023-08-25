@@ -93,13 +93,13 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                             <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
                                                 {row.country ? row.country.value : ''}
                                             </a>
-                                            <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                                            {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
                                                 <ReactCountryFlag
                                                     className="emojiFlag"
                                                     countryCode={row.country.code}
                                                     aria-label={row.country.value}
                                                 /> / {row.country ? row.country.code : ''}
-                                            </span>
+                                            </span> */}
                                         </td>
                                         <td>
                                             {row.sequence}
