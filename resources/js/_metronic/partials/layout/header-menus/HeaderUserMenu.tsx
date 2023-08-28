@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { FC } from 'react'
-import { Link } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 // import {useAuth} from '../../../../app/modules/auth'
 import { Languages } from './Languages'
 import { toAbsoluteUrl } from '../../../helpers'
@@ -124,7 +124,7 @@ const HeaderUserMenu: FC = () => {
       </div>
 
       <div className='menu-item px-5'>
-        <a className='menu-link px-5'>
+        <a href='#' className='menu-link px-5' onClick={() => router.post(route('logout'))}>
           Sign Out
         </a>
       </div>
