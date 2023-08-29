@@ -116,7 +116,8 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
 													<span className="badge badge-light-success fs-7 fw-bold text-capitalize">{row.status}</span>
 													: row.status == 'in progress' ? <span className='badge badge-light-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
 														: row.status == 'delivered' ? <span className='badge badge-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
-															: row.status == 'closed' ? <span className='badge badge-dark fs-7 fw-bold text-capitalize'>{row.status}</span> : ''}
+															: row.status == 'closed' ? <span className='badge badge-dark fs-7 fw-bold text-capitalize'>{row.status}</span>
+																: row.status == 'to verify' ? <span className='badge badge-light-danger fs-7 fw-bold text-capitalize'>{row.status}</span> : ''}
 										</td>
 										<td>
 											{row.dossier_type ? row.dossier_type.value : ''}

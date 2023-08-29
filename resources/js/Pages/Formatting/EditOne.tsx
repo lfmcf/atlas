@@ -305,6 +305,16 @@ const EditOne: FC = (props: any) => {
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
+                                <div className='col-12 mb-10'>
+                                    <label className="form-label">uploaded documents</label>
+                                    <ul>
+                                        {folder.document ? folder.document.map((doc, i) => (
+                                            <li key={i}>
+                                                <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
+                                            </li>
+                                        )) : ''}
+                                    </ul>
+                                </div>
                                 <div className='col-6'>
                                     <label className="form-label">Attached documents</label>
                                     <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />

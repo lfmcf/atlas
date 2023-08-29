@@ -87,14 +87,14 @@ export default function Login() {
                             {/* begin::Heading */}
                             <div className='text-center mb-11'>
                                 <h1 className='text-dark fw-bolder mb-3'>Sign In</h1>
-                                <div className='text-gray-500 fw-semibold fs-6'>Your Social Campaigns</div>
+                                {/* <div className='text-gray-500 fw-semibold fs-6'>Your Social Campaigns</div> */}
                             </div>
                             {/* begin::Heading */}
 
                             {/* begin::Login options */}
                             <div className='row g-3 mb-9'>
                                 {/* begin::Col */}
-                                <div className='col-md-6'>
+                                <div className='col-md-6 mx-auto'>
                                     {/* begin::Google link */}
                                     <a
                                         href='#'
@@ -102,18 +102,18 @@ export default function Login() {
                                     >
                                         <img
                                             alt='Logo'
-                                            src={toAbsoluteUrl('/media/svg/brand-logos/google-icon.svg')}
+                                            src={toAbsoluteUrl('/media/svg/brand-logos/sso.png')}
                                             className='h-15px me-3'
                                         />
-                                        Sign in with Google
+                                        Sign in with SSO
                                     </a>
                                     {/* end::Google link */}
                                 </div>
                                 {/* end::Col */}
 
                                 {/* begin::Col */}
-                                <div className='col-md-6'>
-                                    {/* begin::Google link */}
+                                {/* <div className='col-md-6'>
+                                   
                                     <a
                                         href='#'
                                         className='btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100'
@@ -130,9 +130,9 @@ export default function Login() {
                                         />
                                         Sign in with Apple
                                     </a>
-                                    {/* end::Google link */}
-                                </div>
-                                {/* end::Col */}
+                                    
+                                </div> */}
+
                             </div>
                             {/* end::Login options */}
 
