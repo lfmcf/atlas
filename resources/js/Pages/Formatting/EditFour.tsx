@@ -59,7 +59,7 @@ const EditFour: FC = (props: any) => {
                                         </a>
                                     </li>
                                     <li className='nav-item' role='presentation'>
-                                        <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_2" aria-selected="false" tabIndex={-1} role="tab">
+                                        <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_3" aria-selected="false" tabIndex={-1} role="tab">
                                             <span className="nav-text text-gray-600 fw-bold fs-6">Delivery details</span>
                                             <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
                                         </a>
@@ -130,6 +130,50 @@ const EditFour: FC = (props: any) => {
                                         <label className="col-lg-4 fw-semibold text-muted">Remarks</label>
                                         <div className="col-lg-8">
                                             <span className="fw-bold fs-6 text-gray-800">{folder.remarks}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='tab-content'>
+                                <div className='tab-pane fade' id='kt_aside_tab_2' role='tabpanel'>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Documents</label>
+                                        <div className="col-lg-8">
+                                            <ul>
+                                                {folder.document ? folder.document.map((doc, i) => (
+                                                    <li key={i}>
+                                                        <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
+                                                    </li>
+                                                )) : ''}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Documents Remarks</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.docremarks}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='tab-content'>
+                                <div className='tab-pane fade' id='kt_aside_tab_3' role='tabpanel'>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Request date</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{moment(folder.request_date).format("DD-MMM-YYYY H:m")}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Delivery deadline</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{moment(folder.deadline).format("DD-MMM-YYYY H:m")}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Adjusted deadline</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
                                         </div>
                                     </div>
                                 </div>

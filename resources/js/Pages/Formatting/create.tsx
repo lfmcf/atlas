@@ -116,14 +116,13 @@ const Create: FC = (props: any) => {
         let hour = date.getHours();
         let delai = data.dossier_type ? data.dossier_type.delai : '';
         let deadline;
-
         if (delai) {
             if (hour < 12) {
                 deadline = date.setDate(date.getDate() + delai)
             } else {
                 deadline = date.setDate(date.getDate() + delai + 1)
             }
-            setData('deadline', deadline);
+            setData('deadline', new Date(deadline));
         }
 
     }, [data.dossier_type]);
@@ -240,7 +239,7 @@ const Create: FC = (props: any) => {
                         <div className="flex-column current" data-kt-stepper-element="content">
                             {/* <!--begin::Input group--> */}
                             <div className="row mb-10">
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     {/* <!--begin::Label--> */}
                                     <label className="form-label">Dossier contact</label>
                                     {/* <!--end::Label--> */}
@@ -248,13 +247,13 @@ const Create: FC = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="dossier_contact" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Object</label>
                                     <input type="text" className="form-control form-control-solid" name="object" onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
 
                                     <label className="form-label">Product name</label>
 
@@ -268,7 +267,7 @@ const Create: FC = (props: any) => {
                                     />
 
                                 </div>
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Substance name</label>
                                     <Select options={substanceFormattingList}
                                         name="substance_name"
@@ -282,7 +281,7 @@ const Create: FC = (props: any) => {
 
                             </div>
                             <div className="row mb-10">
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Country</label>
                                     <Select options={contries}
                                         name="country"
@@ -293,7 +292,7 @@ const Create: FC = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
 
                                     <label className="form-label">Dossier type</label>
                                     <Select options={formattingDossierType}
@@ -308,15 +307,15 @@ const Create: FC = (props: any) => {
 
                             </div>
                             <div className='row mb-10'>
-                                <div className='col-4'>
+                                <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Document Count</label>
                                     <input type="number" className="form-control form-control-solid" name="document_count" onChange={handleChange} />
                                 </div>
-                                <div className='col-4'>
+                                <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Deficiency Letter</label>
                                     <input type="text" className="form-control form-control-solid" name="deficiency_letter" onChange={handleChange} />
                                 </div>
-                                <div className='col-4'>
+                                <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Chrono N°/ Dossier Reference</label>
                                     <input type="text" className="form-control form-control-solid" name="chrono" onChange={handleChange} />
                                 </div>
@@ -330,11 +329,11 @@ const Create: FC = (props: any) => {
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
                                     <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
                                 </div>
-                                <div className='col-6'>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <div className='d-flex align-items-center text-gray-400 h-100'>
                                         {data.doc ? data.doc.map((ele) => (
                                             <span className='me-2 fs-5'>{ele.name}</span>

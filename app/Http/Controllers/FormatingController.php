@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FormSubmitted;
 use App\Models\Formating;
 use Illuminate\Http\Request;
 use App\Models\Continent;
@@ -10,6 +11,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Notifications\InvoiceInitaitedForm;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 class FormatingController extends Controller
 {
@@ -52,6 +55,30 @@ class FormatingController extends Controller
      */
     public function store(Request $request)
     {
+
+        $docs = $request->doc;
+
+        if (!empty($docs)) {
+            $arr = array_map(function ($doc) {
+
+                $myarr = [];
+
+                if ($doc && gettype($doc) != 'string') {
+                    $uploadedFile = $doc;
+                    $filename = $uploadedFile->getClientOriginalName();
+                    $path = Storage::putFileAs(
+                        'public',
+                        $uploadedFile,
+                        $filename
+                    );
+                    $myarr['name'] = $filename;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                }
+                return $myarr;
+            }, $docs);
+            $docs = $arr;
+        }
+
         $formatting = new Formating();
         $formatting->form = $request->form;
         $formatting->region = $request->region;
@@ -66,13 +93,12 @@ class FormatingController extends Controller
         $formatting->deficiency_letter = $request->deficiency_letter;
         $formatting->chrono = $request->chrono;
         $formatting->remarks = $request->remarks;
-        $formatting->document = $request->doc;
+        $formatting->document = $docs;
         $formatting->docremarks = $request->docremarks;
-        $formatting->request_date = date('Y-m-d H:i:s', strtotime(Carbon::now()));
-        $formatting->deadline = date('Y-m-d H:i:s', $request->deadline);
+        $formatting->request_date = $request->request_date;
+        $formatting->deadline = $request->deadline;
         $formatting->status = 'initiated';
         $formatting->created_by = $request->created_by;
-
         $formatting->save();
 
         $user = User::where('current_team_id', 2)->get();
@@ -156,6 +182,29 @@ class FormatingController extends Controller
 
     public function confirmation(Request $request)
     {
+        $docs = $request->doc;
+
+        if (!empty($docs)) {
+            $arr = array_map(function ($doc) {
+
+                $myarr = [];
+
+                if ($doc && gettype($doc) != 'string') {
+                    $uploadedFile = $doc;
+                    $filename = $uploadedFile->getClientOriginalName();
+                    $path = Storage::putFileAs(
+                        'public',
+                        $uploadedFile,
+                        $filename
+                    );
+                    $myarr['name'] = $filename;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                }
+                return $myarr;
+            }, $docs);
+            $docs = $arr;
+        }
+
         $formatting = Formating::findOrfail($request->id);
         $formatting->dossier_contact = $request->dossier_contact;
         $formatting->object = $request->object;
@@ -167,17 +216,22 @@ class FormatingController extends Controller
         $formatting->deficiency_letter = $request->deficiency_letter;
         $formatting->chrono = $request->chrono;
         $formatting->remarks = $request->remarks;
-        $formatting->document = $request->doc;
+        if (!empty($docs)) {
+            $formatting->document = [...$formatting->document, $docs];
+        }
+
         $formatting->docremarks = $request->docremarks;
         //$formatting->request_date = date('Y-m-d H:i:s', strtotime(Carbon::now()));
         // $formatting->deadline = date('Y-m-d H:i:s', $request->deadline);
         $formatting->status = 'submitted';
-        $formatting->adjusted_deadline = $request->adjusted_deadline;
+        $formatting->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $formatting->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+
         $formatting->save();
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
         return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
     }
 
@@ -196,7 +250,12 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'to verify';
         // $formatting->audit->push((object));
-        $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message], ...$formatting->audit];
+        if ($formatting->audit) {
+            $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message], ...$formatting->audit];
+        } else {
+            $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message]];
+        }
+
         $formatting->save();
         return back()->with('folder', $formatting);
     }
