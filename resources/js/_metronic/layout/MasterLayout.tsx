@@ -6,53 +6,55 @@ import { ScrollTop } from './components/scroll-top'
 import { Content } from './components/content'
 import { FooterWrapper } from './components/footer'
 import { Sidebar } from './components/sidebar'
-import { ActivityDrawer, DrawerMessenger, InviteUsers, MultiDataUpdate, UpgradePlan } from '../partials'
+import { ActivityDrawer, DeliveryMessage, DrawerMessenger, InviteUsers, MultiDataUpdate, UpgradePlan } from '../partials'
 import { PageDataProvider } from './core'
 import { reInitMenu } from '../helpers'
 import { ToolbarWrapper } from './components/toolbar'
 
 const MasterLayout = ({ auth, children }) => {
 
-  // const location = useLocation()
-  // useEffect(() => {
-  //   reInitMenu()
-  // }, [location.key])
+	const location = route().current()
 
-  return (
-    <PageDataProvider>
-      <div className='d-flex flex-column flex-root app-root' id='kt_app_root'>
-        <div className='app-page flex-column flex-column-fluid' id='kt_app_page'>
-          <HeaderWrapper auth={auth} />
-          <div className='app-wrapper flex-column flex-row-fluid' id='kt_app_wrapper'>
-            <Sidebar />
-            <div className='app-main flex-column flex-row-fluid' id='kt_app_main'>
-              <div className='d-flex flex-column flex-column-fluid'>
-                <ToolbarWrapper />
-                <Content>
-                  {children}
-                  {/* <Outlet /> */}
-                </Content>
-              </div>
-              <FooterWrapper />
-            </div>
-          </div>
-        </div>
-      </div>
+	useEffect(() => {
+		reInitMenu()
+	}, [location])
 
-      {/* begin:: Drawers */}
-      <ActivityDrawer />
-      {/* <RightToolbar /> */}
-      <DrawerMessenger />
-      {/* end:: Drawers */}
+	return (
+		<PageDataProvider>
+			<div className='d-flex flex-column flex-root app-root' id='kt_app_root'>
+				<div className='app-page flex-column flex-column-fluid' id='kt_app_page'>
+					<HeaderWrapper auth={auth} />
+					<div className='app-wrapper flex-column flex-row-fluid' id='kt_app_wrapper'>
+						<Sidebar />
+						<div className='app-main flex-column flex-row-fluid' id='kt_app_main'>
+							<div className='d-flex flex-column flex-column-fluid'>
+								<ToolbarWrapper />
+								<Content>
+									{children}
+									{/* <Outlet /> */}
+								</Content>
+							</div>
+							<FooterWrapper />
+						</div>
+					</div>
+				</div>
+			</div>
 
-      {/* begin:: Modals */}
-      <InviteUsers />
-      <UpgradePlan />
-      {/* <MultiDataUpdate /> */}
-      {/* end:: Modals */}
-      <ScrollTop />
-    </PageDataProvider>
-  )
+			{/* begin:: Drawers */}
+			{/* <ActivityDrawer /> */}
+			{/* <RightToolbar /> */}
+			{/* <DrawerMessenger /> */}
+			{/* end:: Drawers */}
+
+			{/* begin:: Modals */}
+			<InviteUsers />
+			<UpgradePlan />
+			<MultiDataUpdate />
+
+			{/* end:: Modals */}
+			<ScrollTop />
+		</PageDataProvider>
+	)
 }
 
 export { MasterLayout }

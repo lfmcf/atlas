@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { KTIcon } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import { router } from '@inertiajs/react';
+import StatusComponent from '../../../../Components/StatusComponent';
+import { DeliveryMessage } from '../../modals/Delivey-Message/DeliveryMessage';
+
 
 type Props = {
     data: any[] | any;
@@ -10,9 +13,11 @@ type Props = {
 
 const FormattingTable: React.FC<Props> = ({ data }) => {
 
-    const handleDilivred = (id) => {
+    const [show, setShow] = useState({ 'status': false, id: '', form: '' });
 
-        router.post(route('deliver'), { id: id })
+    const handleDilivred = (id, form) => {
+        setShow({ 'status': !show.status, id: id, form: form })
+        //router.post(route('deliver'), { id: id })
     }
 
     const handleClose = (id) => {
@@ -23,13 +28,17 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         router.get(route('correct'), { id: id })
     }
 
+    const handleShow = (id) => {
+        router.get(route('showformatting'), { id: id })
+    }
+
     return (
         <>
             <div className={`card mb-5`}>
                 <div className='card-header border-0 pt-5'>
                     <h3 className='card-title align-items-start flex-column'>
                         <span className='card-label fw-bold fs-3 mb-1'>Formatting List</span>
-                        <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span>
+                        {/* <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span> */}
                     </h3>
                     {/* <div
                         className='card-toolbar'
@@ -121,14 +130,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                         </td>
 
                                         <td>
-                                            {row.status == 'initiated' ?
-                                                <span className="badge badge-light-warning fs-7 fw-bold text-capitalize">{row.status}</span>
-                                                : row.status == 'submitted' ?
-                                                    <span className="badge badge-light-success fs-7 fw-bold text-capitalize">{row.status}</span>
-                                                    : row.status == 'in progress' ? <span className='badge badge-light-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
-                                                        : row.status == 'to verify' ? <span className='badge badge-light-danger fs-7 fw-bold text-capitalize'>{row.status}</span>
-                                                            : row.status == 'delivered' ? <span className='badge badge-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
-                                                                : row.status == 'to correct' ? <span className='badge badge-danger fs-7 fw-bold text-capitalize'>{row.status}</span> : ''}
+                                            <StatusComponent status={row.status} />
                                         </td>
                                         <td>
                                             {row.dossier_type ? row.dossier_type.value : ''}
@@ -139,45 +141,54 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
-                                                {/* <a
-													href='#'
-													className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-												>
-													<KTIcon iconName='switch' className='fs-3' />
-												</a> */}
-                                                {row.status == 'in progress' || row.status == 'to correct' ?
-                                                    <button
-                                                        onClick={() => handleDilivred(row._id)}
+                                                {row.status == 'initaited' ?
+                                                    <a
+                                                        href='#'
+                                                        onClick={() => router.get(route('editOne', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                     >
-                                                        <KTIcon iconName='check-circle' className='fs-3' />
-                                                    </button>
-                                                    : row.status == 'delivered' ?
-                                                        <>
-                                                            <button
-                                                                onClick={() => handleClose(row._id)}
-                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                            >
-                                                                <KTIcon iconName='check-circle' className='fs-3' />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleCorrect(row._id)}
-                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                            >
-                                                                <KTIcon iconName='cross-circle' className='fs-3' />
-                                                            </button>
-                                                        </> :
-                                                        <button onClick={() => router.get(route('editOne', { id: row._id }))} className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                    </a> : row.status == 'submitted' || row.status == 'to verify' ?
+                                                        <a
+                                                            href='#'
+                                                            onClick={() => router.get(route('editOne', { id: row._id }))}
+                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        >
                                                             <KTIcon iconName='pencil' className='fs-3' />
-                                                        </button>
+                                                        </a> : row.status == 'in progress' || row.status == 'to correct' ?
+                                                            <>
+                                                                <button
+                                                                    onClick={() => handleShow(row._id)}
+                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                >
+                                                                    <KTIcon iconName='eye' className='fs-3' />
+                                                                </button>
+                                                                <a
+                                                                    href='#'
+                                                                    onClick={() => handleDilivred(row._id, row.form)}
+                                                                    data-bs-toggle='modal'
+                                                                    data-bs-target='#kt_modal_delivery_message'
+                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                >
+                                                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                                                </a>
+                                                            </>
+                                                            : row.status == 'delivered' ?
+                                                                <>
+                                                                    <button
+                                                                        onClick={() => handleClose(row._id)}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='check-circle' className='fs-3' />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleCorrect(row._id)}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                    </button>
+                                                                </> : ''
                                                 }
-
-                                                {/* <a
-                                                    href='#'
-                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-                                                >
-                                                    <KTIcon iconName='trash' className='fs-3' />
-                                                </a> */}
                                             </div>
                                         </td>
                                     </tr>
@@ -190,6 +201,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                     {/* end::Table container */}
                 </div>
             </div>
+            <DeliveryMessage show={show.status} id={show.id} form={show.form} />
         </>
     )
 }

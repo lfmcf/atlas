@@ -18,24 +18,24 @@
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
-    @inertiaHead
+    <!-- @inertiaHead -->
 </head>
 
 <body id="kt_body" class="page-loading">
 
     <!--begin::Theme mode setup on page load-->
     <script>
-        let themeMode = 'system'
+        // let themeMode = 'system'
 
-        if (localStorage.getItem('kt_theme_mode_value')) {
-            themeMode = localStorage.getItem('kt_theme_mode_value')
-        }
+        // if (localStorage.getItem('kt_theme_mode_value')) {
+        //     themeMode = localStorage.getItem('kt_theme_mode_value')
+        // }
 
-        if (themeMode === 'system') {
-            themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
+        // if (themeMode === 'system') {
+        //     themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        // }
 
-        document.documentElement.setAttribute('data-bs-theme', themeMode)
+        document.documentElement.setAttribute('data-bs-theme', 'light')
     </script>
     <!--end::Theme mode setup on page load-->
 

@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/confirmation', [FormatingController::class, 'editOne'])->name('editOne');
     Route::get('/verification', [FormatingController::class, 'editThree'])->name('editThree');
+    Route::get('/showformatting', [FormatingController::class, 'show'])->name('showformatting');
 
     Route::post('progress', [FormatingController::class, 'setProgress'])->name('progress');
     Route::post('verify', [FormatingController::class, 'setVerify'])->name('verify');
@@ -56,6 +57,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tocorrect', [FormatingController::class, 'tocorrect'])->name('tocorrect');
 
     Route::get('/publishing', [PublishingController::class, 'create'])->name('pub-create');
+    Route::post('/publishingStore', [PublishingController::class, 'store'])->name('publishingStore');
+    Route::get('/validate', [PublishingController::class, 'validation'])->name('validate');
+    Route::post('/postvalidate', [PublishingController::class, 'validationStore'])->name('postvalidate');
+    Route::get('/review', [PublishingController::class, 'audit'])->name('review');
+    Route::post('progresspublishing', [PublishingController::class, 'setProgress'])->name('progresspublishing');
+    Route::post('verify', [PublishingController::class, 'setVerify'])->name('verify');
+    Route::post('deliverpublishing', [PublishingController::class, 'deliver'])->name('deliverpublishing');
+    Route::get('/correctpublishing', [PublishingController::class, 'correctshow'])->name('correctpublishing');
+    Route::post('tocorrectpublishing', [PublishingController::class, 'tocorrect'])->name('tocorrectpublishing');
+    Route::post('closepublishing', [PublishingController::class, 'close'])->name('closepublishing');
+
+    Route::get('/show', [PublishingController::class, 'show'])->name('show');
 });
 
 

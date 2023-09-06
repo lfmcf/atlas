@@ -10,6 +10,8 @@ import 'flatpickr/dist/flatpickr.css';
 import { PageTitle } from '../../_metronic/layout/core';
 import { router } from '@inertiajs/react'
 import clsx from 'clsx';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const EditFour: FC = (props: any) => {
 
@@ -19,6 +21,9 @@ const EditFour: FC = (props: any) => {
 
     const [comment, setComment] = useState('');
     const [source, setSource] = useState('');
+    function createMarkup(msg: any) {
+        return { __html: msg.message };
+    }
 
 
     const handleChange = (e) => {
@@ -61,6 +66,12 @@ const EditFour: FC = (props: any) => {
                                     <li className='nav-item' role='presentation'>
                                         <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_3" aria-selected="false" tabIndex={-1} role="tab">
                                             <span className="nav-text text-gray-600 fw-bold fs-6">Delivery details</span>
+                                            <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
+                                        </a>
+                                    </li>
+                                    <li className='nav-item' role='presentation'>
+                                        <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_4" aria-selected="false" tabIndex={-1} role="tab">
+                                            <span className="nav-text text-gray-600 fw-bold fs-6">Dossier Review</span>
                                             <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
                                         </a>
                                     </li>
@@ -178,6 +189,98 @@ const EditFour: FC = (props: any) => {
                                     </div>
                                 </div>
                             </div>
+                            <div className='tab-content'>
+                                <div className='tab-pane fade' id='kt_aside_tab_4' role="tabpanel">
+                                    <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
+                                        <div className="mb-5">
+                                            <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
+                                                <span className="accordion-icon">
+                                                    <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                                </span>
+                                                <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
+                                            </div>
+                                            <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
+                                                <div className='scroll-y me-n5 pe-5'
+                                                    data-kt-element="messages"
+                                                    data-kt-scroll="true"
+                                                    data-kt-scroll-activate="{default: false, lg: true}"
+                                                    data-kt-scroll-max-height="auto" >
+                                                    {
+                                                        folder.audit ? folder.audit.map((msg, i) => (
+                                                            msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
+                                                                <div className='d-flex flex-column align-items-start'>
+                                                                    <div className='d-flex align-items-center mb-2'>
+
+                                                                        <div className='ms-3'>
+                                                                            <span className='text-muted fs-7 mb-1'>7 hours</span>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                        {msg.message}
+                                                                    </div>
+                                                                </div>
+                                                            </div> : ''
+                                                        )
+                                                        ) : ''
+                                                    }
+                                                </div>
+                                                {/* {teamId == 3 ?
+                                                <>
+                                                    <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={handleChange} placeholder="Type a message"></textarea>
+
+                                                    <div className="d-flex flex-stack">
+                                                        <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
+                                                    </div>
+                                                </>
+                                                : ''} */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_5">
+                                        <div className="mb-5">
+                                            <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_4_item_3">
+                                                <span className="accordion-icon">
+                                                    <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                                </span>
+                                                <h3 className="fs-4 fw-semibold mb-0 ms-4">Delivery Comments</h3>
+                                            </div>
+                                            <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
+                                                <div>
+                                                    {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
+                                                        <div key={i}  >{msg.message}</div>
+
+                                                    ))
+                                                        : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_4">
+                                        <div className="mb-5">
+                                            <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
+                                                <span className="accordion-icon">
+                                                    <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                                </span>
+                                                <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier Correction</h3>
+                                            </div>
+                                            <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
+                                                <div>
+                                                    {
+                                                        folder.correction ? folder.correction.map((msg, i) => (
+                                                            <div key={i} dangerouslySetInnerHTML={createMarkup(msg)} />
+
+
+                                                        ))
+                                                            : ''
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                         {/* <div className='card-footer d-flex justify-content-end'>
@@ -191,162 +294,39 @@ const EditFour: FC = (props: any) => {
                     </div>
                 </div>
                 <div className='col-12'>
-                    {/* <div className='rounded border p-10 bg-body'> */}
-                    <div className="accordion accordion-icon-toggle bg-white" id="kt_accordion_2">
-                        {/* begin::Item */}
-                        <div className="mb-5">
-                            {/* <!--begin::Header--> */}
-                            <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_2">
-                                <span className="accordion-icon">
-                                    <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                </span>
-                                <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier correction</h3>
-                            </div>
-                            {/* <!--end::Header--> */}
+                    <div className='card'>
+                        <div className="card-header">
+                            <h3 className="card-title">Dossier Correction</h3>
 
-                            {/* <!--begin::Body--> */}
-                            <div id="kt_accordion_2_item_2" className="collapse fs-6 ps-10" data-bs-parent="#kt_accordion_2">
-                                <div className='scroll-y me-n5 pe-5'
-                                    data-kt-element="messages"
-                                    data-kt-scroll="true"
-                                    data-kt-scroll-activate="{default: false, lg: true}"
-                                    data-kt-scroll-max-height="auto" >
-                                    {
-                                        folder.correction ? folder.correction.map((msg, i) => (
-                                            msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
-                                                <div className='d-flex flex-column align-items-start'>
-                                                    {/* <div className='d-flex align-items-center mb-2'>
-                                                        <div className='symbol symbol-35px symbol-circle'>
-                                                            EM
-                                                        </div>
-                                                        <div className='ms-3'>
-                                                            <span className='text-muted fs-7 mb-1'>7 hours</span>
-                                                            <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span>
-                                                        </div>
-
-                                                    </div> */}
-                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                        {msg.message}
-                                                    </div>
-                                                </div>
-                                            </div> : ''
-                                        )
-                                        ) : ''
-                                    }
-                                </div>
-                                {teamId == 2 ?
-                                    <>
-                                        {/* <!--begin::Heading--> */}
-                                        <div className="mb-3">
-                                            {/* <!--begin::Label--> */}
-                                            <label className="d-flex align-items-center fs-5 fw-semibold">
-                                                <span className="required">Specify Error source</span>
-
-                                                <span className="m2-1" data-bs-toggle="tooltip" title="Choose source of error">
-                                                    <i className="ki-duotone ki-information fs-7"><span className="path1"></span><span className="path2"></span><span className="path3"></span></i>
-                                                </span>
-                                            </label>
-                                            {/* <!--end::Label--> */}
-
-                                            {/* <!--begin::Description--> */}
-                                            {/* <div className="fs-7 fw-semibold text-muted">If you need more info, please check budget planning</div> */}
-                                            {/* <!--end::Description--> */}
-                                        </div>
-                                        {/* <!--end::Heading--> */}
-
-                                        {/* <!--begin::Radio group--> */}
-                                        <div className="btn-group mb-3 w-100 w-lg-50" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]" onChange={handleSourceChange}>
-                                            {/* <!--begin::Radio--> */}
-                                            <label className={clsx("btn btn-outline btn-color-muted btn-active-success", { 'active': source == 'ekemia' })} data-kt-button="true">
-                                                {/* <!--begin::Input--> */}
-                                                <input className="btn-check" type="radio" name="method" value="ekemia" />
-                                                {/* <!--end::Input--> */}
-                                                Ekemia
-                                            </label>
-                                            {/* <!--end::Radio--> */}
-
-                                            {/* <!--begin::Radio--> */}
-                                            <label className={clsx("btn btn-outline btn-color-muted btn-active-success", { 'active': source == 'STG' })} data-kt-button="true">
-                                                {/* <!--begin::Input--> */}
-                                                <input className="btn-check" type="radio" name="method" value="STG" />
-                                                {/* <!--end::Input--> */}
-                                                STG
-                                            </label>
-                                            {/* <!--end::Radio--> */}
-
-                                            {/* <!--begin::Radio--> */}
-                                            <label className={clsx("btn btn-outline btn-color-muted btn-active-success", { 'active': source == 'All' })} data-kt-button="true">
-                                                {/* <!--begin::Input--> */}
-                                                <input className="btn-check" type="radio" name="method" value="All" />
-                                                {/* <!--end::Input--> */}
-                                                All
-                                            </label>
-                                            {/* <!--end::Radio--> */}
-
-
-                                        </div>
-                                        {/* <!--end::Radio group--> */}
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleChange} placeholder="Type a message"></textarea>
-                                        <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
-                                        </div>
-                                    </>
-                                    : ''}
-                            </div>
-                            {/* <!--end::Body--> */}
                         </div>
-                        {/* <!--end::Item--> */}
-
-                        <div className="mb-5">
-                            <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
-                                <span className="accordion-icon">
-                                    <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                </span>
-                                <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
-                            </div>
-                            <div id="kt_accordion_2_item_1" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
-                                <div className='scroll-y me-n5 pe-5'
-                                    data-kt-element="messages"
-                                    data-kt-scroll="true"
-                                    data-kt-scroll-activate="{default: false, lg: true}"
-                                    data-kt-scroll-max-height="auto" >
-                                    {
-                                        folder.audit ? folder.audit.map((msg, i) => (
-                                            msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
-                                                <div className='d-flex flex-column align-items-start'>
-                                                    {/* <div className='d-flex align-items-center mb-2'>
-                                                        <div className='symbol symbol-35px symbol-circle'>
-                                                            EM
-                                                        </div>
-                                                        <div className='ms-3'>
-                                                            <span className='text-muted fs-7 mb-1'>7 hours</span>
-                                                            <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span>
-                                                        </div>
-
-                                                    </div> */}
-                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                        {msg.message}
-                                                    </div>
-                                                </div>
-                                            </div> : ''
-                                        )
-                                        ) : ''
-                                    }
-                                </div>
-                                {teamId == 3 ?
-                                    <>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleChange} placeholder="Type a message"></textarea>
-
-                                        <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
-                                        </div>
-                                    </>
-                                    : ''}
+                        <div className="card-body">
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data=""
+                                onReady={editor => {
+                                    // You can store the "editor" and use when it is needed.
+                                    console.log('Editor is ready to use!', editor);
+                                }}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setComment(data)
+                                }}
+                            // onBlur={(event, editor) => {
+                            //     console.log('Blur.', editor);
+                            // }}
+                            // onFocus={(event, editor) => {
+                            //     console.log('Focus.', editor);
+                            // }}
+                            />
+                            <div className="d-flex flex-stack mt-5">
+                                <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
                             </div>
                         </div>
+
+                        {/* <div className="card-footer">
+                            Footer
+                        </div> */}
                     </div>
-                    {/* </div> */}
-
                 </div>
             </div>
 

@@ -84,24 +84,23 @@ const InviteUsers: FC = () => {
     }
 
     const handleSelectProductChange = (e, name) => {
+        setData(name, e)
+        // if (data.procedure && data.procedure.value == 'Nationale' && e && !data.country) {
+        //     axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
+        //         var dt = res.data.map(ct => {
+        //             return { label: ct.country, value: ct.country }
+        //         })
+        //         setCountryList(dt)
+        //         setData({ ...data, 'product': e, country: '' })
 
-        if (data.procedure && data.procedure.value == 'Nationale' && e && !data.country) {
-            axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
-                var dt = res.data.map(ct => {
-                    return { label: ct.country, value: ct.country }
-                })
-                setCountryList(dt)
-                setData({ ...data, 'product': e, country: '' })
-                // setData('product', e)
-            })
+        //     })
 
-        } else if (e == null) {
-            setData({ ...data, 'product': '', 'country': '' })
-        } else {
-            setData(name, e)
-            // setProductList(eunatproduct)
-            // setCountryList(eunatcountry)
-        }
+        // } else if (e == null) {
+        //     setData({ ...data, 'product': '', 'country': '' })
+        // } else {
+        //     setData(name, e)
+
+        // }
     }
 
     const handleNavigate = () => {
@@ -173,7 +172,7 @@ const InviteUsers: FC = () => {
 
                     <div className='modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15'>
                         <div className='text-center mb-13'>
-                            <h1 className='mb-3'>New type</h1>
+                            <h1 className='mb-3'>New request</h1>
                         </div>
 
                         <div>

@@ -72,7 +72,7 @@ class FormatingController extends Controller
                         $filename
                     );
                     $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                    $myarr['link'] = asset('storage/' . $filename);;
                 }
                 return $myarr;
             }, $docs);
@@ -109,9 +109,12 @@ class FormatingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Formating $formating)
+    public function show(Request $request)
     {
-        //
+        $formatting = Formating::findOrfail($request->id);
+        return Inertia::render('Formatting/Show', [
+            'folder' => $formatting
+        ]);
     }
 
     /**
@@ -262,9 +265,14 @@ class FormatingController extends Controller
 
     public function deliver(Request $request)
     {
-
+        $user = auth()->user();
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'delivered';
+        if ($formatting->deliveryComment) {
+            $formatting->deliveryComment = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment], ...$formatting->deliveryComment];
+        } else {
+            $formatting->deliveryComment = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment]];
+        }
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));

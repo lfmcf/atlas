@@ -2,21 +2,17 @@
 import clsx from 'clsx'
 import { FC } from 'react'
 import { Link } from '@inertiajs/react'
-import {
-    defaultAlerts,
-    defaultLogs,
-    KTIcon,
-    toAbsoluteUrl,
-    useIllustrationsPath,
-} from '../../../helpers'
+import { defaultAlerts, defaultLogs, KTIcon, toAbsoluteUrl, useIllustrationsPath } from '../../../helpers'
 import moment from 'moment'
 import { router } from '@inertiajs/react'
+
 type Props = {
     // className: string
     auth: any;
 }
 
 const handleNavigation = (data) => {
+
     if (data.status == 'closed') {
         router.get(route('list'), { id: data.id })
     } else {
@@ -26,10 +22,7 @@ const handleNavigation = (data) => {
 }
 
 const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
-    <div
-        className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px'
-        data-kt-menu='true'
-    >
+    <div className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px' data-kt-menu='true'>
         <div
             className='d-flex flex-column bgi-no-repeat rounded-top'
             style={{ backgroundImage: `url('${toAbsoluteUrl('/media/misc/menu-header-bg.jpg')}')` }}
@@ -48,31 +41,11 @@ const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
                         Alerts
                     </a>
                 </li>
-
-                <li className='nav-item'>
-                    <a
-                        className='nav-link text-white opacity-75 opacity-state-100 pb-4 active'
-                        data-bs-toggle='tab'
-                        href='#kt_topbar_notifications_2'
-                    >
-                        Updates
-                    </a>
-                </li>
-
-                {/* <li className='nav-item'>
-                    <a
-                        className='nav-link text-white opacity-75 opacity-state-100 pb-4'
-                        data-bs-toggle='tab'
-                        href='#kt_topbar_notifications_3'
-                    >
-                        Logs
-                    </a>
-                </li> */}
             </ul>
         </div>
 
         <div className='tab-content'>
-            <div className='tab-pane fade' id='kt_topbar_notifications_1' role='tabpanel'>
+            <div className='tab-pane fade show active' id='kt_topbar_notifications_1' role='tabpanel'>
                 <div className='scroll-y mh-325px my-5 px-8'>
                     {auth.notReadedNotifications.map((alert, index) => (
                         <div key={`alert${index}`} className='d-flex flex-stack py-4'>
@@ -109,7 +82,7 @@ const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
                 </div>
             </div>
 
-            <div className='tab-pane fade show active' id='kt_topbar_notifications_2' role='tabpanel'>
+            <div className='tab-pane fade' id='kt_topbar_notifications_2' role='tabpanel'>
                 <div className='d-flex flex-column px-9'>
                     <div className='pt-10 pb-0'>
                         <h3 className='text-dark text-center fw-bolder'>Get Pro Access</h3>

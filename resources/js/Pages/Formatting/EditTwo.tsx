@@ -9,6 +9,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { PageTitle } from '../../_metronic/layout/core';
 import { router } from '@inertiajs/react'
+import StatusComponent from '../../Components/StatusComponent';
 
 const EditTwo: FC = (props: any) => {
 
@@ -42,6 +43,7 @@ const EditTwo: FC = (props: any) => {
     }
 
     const handleSend = () => {
+        setComment('')
         router.post('verify', { id: folder._id, message: comment })
     }
 
@@ -79,7 +81,8 @@ const EditTwo: FC = (props: any) => {
                                     </li>
                                 </ul>
                                 <div>
-                                    <span className="badge badge-lg badge-light-success fw-bold fs-7">{folder.status}</span>
+
+                                    <StatusComponent status={folder.status} />
                                 </div>
 
                             </div>
@@ -189,6 +192,12 @@ const EditTwo: FC = (props: any) => {
                                             <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
                                         </div>
                                     </div>
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Comments</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.adjustedDeadlineComments}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -223,16 +232,16 @@ const EditTwo: FC = (props: any) => {
                                         folder.audit ? folder.audit.map((msg, i) => (
                                             msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
                                                 <div className='d-flex flex-column align-items-start'>
-                                                    {/* <div className='d-flex align-items-center mb-2'>
-                                                        <div className='symbol symbol-35px symbol-circle'>
+                                                    <div className='d-flex align-items-center mb-2'>
+                                                        {/* <div className='symbol symbol-35px symbol-circle'>
                                                             EM
-                                                        </div>
+                                                        </div> */}
                                                         <div className='ms-3'>
                                                             <span className='text-muted fs-7 mb-1'>7 hours</span>
-                                                            <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span>
+                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                         </div>
 
-                                                    </div> */}
+                                                    </div>
                                                     <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
                                                         {msg.message}
                                                     </div>
@@ -244,7 +253,7 @@ const EditTwo: FC = (props: any) => {
                                 </div>
                                 {teamId == 3 ?
                                     <>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleChange} placeholder="Type a message"></textarea>
+                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={handleChange} placeholder="Type a message"></textarea>
 
                                         <div className="d-flex flex-stack">
                                             <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
