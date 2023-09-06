@@ -3,13 +3,16 @@ import React from 'react'
 import { KTIcon } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
+import StatusComponent from '../../../../Components/StatusComponent';
+import { isObject } from 'chart.js/dist/helpers/helpers.core';
 
 type Props = {
 	// className: string
 	data: any[] | any;
+	user: any
 }
 
-const TablesWidget9: React.FC<Props> = ({ data }) => {
+const TablesWidget9: React.FC<Props> = (props) => {
 
 	return (
 		<>
@@ -18,25 +21,26 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
 				<div className='card-header border-0 pt-5'>
 					<h3 className='card-title align-items-start flex-column'>
 						<span className='card-label fw-bold fs-3 mb-1'>Formatting & Publishing List</span>
-						<span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span>
+						{/* <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span> */}
 					</h3>
-					<div
-						className='card-toolbar'
-						data-bs-toggle='tooltip'
-						data-bs-placement='top'
-						data-bs-trigger='hover'
-						title='Click to add a user'
-					>
-						<a
-							href='#'
-							className='btn btn-sm btn-light-primary'
-							data-bs-toggle='modal'
-							data-bs-target='#kt_modal_invite_friends'
+					{props.user.current_team_id !== 3 ?
+						<div
+							className='card-toolbar'
+							data-bs-toggle='tooltip'
+							data-bs-placement='top'
+							data-bs-trigger='hover'
+							title='Click to add a record'
 						>
-							<KTIcon iconName='plus' className='fs-3' />
-							New Member
-						</a>
-					</div>
+							<a
+								href='#'
+								className='btn btn-sm btn-light-primary'
+								data-bs-toggle='modal'
+								data-bs-target='#kt_modal_invite_friends'
+							>
+								<KTIcon iconName='plus' className='fs-3' />
+								Add New Record
+							</a>
+						</div> : ''}
 				</div>
 				{/* end::Header */}
 				{/* begin::Body */}
@@ -71,7 +75,7 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
 							{/* end::Table head */}
 							{/* begin::Table body */}
 							<tbody>
-								{data ? Object.values(data).map((row: any, i) => (
+								{props.data ? Object.values(props.data).map((row: any, i) => (
 									<tr key={i}>
 										<td>
 											<div className='form-check form-check-sm form-check-custom form-check-solid'>
@@ -85,7 +89,8 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
                       </div> */}
 												<div className='d-flex justify-content-start flex-column'>
 													<a href='#' className='text-dark fw-bold text-hover-primary fs-6'>
-														{row.product_name ? row.product_name.value : ''}
+														{typeof row.product_name === 'object' && row.product_name ?
+															row.product_name.value : row.product_name}
 													</a>
 													{/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
 														HTML, JS, ReactJS
@@ -95,7 +100,8 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
 										</td>
 										<td>
 											<a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
-												{row.country ? row.country.value : ''}
+												{typeof row.country === 'object' && row.country ?
+													row.country.value : row.country}
 											</a>
 											{/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
 												<ReactCountryFlag
@@ -110,14 +116,7 @@ const TablesWidget9: React.FC<Props> = ({ data }) => {
 										</td>
 
 										<td>
-											{row.status == 'initiated' ?
-												<span className="badge badge-light-warning fs-7 fw-bold text-capitalize">{row.status}</span>
-												: row.status == 'submitted' ?
-													<span className="badge badge-light-success fs-7 fw-bold text-capitalize">{row.status}</span>
-													: row.status == 'in progress' ? <span className='badge badge-light-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
-														: row.status == 'delivered' ? <span className='badge badge-primary fs-7 fw-bold text-capitalize'>{row.status}</span>
-															: row.status == 'closed' ? <span className='badge badge-dark fs-7 fw-bold text-capitalize'>{row.status}</span>
-																: row.status == 'to verify' ? <span className='badge badge-light-danger fs-7 fw-bold text-capitalize'>{row.status}</span> : ''}
+											<StatusComponent status={row.status} />
 										</td>
 										<td>
 											{row.dossier_type ? row.dossier_type.value : ''}

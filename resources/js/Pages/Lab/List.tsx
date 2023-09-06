@@ -9,7 +9,7 @@ const List: FC = (props: any) => {
 
     return (
         <Authenticated auth={props.auth}>
-            <TablesWidget9 data={allDemands} />
+            <TablesWidget9 data={allDemands} user={props.auth.user} />
         </Authenticated>
     )
 }

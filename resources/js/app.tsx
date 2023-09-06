@@ -31,13 +31,15 @@ createInertiaApp({
             const root = createRoot(el);
 
             root.render(
+
                 <QueryClientProvider client={queryClient}>
                     <MetronicI18nProvider>
                         <I18nProvider>
+
                             <App {...props} />
+
                         </I18nProvider>
                     </MetronicI18nProvider>
-
                 </QueryClientProvider>
                 // <MasterLayout>
                 //     <QueryClientProvider client={queryClient}>

@@ -75,20 +75,31 @@ class ReportController extends Controller
                 ->orWhere('status', 'submitted')
                 ->orWhere('status', 'closed')
                 ->get();
-            $publishing = Publishing::where('status', 'initiated')->orWhere('status', 'submitted')->get();
+            $publishing = Publishing::where('status', 'initiated')
+                ->orWhere('status', 'submitted')
+                ->orWhere('status', 'in progress')
+                ->orWhere('status', 'closed')
+                ->get();
         } else if ($user->current_team_id == 2) {
             $formattings = Formating::where('status', 'in progress')
                 ->orWhere('status', 'submitted')
                 ->orWhere('status', 'to correct')
                 ->orWhere('status', 'closed')
                 ->get();
-            $publishing = Publishing::where('status', 'in progress')->orWhere('status', 'to correct')->get();
+            $publishing = Publishing::where('status', 'in progress')
+                ->orWhere('status', 'submitted')
+                ->orWhere('status', 'to correct')
+                ->orWhere('status', 'closed')
+                ->get();
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orWhere('status', 'closed')
                 ->get();
-            $publishing = Publishing::where('status', 'to verify')->orWhere('status', 'delivered')->get();
+            $publishing = Publishing::where('status', 'to verify')
+                ->orWhere('status', 'delivered')
+                ->orWhere('status', 'closed')
+                ->get();
         }
 
         $allItems = collect($formattings)->merge($publishing)->sortByDesc('created_at');
@@ -111,7 +122,10 @@ class ReportController extends Controller
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->get();
-            $publishing = Publishing::where('status', 'initiated')->orWhere('status', 'to verify')->get();
+            $publishing = Publishing::where('status', 'initiated')
+                ->orWhere('status', 'to verify')
+                ->orWhere('status', 'delivered')
+                ->get();
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'submitted')
                 ->orWhere('status', 'in progress')

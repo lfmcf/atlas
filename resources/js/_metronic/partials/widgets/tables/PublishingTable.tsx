@@ -1,20 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { KTIcon } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
+import StatusComponent from '../../../../Components/StatusComponent';
+import { router } from '@inertiajs/react';
+import { DeliveryMessage } from '../../modals/Delivey-Message/DeliveryMessage';
 
 type Props = {
     data: any[] | any;
 }
 
 const PublishingTable: React.FC<Props> = ({ data }) => {
+
+    const [show, setShow] = useState({ 'status': false, id: '', form: '' });
+
+    const handleDilivred = (id, form) => {
+        setShow({ 'status': !show.status, id: id, form: form })
+
+    }
+
+    const handleClose = (id) => {
+        router.post(route('closepublishing'), { id: id })
+    }
+    const handleCorrect = (id) => {
+        router.get(route('correctpublishing'), { id: id })
+    }
+
+    const handleShow = (id) => {
+        router.get(route('show'), { id: id })
+    }
     return (
         <>
             <div className={`card mb-5`}>
                 <div className='card-header border-0 pt-5'>
                     <h3 className='card-title align-items-start flex-column'>
                         <span className='card-label fw-bold fs-3 mb-1'>Publishing List</span>
-                        <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span>
+                        {/* <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span> */}
                     </h3>
                     {/* <div
                         className='card-toolbar'
@@ -81,7 +102,8 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                       </div> */}
                                                 <div className='d-flex justify-content-start flex-column'>
                                                     <a href='#' className='text-dark fw-bold text-hover-primary fs-6'>
-                                                        {row.product_name ? row.product_name.value : ''}
+                                                        {typeof row.product_name === 'object' && row.product_name ?
+                                                            row.product_name.value : row.product_name}
                                                     </a>
                                                     {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
 														HTML, JS, ReactJS
@@ -91,7 +113,8 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                         </td>
                                         <td>
                                             <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
-                                                {row.country ? row.country.value : ''}
+                                                {typeof row.country === 'object' && row.country ?
+                                                    row.country.value : row.country}
                                             </a>
                                             {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
                                                 <ReactCountryFlag
@@ -106,7 +129,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                         </td>
 
                                         <td>
-                                            <span className="badge badge-light-warning fs-7 fw-bold text-capitalize">{row.status}</span>
+                                            <StatusComponent status={row.status} />
                                         </td>
                                         <td>
                                             {row.dossier_type ? row.dossier_type.value : ''}
@@ -117,24 +140,56 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
 
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
-                                                {/* <a
-													href='#'
-													className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-												>
-													<KTIcon iconName='switch' className='fs-3' />
-												</a> */}
-                                                <a
-                                                    href='#'
-                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                >
-                                                    <KTIcon iconName='pencil' className='fs-3' />
-                                                </a>
-                                                <a
-                                                    href='#'
-                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-                                                >
-                                                    <KTIcon iconName='trash' className='fs-3' />
-                                                </a>
+
+                                                {row.status == 'initaited' ?
+                                                    <a
+                                                        href='#'
+                                                        onClick={() => router.get(route('validate', { id: row._id }))}
+                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                    >
+                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                    </a> : row.status == 'submitted' || row.status == 'to verify' ?
+                                                        <a
+                                                            href='#'
+                                                            onClick={() => router.get(route('review', { id: row._id }))}
+                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        >
+                                                            <KTIcon iconName='pencil' className='fs-3' />
+                                                        </a> : row.status == 'in progress' || row.status == 'to correct' ?
+                                                            <>
+                                                                <button
+                                                                    onClick={() => handleShow(row._id)}
+                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                >
+                                                                    <KTIcon iconName='eye' className='fs-3' />
+                                                                </button>
+                                                                <a
+                                                                    href='#'
+                                                                    onClick={() => handleDilivred(row._id, row.form)}
+                                                                    data-bs-toggle='modal'
+                                                                    data-bs-target='#kt_modal_delivery_message'
+                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                >
+                                                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                                                </a>
+                                                            </>
+                                                            : row.status == 'delivered' ?
+                                                                <>
+                                                                    <button
+                                                                        onClick={() => handleClose(row._id)}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='check-circle' className='fs-3' />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleCorrect(row._id)}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                    </button>
+                                                                </> : ''
+                                                }
+
                                             </div>
                                         </td>
                                     </tr>
@@ -147,6 +202,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                     {/* end::Table container */}
                 </div>
             </div>
+            <DeliveryMessage show={show.status} id={show.id} form={show.form} />
         </>
     )
 }

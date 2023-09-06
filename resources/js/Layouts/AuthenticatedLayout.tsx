@@ -22,12 +22,10 @@ export default function Authenticated({ auth, children }) {
                 <I18nProvider>
                     <LayoutProvider>
                         <ThemeModeProvider>
-                            {/* <AuthInit> */}
-                            {/* <Outlet /> */}
+
                             {children}
                             <MasterInit />
-                            {/*  <App {...props} /> */}
-                            {/* </AuthInit> */}
+
                         </ThemeModeProvider>
                     </LayoutProvider>
 
