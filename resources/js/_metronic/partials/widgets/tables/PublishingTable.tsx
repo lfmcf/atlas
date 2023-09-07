@@ -141,7 +141,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
 
-                                                {row.status == 'initaited' ?
+                                                {row.status == 'initiated' ?
                                                     <a
                                                         href='#'
                                                         onClick={() => router.get(route('validate', { id: row._id }))}
