@@ -45,7 +45,7 @@ class FormatingController extends Controller
         }
 
         $countries = json_decode($cc->countries);
-        return Inertia::render('Formatting/create', [
+        return Inertia::render('Formatting/Initiate', [
             'countries' => $countries
         ]);
     }
@@ -55,7 +55,6 @@ class FormatingController extends Controller
      */
     public function store(Request $request)
     {
-
         $docs = $request->doc;
 
         if (!empty($docs)) {
@@ -121,7 +120,7 @@ class FormatingController extends Controller
      * Show the form for editing the specified resource.
      */
 
-    public function editOne(Request $request)
+    public function createConfirm(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
         $region = $formatting->region;
@@ -143,7 +142,7 @@ class FormatingController extends Controller
 
         $countries = json_decode($cc->countries);
         if ($status == 'initiated') {
-            return Inertia::render('Formatting/EditOne', [
+            return Inertia::render('Formatting/Confirm', [
                 'folder' => $formatting,
                 'countries' => $countries
             ]);
@@ -155,35 +154,7 @@ class FormatingController extends Controller
         }
     }
 
-    public function editThree(Request $request)
-    {
-        $formatting = Formating::findOrfail($request->id);
-        $region = $formatting->region;
-        $status = $formatting->status;
-
-        if ($region == "EU") {
-            $cc = Continent::where('continent', 'europe')->first('countries');
-        } else if ($region == "Asia") {
-            $cc = Continent::where('continent', 'asia')->first('countries');
-        } else if ($region == "GCC") {
-            $cc = Continent::where('continent', 'gcc')->first('countries');
-        } else if ($region == "Africa") {
-            $cc = Continent::where('continent', 'africa')->first('countries');
-        } else if ($region == "US") {
-            $cc = Continent::where('continent', 'us')->first('countries');
-        } else if ($region == "CH") {
-            $cc = Continent::where('continent', 'ch')->first('countries');
-        }
-
-        $countries = json_decode($cc->countries);
-
-        return Inertia::render('Formatting/EditThree', [
-            'folder' => $formatting,
-            'countries' => $countries
-        ]);
-    }
-
-    public function confirmation(Request $request)
+    public function postConfirm(Request $request)
     {
         $docs = $request->doc;
 
@@ -238,29 +209,63 @@ class FormatingController extends Controller
         return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
     }
 
-    public function setProgress(Request $request)
+    public function createAudit(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
-        $formatting->status = 'in progress';
-        $formatting->save();
-        return redirect('/tasks');
+        $region = $formatting->region;
+        $status = $formatting->status;
+
+        if ($region == "EU") {
+            $cc = Continent::where('continent', 'europe')->first('countries');
+        } else if ($region == "Asia") {
+            $cc = Continent::where('continent', 'asia')->first('countries');
+        } else if ($region == "GCC") {
+            $cc = Continent::where('continent', 'gcc')->first('countries');
+        } else if ($region == "Africa") {
+            $cc = Continent::where('continent', 'africa')->first('countries');
+        } else if ($region == "US") {
+            $cc = Continent::where('continent', 'us')->first('countries');
+        } else if ($region == "CH") {
+            $cc = Continent::where('continent', 'ch')->first('countries');
+        }
+
+        $countries = json_decode($cc->countries);
+
+        return Inertia::render('Formatting/Audit', [
+            'folder' => $formatting,
+            'countries' => $countries
+        ]);
     }
 
-    public function setVerify(Request $request)
+    public function postMessageAudit(Request $request)
     {
-
         $user = auth()->user();
+
         $formatting = Formating::findOrfail($request->id);
-        $formatting->status = 'to verify';
-        // $formatting->audit->push((object));
+        if ($user->current_team_id == 3) {
+            $formatting->status = 'to verify';
+        } else {
+            $formatting->status = 'submitted';
+        }
+
         if ($formatting->audit) {
-            $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message], ...$formatting->audit];
+            $formatting->audit = [...$formatting->audit, ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message]];
         } else {
             $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message]];
         }
-
         $formatting->save();
         return back()->with('folder', $formatting);
+    }
+
+    public function postAudit(Request $request)
+    {
+        $user = auth()->user();
+        $formatting = Formating::findOrfail($request->id);
+        if ($user->current_team_id == 3) {
+            $formatting->status = 'in progress';
+        }
+        $formatting->save();
+        return redirect('/tasks')->with('message', 'Your form has been successfully submitted');
     }
 
     public function deliver(Request $request)
@@ -269,41 +274,51 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'delivered';
         if ($formatting->deliveryComment) {
-            $formatting->deliveryComment = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment], ...$formatting->deliveryComment];
+            $formatting->deliveryComment = [...$formatting->deliveryComment, ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment]];
         } else {
             $formatting->deliveryComment = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment]];
         }
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        return redirect('/list')->with('message', 'delivery has been completed, a notification has been sent');
     }
 
-    public function close(Request $request)
+    public function verification(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
-        $formatting->status = 'closed';
-        $formatting->save();
-        $user = User::where('current_team_id', 3)->get();
-        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-    }
+        $region = $formatting->region;
+        if ($region == "EU") {
+            $cc = Continent::where('continent', 'europe')->first('countries');
+        } else if ($region == "Asia") {
+            $cc = Continent::where('continent', 'asia')->first('countries');
+        } else if ($region == "GCC") {
+            $cc = Continent::where('continent', 'gcc')->first('countries');
+        } else if ($region == "Africa") {
+            $cc = Continent::where('continent', 'africa')->first('countries');
+        } else if ($region == "US") {
+            $cc = Continent::where('continent', 'us')->first('countries');
+        } else if ($region == "CH") {
+            $cc = Continent::where('continent', 'ch')->first('countries');
+        }
 
-    public function correctshow(Request $request)
-    {
-        $formatting = Formating::findOrfail($request->id);
-        return Inertia::render('Formatting/EditFour', [
+        $countries = json_decode($cc->countries);
+
+        return Inertia::render('Formatting/Correct', [
             'folder' => $formatting,
+            'countries' => $countries
         ]);
     }
 
-    public function tocorrect(Request $request)
+    public function postCorrection(Request $request)
     {
         $user = auth()->user();
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'to correct';
         if (is_array($formatting->correction)) {
             $formatting->correction = [
-                ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message, 'source' => $request->source],
-                ...$formatting->correction
+                ...$formatting->correction,
+                ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message, 'source' => $request->source]
             ];
         } else {
             $formatting->correction = [
@@ -316,6 +331,48 @@ class FormatingController extends Controller
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($formatting));
         return back()->with('folder', $formatting);
     }
+
+    public function close(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $formatting->status = 'closed';
+        $formatting->save();
+        $user = User::where('current_team_id', 3)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        return redirect('/list')->with('message', 'Formatting ' . $formatting->product_name['value'] . ' has been closed successfully');
+    }
+
+
+    // public function setProgress(Request $request)
+    // {
+    //     $formatting = Formating::findOrfail($request->id);
+    //     $formatting->status = 'in progress';
+    //     $formatting->save();
+    //     return redirect('/tasks');
+    // }
+
+    // public function setVerify(Request $request)
+    // {
+
+    //     $user = auth()->user();
+    //     $formatting = Formating::findOrfail($request->id);
+    //     $formatting->status = 'to verify';
+
+    //     if ($formatting->audit) {
+    //         $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message], ...$formatting->audit];
+    //     } else {
+    //         $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message]];
+    //     }
+
+    //     $formatting->save();
+    //     return back()->with('folder', $formatting);
+    // }
+
+
+
+
+
+
 
 
     public function edit(Formating $formating)

@@ -61,7 +61,7 @@ const EditTwo: FC = (props: any) => {
     return (
         <Authenticated auth={props.auth}>
             <PageTitle breadcrumbs={[]}>
-                Edit
+                {/* Show */}
             </PageTitle>
             <div className='row'>
                 <div className='col-12 mb-10'>
@@ -222,48 +222,61 @@ const EditTwo: FC = (props: any) => {
                             <div className='tab-pane fade' id='kt_aside_tab_4' role="tabpanel">
                                 <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
                                     <div className="mb-5">
-                                        <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
+                                        <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
                                             <span className="accordion-icon">
                                                 <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
                                             </span>
                                             <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
                                         </div>
-                                        <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
+                                        <div id="kt_accordion_2_item_1" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
                                             <div className='scroll-y me-n5 pe-5'
                                                 data-kt-element="messages"
                                                 data-kt-scroll="true"
                                                 data-kt-scroll-activate="{default: false, lg: true}"
-                                                data-kt-scroll-max-height="auto" >
+                                                data-kt-scroll-max-height="auto">
                                                 {
                                                     folder.audit ? folder.audit.map((msg, i) => (
-                                                        msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
-                                                            <div className='d-flex flex-column align-items-start'>
-                                                                <div className='d-flex align-items-center mb-2'>
-
-                                                                    <div className='ms-3'>
-                                                                        <span className='text-muted fs-7 mb-1'>7 hours</span>
+                                                        msg.message && msg.user !== props.auth.user.id ?
+                                                            <div key={i} className='d-flex justify-content-start mb-10'>
+                                                                <div className='d-flex flex-column align-items-start'>
+                                                                    <div className='d-flex align-items-center mb-2'>
+                                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                            EM
+                                                                        </div>
+                                                                        <div className='ms-3'>
+                                                                            <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                        </div>
 
                                                                     </div>
-
+                                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                        {msg.message}
+                                                                    </div>
                                                                 </div>
-                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
+                                                            </div> :
+                                                            <div key={i} className='d-flex justify-content-end mb-10'>
+                                                                <div className='d-flex flex-column align-items-end'>
+                                                                    <div className='d-flex align-items-center mb-2'>
+
+                                                                        <div className='me-3'>
+                                                                            <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                        </div>
+                                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                            EM
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                        {msg.message}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div> : ''
                                                     )
                                                     ) : ''
                                                 }
                                             </div>
-                                            {/* {teamId == 3 ?
-                                                <>
-                                                    <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={handleChange} placeholder="Type a message"></textarea>
 
-                                                    <div className="d-flex flex-stack">
-                                                        <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleSend}>Send</button>
-                                                    </div>
-                                                </>
-                                                : ''} */}
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +331,7 @@ const EditTwo: FC = (props: any) => {
                                 </>
                                 : <button className='btn btn-primary me-3 btn-sm' onClick={handleEdit}>Edit</button>}
                         </div> */}
-                        <div className="card-footer">
+                        <div className="card-footer d-flex justify-content-end">
                             <a
                                 href="#"
                                 onClick={() => handleDilivred(folder._id, folder.form)}

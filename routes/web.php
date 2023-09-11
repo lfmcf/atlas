@@ -41,18 +41,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/list', [ReportController::class, 'list'])->name('list');
     Route::get('/tasks', [ReportController::class, 'task'])->name('tasks');
 
-    Route::get('/formatting', [FormatingController::class, 'create'])->name('formatting');
-    Route::post('storeFormatting', [FormatingController::class, 'store'])->name('storeFormatting');
-    Route::post('confirmDeadline', [FormatingController::class, 'confirmation'])->name('confirmFormattingDeadline');
+    // ** iniatiate and submit form ** //
+    Route::get('/formatting-initiate', [FormatingController::class, 'create'])->name('formatting-initiate');
+    Route::post('initiate-formatting', [FormatingController::class, 'store'])->name('initiate-formatting');
 
-    Route::get('/confirmation', [FormatingController::class, 'editOne'])->name('editOne');
-    Route::get('/verification', [FormatingController::class, 'editThree'])->name('editThree');
-    Route::get('/showformatting', [FormatingController::class, 'show'])->name('showformatting');
+    // ** confirm deadline form ** //
+    Route::get('/formatting-confirm', [FormatingController::class, 'createConfirm'])->name('formatting-confirm');
+    Route::post('confirm-formatting', [FormatingController::class, 'postConfirm'])->name('confirm-formatting');
+
+    // ** audit and check form ** //
+    Route::get('/formatting-audit', [FormatingController::class, 'createAudit'])->name('formatting-audit');
+    Route::post('message-audit', [FormatingController::class, 'postMessageAudit'])->name('message-audit');
+    Route::post('/audit-formatting', [FormatingController::class, 'postAudit'])->name('audit-formatting');
+
+    // ** show formatting and deliver  ** //
+    Route::get('/show-formatting', [FormatingController::class, 'show'])->name('show-formatting');
+
+    // ** post deliver  ** //
+    Route::post('diliver-formatting', [FormatingController::class, 'deliver'])->name('diliver-formatting');
+
+    // ** delivery and dossier correction  ** //
+    Route::get('/formatting-verification', [FormatingController::class, 'verification'])->name('formatting-verification');
+    Route::post('correct-formatting', [FormatingController::class, 'postCorrection'])->name('correct-formatting');
+
+    // ** close demande  ** //
+    Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
 
     Route::post('progress', [FormatingController::class, 'setProgress'])->name('progress');
     Route::post('verify', [FormatingController::class, 'setVerify'])->name('verify');
-    Route::post('diliver', [FormatingController::class, 'deliver'])->name('deliver');
-    Route::post('close', [FormatingController::class, 'close'])->name('close');
+
+
     Route::get('/correction', [FormatingController::class, 'correctshow'])->name('correct');
     Route::post('tocorrect', [FormatingController::class, 'tocorrect'])->name('tocorrect');
 

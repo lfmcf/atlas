@@ -13,6 +13,8 @@ const Navbar = ({ auth }) => {
 
     const { config } = useLayout()
 
+
+
     return (
         <div className='app-navbar flex-shrink-0'>
 
@@ -23,7 +25,7 @@ const Navbar = ({ auth }) => {
                     data-kt-menu-placement='bottom-end'
                     className={btnClass}
                 >
-                    <KTIcon iconName='element-plus' className={btnIconClass} />
+                    <KTIcon iconName='notification-2' className={btnIconClass} />
                 </div>
                 <HeaderNotificationsMenu auth={auth} />
             </div>
@@ -37,7 +39,7 @@ const Navbar = ({ auth }) => {
                 >
                     <img src={toAbsoluteUrl('/media/avatars/300-3.jpg')} alt='' />
                 </div>
-                <HeaderUserMenu />
+                <HeaderUserMenu user={auth.user} />
             </div>
 
             {/* {config.app?.header?.default?.menu?.display && (

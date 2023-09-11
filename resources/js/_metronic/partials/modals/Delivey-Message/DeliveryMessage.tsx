@@ -9,7 +9,7 @@ const DeliveryMessage = (props) => {
     const [comment, setComment] = useState('')
     const handleDilivred = () => {
         if (props.form == 'Formatting') {
-            router.post(route('deliver'), { id: props.id, comment: comment })
+            router.post(route('diliver-formatting'), { id: props.id, comment: comment })
         } else {
             router.post(route('deliverpublishing'), { id: props.id, comment: comment })
         }
