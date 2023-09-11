@@ -106,7 +106,7 @@ const InviteUsers: FC = () => {
     const handleNavigate = () => {
 
         if (data.form && data.form.value == "Formatting") {
-            router.visit('/formatting', {
+            router.visit('/formatting-initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, coreDoc: data.coreDoc },
                 headers: {

@@ -21,15 +21,15 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
     }
 
     const handleClose = (id) => {
-        router.post(route('close'), { id: id })
+        router.post(route('close-formatting'), { id: id })
     }
 
     const handleCorrect = (id) => {
-        router.get(route('correct'), { id: id })
+        router.get(route('formatting-verification'), { id: id })
     }
 
     const handleShow = (id) => {
-        router.get(route('showformatting'), { id: id })
+        router.get(route('show-formatting'), { id: id })
     }
 
     return (
@@ -114,9 +114,12 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                             </div>
                                         </td>
                                         <td>
-                                            <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
-                                                {row.country ? row.country.value : ''}
-                                            </a>
+                                            {/* <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'> */}
+                                            <ReactCountryFlag
+                                                countryCode={row.country.code}
+                                                aria-label={row.country.value}
+                                            />
+                                            {/* </a> */}
                                             {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
                                                 <ReactCountryFlag
                                                     className="emojiFlag"
@@ -144,14 +147,14 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                 {row.status == 'initiated' ?
                                                     <a
                                                         href='#'
-                                                        onClick={() => router.get(route('editOne', { id: row._id }))}
+                                                        onClick={() => router.get(route('formatting-confirm', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
                                                     </a> : row.status == 'submitted' || row.status == 'to verify' ?
                                                         <a
                                                             href='#'
-                                                            onClick={() => router.get(route('editOne', { id: row._id }))}
+                                                            onClick={() => router.get(route('formatting-audit', { id: row._id }))}
                                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                         >
                                                             <KTIcon iconName='pencil' className='fs-3' />

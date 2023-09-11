@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
 import { PageTitle } from '../../js/_metronic/layout/core'
@@ -18,7 +18,10 @@ import {
     EngageWidget10,
 } from '../../js/_metronic/partials/widgets'
 import Authenticated from '../Layouts/AuthenticatedLayout'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
+const MySwal = withReactContent(Swal)
 
 const DashboardPage: FC = () => (
     <>
@@ -118,13 +121,27 @@ const DashboardPage: FC = () => (
 const Dashboard: FC = (props: any) => {
     const intl = useIntl()
 
+    useEffect(() => {
+        if (props.flash.message) {
+            MySwal.fire({
+                title: <p>Your work has been submitted</p>,
+                icon: 'success',
+                text: props.flash.message,
+            })
+        }
+    }, [])
+
+
+
     return (
         <Authenticated auth={props.auth}>
             <PageTitle breadcrumbs={[]}>
                 {intl.formatMessage({ id: 'MENU.DASHBOARD' })}
             </PageTitle>
             <DashboardPage />
+
         </Authenticated>
+
     )
 }
 

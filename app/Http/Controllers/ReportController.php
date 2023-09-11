@@ -102,7 +102,10 @@ class ReportController extends Controller
                 ->get();
         }
 
-        $allItems = collect($formattings)->merge($publishing)->sortByDesc('created_at');
+        $formattings = $formattings->values();
+        $publishing = $publishing->values();
+
+        $allItems = collect($formattings)->merge($publishing)->sortBy('created_at');
 
         return Inertia::render('Lab/List', [
             'allDemands' => $allItems
@@ -121,20 +124,24 @@ class ReportController extends Controller
             $formattings = Formating::where('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orderBy('created_at', 'desc')
                 ->get();
             $publishing = Publishing::where('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'submitted')
                 ->orWhere('status', 'in progress')
                 ->orWhere('status', 'to correct')
+                ->orderBy('created_at', 'desc')
                 ->get();
 
             $publishing = Publishing::where('status', 'submitted')
                 ->orWhere('status', 'in progress')
                 ->orWhere('status', 'to correct')
+                ->orderBy('created_at', 'desc')
                 ->get();
         }
 

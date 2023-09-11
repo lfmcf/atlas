@@ -99,10 +99,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 											</div>
 										</td>
 										<td>
-											<a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
-												{typeof row.country === 'object' && row.country ?
-													row.country.value : row.country}
-											</a>
+											{/* <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'> */}
+											{typeof row.country === 'object' && row.country ?
+												<><ReactCountryFlag countryCode={row.country.code}
+
+													aria-label={row.country.value} /> </> : row.country}
+											{/* </a> */}
 											{/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
 												<ReactCountryFlag
 													className="emojiFlag"
