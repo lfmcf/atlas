@@ -61,7 +61,7 @@ const Correct: FC = (props: any) => {
         document_remarks: '',
         status: folder.status,
         deadlineComments: '',
-        correction: { user: props.auth.user.id, date: new Date, message: '', source: '' }
+        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: '' }
     });
 
     let contries = props.countries.map(function (country) {
