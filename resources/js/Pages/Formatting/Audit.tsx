@@ -55,7 +55,7 @@ const Audit: FC = (props: any) => {
         document_remarks: '',
         status: folder.status,
         deadlineComments: '',
-        audit: { user: props.auth.user.id, date: new Date, message: '' }
+        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' }
     });
 
     let contries = props.countries.map(function (country) {
@@ -436,16 +436,15 @@ const Audit: FC = (props: any) => {
                                             data-kt-scroll-max-height="auto">
                                             {
                                                 folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user !== props.auth.user.id ?
+                                                    msg.message && msg.user.id !== props.auth.user.id ?
                                                         <div key={i} className='d-flex justify-content-start mb-10'>
                                                             <div className='d-flex flex-column align-items-start'>
                                                                 <div className='d-flex align-items-center mb-2'>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        EM
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
                                                                     </div>
                                                                     <div className='ms-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-
                                                                     </div>
 
                                                                 </div>
@@ -463,7 +462,7 @@ const Audit: FC = (props: any) => {
 
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        EM
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
                                                                     </div>
 
                                                                 </div>
