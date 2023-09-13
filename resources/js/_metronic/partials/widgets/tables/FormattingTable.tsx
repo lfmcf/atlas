@@ -157,8 +157,9 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
-                                                    </a> : row.status == 'submitted' || row.status == 'to verify' ?
+                                                    </a> : row.status == 'submitted' ?
                                                         <>
+
                                                             <a
                                                                 href='#'
                                                                 onClick={() => router.post(route('progress-formatting', { id: row._id }))}
@@ -174,39 +175,57 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                 <KTIcon iconName='pencil' className='fs-3' />
                                                             </a>
                                                         </>
-                                                        : row.status == 'in progress' || row.status == 'to correct' ?
+                                                        : row.status == 'to verify' ?
                                                             <>
-                                                                <button
-                                                                    onClick={() => handleShow(row._id)}
-                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                >
-                                                                    <KTIcon iconName='eye' className='fs-3' />
-                                                                </button>
+
                                                                 <a
                                                                     href='#'
-                                                                    onClick={() => handleDilivred(row._id, row.form)}
-                                                                    data-bs-toggle='modal'
-                                                                    data-bs-target='#kt_modal_delivery_message'
+                                                                    onClick={() => router.post(route('confirm-formatting-out', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                 >
                                                                     <KTIcon iconName='check-circle' className='fs-3' />
                                                                 </a>
+                                                                <a
+                                                                    href='#'
+                                                                    onClick={() => router.get(route('formatting-audit', { id: row._id }))}
+                                                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                >
+                                                                    <KTIcon iconName='pencil' className='fs-3' />
+                                                                </a>
                                                             </>
-                                                            : row.status == 'delivered' ?
+                                                            : row.status == 'in progress' || row.status == 'to correct' ?
                                                                 <>
                                                                     <button
-                                                                        onClick={() => handleClose(row._id)}
+                                                                        onClick={() => handleShow(row._id)}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='eye' className='fs-3' />
+                                                                    </button>
+                                                                    <a
+                                                                        href='#'
+                                                                        onClick={() => handleDilivred(row._id, row.form)}
+                                                                        data-bs-toggle='modal'
+                                                                        data-bs-target='#kt_modal_delivery_message'
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
                                                                         <KTIcon iconName='check-circle' className='fs-3' />
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => handleCorrect(row._id)}
-                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                    >
-                                                                        <KTIcon iconName='cross-circle' className='fs-3' />
-                                                                    </button>
-                                                                </> : ''
+                                                                    </a>
+                                                                </>
+                                                                : row.status == 'delivered' ?
+                                                                    <>
+                                                                        <button
+                                                                            onClick={() => handleClose(row._id)}
+                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                        >
+                                                                            <KTIcon iconName='check-circle' className='fs-3' />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => handleCorrect(row._id)}
+                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                        >
+                                                                            <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                        </button>
+                                                                    </> : ''
                                                 }
                                             </div>
                                         </td>

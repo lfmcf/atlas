@@ -209,6 +209,16 @@ class FormatingController extends Controller
         return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
     }
 
+    public function QuickpostConfirm(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $formatting->status = 'submitted';
+        $formatting->save();
+        $user = User::where('current_team_id', 3)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
+    }
+
     public function createAudit(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
