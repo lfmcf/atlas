@@ -11,6 +11,8 @@ const List: FC = (props: any) => {
 
     const { allDemands } = props
 
+    console.log(allDemands)
+
     useEffect(() => {
         if (props.flash.message) {
             MySwal.fire({

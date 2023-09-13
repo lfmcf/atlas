@@ -9,8 +9,10 @@ import Select from 'react-select';
 import { formattingDossierType, formattingProduct, substanceFormattingList } from '../Lab/MetaDataList';
 import moment from 'moment';
 import { useForm } from '@inertiajs/react';
+//import useDropzone from 'react-dropzone'
 
 const Initiate: FC = (props: any) => {
+
     var params = new URLSearchParams(window.location.search)
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
@@ -332,6 +334,7 @@ const Initiate: FC = (props: any) => {
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
                                     <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <div className='d-flex align-items-center text-gray-400 h-100'>

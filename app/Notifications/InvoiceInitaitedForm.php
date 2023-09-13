@@ -56,6 +56,7 @@ class InvoiceInitaitedForm extends Notification
             'type' => $this->request->type || '',
             'product' => $this->request->product_name,
             'status' => $this->request->status,
+            'country' => $this->request->country
         ];
     }
 

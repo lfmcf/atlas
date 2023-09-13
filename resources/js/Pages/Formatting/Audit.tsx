@@ -55,6 +55,7 @@ const Audit: FC = (props: any) => {
         document_remarks: '',
         status: folder.status,
         deadlineComments: '',
+        audit: { user: props.auth.user.id, date: new Date, message: '' }
     });
 
     let contries = props.countries.map(function (country) {
@@ -78,6 +79,12 @@ const Audit: FC = (props: any) => {
 
     const handleChange = (e) => {
         setData(e.target.name, e.target.value)
+    }
+
+    const handleCommentChange = (e) => {
+        let arr = { ...data }
+        arr.audit.message = e.target.value
+        setData(arr)
     }
 
     const handleUploadFileChange = (e) => {
@@ -437,8 +444,8 @@ const Audit: FC = (props: any) => {
                                                                         EM
                                                                     </div>
                                                                     <div className='ms-3'>
-                                                                        <span className='text-muted fs-7 mb-1'>{msg.date}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+
                                                                     </div>
 
                                                                 </div>
@@ -452,8 +459,8 @@ const Audit: FC = (props: any) => {
                                                                 <div className='d-flex align-items-center mb-2'>
 
                                                                     <div className='me-3'>
-                                                                        <span className='text-muted fs-7 mb-1'>{msg.date}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
                                                                         EM
@@ -469,11 +476,11 @@ const Audit: FC = (props: any) => {
                                                 ) : ''
                                             }
                                         </div>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Type a message"></textarea>
+                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
 
-                                        <div className="d-flex flex-stack">
+                                        {/* <div className="d-flex flex-stack">
                                             <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>

@@ -12,8 +12,7 @@ const btnIconClass = 'fs-2'
 const Navbar = ({ auth }) => {
 
     const { config } = useLayout()
-
-
+    let unreadNot = auth.user.unread_notifications.length
 
     return (
         <div className='app-navbar flex-shrink-0'>
@@ -23,9 +22,12 @@ const Navbar = ({ auth }) => {
                     data-kt-menu-trigger="{default: 'click'}"
                     data-kt-menu-attach='parent'
                     data-kt-menu-placement='bottom-end'
-                    className={btnClass}
+                    className={clsx('position-relative', btnClass)}
+
                 >
-                    <KTIcon iconName='notification-2' className={btnIconClass} />
+                    {/* <KTIcon iconName='notification-2' className={btnIconClass} /> */}
+                    <i className="bi bi-bell fa-5x"></i>
+                    <span className="position-absolute text-gray-600" style={{ top: '0', right: '0', fontSize: '12px' }}>{unreadNot > 0 ? unreadNot : ''}</span>
                 </div>
                 <HeaderNotificationsMenu auth={auth} />
             </div>
@@ -37,7 +39,10 @@ const Navbar = ({ auth }) => {
                     data-kt-menu-attach='parent'
                     data-kt-menu-placement='bottom-end'
                 >
-                    <img src={toAbsoluteUrl('/media/avatars/300-3.jpg')} alt='' />
+                    <div className="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" data-bs-original-title="Susan Redwood" data-kt-initialized="1">
+                        <span className="symbol-label bg-primary text-inverse-primary fw-bold text-uppercase">{auth.user.name}</span>
+                    </div>
+                    {/* <img src={toAbsoluteUrl('/media/avatars/300-3.jpg')} alt='' /> */}
                 </div>
                 <HeaderUserMenu user={auth.user} />
             </div>

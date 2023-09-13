@@ -104,7 +104,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                         <img src={toAbsoluteUrl('/media/avatars/300-14.jpg')} alt='' />
                       </div> */}
                                                 <div className='d-flex justify-content-start flex-column'>
-                                                    <a href='#' className='text-dark fw-bold text-hover-primary fs-6'>
+                                                    <a href={route('show-formatting', { id: row._id })} className='text-dark fw-bold text-hover-primary fs-6'>
                                                         {row.product_name ? row.product_name.value : ''}
                                                     </a>
                                                     {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
@@ -118,6 +118,12 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                             <ReactCountryFlag
                                                 countryCode={row.country.code}
                                                 aria-label={row.country.value}
+                                                title={row.country.value}
+                                                svg
+                                                style={{
+                                                    width: '1.5em',
+                                                    height: '1.5em',
+                                                }}
                                             />
                                             {/* </a> */}
                                             {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
@@ -152,13 +158,23 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
                                                     </a> : row.status == 'submitted' || row.status == 'to verify' ?
-                                                        <a
-                                                            href='#'
-                                                            onClick={() => router.get(route('formatting-audit', { id: row._id }))}
-                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                        >
-                                                            <KTIcon iconName='pencil' className='fs-3' />
-                                                        </a> : row.status == 'in progress' || row.status == 'to correct' ?
+                                                        <>
+                                                            <a
+                                                                href='#'
+                                                                onClick={() => router.post(route('progress-formatting', { id: row._id }))}
+                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                            >
+                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                            </a>
+                                                            <a
+                                                                href='#'
+                                                                onClick={() => router.get(route('formatting-audit', { id: row._id }))}
+                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                            >
+                                                                <KTIcon iconName='pencil' className='fs-3' />
+                                                            </a>
+                                                        </>
+                                                        : row.status == 'in progress' || row.status == 'to correct' ?
                                                             <>
                                                                 <button
                                                                     onClick={() => handleShow(row._id)}

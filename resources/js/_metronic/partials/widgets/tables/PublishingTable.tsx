@@ -112,10 +112,16 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                             </div>
                                         </td>
                                         <td>
-                                            <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'>
-                                                {typeof row.country === 'object' && row.country ?
-                                                    row.country.value : row.country}
-                                            </a>
+                                            <ReactCountryFlag
+                                                countryCode={row.country.code}
+                                                aria-label={row.country.value}
+                                                title={row.country.value}
+                                                svg
+                                                style={{
+                                                    width: '1.5em',
+                                                    height: '1.5em',
+                                                }}
+                                            />
                                             {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
                                                 <ReactCountryFlag
                                                     className="emojiFlag"
@@ -144,7 +150,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                 {row.status == 'initiated' ?
                                                     <a
                                                         href='#'
-                                                        onClick={() => router.get(route('validate', { id: row._id }))}
+                                                        onClick={() => router.get(route('publishing-rmp-confirm', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />

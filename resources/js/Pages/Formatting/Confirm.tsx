@@ -308,7 +308,7 @@ const Confirm: FC = (props: any) => {
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-12 mb-10'>
-                                    <label className="form-label">uploaded documents</label>
+                                    <label className="form-label">Uploaded documents</label>
                                     <ul>
                                         {folder.document ? folder.document.map((doc, i) => (
                                             <li key={i}>
