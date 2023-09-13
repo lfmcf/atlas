@@ -15,9 +15,9 @@ type Props = {
 
 const TablesWidget9: React.FC<Props> = (props) => {
 
-	let table = new DataTable('#lisTable', {
-		paging: true
-	});
+	// let table = new DataTable('#lisTable', {
+	// 	paging: true
+	// });
 
 	return (
 		<>

@@ -49,10 +49,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/formatting-confirm', [FormatingController::class, 'createConfirm'])->name('formatting-confirm');
     Route::post('confirm-formatting', [FormatingController::class, 'postConfirm'])->name('confirm-formatting');
 
+
     // ** audit and check form ** //
     Route::get('/formatting-audit', [FormatingController::class, 'createAudit'])->name('formatting-audit');
     Route::post('message-audit', [FormatingController::class, 'postMessageAudit'])->name('message-audit');
     Route::post('/audit-formatting', [FormatingController::class, 'postAudit'])->name('audit-formatting');
+    Route::post('confirm-formatting-out', [FormatingController::class, 'QuickpostConfirm'])->name('confirm-formatting-out');
     Route::post('progress-formatting', [FormatingController::class, 'setProgress'])->name('progress-formatting');
 
     // ** show formatting and deliver  ** //
