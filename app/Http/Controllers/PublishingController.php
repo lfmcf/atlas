@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Notifications\InvoiceInitaitedForm;
+use App\Models\PublishingMrp;
 
 class PublishingController extends Controller
 {
@@ -60,7 +61,7 @@ class PublishingController extends Controller
                         array_push($listmd, $md);
                     }
                 }
-                return Inertia::render('Publishing/Create', [
+                return Inertia::render('Publishing/Rmp/Create', [
                     'metadata' => $listmd,
                 ]);
             }
@@ -373,5 +374,86 @@ class PublishingController extends Controller
     public function destroy(Publishing $publishing)
     {
         //
+    }
+
+    public function storemrp(Request $request)
+    {
+        $docs = $request->doc;
+
+        if (!empty($docs)) {
+            $arr = array_map(function ($doc) {
+
+                $myarr = [];
+
+                if ($doc && gettype($doc) != 'string') {
+                    $uploadedFile = $doc;
+                    $filename = $uploadedFile->getClientOriginalName();
+                    $path = Storage::putFileAs(
+                        'public',
+                        $uploadedFile,
+                        $filename
+                    );
+                    $myarr['name'] = $filename;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                }
+                return $myarr;
+            }, $docs);
+            $docs = $arr;
+        }
+
+        $pub = new PublishingMrp();
+        $pub->form = $request->form;
+        $pub->region = $request->region;
+        $pub->procedure = $request->procedure;
+        $pub->product_name = $request->product_name;
+        $pub->dossier_contact = $request->dossier_contact;
+        $pub->object = $request->object;
+        $pub->country = $request->country;
+        $pub->dossier_type = $request->dossier_type;
+        $pub->document_count = $request->dossier_count;
+        $pub->remarks = $request->remarks;
+        $pub->mt = $request->mt;
+        $pub->indication = $request->indication;
+        $pub->manufacturer = $request->manufacturer;
+        $pub->drug_substance = $request->drug_substance;
+        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+        $pub->dosage_form = $request->dosage_form;
+        $pub->excipient = $request->excipient;
+        $pub->doc = $docs;
+        $pub->docremarks = $request->docremarks;
+        $pub->deadline = $request->deadline;
+        $pub->request_date = $request->request_date;
+        $pub->type = $request->query('type');
+        $pub->status = 'initiated';
+        $pub->save();
+
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
+    }
+
+    public function createConfirmrmp(Request $request)
+    {
+        $pub = PublishingMrp::findOrfail($request->id);
+        $product = $pub->product_name;
+        $procedure = $pub->procedure;
+        // dd($pub->mt);
+        $listmd = [];
+        for ($i = 0; $i < count($pub->mt); $i += 1) {
+
+            $md = MetaData::where([
+                ['Product', '=', $product],
+                ['procedure', '=', $procedure],
+                ['country', '=', $pub->mt[$i]['country']]
+            ])->first();
+            if ($md) {
+                array_push($listmd, $md);
+            }
+        }
+
+        return Inertia::render('Publishing/Rmp/Confirm', [
+            'folder' => $pub,
+            'metadata' => $listmd
+        ]);
     }
 }

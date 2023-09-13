@@ -28,8 +28,8 @@ const Correct: FC = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const { folder } = props
-    const [comment, setComment] = useState('');
-    const [source, setSource] = useState('');
+    // const [comment, setComment] = useState('');
+    // const [source, setSource] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -61,6 +61,7 @@ const Correct: FC = (props: any) => {
         document_remarks: '',
         status: folder.status,
         deadlineComments: '',
+        correction: { user: props.auth.user.id, date: new Date, message: '', source: '' }
     });
 
     let contries = props.countries.map(function (country) {
@@ -73,7 +74,7 @@ const Correct: FC = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('close-formatting'));
+        post(route('correct-formatting'));
     }
 
     const handleSelectChange = (e, name) => {
@@ -82,6 +83,19 @@ const Correct: FC = (props: any) => {
 
     const handleChange = (e) => {
         setData(e.target.name, e.target.value)
+    }
+
+    const handleSourceChange = (e) => {
+        let arr = { ...data }
+        arr.correction.source = e.target.value
+        setData(arr)
+    }
+
+    const handleMessageChange = (e) => {
+        const editorData = e.getData();
+        let arr = { ...data }
+        arr.correction.message = editorData
+        setData(arr)
     }
 
     const handleUploadFileChange = (e) => {
@@ -124,8 +138,7 @@ const Correct: FC = (props: any) => {
     }
 
     const handleMessageSend = () => {
-        setComment('')
-        router.post(route('correct-formatting', { message: comment, id: folder._id, source: source }))
+        //router.post(route('correct-formatting', { message: comment, id: folder._id, source: source }))
     }
 
     return (
@@ -438,7 +451,7 @@ const Correct: FC = (props: any) => {
                                                                         EM
                                                                     </div>
                                                                     <div className='ms-3'>
-                                                                        <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                                         {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                     </div>
 
@@ -453,7 +466,7 @@ const Correct: FC = (props: any) => {
                                                                 <div className='d-flex align-items-center mb-2'>
 
                                                                     <div className='me-3'>
-                                                                        <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                                         {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
@@ -486,7 +499,13 @@ const Correct: FC = (props: any) => {
                                     </div>
                                     <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
                                         {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                            <p>{msg.message}</p>
+                                            <div key={i}>
+                                                <div className='bg-light-primary p-2 rounded mw-lg-600px'>
+                                                    <p className='m-0'>{msg.message}</p>
+
+                                                </div>
+                                                <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                            </div>
                                         )) : ''}
                                     </div>
                                 </div>
@@ -511,24 +530,24 @@ const Correct: FC = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='stg' onChange={(e) => setSource(e.target.value)} />
+                                                        <input className='form-check-input' type='radio' name='source' value='stg' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>STG</span>
+                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
                                                     </span>
                                                 </label>
                                             </div>
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='ekemia' onChange={(e) => setSource(e.target.value)} />
+                                                        <input className='form-check-input' type='radio' name='source' value='ekemia' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Ekemia</span>
+                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>
                                                     </span>
                                                 </label>
                                             </div>
-                                            <div className='col'>
+                                            {/* <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
                                                         <input className='form-check-input' type='radio' name='source' value='all' onChange={(e) => setSource(e.target.value)} />
@@ -537,7 +556,7 @@ const Correct: FC = (props: any) => {
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>All</span>
                                                     </span>
                                                 </label>
-                                            </div>
+                                            </div> */}
                                         </div>
                                         <label className='form-label'>Comment</label>
                                         <div>
@@ -549,14 +568,11 @@ const Correct: FC = (props: any) => {
                                                     // You can store the "editor" and use when it is needed.
                                                     console.log('Editor is ready to use!', editor);
                                                 }}
-                                                onChange={(event, editor) => {
-                                                    const data = editor.getData();
-                                                    setComment(data)
-                                                }}
+                                                onChange={(event, editor) => handleMessageChange(editor)}
                                             />
-                                            <div className="d-flex flex-stack mt-5">
+                                            {/* <div className="d-flex flex-stack mt-5">
                                                 <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend}>Send</button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

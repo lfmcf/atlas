@@ -4,7 +4,8 @@ import { KTIcon } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import StatusComponent from '../../../../Components/StatusComponent';
-import { isObject } from 'chart.js/dist/helpers/helpers.core';
+import DataTable from 'datatables.net-dt';
+
 
 type Props = {
 	// className: string
@@ -13,6 +14,10 @@ type Props = {
 }
 
 const TablesWidget9: React.FC<Props> = (props) => {
+
+	let table = new DataTable('#lisTable', {
+		paging: true
+	});
 
 	return (
 		<>
@@ -38,7 +43,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								data-bs-target='#kt_modal_invite_friends'
 							>
 								<KTIcon iconName='plus' className='fs-3' />
-								Add New Record
+								Add New Request
 							</a>
 						</div> : ''}
 				</div>
@@ -48,7 +53,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					{/* begin::Table container */}
 					<div className='table-responsive'>
 						{/* begin::Table */}
-						<table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4'>
+						<table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4' id='lisTable'>
 							{/* begin::Table head */}
 							<thead>
 								<tr className='fw-bold text-muted'>
@@ -101,9 +106,18 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										<td>
 											{/* <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'> */}
 											{typeof row.country === 'object' && row.country ?
-												<><ReactCountryFlag countryCode={row.country.code}
-
-													aria-label={row.country.value} /> </> : row.country}
+												<>
+													<ReactCountryFlag
+														countryCode={row.country.code}
+														aria-label={row.country.value}
+														title={row.country.value}
+														svg
+														style={{
+															width: '1.5em',
+															height: '1.5em',
+														}}
+													/>
+												</> : row.country}
 											{/* </a> */}
 											{/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
 												<ReactCountryFlag

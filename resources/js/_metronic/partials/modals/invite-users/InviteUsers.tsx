@@ -85,15 +85,16 @@ const InviteUsers: FC = () => {
 
     const handleSelectProductChange = (e, name) => {
         setData(name, e)
-        // if (data.procedure && data.procedure.value == 'Nationale' && e && !data.country) {
-        //     axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
-        //         var dt = res.data.map(ct => {
-        //             return { label: ct.country, value: ct.country }
-        //         })
-        //         setCountryList(dt)
-        //         setData({ ...data, 'product': e, country: '' })
+        if (data.procedure && data.procedure.value == 'Nationale') {
+            axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
+                var dt = res.data.map(ct => {
+                    return { label: ct.country, value: ct.country }
+                })
+                setCountryList(dt)
+                setData({ ...data, 'product': e, country: '' })
 
-        //     })
+            })
+        }
 
         // } else if (e == null) {
         //     setData({ ...data, 'product': '', 'country': '' })
@@ -114,7 +115,7 @@ const InviteUsers: FC = () => {
                 }
             })
         } else if (data.form && data.form.value == "Publishing") {
-            router.visit('/publishing', {
+            router.visit('/publishing-rmp-initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
                 headers: {

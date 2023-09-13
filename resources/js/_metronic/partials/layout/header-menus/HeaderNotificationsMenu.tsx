@@ -11,17 +11,18 @@ type Props = {
     auth: any;
 }
 
-const handleNavigation = (data) => {
+const handleNavigation = (data, notId) => {
 
-    if (data.status == 'closed') {
-        router.get(route('list'), { id: data.id })
+    if (data.status == 'closed' || data.status == 'in progress') {
+        router.get(route('list'), { id: data.id, notId: notId })
     } else {
-        router.get(route('tasks'), { id: data.id })
+        router.get(route('tasks'), { id: data.id, notId: notId })
     }
 
 }
 
 const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
+
     <div className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px' data-kt-menu='true'>
         <div
             className='d-flex flex-column bgi-no-repeat rounded-top'
@@ -47,22 +48,23 @@ const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
         <div className='tab-content'>
             <div className='tab-pane fade show active' id='kt_topbar_notifications_1' role='tabpanel'>
                 <div className='scroll-y mh-325px my-5 px-8'>
-                    {auth.notReadedNotifications.map((alert, index) => (
-                        <div key={`alert${index}`} className='d-flex flex-stack py-4'>
+                    {auth.user.notifications.map((alert, index) => (
+                        <div key={`alert${index}`} className={clsx('d-flex flex-stack py-4 mb-1', alert.read_at ? '' : 'rounded bg-light-primary')}>
                             <div className='d-flex align-items-center'>
-                                <div className='symbol symbol-35px me-4'>
+                                {/* <div className='symbol symbol-35px me-4'>
                                     <span className={clsx('symbol-label', `bg-light-${alert.state}`)}>
                                         {' '}
                                         <KTIcon iconName={alert.icon} className={`fs-2 text-${alert.state}`} />
                                     </span>
-                                </div>
+                                </div> */}
 
-                                <div className='mb-0 me-2'>
-                                    <a href='#' className='fs-6 text-gray-800 text-hover-primary fw-bolder' onClick={() => handleNavigation(alert.data)}>
+                                <div className='mb-0 ms-2 me-2'>
+                                    <a href='#' className='fs-6 text-gray-800 text-hover-primary fw-bolder' onClick={() => handleNavigation(alert.data, alert.id)}>
                                         {alert.data ? alert.data.title : ''}
+                                        <span className='fs-8 ps-2 fw-light'>{alert.data.status}</span>
                                     </a>
                                     <div className='text-gray-400 fs-7'>
-                                        {alert.data && alert.data.product ? alert.data.product.label : ''}
+                                        {alert.data.product && typeof alert.data.product === 'object' ? alert.data.product.value : alert.data.product} - <span>{alert.data.country ? alert.data.country.code : ''}</span>
                                     </div>
                                 </div>
                             </div>

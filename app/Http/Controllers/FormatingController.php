@@ -205,7 +205,7 @@ class FormatingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
+        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
         return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
     }
 
@@ -259,13 +259,71 @@ class FormatingController extends Controller
 
     public function postAudit(Request $request)
     {
-        $user = auth()->user();
+        $currentUser = auth()->user();
         $formatting = Formating::findOrfail($request->id);
-        if ($user->current_team_id == 3) {
-            $formatting->status = 'in progress';
+
+        if ($currentUser->current_team_id == 3) {
+            $formatting->status = 'to verify';
+            if ($formatting->audit) {
+                $formatting->audit = [...$formatting->audit, $request->audit];
+            } else {
+                $formatting->audit = [$request->audit];
+            }
+            $formatting->save();
+            $user = User::where('current_team_id', 2)->get();
+            Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        } else {
+            $docs = $request->doc;
+
+            if (!empty($docs)) {
+                $arr = array_map(function ($doc) {
+
+                    $myarr = [];
+
+                    if ($doc && gettype($doc) != 'string') {
+                        $uploadedFile = $doc;
+                        $filename = $uploadedFile->getClientOriginalName();
+                        $path = Storage::putFileAs(
+                            'public',
+                            $uploadedFile,
+                            $filename
+                        );
+                        $myarr['name'] = $filename;
+                        $myarr['link'] = asset('storage/documents/' . $filename);;
+                    }
+                    return $myarr;
+                }, $docs);
+                $docs = $arr;
+            }
+            $formatting = Formating::findOrfail($request->id);
+            $formatting->dossier_contact = $request->dossier_contact;
+            $formatting->object = $request->object;
+            $formatting->product_name = $request->product_name;
+            $formatting->substance_name = $request->substance_name;
+            $formatting->country = $request->country;
+            $formatting->dossier_type = $request->dossier_type;
+            $formatting->document_count = $request->document_count;
+            $formatting->deficiency_letter = $request->deficiency_letter;
+            $formatting->chrono = $request->chrono;
+            $formatting->remarks = $request->remarks;
+            if (!empty($docs)) {
+                $formatting->document = [...$formatting->document, $docs];
+            }
+            $formatting->docremarks = $request->docremarks;
+            $formatting->status = 'submitted';
+            $formatting->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
+            $formatting->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+            if ($formatting->audit) {
+                $formatting->audit = [...$formatting->audit, $request->audit];
+            } else {
+                $formatting->audit = [$request->audit];
+            }
+            $formatting->save();
+            $user = User::where('current_team_id', 3)->get();
+            Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         }
-        $formatting->save();
-        return redirect('/tasks')->with('message', 'Your form has been successfully submitted');
+
+        return redirect()->route('show-formatting', ['id' => $request->id])->with('message', 'Your form has been successfully submitted');
     }
 
     public function deliver(Request $request)
@@ -316,20 +374,15 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'to correct';
         if (is_array($formatting->correction)) {
-            $formatting->correction = [
-                ...$formatting->correction,
-                ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message, 'source' => $request->source]
-            ];
+            $formatting->correction = [...$formatting->correction, $request->correction];
         } else {
-            $formatting->correction = [
-                ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message, 'source' => $request->source]
-            ];
+            $formatting->correction = [$request->correction];
         }
 
         $formatting->save();
         $Notuser = User::where('current_team_id', 3)->get();
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($formatting));
-        return back()->with('folder', $formatting);
+        return redirect()->route('show-formatting', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
 
     public function close(Request $request)
@@ -343,13 +396,15 @@ class FormatingController extends Controller
     }
 
 
-    // public function setProgress(Request $request)
-    // {
-    //     $formatting = Formating::findOrfail($request->id);
-    //     $formatting->status = 'in progress';
-    //     $formatting->save();
-    //     return redirect('/tasks');
-    // }
+    public function setProgress(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $formatting->status = 'in progress';
+        $formatting->save();
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        return redirect('/tasks')->with('message', 'work is in progress, a notification has been sent');
+    }
 
     // public function setVerify(Request $request)
     // {

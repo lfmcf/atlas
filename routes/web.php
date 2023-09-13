@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/formatting-audit', [FormatingController::class, 'createAudit'])->name('formatting-audit');
     Route::post('message-audit', [FormatingController::class, 'postMessageAudit'])->name('message-audit');
     Route::post('/audit-formatting', [FormatingController::class, 'postAudit'])->name('audit-formatting');
+    Route::post('progress-formatting', [FormatingController::class, 'setProgress'])->name('progress-formatting');
 
     // ** show formatting and deliver  ** //
     Route::get('/show-formatting', [FormatingController::class, 'show'])->name('show-formatting');
@@ -67,15 +68,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** close demande  ** //
     Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
 
-    Route::post('progress', [FormatingController::class, 'setProgress'])->name('progress');
-    Route::post('verify', [FormatingController::class, 'setVerify'])->name('verify');
+    // ** iniatiate and submit form publishing rmp ** //
+    Route::get('/publishing-rmp-initiate', [PublishingController::class, 'create'])->name('publishing-rmp-initiate');
+    Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
+
+    // ** confirm deadline form ** //
+    Route::get('/publishing-rmp-confirm', [PublishingController::class, 'createConfirmrmp'])->name('publishing-rmp-confirm');
+    Route::post('confirm-rmp-formatting', [PublishingController::class, 'postConfirmrmp'])->name('confirm-rmp-ormatting');
 
 
-    Route::get('/correction', [FormatingController::class, 'correctshow'])->name('correct');
-    Route::post('tocorrect', [FormatingController::class, 'tocorrect'])->name('tocorrect');
-
-    Route::get('/publishing', [PublishingController::class, 'create'])->name('pub-create');
-    Route::post('/publishingStore', [PublishingController::class, 'store'])->name('publishingStore');
     Route::get('/validate', [PublishingController::class, 'validation'])->name('validate');
     Route::post('/postvalidate', [PublishingController::class, 'validationStore'])->name('postvalidate');
     Route::get('/review', [PublishingController::class, 'audit'])->name('review');
@@ -89,7 +90,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/show', [PublishingController::class, 'show'])->name('show');
 });
 
-
+// ** route for getting country while select product punlishing ** //
+Route::post('/getProductOrCountry', [ReportController::class, 'getProductOrCountry']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

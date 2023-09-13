@@ -244,7 +244,7 @@ const EditTwo: FC = (props: any) => {
                                                                             EM
                                                                         </div>
                                                                         <div className='ms-3'>
-                                                                            <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                                             {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                         </div>
 
@@ -259,7 +259,7 @@ const EditTwo: FC = (props: any) => {
                                                                     <div className='d-flex align-items-center mb-2'>
 
                                                                         <div className='me-3'>
-                                                                            <span className='text-muted fs-7 mb-1'>{msg.date}</span>
+                                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                                             {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                         </div>
                                                                         <div className='symbol symbol-35px bg-secondary symbol-circle'>
@@ -291,8 +291,13 @@ const EditTwo: FC = (props: any) => {
                                         <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
                                             <div>
                                                 {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                                    <div key={i}  >{msg.message}</div>
+                                                    <div key={i}>
+                                                        <div className='bg-light-primary p-4 rounded mw-lg-600px'>
+                                                            <p className='m-0'>{msg.message}</p>
 
+                                                        </div>
+                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                    </div>
                                                 ))
                                                     : ''}
                                             </div>
@@ -331,17 +336,20 @@ const EditTwo: FC = (props: any) => {
                                 </>
                                 : <button className='btn btn-primary me-3 btn-sm' onClick={handleEdit}>Edit</button>}
                         </div> */}
-                        <div className="card-footer d-flex justify-content-end">
-                            <a
-                                href="#"
-                                onClick={() => handleDilivred(folder._id, folder.form)}
-                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                data-bs-toggle='modal'
-                                data-bs-target='#kt_modal_delivery_message'
-                            >
-                                <KTIcon iconName='check-circle' className='fs-3' />
-                            </a>
-                        </div>
+                        {folder.status == 'in progress' || (folder.status == 'to correct' && teamId == 3) ?
+                            <div className="card-footer d-flex justify-content-end">
+                                <a
+                                    href="#"
+                                    onClick={() => handleDilivred(folder._id, folder.form)}
+                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#kt_modal_delivery_message'
+                                >
+                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                </a>
+                            </div>
+                            :
+                            ''}
                     </div>
                 </div>
                 {/* <div className='col-12'>
