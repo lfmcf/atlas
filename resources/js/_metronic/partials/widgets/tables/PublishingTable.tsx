@@ -65,7 +65,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                             {/* begin::Table head */}
                             <thead>
                                 <tr className='fw-bold text-muted'>
-                                    <th className='w-25px'>
+                                    {/* <th className='w-25px'>
                                         <div className='form-check form-check-sm form-check-custom form-check-solid'>
                                             <input
                                                 className='form-check-input'
@@ -75,7 +75,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                 data-kt-check-target='.widget-9-check'
                                             />
                                         </div>
-                                    </th>
+                                    </th> */}
                                     <th className='min-w-150px'>Product</th>
                                     <th className='min-w-140px'>Country</th>
                                     <th className='min-w-140px'>Sequence</th>
@@ -90,26 +90,16 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                             <tbody>
                                 {data ? Object.values(data).map((row: any, i) => (
                                     <tr key={i}>
-                                        <td>
+                                        {/* <td>
                                             <div className='form-check form-check-sm form-check-custom form-check-solid'>
                                                 <input className='form-check-input widget-9-check' type='checkbox' value='1' />
                                             </div>
-                                        </td>
+                                        </td> */}
                                         <td>
-                                            <div className='d-flex align-items-center'>
-                                                {/* <div className='symbol symbol-45px me-5'>
-                        <img src={toAbsoluteUrl('/media/avatars/300-14.jpg')} alt='' />
-                      </div> */}
-                                                <div className='d-flex justify-content-start flex-column'>
-                                                    <a href='#' className='text-dark fw-bold text-hover-primary fs-6'>
-                                                        {typeof row.product_name === 'object' && row.product_name ?
-                                                            row.product_name.value : row.product_name}
-                                                    </a>
-                                                    {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
-														HTML, JS, ReactJS
-													</span> */}
-                                                </div>
-                                            </div>
+                                            <span className='fs-7'>
+                                                {typeof row.product_name === 'object' && row.product_name ?
+                                                    row.product_name.value : row.product_name}
+                                            </span>
                                         </td>
                                         <td>
                                             <ReactCountryFlag
@@ -122,26 +112,25 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                     height: '1.5em',
                                                 }}
                                             />
-                                            {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                                                <ReactCountryFlag
-                                                    className="emojiFlag"
-                                                    countryCode={row.country.code}
-                                                    aria-label={row.country.value}
-                                                /> / {row.country ? row.country.code : ''}
-                                            </span> */}
                                         </td>
                                         <td>
-                                            {row.sequence}
+                                            <span className='fs-7'>
+                                                {row.sequence}
+                                            </span>
                                         </td>
 
                                         <td>
                                             <StatusComponent status={row.status} />
                                         </td>
                                         <td>
-                                            {row.dossier_type ? row.dossier_type.value : ''}
+                                            <span className='fs-7'>
+                                                {row.dossier_type ? row.dossier_type.value : ''}
+                                            </span>
                                         </td>
                                         <td>
-                                            {row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
+                                            <span className='fs-7'>
+                                                {row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
+                                            </span>
                                         </td>
 
                                         <td>

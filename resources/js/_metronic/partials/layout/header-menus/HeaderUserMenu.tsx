@@ -6,6 +6,7 @@ import { Languages } from './Languages'
 import { toAbsoluteUrl } from '../../../helpers'
 
 const HeaderUserMenu = ({ user }) => {
+
     // const {currentUser, logout} = useAuth()
     return (
         <div
@@ -21,7 +22,7 @@ const HeaderUserMenu = ({ user }) => {
 
                     <div className='d-flex flex-column'>
                         <div className='fw-bolder d-flex align-items-center fs-5'>
-                            {user.name}
+                            {user.trigramme}
                             {/* <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span> */}
                         </div>
                         <a href='#' className='fw-bold text-muted text-hover-primary fs-7'>

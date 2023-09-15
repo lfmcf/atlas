@@ -92,7 +92,7 @@ const EditTwo: FC = (props: any) => {
                                     </li>
                                     <li className='nav-item' role='presentation'>
                                         <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_4" aria-selected="false" tabIndex={-1} role="tab">
-                                            <span className="nav-text text-gray-600 fw-bold fs-6">Dossier Review</span>
+                                            <span className="nav-text text-gray-600 fw-bold fs-6">Dossier review</span>
                                             <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
                                         </a>
                                     </li>
@@ -291,12 +291,22 @@ const EditTwo: FC = (props: any) => {
                                         <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
                                             <div>
                                                 {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                                    <div key={i}>
-                                                        <div className='bg-light-primary p-4 rounded mw-lg-600px'>
-                                                            <p className='m-0'>{msg.message}</p>
+                                                    <div key={i} className='d-flex justify-content-start mb-10'>
+                                                        <div className='d-flex flex-column align-items-start'>
+                                                            <div className='d-flex align-items-center mb-2'>
+                                                                <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                    <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">EK</span>
+                                                                </div>
+                                                                <div className='ms-3'>
+                                                                    <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                    {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                </div>
 
+                                                            </div>
+                                                            <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                {msg.message}
+                                                            </div>
                                                         </div>
-                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                     </div>
                                                 ))
                                                     : ''}

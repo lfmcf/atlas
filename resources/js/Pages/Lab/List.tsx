@@ -11,12 +11,10 @@ const List: FC = (props: any) => {
 
     const { allDemands } = props
 
-    console.log(allDemands)
-
     useEffect(() => {
         if (props.flash.message) {
             MySwal.fire({
-                title: <p>Your work has been submitted</p>,
+                title: <p>Done !</p>,
                 icon: 'success',
                 text: props.flash.message,
             })

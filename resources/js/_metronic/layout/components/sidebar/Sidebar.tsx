@@ -17,6 +17,8 @@ const Sidebar = () => {
     return null
   }
 
+
+
   return (
     <>
       {(config.layoutType === 'dark-sidebar' || config.layoutType === 'light-sidebar') && (

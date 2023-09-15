@@ -29,7 +29,14 @@ class FormatingController extends Controller
      */
     public function create(Request $request)
     {
-        $region = $request->query('region');
+        $formatting = "";
+        if ($request->id) {
+            $formatting = Formating::findOrfail($request->id);
+            $region = $formatting->region;
+        } else {
+            $region = $request->query('region');
+        }
+
         if ($region == "EU") {
             $cc = Continent::where('continent', 'europe')->first('countries');
         } else if ($region == "Asia") {
@@ -46,7 +53,8 @@ class FormatingController extends Controller
 
         $countries = json_decode($cc->countries);
         return Inertia::render('Formatting/Initiate', [
-            'countries' => $countries
+            'countries' => $countries,
+            'folder' => $formatting
         ]);
     }
 
@@ -96,13 +104,20 @@ class FormatingController extends Controller
         $formatting->docremarks = $request->docremarks;
         $formatting->request_date = $request->request_date;
         $formatting->deadline = $request->deadline;
-        $formatting->status = 'initiated';
-        $formatting->created_by = $request->created_by;
-        $formatting->save();
 
-        $user = User::where('current_team_id', 2)->get();
-        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
+        $formatting->created_by = $request->created_by;
+
+        if ($request->query('type') == 'save') {
+            $formatting->status = 'draft';
+            $formatting->save();
+            return redirect('/dashboard')->with('message', 'Form has been successfully saved');
+        } else {
+            $formatting->status = 'initiated';
+            $formatting->save();
+            $user = User::where('current_team_id', 2)->get();
+            Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+            return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
+        }
     }
 
     /**
@@ -206,7 +221,7 @@ class FormatingController extends Controller
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
-        return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
+        return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
     public function QuickpostConfirm(Request $request)
@@ -216,7 +231,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect('/dashboard')->with('message', 'Your form has been successfully submitted');
+        return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
     public function createAudit(Request $request)
@@ -349,7 +364,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect('/list')->with('message', 'delivery has been completed, a notification has been sent');
+        return redirect('/list')->with('message', 'Dossier Delivery has been completed');
     }
 
     public function verification(Request $request)
@@ -395,14 +410,25 @@ class FormatingController extends Controller
         return redirect()->route('show-formatting', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
 
+    public function complete(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $formatting->status = 'completed';
+        $formatting->save();
+        $user = User::where('current_team_id', 1)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        return redirect('/list')->with('message', 'Formatting Request has been successfully completed');
+    }
+
     public function close(Request $request)
     {
+
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'closed';
         $formatting->save();
-        $user = User::where('current_team_id', 3)->get();
+        $user = User::whereIn('current_team_id', [2, 3])->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect('/list')->with('message', 'Formatting ' . $formatting->product_name['value'] . ' has been closed successfully');
+        return redirect('/list')->with('message', 'Formatting Request has been successfully closed');
     }
 
 
@@ -413,7 +439,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect('/tasks')->with('message', 'work is in progress, a notification has been sent');
+        return redirect()->back()->with('message', 'Request ACK has been susccessfully sent');
     }
 
     // public function setVerify(Request $request)

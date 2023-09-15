@@ -61,7 +61,7 @@ const Correct: FC = (props: any) => {
         document_remarks: '',
         status: folder.status,
         deadlineComments: '',
-        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: '' }
+        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
     });
 
     let contries = props.countries.map(function (country) {
@@ -87,8 +87,14 @@ const Correct: FC = (props: any) => {
 
     const handleSourceChange = (e) => {
         let arr = { ...data }
-        arr.correction.source = e.target.value
+        if (e.target.checked) {
+            arr.correction.source.push(e.target.value)
+        } else {
+            const index = arr.correction.source.indexOf(e.target.value);
+            arr.correction.source.splice(index, 1)
+        }
         setData(arr)
+
     }
 
     const handleMessageChange = (e) => {
@@ -162,7 +168,7 @@ const Correct: FC = (props: any) => {
                                 </h3>
 
                                 <div className="stepper-desc">
-                                    General information
+                                    General Information
                                 </div>
                             </div>
                             {/* <!--end::Label--> */}
@@ -448,7 +454,7 @@ const Correct: FC = (props: any) => {
                                                             <div className='d-flex flex-column align-items-start'>
                                                                 <div className='d-flex align-items-center mb-2'>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        EM
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
                                                                     </div>
                                                                     <div className='ms-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
@@ -470,7 +476,7 @@ const Correct: FC = (props: any) => {
                                                                         {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        EM
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
                                                                     </div>
 
                                                                 </div>
@@ -499,12 +505,22 @@ const Correct: FC = (props: any) => {
                                     </div>
                                     <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
                                         {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                            <div key={i}>
-                                                <div className='bg-light-primary p-2 rounded mw-lg-600px'>
-                                                    <p className='m-0'>{msg.message}</p>
+                                            <div key={i} className='d-flex justify-content-start mb-10'>
+                                                <div className='d-flex flex-column align-items-start'>
+                                                    <div className='d-flex align-items-center mb-2'>
+                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                            <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">EK</span>
+                                                        </div>
+                                                        <div className='ms-3'>
+                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                        </div>
 
+                                                    </div>
+                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                        {msg.message}
+                                                    </div>
                                                 </div>
-                                                <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                             </div>
                                         )) : ''}
                                     </div>
@@ -525,12 +541,12 @@ const Correct: FC = (props: any) => {
                                                     : ''
                                             }
                                         </div>
-                                        <label className='form-label'>Source</label>
+                                        {/* <label className='form-label'>Source</label> */}
                                         <div className='row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9 mb-10'>
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='stg' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' value='stg' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
@@ -540,7 +556,7 @@ const Correct: FC = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='ekemia' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' value='ekemia' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>
@@ -558,7 +574,7 @@ const Correct: FC = (props: any) => {
                                                 </label>
                                             </div> */}
                                         </div>
-                                        <label className='form-label'>Comment</label>
+                                        {/* <label className='form-label'>Comment</label> */}
                                         <div>
 
                                             <CKEditor
