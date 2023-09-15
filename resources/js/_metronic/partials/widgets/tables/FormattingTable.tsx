@@ -32,6 +32,10 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         router.get(route('show-formatting'), { id: id })
     }
 
+    const handleCompleted = (id) => {
+        router.post(route('complete-formatting'), { id: id })
+    }
+
     return (
         <>
             <div className={`card mb-5`}>
@@ -68,7 +72,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                             {/* begin::Table head */}
                             <thead>
                                 <tr className='fw-bold text-muted'>
-                                    <th className='w-25px'>
+                                    {/* <th className='w-25px'>
                                         <div className='form-check form-check-sm form-check-custom form-check-solid'>
                                             <input
                                                 className='form-check-input'
@@ -78,7 +82,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                 data-kt-check-target='.widget-9-check'
                                             />
                                         </div>
-                                    </th>
+                                    </th> */}
                                     <th className='min-w-150px'>Product</th>
                                     <th className='min-w-140px'>Country</th>
                                     <th className='min-w-140px'>Sequence</th>
@@ -93,25 +97,16 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                             <tbody>
                                 {data ? Object.values(data).map((row: any, i) => (
                                     <tr key={i}>
-                                        <td>
+                                        {/* <td>
                                             <div className='form-check form-check-sm form-check-custom form-check-solid'>
                                                 <input className='form-check-input widget-9-check' type='checkbox' value='1' />
                                             </div>
-                                        </td>
+                                        </td> */}
                                         <td>
-                                            <div className='d-flex align-items-center'>
-                                                {/* <div className='symbol symbol-45px me-5'>
-                        <img src={toAbsoluteUrl('/media/avatars/300-14.jpg')} alt='' />
-                      </div> */}
-                                                <div className='d-flex justify-content-start flex-column'>
-                                                    <a href={route('show-formatting', { id: row._id })} className='text-dark fw-bold text-hover-primary fs-6'>
-                                                        {row.product_name ? row.product_name.value : ''}
-                                                    </a>
-                                                    {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
-														HTML, JS, ReactJS
-													</span> */}
-                                                </div>
-                                            </div>
+                                            <span className='fs-7'>
+                                                {row.product_name ? row.product_name.value : ''}
+                                            </span>
+
                                         </td>
                                         <td>
                                             {/* <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'> */}
@@ -135,52 +130,48 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                             </span> */}
                                         </td>
                                         <td>
-                                            {row.sequence}
+                                            <span className='fs-7'>
+                                                NA
+                                            </span>
                                         </td>
 
                                         <td>
                                             <StatusComponent status={row.status} />
                                         </td>
                                         <td>
-                                            {row.dossier_type ? row.dossier_type.value : ''}
+                                            <span className='fs-7'>
+                                                {row.dossier_type ? row.dossier_type.value : ''}
+                                            </span>
                                         </td>
                                         <td>
-                                            {row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
+                                            <span className='fs-7'>
+                                                {row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
+                                            </span>
                                         </td>
 
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
-                                                {row.status == 'initiated' ?
+                                                {row.status == 'draft' ?
                                                     <a
                                                         href='#'
-                                                        onClick={() => router.get(route('formatting-confirm', { id: row._id }))}
+                                                        onClick={() => router.get(route('formatting-initiate', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
-                                                    </a> : row.status == 'submitted' ?
-                                                        <>
-
-                                                            <a
-                                                                href='#'
-                                                                onClick={() => router.post(route('progress-formatting', { id: row._id }))}
-                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                            >
-                                                                <KTIcon iconName='check-circle' className='fs-3' />
-                                                            </a>
-                                                            <a
-                                                                href='#'
-                                                                onClick={() => router.get(route('formatting-audit', { id: row._id }))}
-                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                            >
-                                                                <KTIcon iconName='pencil' className='fs-3' />
-                                                            </a>
-                                                        </>
-                                                        : row.status == 'to verify' ?
+                                                    </a>
+                                                    : row.status == 'initiated' ?
+                                                        <a
+                                                            href='#'
+                                                            onClick={() => router.get(route('formatting-confirm', { id: row._id }))}
+                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        >
+                                                            <KTIcon iconName='pencil' className='fs-3' />
+                                                        </a> : row.status == 'submitted' ?
                                                             <>
 
                                                                 <a
                                                                     href='#'
-                                                                    onClick={() => router.post(route('confirm-formatting-out', { id: row._id }))}
+                                                                    onClick={() => router.post(route('progress-formatting', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                 >
                                                                     <KTIcon iconName='check-circle' className='fs-3' />
@@ -193,39 +184,65 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                     <KTIcon iconName='pencil' className='fs-3' />
                                                                 </a>
                                                             </>
-                                                            : row.status == 'in progress' || row.status == 'to correct' ?
+                                                            : row.status == 'to verify' ?
                                                                 <>
-                                                                    <button
-                                                                        onClick={() => handleShow(row._id)}
-                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                    >
-                                                                        <KTIcon iconName='eye' className='fs-3' />
-                                                                    </button>
+
                                                                     <a
                                                                         href='#'
-                                                                        onClick={() => handleDilivred(row._id, row.form)}
-                                                                        data-bs-toggle='modal'
-                                                                        data-bs-target='#kt_modal_delivery_message'
+                                                                        onClick={() => router.post(route('confirm-formatting-out', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
                                                                         <KTIcon iconName='check-circle' className='fs-3' />
                                                                     </a>
+                                                                    <a
+                                                                        href='#'
+                                                                        onClick={() => router.get(route('formatting-audit', { id: row._id }))}
+                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    >
+                                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                                    </a>
                                                                 </>
-                                                                : row.status == 'delivered' ?
+                                                                : row.status == 'in progress' || row.status == 'to correct' ?
                                                                     <>
                                                                         <button
-                                                                            onClick={() => handleClose(row._id)}
+                                                                            onClick={() => handleShow(row._id)}
+                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                        >
+                                                                            <KTIcon iconName='eye' className='fs-3' />
+                                                                        </button>
+                                                                        <a
+                                                                            href='#'
+                                                                            onClick={() => handleDilivred(row._id, row.form)}
+                                                                            data-bs-toggle='modal'
+                                                                            data-bs-target='#kt_modal_delivery_message'
                                                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                         >
                                                                             <KTIcon iconName='check-circle' className='fs-3' />
-                                                                        </button>
-                                                                        <button
-                                                                            onClick={() => handleCorrect(row._id)}
-                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                        >
-                                                                            <KTIcon iconName='cross-circle' className='fs-3' />
-                                                                        </button>
-                                                                    </> : ''
+                                                                        </a>
+                                                                    </>
+                                                                    : row.status == 'delivered' ?
+                                                                        <>
+                                                                            <button
+                                                                                onClick={() => handleCompleted(row._id)}
+                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            >
+                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => handleCorrect(row._id)}
+                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            >
+                                                                                <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                            </button>
+                                                                        </>
+                                                                        : row.status == 'completed' ?
+                                                                            <button
+                                                                                onClick={() => handleClose(row._id)}
+                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            >
+                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                            </button>
+                                                                            : ''
                                                 }
                                             </div>
                                         </td>

@@ -131,7 +131,7 @@ const Confirm: FC = (props: any) => {
                                 </h3>
 
                                 <div className="stepper-desc">
-                                    General information
+                                    General Information
                                 </div>
                             </div>
                             {/* <!--end::Label--> */}

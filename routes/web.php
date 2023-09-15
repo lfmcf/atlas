@@ -31,7 +31,8 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/', function () {
-        return Inertia::render('Dashboard');
+        // return Inertia::render('Dashboard');
+        return redirect('/dashboard');
     });
 
     Route::get('/dashboard', function () {
@@ -67,7 +68,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/formatting-verification', [FormatingController::class, 'verification'])->name('formatting-verification');
     Route::post('correct-formatting', [FormatingController::class, 'postCorrection'])->name('correct-formatting');
 
-    // ** close demande  ** //
+    // ** complete and close demande  ** //
+    Route::post('complete-formatting', [FormatingController::class, 'complete'])->name('complete-formatting');
     Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
 
     // ** iniatiate and submit form publishing rmp ** //

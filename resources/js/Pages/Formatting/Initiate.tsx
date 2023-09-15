@@ -16,21 +16,22 @@ const Initiate: FC = (props: any) => {
     var params = new URLSearchParams(window.location.search)
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
+    const { folder } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
-        form: params.get('form'),
-        region: params.get('region'),
-        coredoc: params.get('coreDoc'),
-        dossier_contact: '',
-        object: '',
-        product_name: '',
-        substance_name: '',
-        country: '',
-        dossier_type: '',
-        document_count: '',
-        deficiency_letter: '',
-        chrono: '',
-        remarks: '',
+        form: folder ? folder.form : params.get('form'),
+        region: folder ? folder.region : params.get('region'),
+        coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
+        dossier_contact: folder ? folder.dossier_contact : '',
+        object: folder ? folder.object : '',
+        product_name: folder ? folder.product_name : '',
+        substance_name: folder ? folder.substance_name : '',
+        country: folder ? folder.country : '',
+        dossier_type: folder ? folder.dossier_type : '',
+        document_count: folder ? folder.document_count : '',
+        deficiency_letter: folder ? folder.deficiency_letter : '',
+        chrono: folder ? folder.chrono : '',
+        remarks: folder ? folder.remarks : '',
         doc: [],
         request_date: new Date(),
         deadline: new Date(),
@@ -129,9 +130,9 @@ const Initiate: FC = (props: any) => {
 
     }, [data.dossier_type]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('initiate-formatting'));
+        post(route('initiate-formatting', { type: type }));
     }
 
     return (
@@ -156,7 +157,7 @@ const Initiate: FC = (props: any) => {
                                 </h3>
 
                                 <div className="stepper-desc">
-                                    General information
+                                    General Information
                                 </div>
                             </div>
                             {/* <!--end::Label--> */}
@@ -246,12 +247,12 @@ const Initiate: FC = (props: any) => {
                                     <label className="form-label">Dossier contact</label>
                                     {/* <!--end::Label--> */}
                                     {/* <!--begin::Input--> */}
-                                    <input type="text" className="form-control form-control-solid" name="dossier_contact" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label">Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.object} name="object" onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -266,6 +267,7 @@ const Initiate: FC = (props: any) => {
                                         isClearable
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        value={data.product_name}
                                     />
 
                                 </div>
@@ -278,6 +280,7 @@ const Initiate: FC = (props: any) => {
                                         isClearable
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        value={data.substance_name}
                                     />
                                 </div>
 
@@ -292,6 +295,7 @@ const Initiate: FC = (props: any) => {
                                         isClearable
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        value={data.country}
                                     />
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
@@ -304,6 +308,7 @@ const Initiate: FC = (props: any) => {
                                         isClearable
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        value={data.dossier_type}
                                     />
                                 </div>
 
@@ -311,21 +316,21 @@ const Initiate: FC = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Document Count</label>
-                                    <input type="number" className="form-control form-control-solid" name="document_count" onChange={handleChange} />
+                                    <input type="number" className="form-control form-control-solid" defaultValue={data.document_count} name="document_count" onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Deficiency Letter</label>
-                                    <input type="text" className="form-control form-control-solid" name="deficiency_letter" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.deficiency_letter} name="deficiency_letter" onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Chrono N°/ Dossier Reference</label>
-                                    <input type="text" className="form-control form-control-solid" name="chrono" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="chrono" defaultValue={data.chrono} onChange={handleChange} />
                                 </div>
 
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="remarks" onChange={handleChange} />
+                                <textarea className="form-control form-control-solid" rows={3} defaultValue={data.remarks} name="remarks" onChange={handleChange} />
                             </div>
                         </div>
 
@@ -393,12 +398,12 @@ const Initiate: FC = (props: any) => {
 
                         <!--begin::Wrapper--> */}
                         <div>
-                            <button type="submit" className="btn btn-primary m-3" data-kt-stepper-action="submit">
+                            <button type="button" className="btn btn-primary m-3" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'save')}>
                                 <span className="indicator-label">
                                     Save
                                 </span>
                             </button>
-                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
+                            <button type="button" className="btn btn-primary" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'submit')}>
                                 <span className="indicator-label">
                                     Submit
                                 </span>

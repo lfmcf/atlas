@@ -96,6 +96,7 @@ class ReportController extends Controller
             $formattings = Formating::where('status', 'in progress')
                 ->orWhere('status', 'submitted')
                 ->orWhere('status', 'to correct')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
             $publishing = Publishing::where('status', 'in progress')
@@ -111,6 +112,7 @@ class ReportController extends Controller
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
             $publishing = Publishing::where('status', 'to verify')
@@ -123,19 +125,13 @@ class ReportController extends Controller
                 ->get();
         }
 
-        //$formattings = collect($formattings);
-        //dd($publishingmrp);
-        // $publishing = collect($publishing);
-        // $publishingmrp = collect($publishingmrp);
 
-        $allItems = $formattings->merge($publishing);
-        //$sorted = $allItems->sortByDesc('created_at');
-        //dd($allItems);
-        // $sorted = $allItems->sortBy('created_at');
-        //dd($sorted);
+        $allItems = $formattings->merge($publishing)->merge($publishingmrp);
+        $sorted = $allItems->sortByDesc('updated_at');
+        $sorted = $sorted->values()->all();
 
         return Inertia::render('Lab/List', [
-            'allDemands' => $allItems
+            'allDemands' => $sorted
         ]);
     }
 
@@ -148,7 +144,10 @@ class ReportController extends Controller
         }
 
         if ($user->current_team_id == 1) {
-            $formattings = Formating::where('status', 'draft')->get();
+            $formattings = Formating::where('status', 'draft')
+                ->orWhere('status', 'completed')
+                ->orderBy('created_at', 'desc')
+                ->get();
             $publishing = Publishing::where('status', 'draft')->get();
             $publishingmrp = PublishingMrp::where('status', 'draft')->get();
         } else if ($user->current_team_id == 2) {
