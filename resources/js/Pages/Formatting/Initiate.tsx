@@ -22,7 +22,7 @@ const Initiate: FC = (props: any) => {
         form: folder ? folder.form : params.get('form'),
         region: folder ? folder.region : params.get('region'),
         coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
-        dossier_contact: folder ? folder.dossier_contact : '',
+        dossier_contact: folder ? folder.dossier_contact : ,
         object: folder ? folder.object : '',
         product_name: folder ? folder.product_name : '',
         substance_name: folder ? folder.substance_name : '',
@@ -247,7 +247,7 @@ const Initiate: FC = (props: any) => {
                                     <label className="form-label">Dossier contact</label>
                                     {/* <!--end::Label--> */}
                                     {/* <!--begin::Input--> */}
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" onChange={handleChange} disabled />
                                     {/* <!--end::Input--> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>

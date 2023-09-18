@@ -51,12 +51,12 @@ const SidebarLogo = (props: PropsType) => {
     <div className='app-sidebar-logo px-6' id='kt_app_sidebar_logo'>
       <Link href='/dashboard'>
         {config.layoutType === 'dark-sidebar' ? (
-          <>Atlas</>
-          // <img
-          //   alt='Logo'
-          //   src={toAbsoluteUrl('/media/logos/default-dark.svg')}
-          //   className='h-25px app-sidebar-logo-default'
-          // />
+
+          <img
+            alt='Logo'
+            src={toAbsoluteUrl('/media/logos/logoek.jpeg')}
+            className='h-25px app-sidebar-logo-default'
+          />
         ) : (
           <>
             <img
