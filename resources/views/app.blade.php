@@ -35,6 +35,7 @@
         //     themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
         // }
 
+
         document.documentElement.setAttribute('data-bs-theme', 'light')
     </script>
     <!--end::Theme mode setup on page load-->
