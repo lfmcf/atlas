@@ -5,3 +5,11 @@
 #app {
     height: 100%;
 }
+
+#lisTable_wrapper .row:first-child {
+    display: none;
+}
+
+#lisTable_wrapper {
+    overflow: hidden;
+}
