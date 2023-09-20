@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import {FC, useEffect, useRef} from 'react'
-import {KTIcon} from '../../../../helpers'
-import {getCSSVariableValue} from '../../../../assets/ts/_utils'
-import {useThemeMode} from '../../../layout/theme-mode/ThemeModeProvider'
+import { FC, useEffect, useRef } from 'react'
+import { KTIcon } from '../../../../helpers'
+import { getCSSVariableValue } from '../../../../assets/ts/_utils'
+import { useThemeMode } from '../../../layout/theme-mode/ThemeModeProvider'
 
 type Props = {
   className: string
@@ -18,7 +18,7 @@ const CardsWidget17: FC<Props> = ({
   chartRotate = 145,
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null)
-  const {mode} = useThemeMode()
+  const { mode } = useThemeMode()
   useEffect(() => {
     refreshChart()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,15 +39,15 @@ const CardsWidget17: FC<Props> = ({
       <div className='card-header pt-5'>
         <div className='card-title d-flex flex-column'>
           <div className='d-flex align-items-center'>
-            <span className='fs-4 fw-semibold text-gray-400 me-1 align-self-start'>$</span>
+            {/* <span className='fs-4 fw-semibold text-gray-400 me-1 align-self-start'>$</span> */}
 
-            <span className='fs-2hx fw-bold text-dark me-2 lh-1 ls-n2'>69,700</span>
+            <span className='fs-2hx fw-bold text-dark me-2 lh-1 ls-n2'>150</span>
 
             <span className='badge badge-light-success fs-base'>
               <KTIcon iconName='arrow-up' className='fs-5 text-success ms-n1' /> 2.2%
             </span>
           </div>
-          <span className='text-gray-400 pt-1 fw-semibold fs-6'>Projects Earnings in April</span>
+          <span className='text-gray-400 pt-1 fw-semibold fs-6'>Total Requests</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ const CardsWidget17: FC<Props> = ({
           <div
             id='kt_card_widget_17_chart'
             ref={chartRef}
-            style={{minWidth: chartSize + 'px', minHeight: chartSize + 'px'}}
+            style={{ minWidth: chartSize + 'px', minHeight: chartSize + 'px' }}
             data-kt-size={chartSize}
             data-kt-line={chartLine}
           ></div>
@@ -65,21 +65,21 @@ const CardsWidget17: FC<Props> = ({
         <div className='d-flex flex-column content-justify-center flex-row-fluid'>
           <div className='d-flex fw-semibold align-items-center'>
             <div className='bullet w-8px h-3px rounded-2 bg-success me-3'></div>
-            <div className='text-gray-500 flex-grow-1 me-4'>Leaf CRM</div>
-            <div className='fw-bolder text-gray-700 text-xxl-end'>$7,660</div>
+            <div className='text-gray-500 flex-grow-1 me-4'>Formatting</div>
+            <div className='fw-bolder text-gray-700 text-xxl-end'>90</div>
           </div>
           <div className='d-flex fw-semibold align-items-center my-3'>
             <div className='bullet w-8px h-3px rounded-2 bg-primary me-3'></div>
-            <div className='text-gray-500 flex-grow-1 me-4'>Mivy App</div>
-            <div className='fw-bolder text-gray-700 text-xxl-end'>$2,820</div>
+            <div className='text-gray-500 flex-grow-1 me-4'>Publishing</div>
+            <div className='fw-bolder text-gray-700 text-xxl-end'>50</div>
           </div>
           <div className='d-flex fw-semibold align-items-center'>
             <div
               className='bullet w-8px h-3px rounded-2 me-3'
-              style={{backgroundColor: '#E4E6EF'}}
+              style={{ backgroundColor: '#E4E6EF' }}
             ></div>
-            <div className='text-gray-500 flex-grow-1 me-4'>Others</div>
-            <div className=' fw-bolder text-gray-700 text-xxl-end'>$45,257</div>
+            <div className='text-gray-500 flex-grow-1 me-4'>Submission</div>
+            <div className=' fw-bolder text-gray-700 text-xxl-end'>10</div>
           </div>
         </div>
       </div>
@@ -148,4 +148,4 @@ const initChart = function (
   drawCircle(getCSSVariableValue('--bs-success'), options.lineWidth, 100 / 250)
 }
 
-export {CardsWidget17}
+export { CardsWidget17 }
