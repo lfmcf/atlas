@@ -10,7 +10,7 @@
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link rel="shortcut icon" href="storage/media/logos/favicon.ico" />
+    <link rel="shortcut icon" href="storage/media/logos/faviconek.ico" />
     <link rel="stylesheet" id="layout-styles-anchor" href="storage/splash-screen.css" />
 
     <!-- Scripts -->
@@ -47,7 +47,7 @@
     <!--begin::Loading markup-->
     <div id="splash-screen" class="splash-screen">
         <img src="/storage/media/logos/default-dark.svg" class="dark-logo" alt="Metronic dark logo" />
-        <img src="/storage/media/logos/default.svg" class="light-logo" alt="Metronic light logo" />
+        <img src="/storage/media/logos/defaultek.svg" class="light-logo" alt="Metronic light logo" />
         <span>Loading ...</span>
     </div>
     <!--end::Loading markup-->

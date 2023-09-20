@@ -346,7 +346,7 @@ const EditTwo: FC = (props: any) => {
                                 </>
                                 : <button className='btn btn-primary me-3 btn-sm' onClick={handleEdit}>Edit</button>}
                         </div> */}
-                        {folder.status == 'in progress' || (folder.status == 'to correct' && teamId == 3) ?
+                        {folder.status == 'in progress' && teamId == 3 || (folder.status == 'to correct' && teamId == 3) ?
                             <div className="card-footer d-flex justify-content-end">
                                 <a
                                     href="#"

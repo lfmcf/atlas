@@ -15,6 +15,8 @@ type Props = {
 	user: any
 }
 
+
+
 const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
@@ -25,15 +27,19 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	const indexOfFirstPage = indexOfLastPage - postsPerPage;
 	let currentPosts = Object.entries(data).slice(indexOfFirstPage, indexOfLastPage).map(entry => entry[1]);
 	const [search, setSearch] = useState('');
+	const [loading, setloading] = useState(true);
 
 	let tb;
+	tb = new DataTable('#lisTable', {
+		"info": false,
+		'order': [],
+		'paging': false,
+		'pageLength': 3,
 
-	useEffect(() => {
-
-		tb = new DataTable('#lisTable', {
-			"ordering": false,
-		})
 	})
+	useEffect(() => {
+		setloading(false)
+	}, [])
 
 	const handleSearch = (e) => {
 		tb.search(e.target.value).draw();
@@ -149,20 +155,27 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	}
 
 
+
 	const Pagination = () => {
 		const pageNumbers = [];
-		const totalPosts = Object.keys(data).length;
-		for (let i: number = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
-			pageNumbers.push(i)
+
+		if (!loading) {
+
+			for (let i: number = 1; i <= tb.page.info().pages; i++) {
+				pageNumbers.push(i)
+			}
+			let currentPage = tb.page.info().page
+
 		}
 
-		const pagination = (pageNumbers) => {
-			setCurrentPage(pageNumbers)
+		const pagination = (number) => {
+			setCurrentPage(number)
+			tb.page(number - 1).draw('page')
 		}
 
 		return (
 
-			<ul className="pagination pagination-circle">
+			<ul className="pagination">
 				{pageNumbers.map(number => (
 					<li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
 						<button onClick={() => pagination(number)} className="page-link"> {number} </button>
@@ -211,7 +224,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 						</div>
 					</div>
 					<div className='card-toolbar flex-row-fluid justify-content-end gap-5'>
-						<div className='w-100 mw-50px'>
+						{/* <div className='w-100 mw-50px'>
 							<button className="btn btn-sm btn-light">
 								<KTIcon iconName='printer' className='fs-3' />
 							</button>
@@ -220,7 +233,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 							<button className="btn btn-sm btn-light">
 								<KTIcon iconName='arrow-down' className='fs-3' />
 							</button>
-						</div>
+						</div> */}
 						<div className='w-100 mw-150px'>
 							<Select options={[
 								{ label: 'All', value: 'All' },
@@ -372,9 +385,16 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					{/* end::Table container */}
 				</div>
 				{/* <div className='card-footer'>
-					<div className='d-flex justify-content-end'>
-						<Pagination />
+					<div className='row'>
+						<div className='col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'>
+
+						</div>
+						<div className='col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'>
+							<Pagination />
+						</div>
+
 					</div>
+
 
 				</div> */}
 
