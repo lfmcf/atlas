@@ -36,7 +36,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 				var datatable = new DataTable('#lisTable', {
 					"info": false,
 					'order': [],
-					'pageLength': 3,
+					'pageLength': 15,
 				})
 
 				setTb(datatable)
