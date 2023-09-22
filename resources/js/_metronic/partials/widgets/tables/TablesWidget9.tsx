@@ -7,6 +7,9 @@ import StatusComponent from '../../../../Components/StatusComponent';
 import DataTable from 'datatables.net-bs5';
 import Select from 'react-select';
 import { router } from '@inertiajs/react';
+import $ from 'jquery';
+import "datatables.net-dt/js/dataTables.dataTables";
+import clsx from 'clsx';
 
 
 type Props = {
@@ -21,24 +24,28 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
 
-	const [postsPerPage, setPostsPerPage] = useState(15);
 	const [currentPage, setCurrentPage] = useState(1);
-	const indexOfLastPage = currentPage * postsPerPage;
-	const indexOfFirstPage = indexOfLastPage - postsPerPage;
-	let currentPosts = Object.entries(data).slice(indexOfFirstPage, indexOfLastPage).map(entry => entry[1]);
-	const [search, setSearch] = useState('');
+	const [tb, setTb] = useState();
 	const [loading, setloading] = useState(true);
 
-	let tb;
-	tb = new DataTable('#lisTable', {
-		"info": false,
-		'order': [],
-		'paging': false,
-		'pageLength': 3,
-
-	})
+	// let tb = ''
 	useEffect(() => {
-		setloading(false)
+
+		if (!$.fn.DataTable.isDataTable("#myTable")) {
+			$(document).ready(function () {
+				var datatable = new DataTable('#lisTable', {
+					"info": false,
+					'order': [],
+					'pageLength': 3,
+				})
+
+				setTb(datatable)
+			})
+
+		}
+		console.log('render1')
+
+		$.fn.dataTable.ext.errMode = 'none';
 	}, [])
 
 	const handleSearch = (e) => {
@@ -154,38 +161,42 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	}
 
+	const pageNumbers = [];
+	var nombrePages;
 
+	if (tb) {
 
-	const Pagination = () => {
-		const pageNumbers = [];
-
-		if (!loading) {
-
-			for (let i: number = 1; i <= tb.page.info().pages; i++) {
-				pageNumbers.push(i)
-			}
-			let currentPage = tb.page.info().page
-
+		nombrePages = tb.page.info().pages;
+		for (let i: number = 1; i <= nombrePages; i++) {
+			pageNumbers.push(i)
 		}
-
-		const pagination = (number) => {
-			setCurrentPage(number)
-			tb.page(number - 1).draw('page')
-		}
-
-		return (
-
-			<ul className="pagination">
-				{pageNumbers.map(number => (
-					<li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
-						<button onClick={() => pagination(number)} className="page-link"> {number} </button>
-					</li>
-				))}
-			</ul>
-
-		)
-
 	}
+
+	const pagination = (number) => {
+		console.log(number)
+		setCurrentPage(number)
+		tb.page(number - 1).draw('page')
+	}
+
+	const handleprevious = () => {
+		let number = tb.page.info().page
+		setCurrentPage(number)
+		tb.page(number - 1).draw('page')
+	}
+
+	const handlenext = () => {
+		let number = tb.page.info().page + 1
+		console.log(number)
+		setCurrentPage(number + 1)
+		tb.page(number).draw('page')
+	}
+
+	const getCountryCode = (str) => {
+		let chars = str.split('-')
+		return chars[0]
+	}
+
+
 
 
 	return (
@@ -259,7 +270,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								data-bs-target='#kt_modal_invite_friends'
 							>
 								<KTIcon iconName='plus' className='fs-3' />
-								Add New Request
+								New Request
 							</a> : ''}
 					</div>
 				</div>
@@ -297,7 +308,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 							{/* <ShowData /> */}
 							<tbody>
-								{props.data ? Object.values(props.data).map((row: any, i) => (
+								{data ? Object.values(data).map((row: any, i) => (
 									<tr key={i}>
 										{/* <td>
 								<div className='form-check form-check-sm form-check-custom form-check-solid'>
@@ -331,7 +342,16 @@ const TablesWidget9: React.FC<Props> = (props) => {
 															height: '1.5em',
 														}}
 													/>
-												</> : row.country}
+												</> : <ReactCountryFlag
+													countryCode={getCountryCode(row.agency_code)}
+													aria-label={row.country}
+													title={row.country}
+													svg
+													style={{
+														width: '1.5em',
+														height: '1.5em',
+													}}
+												/>}
 										</td>
 										<td>
 											<span className='fs-7'>
@@ -384,19 +404,36 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					</div>
 					{/* end::Table container */}
 				</div>
-				{/* <div className='card-footer'>
+				<div className='card-footer'>
 					<div className='row'>
 						<div className='col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'>
 
 						</div>
 						<div className='col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'>
-							<Pagination />
+							<ul className="pagination">
+								<li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} >
+									<a className='page-link' onClick={handleprevious}>
+										<i className="bi bi-chevron-left"></i>
+									</a>
+								</li>
+								{
+									pageNumbers.map(number => (
+
+										<li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
+											<button onClick={() => pagination(number)} className="page-link"> {number} </button>
+										</li>
+									))
+								}
+								<li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} >
+									<a className='page-link' onClick={handlenext}>
+										<i className="bi bi-chevron-right"></i>
+									</a>
+								</li>
+							</ul >
 						</div>
 
 					</div>
-
-
-				</div> */}
+				</div>
 
 				{/* begin::Body */}
 			</div>

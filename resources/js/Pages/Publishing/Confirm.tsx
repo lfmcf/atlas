@@ -1,27 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import Authenticated from "../../Layouts/AuthenticatedLayout";
-import { IStepperOptions, StepperComponent } from "../../_metronic/assets/ts/components";
+import { StepperComponent } from "../../_metronic/assets/ts/components";
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { useForm } from '@inertiajs/react';
 import Select from 'react-select'
-import moment from 'moment'
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-const StepperOptions: IStepperOptions = {
-    startIndex: 6,
-    animation: false,
-    animationSpeed: '0.3s',
-    animationNextClass: 'animate__animated animate__slideInRight animate__fast',
-    animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
-}
-
-const Correct = (props: any) => {
-
-    function createMarkup(msg: any) {
-        return { __html: msg.message };
-    }
+const Confirm = (props: any) => {
 
     const { folder } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -65,13 +50,11 @@ const Correct = (props: any) => {
         deadline: folder.deadline,
         adjusted_deadline: folder.adjusted_deadline ? folder.adjusted_deadline : new Date,
         adjustedDeadlineComments: '',
-        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
     })
 
     useEffect(() => {
-        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
+        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
-
 
     const nextStep = () => {
         // setHasError(false)
@@ -113,25 +96,6 @@ const Correct = (props: any) => {
         setData(name, e)
     }
 
-    const handleSourceChange = (e) => {
-        let arr = { ...data }
-        if (e.target.checked) {
-            arr.correction.source.push(e.target.value)
-        } else {
-            const index = arr.correction.source.indexOf(e.target.value);
-            arr.correction.source.splice(index, 1)
-        }
-        setData(arr)
-
-    }
-
-    const handleMessageChange = (e) => {
-        const editorData = e.getData();
-        let arr = { ...data }
-        arr.correction.message = editorData
-        setData(arr)
-    }
-
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc = []
@@ -141,20 +105,14 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('correct-publishing'));
+        post(route('confirm-publishing'));
     }
-
-    // const handleCommentChange = (e) => {
-    //     let arr = { ...data }
-    //     arr.audit.message = e.target.value
-    //     setData(arr)
-    // }
 
     return (
         <Authenticated auth={props.auth}>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
                         <div className="stepper-wrapper d-flex align-items-center">
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -244,28 +202,10 @@ const Correct = (props: any) => {
                         </div>
                         <div className="stepper-line h-40px"></div>
                     </div>
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">6</span>
-                            </div>
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 6
-                                </h3>
-
-                                <div className="stepper-desc">
-                                    Dossier Review
-                                </div>
-                            </div>
-                        </div>
-                        <div className="stepper-line h-40px"></div>
-                    </div>
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <div className="flex-column" data-kt-stepper-element="content">
+                        <div className="flex-column current" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier contact</label>
@@ -659,169 +599,6 @@ const Correct = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
-                                    </div>
-                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
-                                        <div className='scroll-y me-n5 pe-5'
-                                            data-kt-element="messages"
-                                            data-kt-scroll="true"
-                                            data-kt-scroll-activate="{default: false, lg: true}"
-                                            data-kt-scroll-max-height="auto">
-                                            {
-                                                folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user !== props.auth.user.id ?
-                                                        <div key={i} className='d-flex justify-content-start mb-10'>
-                                                            <div className='d-flex flex-column align-items-start'>
-                                                                <div className='d-flex align-items-center mb-2'>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
-                                                                    </div>
-                                                                    <div className='ms-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div> :
-                                                        <div key={i} className='d-flex justify-content-end mb-10'>
-                                                            <div className='d-flex flex-column align-items-end'>
-                                                                <div className='d-flex align-items-center mb-2'>
-
-                                                                    <div className='me-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
-                                                                    </div>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                )
-                                                ) : ''
-                                            }
-                                        </div>
-                                        {/* <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Type a message"></textarea>
-
-                                        <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
-                                        </div> */}
-                                    </div>
-                                </div>
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Delivery comment</h3>
-                                    </div>
-                                    <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
-                                        {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                            <div key={i} className='d-flex justify-content-start mb-10'>
-                                                <div className='d-flex flex-column align-items-start'>
-                                                    <div className='d-flex align-items-center mb-2'>
-                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                            <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">EK</span>
-                                                        </div>
-                                                        <div className='ms-3'>
-                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
-                                                        </div>
-
-                                                    </div>
-                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
-                                                        {msg.message}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )) : ''}
-                                    </div>
-                                </div>
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_4_item_3">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Correction requests</h3>
-                                    </div>
-                                    <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10 show" data-bs-parent="#kt_accordion_2">
-                                        <div className='mb-10'>
-                                            {
-                                                folder.correction ? folder.correction.map((msg, i) => (
-                                                    <div key={i} dangerouslySetInnerHTML={createMarkup(msg)} />
-                                                ))
-                                                    : ''
-                                            }
-                                        </div>
-                                        {/* <label className='form-label'>Source</label> */}
-                                        <div className='row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9 mb-10'>
-                                            <div className='col'>
-                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
-                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='stg' onChange={handleSourceChange} />
-                                                    </span>
-                                                    <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            <div className='col'>
-                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
-                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='ekemia' onChange={handleSourceChange} />
-                                                    </span>
-                                                    <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            {/* <div className='col'>
-                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
-                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='all' onChange={(e) => setSource(e.target.value)} />
-                                                    </span>
-                                                    <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>All</span>
-                                                    </span>
-                                                </label>
-                                            </div> */}
-                                        </div>
-                                        {/* <label className='form-label'>Comment</label> */}
-                                        <div>
-
-                                            <CKEditor
-                                                editor={ClassicEditor}
-                                                data=""
-                                                onReady={editor => {
-                                                    // You can store the "editor" and use when it is needed.
-                                                    console.log('Editor is ready to use!', editor);
-                                                }}
-                                                onChange={(event, editor) => handleMessageChange(editor)}
-                                            />
-                                            {/* <div className="d-flex flex-stack mt-5">
-                                                <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend}>Send</button>
-                                            </div> */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
 
@@ -853,4 +630,4 @@ const Correct = (props: any) => {
     )
 }
 
-export default Correct;
+export default Confirm;

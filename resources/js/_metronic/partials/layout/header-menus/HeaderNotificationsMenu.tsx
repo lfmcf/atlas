@@ -19,10 +19,11 @@ const handleNavigation = (data, notId) => {
         router.get(route('tasks'), { id: data.id, notId: notId })
     }
 
+
+
 }
 
 const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
-
     <div className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px' data-kt-menu='true'>
         <div
             className='d-flex flex-column bgi-no-repeat rounded-top'

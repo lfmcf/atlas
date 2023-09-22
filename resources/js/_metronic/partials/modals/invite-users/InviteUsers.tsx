@@ -115,7 +115,7 @@ const InviteUsers: FC = () => {
                 }
             })
         } else if (data.form && data.form.value == "Publishing") {
-            router.visit('/publishing-rmp-initiate', {
+            router.visit('/publishing-initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
                 headers: {

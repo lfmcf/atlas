@@ -72,11 +72,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('complete-formatting', [FormatingController::class, 'complete'])->name('complete-formatting');
     Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
 
+    // ** store orm publishing ** //
+    Route::post('/store-publishing', [PublishingController::class, 'store'])->name('store-publishing');
+
+    // ** confirm deadline form publishing ** //
+    Route::get('/publishing-confirm', [PublishingController::class, 'createConfirm'])->name('publishing-confirm');
+    Route::post('confirm-publishing', [PublishingController::class, 'postConfirm'])->name('confirm-publishing');
+
+    // ** audit and check form ** //
+    Route::get('/publishing-audit', [PublishingController::class, 'createAudit'])->name('publishing-audit');
+    Route::post('progress-publishing', [PublishingController::class, 'setProgress'])->name('progress-publishing');
+    Route::post('audit-publishing', [PublishingController::class, 'postAudit'])->name('audit-publishing');
+    Route::post('confirm-publishing-out', [PublishingController::class, 'QuickpostConfirm'])->name('confirm-publishing-out');
+
+    // ** show formatting and deliver  ** //
+    Route::get('/show-publishing', [PublishingController::class, 'show'])->name('show-publishing');
+
+    // ** post deliver  ** //
+    Route::post('deliver-publishing', [PublishingController::class, 'deliver'])->name('deliver-publishing');
+
+    // ** delivery and dossier correction  ** //
+    Route::get('/publishing-verification', [PublishingController::class, 'verification'])->name('publishing-verification');
+    Route::post('correct-publishing', [PublishingController::class, 'postCorrection'])->name('correct-publishing');
+
+    // ** complete and close demande  ** //
+    Route::post('complete-publishing', [PublishingController::class, 'complete'])->name('complete-publishing');
+    Route::post('close-publishing', [PublishingController::class, 'close'])->name('close-publishing');
+
+
+
+
     // ** iniatiate and submit form publishing rmp ** //
-    Route::get('/publishing-rmp-initiate', [PublishingController::class, 'create'])->name('publishing-rmp-initiate');
+    Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
     Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
 
-    // ** confirm deadline form ** //
+    // ** confirm deadline form publishing rmp ** //
     Route::get('/publishing-rmp-confirm', [PublishingController::class, 'createConfirmrmp'])->name('publishing-rmp-confirm');
     Route::post('confirm-rmp-formatting', [PublishingController::class, 'postConfirmrmp'])->name('confirm-rmp-ormatting');
 

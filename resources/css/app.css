@@ -13,3 +13,7 @@
 #lisTable_wrapper {
     overflow: hidden;
 }
+
+#lisTable_paginate {
+    display: none;
+}
