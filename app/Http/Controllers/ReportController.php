@@ -148,7 +148,10 @@ class ReportController extends Controller
                 ->orWhere('status', 'completed')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $publishing = Publishing::where('status', 'draft')->get();
+            $publishing = Publishing::where('status', 'draft')
+                ->orWhere('status', 'completed')
+                ->get();
+
             $publishingmrp = PublishingMrp::where('status', 'draft')->get();
         } else if ($user->current_team_id == 2) {
 
@@ -186,7 +189,9 @@ class ReportController extends Controller
                 ->get();
         }
 
-        $publishing = $publishing->merge($publishingmrp);
+        $all = $publishing->merge($publishingmrp);
+        $publishing = $all->sortByDesc('updated_at');
+        $publishing = $publishing->values()->all();
 
         return Inertia::render('Lab/Task', [
             'formatting' => $formattings,

@@ -12,6 +12,8 @@ const Show = (props) => {
     const { folder } = props
     const [show, setShow] = useState({ 'status': false, id: '', form: '' });
 
+    const teamId = props.auth.user.current_team_id;
+
     function createMarkup(msg: any) {
         return { __html: msg.message };
     }
@@ -313,26 +315,45 @@ const Show = (props) => {
                                                     data-kt-element="messages"
                                                     data-kt-scroll="true"
                                                     data-kt-scroll-activate="{default: false, lg: true}"
-                                                    data-kt-scroll-max-height="auto" >
+                                                    data-kt-scroll-max-height="auto">
                                                     {
                                                         folder.audit ? folder.audit.map((msg, i) => (
-                                                            msg.message ? <div key={i} className='d-flex justify-content-start mb-10'>
-                                                                <div className='d-flex flex-column align-items-start'>
-                                                                    <div className='d-flex align-items-center mb-2'>
-                                                                        {/* <div className='symbol symbol-35px symbol-circle'>
-                                                                            EM
-                                                                        </div> */}
-                                                                        <div className='ms-3'>
-                                                                            <span className='text-muted fs-7 mb-1'>7 hours</span>
-                                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
-                                                                        </div>
+                                                            msg.message && msg.user.id !== props.auth.user.id ?
+                                                                <div key={i} className='d-flex justify-content-start mb-10'>
+                                                                    <div className='d-flex flex-column align-items-start'>
+                                                                        <div className='d-flex align-items-center mb-2'>
+                                                                            <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                            </div>
+                                                                            <div className='ms-3'>
+                                                                                <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                                {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                            </div>
 
+                                                                        </div>
+                                                                        <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                            {msg.message}
+                                                                        </div>
                                                                     </div>
-                                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                        {msg.message}
+                                                                </div> :
+                                                                <div key={i} className='d-flex justify-content-end mb-10'>
+                                                                    <div className='d-flex flex-column align-items-end'>
+                                                                        <div className='d-flex align-items-center mb-2'>
+
+                                                                            <div className='me-3'>
+                                                                                <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                                {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                            </div>
+                                                                            <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                            {msg.message}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div> : ''
                                                         )
                                                         ) : ''
                                                     }
@@ -351,8 +372,23 @@ const Show = (props) => {
                                             <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
                                                 <div>
                                                     {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
-                                                        <div key={i}  >{msg.message}</div>
+                                                        <div key={i} className='d-flex justify-content-start mb-10'>
+                                                            <div className='d-flex flex-column align-items-start'>
+                                                                <div className='d-flex align-items-center mb-2'>
+                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">EK</span>
+                                                                    </div>
+                                                                    <div className='ms-3'>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                    </div>
 
+                                                                </div>
+                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                    {msg.message}
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     ))
                                                         : ''}
                                                 </div>
@@ -384,17 +420,20 @@ const Show = (props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="card-footer">
-                            <a
-                                href="#"
-                                onClick={() => handleDilivred(folder._id, folder.form)}
-                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                data-bs-toggle='modal'
-                                data-bs-target='#kt_modal_delivery_message'
-                            >
-                                <KTIcon iconName='check-circle' className='fs-3' />
-                            </a>
-                        </div>
+                        {folder.status == 'in progress' && teamId == 3 || (folder.status == 'to correct' && teamId == 3) ?
+                            <div className="card-footer d-flex justify-content-end">
+                                <a
+                                    href="#"
+                                    onClick={() => handleDilivred(folder._id, folder.form)}
+                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#kt_modal_delivery_message'
+                                >
+                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                </a>
+                            </div>
+                            :
+                            ''}
 
                     </div>
                 </div>

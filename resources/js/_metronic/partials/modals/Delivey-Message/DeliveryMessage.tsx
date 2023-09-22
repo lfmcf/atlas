@@ -11,7 +11,7 @@ const DeliveryMessage = (props) => {
         if (props.form == 'Formatting') {
             router.post(route('diliver-formatting'), { id: props.id, comment: comment })
         } else {
-            router.post(route('deliverpublishing'), { id: props.id, comment: comment })
+            router.post(route('deliver-publishing'), { id: props.id, comment: comment })
         }
 
     }

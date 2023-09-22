@@ -247,7 +247,7 @@ const Initiate: FC = (props: any) => {
                                     <label className="form-label">Dossier contact</label>
                                     {/* <!--end::Label--> */}
                                     {/* <!--begin::Input--> */}
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" onChange={handleChange} disabled />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" disabled />
                                     {/* <!--end::Input--> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>

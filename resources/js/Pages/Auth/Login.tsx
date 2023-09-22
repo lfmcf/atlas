@@ -102,7 +102,7 @@ export default function Login() {
                 <div className="d-flex flex-center flex-lg-start flex-column">
                     {/* <!--begin::Logo--> */}
                     <a href="../../demo1/dist/index.html" className="mb-7">
-                        <img alt="Logo" src={toAbsoluteUrl('/media/logos/customek-3.svg')} style={{ width: '200px' }} />
+                        <img alt="Logo" src={toAbsoluteUrl('/media/logos/customek-3.svg')} style={{ width: '226px' }} />
                     </a>
                     {/* <!--end::Logo--> */}
                     {/* <!--begin::Title--> */}
