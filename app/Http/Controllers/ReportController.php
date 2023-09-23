@@ -102,11 +102,13 @@ class ReportController extends Controller
             $publishing = Publishing::where('status', 'in progress')
                 ->orWhere('status', 'submitted')
                 ->orWhere('status', 'to correct')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
             $publishingmrp = PublishingMrp::where('status', 'in progress')
                 ->orWhere('status', 'submitted')
                 ->orWhere('status', 'to correct')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
         } else if ($user->current_team_id == 3) {
@@ -117,10 +119,12 @@ class ReportController extends Controller
                 ->get();
             $publishing = Publishing::where('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
             $publishingmrp = PublishingMrp::where('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'completed')
                 ->orWhere('status', 'closed')
                 ->get();
         }

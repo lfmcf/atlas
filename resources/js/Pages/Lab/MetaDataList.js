@@ -257,24 +257,7 @@ export const eunatproduct = [
     { label: 'STALORAL Mugwort', value: 'STALORAL Mugwort' },
     { label: 'STALORAL Olive', value: 'STALORAL Olive' },
     { label: 'STALORAL Ragweed', value: 'STALORAL Ragweed' },
-    { label: 'STALORAL, aerosols lietošanai zem mēles, šķīdums', value: 'STALORAL, aerosols lietošanai zem mēles, šķīdums' },
-    { label: 'STALORAL', value: 'STALORAL' },
-    { label: 'STALORAL 300', value: 'STALORAL 300' },
-    { label: 'Staloral Birke/Erle/Hasel', value: 'Staloral Birke/Erle/Hasel' },
-    { label: 'STALORAL Birke', value: 'STALORAL Birke' },
-    { label: 'STALORAL 5 Grasses', value: 'STALORAL 5 Grasses' },
-    { label: 'STALORAL Alternaria', value: 'STALORAL Alternaria' },
-    { label: 'STALORAL Birch', value: 'STALORAL Birch' },
-    { label: 'STALORAL Cat', value: 'STALORAL Cat' },
-    { label: 'STALORAL Cupressaceae', value: 'STALORAL Cupressaceae' },
-    { label: 'STALORAL Dermatophagoides farinae', value: 'STALORAL Dermatophagoides farinae' },
-    { label: 'STALORAL Dog', value: 'STALORAL Dog' },
-    { label: 'STALORAL Dermatophagoides pteronyssinus', value: 'STALORAL Dermatophagoides pteronyssinus' },
-    { label: 'STALORAL Erect Wall Pellitory', value: 'STALORAL Erect Wall Pellitory' },
-    { label: 'STALORAL House Dust Mites', value: 'STALORAL House Dust Mites' },
-    { label: 'STALORAL Mugwort', value: 'STALORAL Mugwort' },
-    { label: 'STALORAL Olive', value: 'STALORAL Olive' },
-    { label: 'STALORAL Ragweed', value: 'STALORAL Ragweed' },
+
 ]
 
 export const eunatcountry = [

@@ -16,11 +16,13 @@ const Create: FC = (props: any) => {
     const { metadata, folder } = props;
     var params = new URLSearchParams(window.location.search);
 
+
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
-        form: params.get('form'),
-        region: params.get('region'),
-        procedure: params.get('procedure'),
-        product_name: params.get('product'),
+        id: folder._id,
+        form: folder.form,
+        region: folder.region,
+        procedure: folder.procedure,
+        product_name: folder.product_name,
         dossier_contact: folder.dossier_contact,
         object: folder.object,
         country: folder.country,
@@ -201,7 +203,7 @@ const Create: FC = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('initiate-rmp-publishing'));
+        post(route('confirm-rmp-publishing'));
     }
 
     return (
@@ -356,12 +358,12 @@ const Create: FC = (props: any) => {
                                     <label className="form-label">Dossier contact</label>
                                     {/* <!--end::Label--> */}
                                     {/* <!--begin::Input--> */}
-                                    <input type="text" className="form-control form-control-solid" name="dossier_contact" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
                                 <div className='col-6'>
                                     <label className="form-label">Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.object} name="object" onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -370,7 +372,7 @@ const Create: FC = (props: any) => {
                                     <label className="form-label">Product / Substance</label>
                                     {/* <!--end::Label--> */}
                                     {/* <!--begin::Input--> */}
-                                    <input type="text" className="form-control form-control-solid" value={data.product_name} name="product_name" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.product_name} name="product_name" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
                                 <div className='col-6'>
@@ -409,18 +411,19 @@ const Create: FC = (props: any) => {
                                         isClearable
                                         className="basic"
                                         classNamePrefix="basic"
+                                        value={data.dossier_type}
                                     // menuPortalTarget={document.body}
                                     // styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
                                 <div className='col-6'>
                                     <label className="form-label">Dossier count</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_count} name="dossier_count" onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="remarks" onChange={handleChange} />
+                                <textarea className="form-control form-control-solid" rows={3} defaultValue={data.remarks} name="remarks" onChange={handleChange} />
                             </div>
                         </div>
 
@@ -592,7 +595,7 @@ const Create: FC = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <input type="text" className="form-control form-control-solid" name="drug_substance" onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.drug_substance} name="drug_substance" onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -682,9 +685,25 @@ const Create: FC = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            {/* <div className="mb-10">
+                            <div className="row mb-10">
+                                <div className='col-6'>
+                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <Flatpickr
+                                        data-enable-time
+                                        value={data.adjusted_deadline}
+                                        className="form-control"
+                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        onChange={(date) => setData('adjusted_deadline', date)}
+                                    />
+                                </div>
 
-                            </div> */}
+                            </div>
+                            <div className="row mb-10">
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Comments</label>
+                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" onChange={handleChange} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
