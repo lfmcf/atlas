@@ -1,6 +1,6 @@
 import { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
 import Authenticated from '../../../Layouts/AuthenticatedLayout'
-import { StepperComponent } from '../../../_metronic/assets/ts/components'
+import { IStepperOptions, StepperComponent } from '../../../_metronic/assets/ts/components'
 import { Instance } from 'flatpickr/dist/types/instance'
 import clsx from 'clsx'
 import ReactCountryFlag from 'react-country-flag'
@@ -10,56 +10,69 @@ import Select, { SingleValue } from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
+import moment from 'moment'
 
-const Create: FC = (props: any) => {
+const StepperOptions: IStepperOptions = {
+    startIndex: 6,
+    animation: false,
+    animationSpeed: '0.3s',
+    animationNextClass: 'animate__animated animate__slideInRight animate__fast',
+    animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
+}
+
+const Audit: FC = (props: any) => {
 
     const { metadata, folder } = props;
-    var params = new URLSearchParams(window.location.search);
+
+    console.log(folder)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
-        id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
-        region: folder ? folder.region : params.get('region'),
-        procedure: folder ? folder.procedure : params.get('procedure'),
-        product_name: folder ? folder.product_name : params.get('product'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme,
-        object: folder ? folder.object : '',
-        country: folder ? folder.country : '',
-        dossier_type: folder ? folder.dossier_type : '',
-        dossier_count: folder ? folder.dossier_count : '',
-        remarks: folder ? folder.remarks : '',
-        mt: folder ? folder.mt : [],
-        indication: folder ? folder.indication : '',
-        manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
-        dosage_form: folder ? folder.dosage_form : '',
-        excipient: folder ? folder.excipient : '',
-        doc: folder ? folder.doc : '',
-        docremarks: folder ? folder.docremarks : '',
-        deadline: new Date(),
-        request_date: new Date()
+        id: folder._id,
+        form: folder.form,
+        region: folder.region,
+        procedure: folder.procedure,
+        product_name: folder.product_name,
+        dossier_contact: folder.dossier_contact,
+        object: folder.object,
+        country: folder.country,
+        dossier_type: folder.dossier_type,
+        dossier_count: folder.dossier_count,
+        remarks: folder.remarks,
+        mt: folder.mt,
+        indication: folder.indication,
+        manufacturer: folder.manufacturer,
+        drug_substance: folder.drug_substance,
+        drug_product_manufacturer: folder.drug_product_manufacturer,
+        dosage_form: folder.dosage_form,
+        excipient: folder.excipient,
+        doc: folder.doc,
+        docremarks: folder.docremarks,
+        deadline: folder.deadline,
+        request_date: folder.request_date,
+        adjusted_deadline: new Date(),
+        adjustedDeadlineComments: '',
+        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' }
     })
 
-    const countires = metadata.map((mp) => {
+    // const countires = metadata.map((mp) => {
 
-        return { label: mp.country, value: mp.country, code: mp.code }
-    })
+    //     return { label: mp.country, value: mp.country, code: mp.code }
+    // })
 
-    const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
-        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
-    });
+    // const [multiData, setMultiData] = useState({
+    //     uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
+    //     agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
+    //     r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+    // });
 
-    const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
+    // const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     // const datePicker = useRef() as MutableRefObject<Instance>;
 
     useEffect(() => {
-        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
+        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
     }, [])
 
     const nextStep = () => {
@@ -170,17 +183,17 @@ const Create: FC = (props: any) => {
         setData(perdata)
     }
 
-    useEffect(() => {
-        let arr = { ...data };
-        metadata.map((mtd, i) => {
-            arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
-                submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
-                r_sequence: '', submission_description: '', remarks: ''
-            })
-        })
-        setData(arr)
-    }, [])
+    // useEffect(() => {
+    //     let arr = { ...data };
+    //     metadata.map((mtd, i) => {
+    //         arr.mt.push({
+    //             id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
+    //             submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
+    //             r_sequence: '', submission_description: '', remarks: ''
+    //         })
+    //     })
+    //     setData(arr)
+    // }, [])
 
     useEffect(() => {
         let date = new Date();
@@ -198,9 +211,15 @@ const Create: FC = (props: any) => {
 
     }, [data.dossier_type]);
 
-    const handleSubmit = (e, type) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('initiate-rmp-publishing', { type: type }));
+        post(route('audit-rmp-publishing'));
+    }
+
+    const handleCommentChange = (e) => {
+        let arr = { ...data }
+        arr.audit.message = e.target.value
+        setData(arr)
     }
 
     return (
@@ -208,7 +227,7 @@ const Create: FC = (props: any) => {
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
+                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         <div className="stepper-wrapper d-flex align-items-center">
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
@@ -341,13 +360,31 @@ const Create: FC = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                         {/* <!--end::Line--> */}
                     </div>
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
+                        <div className="stepper-wrapper d-flex align-items-center">
+                            <div className="stepper-icon w-40px h-40px">
+                                <i className="stepper-check fas fa-check"></i>
+                                <span className="stepper-number">6</span>
+                            </div>
+                            <div className="stepper-label">
+                                <h3 className="stepper-title">
+                                    Step 6
+                                </h3>
+
+                                <div className="stepper-desc">
+                                    Dossier Review
+                                </div>
+                            </div>
+                        </div>
+                        <div className="stepper-line h-40px"></div>
+                    </div>
                 </div>
 
                 <form className="form" onSubmit={handleSubmit} id="kt_stepper_example_basic_form">
 
                     <div className="mb-5">
                         {/* <!--begin::Step 1--> */}
-                        <div className="flex-column current" data-kt-stepper-element="content">
+                        <div className="flex-column" data-kt-stepper-element="content">
                             {/* <!--begin::Input group--> */}
                             <div className="row mb-10">
                                 <div className='col-6'>
@@ -374,7 +411,7 @@ const Create: FC = (props: any) => {
                                 </div>
                                 <div className='col-6'>
                                     <label className="form-label">Submission country</label>
-                                    <Select options={countires}
+                                    <Select options={[]}
                                         name="country"
                                         onChange={(e) => handleSelectChange(e, 'country')}
                                         className="basic"
@@ -438,11 +475,11 @@ const Create: FC = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {metadata.map((mt: any, i: string) => (
+                                            {/* {metadata.map((mt: any, i: string) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a className="nav-link mx-0 my-2" data-bs-toggle="tab" href={"#kt_vtab_pane_" + i}>{mt.country}</a>
                                                 </li>
-                                            ))}
+                                            ))} */}
                                         </div>
                                     </div>
 
@@ -682,10 +719,92 @@ const Create: FC = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            {/* <div className="mb-10">
+                            <div className="row mb-10">
+                                <div className='col-6'>
+                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <Flatpickr
+                                        data-enable-time
+                                        value={data.adjusted_deadline}
+                                        className="form-control"
+                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        onChange={(date) => setData('adjusted_deadline', date)}
+                                    />
+                                </div>
 
-                            </div> */}
+                            </div>
+                            <div className="row mb-10">
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Comments</label>
+                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" onChange={handleChange} />
+                                </div>
+                            </div>
                         </div>
+                        <div className="flex-column current" data-kt-stepper-element="content">
+                            <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
+                                <div className="mb-5">
+                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
+                                        <span className="accordion-icon">
+                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                        </span>
+                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
+                                    </div>
+                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
+                                        <div className='scroll-y me-n5 pe-5'
+                                            data-kt-element="messages"
+                                            data-kt-scroll="true"
+                                            data-kt-scroll-activate="{default: false, lg: true}"
+                                            data-kt-scroll-max-height="auto">
+                                            {
+                                                folder.audit ? folder.audit.map((msg, i) => (
+                                                    msg.message && msg.user.id !== props.auth.user.id ?
+                                                        <div key={i} className='d-flex justify-content-start mb-10'>
+                                                            <div className='d-flex flex-column align-items-start'>
+                                                                <div className='d-flex align-items-center mb-2'>
+                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                    </div>
+                                                                    <div className='ms-3'>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                    {msg.message}
+                                                                </div>
+                                                            </div>
+                                                        </div> :
+                                                        <div key={i} className='d-flex justify-content-end mb-10'>
+                                                            <div className='d-flex flex-column align-items-end'>
+                                                                <div className='d-flex align-items-center mb-2'>
+
+                                                                    <div className='me-3'>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+
+                                                                    </div>
+                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                    {msg.message}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                )
+                                                ) : ''
+                                            }
+                                        </div>
+                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
+
+                                        {/* <div className="d-flex flex-stack">
+                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
+                                        </div> */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     {/* <!--begin::Actions--> */}
@@ -700,12 +819,7 @@ const Create: FC = (props: any) => {
 
                         <!--begin::Wrapper--> */}
                         <div>
-                            <button type="button" className="btn btn-primary m-3" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'save')}>
-                                <span className="indicator-label">
-                                    Save
-                                </span>
-                            </button>
-                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'submit')}>
+                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit
                                 </span>
@@ -750,7 +864,7 @@ const Create: FC = (props: any) => {
                                 <div className='d-flex flex-column'>
                                     <div className='row mt-10'>
                                         <div className='col-lg-6 mb-10 mb-lg-0'>
-                                            <form >
+                                            {/* <form >
                                                 <div className='mb-10'>
                                                     <label className="form-label">UUID</label>
                                                     <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0].uuid} onChange={handleMultipleChange} />
@@ -838,10 +952,10 @@ const Create: FC = (props: any) => {
                                                     <label className="form-label">Submission description</label>
                                                     <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
                                                 </div>
-                                            </form>
+                                            </form> */}
                                         </div>
 
-                                        <div className='col-lg-6'>
+                                        {/* <div className='col-lg-6'>
                                             <div className='tab-content rounded h-100 bg-light p-10'>
                                                 {metadata.map((mt: any, i: string) => {
 
@@ -870,7 +984,7 @@ const Create: FC = (props: any) => {
 
 
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
 
@@ -893,4 +1007,4 @@ const Create: FC = (props: any) => {
 
 }
 
-export default Create;
+export default Audit;

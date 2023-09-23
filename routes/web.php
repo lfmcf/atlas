@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FormatingController;
 use App\Http\Controllers\PublishingController;
+use App\Models\Publishing;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -99,12 +100,42 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('complete-publishing', [PublishingController::class, 'complete'])->name('complete-publishing');
     Route::post('close-publishing', [PublishingController::class, 'close'])->name('close-publishing');
 
+    // ** iniatiate and submit form publishing nationale gcc ** //
+    Route::post('store-publishing-nat-gcc', [PublishingController::class, 'storeNatGcc'])->name('store-publishing-nat-gcc');
 
+    // ** confirm form publishing nationale gcc ** //
+    Route::post('confirm-publishing-nat-gcc', [PublishingController::class, 'confirmNatGcc'])->name('confirm-publishing-nat-gcc');
 
+    // ** audit form publishing nationale gcc ** //
+    Route::post('audit-publishing-nat-gcc', [PublishingController::class, 'auditNatGcc'])->name('audit-publishing-nat-gcc');
 
     // ** iniatiate and submit form publishing rmp ** //
     Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
     Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
+
+    Route::post('confirm-rmp-publishing', [PublishingController::class, 'confirmmrp'])->name('confirm-rmp-publishing');
+
+    Route::post('audit-rmp-publishing', [PublishingController::class, 'auditmrp'])->name('audit-rmp-publishing');
+
+    Route::post('correct-rmp-publishing', [PublishingController::class, 'correctmrp'])->name('correct-rmp-publishing');
+
+    Route::get('/show-publishing-rmp', [PublishingController::class, 'showmrp'])->name('show-publishing-rmp');
+
+    // ** iniatiate and submit form publishing nationale ch ** //
+    Route::post('store-publishing-nat-ch', [PublishingController::class, 'storeNatCh'])->name('store-publishing-nat-ch');
+
+    // ** confirm form publishing nationale ch ** //
+    Route::post('confirm-publishing-nat-ch', [PublishingController::class, 'confirmNatCH'])->name('confirm-publishing-nat-ch');
+
+    // ** audit form publishing nationale ch ** //
+    Route::post('audit-publishing-nat-ch', [PublishingController::class, 'auditNatCh'])->name('audit-publishing-nat-ch');
+
+    // ** show form publishing nationale ch ** //
+    Route::get('show-publishing-nat-ch', [PublishingController::class, 'showNatCh'])->name('show-publishing-nat-ch');
+
+
+
+
 
     // ** confirm deadline form publishing rmp ** //
     Route::get('/publishing-rmp-confirm', [PublishingController::class, 'createConfirmrmp'])->name('publishing-rmp-confirm');

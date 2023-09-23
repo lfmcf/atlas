@@ -26,13 +26,31 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
         router.get(route('publishing-verification'), { id: id })
     }
 
-    const handleShow = (id) => {
-        router.get(route('show'), { id: id })
+    const handleShow = (id, region, procedure) => {
+        if (region === 'CH') {
+            router.get(route('show-publishing-nat-ch'), { id: id })
+        } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized")) {
+            router.get(route('show-publishing-rmp'), { id: id })
+        } else {
+            router.get(route('show'), { id: id })
+        }
+
+    }
+
+    const handleShowNatCh = (id) => {
+        router.get(route('show-publishing-nat-ch'), { id: id })
     }
 
     const getCountryCode = (str) => {
-        let chars = str.split('-')
-        return chars[0]
+        let chars
+        if (str === 'Swissmedic' || str == null) {
+            chars = "CH"
+        } else {
+            let lts = str.split('-')
+            chars = lts[0]
+        }
+        return chars
+
     }
 
     const handleCompleted = (id) => {
@@ -113,16 +131,29 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                             </span>
                                         </td>
                                         <td>
-                                            <ReactCountryFlag
-                                                countryCode={getCountryCode(row.agency_code)}
-                                                aria-label={row.country}
-                                                title={row.country}
-                                                svg
-                                                style={{
-                                                    width: '1.5em',
-                                                    height: '1.5em',
-                                                }}
-                                            />
+                                            {typeof row.country === 'object' && row.country ?
+                                                <>
+                                                    <ReactCountryFlag
+                                                        countryCode={row.country.code}
+                                                        aria-label={row.country.value}
+                                                        title={row.country.value}
+                                                        svg
+                                                        style={{
+                                                            width: '1.5em',
+                                                            height: '1.5em',
+                                                        }}
+                                                    />
+                                                </> :
+                                                <ReactCountryFlag
+                                                    countryCode={getCountryCode(row.agency_code)}
+                                                    aria-label={row.country}
+                                                    title={row.country}
+                                                    svg
+                                                    style={{
+                                                        width: '1.5em',
+                                                        height: '1.5em',
+                                                    }}
+                                                />}
                                         </td>
                                         <td>
                                             <span className='fs-7'>
@@ -154,7 +185,9 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
                                                     </a>
-                                                    : row.status == 'initiated' ?
+
+                                                    :
+                                                    row.status == 'initiated' ?
                                                         <a
                                                             href='#'
                                                             onClick={() => router.get(route('publishing-confirm', { id: row._id }))}
@@ -198,7 +231,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                                 : row.status == 'in progress' || row.status == 'to correct' ?
                                                                     <>
                                                                         <button
-                                                                            onClick={() => handleShow(row._id)}
+                                                                            onClick={() => handleShow(row._id, row.region, row.procedure)}
                                                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                         >
                                                                             <KTIcon iconName='eye' className='fs-3' />
@@ -213,7 +246,8 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                                             <KTIcon iconName='check-circle' className='fs-3' />
                                                                         </a>
                                                                     </>
-                                                                    : row.status == 'delivered' ?
+
+                                                                    : row.status == 'delivered' && row.region ?
                                                                         <>
                                                                             <button
                                                                                 onClick={() => handleCompleted(row._id)}
@@ -228,6 +262,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                                                 <KTIcon iconName='cross-circle' className='fs-3' />
                                                                             </button>
                                                                         </>
+
                                                                         : row.status == 'completed' ?
                                                                             <button
                                                                                 onClick={() => handleClose(row._id)}

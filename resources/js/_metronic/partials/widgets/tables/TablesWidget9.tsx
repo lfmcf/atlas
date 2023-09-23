@@ -192,8 +192,15 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	}
 
 	const getCountryCode = (str) => {
-		let chars = str.split('-')
-		return chars[0]
+		let chars
+		if (str === 'Swissmedic' || !str) {
+			chars = "CH"
+		} else {
+			let lts = str.split('-')
+			chars = lts[0]
+		}
+		return chars
+
 	}
 
 
