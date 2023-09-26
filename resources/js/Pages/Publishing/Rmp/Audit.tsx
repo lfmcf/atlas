@@ -24,8 +24,6 @@ const Audit: FC = (props: any) => {
 
     const { metadata, folder } = props;
 
-    console.log(folder)
-
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
         form: folder.form,
@@ -54,18 +52,18 @@ const Audit: FC = (props: any) => {
         audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' }
     })
 
-    // const countires = metadata.map((mp) => {
+    const countires = metadata.map((mp) => {
 
-    //     return { label: mp.country, value: mp.country, code: mp.code }
-    // })
+        return { label: mp.country, value: mp.country, code: mp.code }
+    })
 
-    // const [multiData, setMultiData] = useState({
-    //     uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
-    //     agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-    //     r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
-    // });
+    const [multiData, setMultiData] = useState({
+        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
+        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
+        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+    });
 
-    // const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
+    const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
@@ -475,11 +473,11 @@ const Audit: FC = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {/* {metadata.map((mt: any, i: string) => (
+                                            {metadata.map((mt: any, i: string) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a className="nav-link mx-0 my-2" data-bs-toggle="tab" href={"#kt_vtab_pane_" + i}>{mt.country}</a>
                                                 </li>
-                                            ))} */}
+                                            ))}
                                         </div>
                                     </div>
 
@@ -864,7 +862,7 @@ const Audit: FC = (props: any) => {
                                 <div className='d-flex flex-column'>
                                     <div className='row mt-10'>
                                         <div className='col-lg-6 mb-10 mb-lg-0'>
-                                            {/* <form >
+                                            <form >
                                                 <div className='mb-10'>
                                                     <label className="form-label">UUID</label>
                                                     <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0].uuid} onChange={handleMultipleChange} />
@@ -952,10 +950,10 @@ const Audit: FC = (props: any) => {
                                                     <label className="form-label">Submission description</label>
                                                     <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
                                                 </div>
-                                            </form> */}
+                                            </form>
                                         </div>
 
-                                        {/* <div className='col-lg-6'>
+                                        <div className='col-lg-6'>
                                             <div className='tab-content rounded h-100 bg-light p-10'>
                                                 {metadata.map((mt: any, i: string) => {
 
@@ -984,7 +982,7 @@ const Audit: FC = (props: any) => {
 
 
                                             </div>
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </div>
 
