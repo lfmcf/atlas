@@ -326,10 +326,20 @@ const TablesWidget9: React.FC<Props> = (props) => {
 											<span className='fs-7'>
 
 												{typeof row.product_name === 'object' && row.product_name ?
-													<a href='#' onClick={() => router.get('show-formatting', { id: row._id })} className='text-dark fw-bold text-hover-primary fs-6'>
+													<a href='#' onClick={() => router.get('show-formatting', { id: row._id })} className='text-dark text-hover-primary fs-6'>
 														{row.product_name.value}
 													</a>
-													: row.product_name}
+													: row.procedure == "Decentralized" || row.procedure == "Mutual Recognition" ?
+														<a href='#' onClick={() => router.get('show-publishing-rmp', { id: row._id })} className='text-dark text-hover-primary fs-6'>
+															{row.product_name}
+														</a>
+														: row.form == "Publishing" && row.region == "CH" ?
+															<a href='#' onClick={() => router.get('show-publishing-nat-ch', { id: row._id })} className='text-dark text-hover-primary fs-6'>
+																{row.product_name}
+															</a>
+															: <a href='#' onClick={() => router.get('show-publishing', { id: row._id })} className='text-dark text-hover-primary fs-6'>
+																{row.product_name}
+															</a>}
 
 											</span>
 

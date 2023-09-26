@@ -22,12 +22,16 @@ const Show = (props) => {
         setShow({ 'status': !show.status, id: id, form: form })
     }
 
-    console.log(folder.country.value)
+    console.log(folder.mt)
 
     // CKEditor.
 
     return (
         <Authenticated auth={props.auth}>
+            <a href="#" onClick={() => router.get('list')} className="btn btn-sm fw-bold btn-secondary mb-2">
+                <i className="ki-duotone ki-black-left fs-3">
+                </i>
+            </a>
             <div className="row">
                 <div className='col-12 mb-10'>
                     <div className='card'>
@@ -127,85 +131,46 @@ const Show = (props) => {
                             <div className='tab-content'>
 
                                 <div className='tab-pane fade' id='kt_aside_tab_2' role='tabpanel'>
-                                    <h3>Developpement in preccess</h3>
-                                    {/* <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">UUID</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.uuid}</span>
-                                        </div>
+                                    <div className="table-responsive">
+                                        <table className="table table-sm table-row-dashed" id="showTable" >
+                                            <thead>
+                                                <tr>
+                                                    <th colSpan={1}>Country</th>
+                                                    <th colSpan={1} rowSpan={1}>UUID</th>
+                                                    <th colSpan={1}>S. type</th>
+                                                    <th>S. mode</th>
+                                                    <th>P. Tracking N°</th>
+                                                    <th>S. unit</th>
+                                                    <th>Applicant</th>
+                                                    <th>Agency code</th>
+                                                    <th>Invented name</th>
+                                                    <th>INN</th>
+                                                    <th>Sequence</th>
+                                                    <th>Related Sequence</th>
+                                                    <th>Submission description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {folder.mt.map((mtdata, i) => (
+                                                    <tr key={i}>
+                                                        <td className="fs-7 text-gray-600">{mtdata.country}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.uuid}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.submission_type ? mtdata.submission_type.value : ''}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.submission_mode ? mtdata.submission_mode.value : ''}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.trackingNumber}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.submission_unit ? mtdata.submission_unit.value : ''}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.applicant}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.agencyCode}</td>
+                                                        <td className="fs-7 text-gray-600">{folder.product_name}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.inn}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.sequence}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.r_sequence}</td>
+                                                        <td className="fs-7 text-gray-600">{mtdata.submission_description}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Submission type</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_type.value}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Submission mode</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode.value}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Procedure Tracking N°</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.tracking.value}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Submission unit</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_unit ? folder.submission_unit.value : ''}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Applicant</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.applicant}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Agency code</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.agency_code}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Invented name</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.product_name}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Sequence</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.sequence}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Related Sequence</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.r_sequence}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Submission mode</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode.value}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Submission description</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_description}</span>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Remarks</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.mtremarks}</span>
-                                        </div>
-                                    </div> */}
                                 </div>
                             </div>
                             <div className='tab-content'>
@@ -443,7 +408,7 @@ const Show = (props) => {
                 </div>
             </div>
             <DeliveryMessage show={show.status} id={show.id} form={show.form} />
-        </Authenticated>
+        </Authenticated >
     )
 }
 

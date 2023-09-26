@@ -22,7 +22,7 @@ const Initiate: FC = (props: any) => {
         form: folder ? folder.form : params.get('form'),
         region: folder ? folder.region : params.get('region'),
         coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme,
+        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
         product_name: folder ? folder.product_name : '',
         substance_name: folder ? folder.substance_name : '',

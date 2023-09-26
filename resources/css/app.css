@@ -17,3 +17,8 @@
 #lisTable_paginate {
     display: none;
 }
+
+#showTable {
+    width: 100%;
+    white-space: nowrap;
+}

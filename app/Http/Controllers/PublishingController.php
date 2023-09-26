@@ -377,8 +377,24 @@ class PublishingController extends Controller
         $pub = Publishing::find($request->id);
         if (!$pub) {
             $pub = PublishingMrp::find($request->id);
+            $product = $pub->product_name;
+            $procedure = $pub->procedure;
+
+            $listmd = [];
+            for ($i = 0; $i < count($pub->mt); $i += 1) {
+
+                $md = MetaData::where([
+                    ['Product', '=', $product],
+                    ['procedure', '=', $procedure],
+                    ['country', '=', $pub->mt[$i]['country']]
+                ])->first();
+                if ($md) {
+                    array_push($listmd, $md);
+                }
+            }
             return Inertia::render('Publishing/Rmp/Audit', [
-                'folder' => $pub
+                'folder' => $pub,
+                'metadata' => $listmd
             ]);
         }
         if ($pub->region == "EU") {

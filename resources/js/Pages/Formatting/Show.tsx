@@ -63,6 +63,10 @@ const EditTwo: FC = (props: any) => {
             <PageTitle breadcrumbs={[]}>
                 {/* Show */}
             </PageTitle>
+            <a href="#" onClick={() => router.get('list')} className="btn btn-sm fw-bold btn-secondary mb-2">
+                <i className="ki-duotone ki-black-left fs-3">
+                </i>
+            </a>
             <div className='row'>
                 <div className='col-12 mb-10'>
                     <div className='card'>

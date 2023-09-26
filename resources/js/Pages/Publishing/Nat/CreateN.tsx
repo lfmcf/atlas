@@ -22,7 +22,7 @@ const CreateN: FC = (props: any) => {
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
         productName: folder ? folder.product_name : params.get('product'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme,
+        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
         country: metadata.country,
         dossier_type: folder ? folder.dossier_type : '',
