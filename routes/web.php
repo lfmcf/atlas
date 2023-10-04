@@ -31,14 +31,17 @@ use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/', function () {
-        // return Inertia::render('Dashboard');
-        return redirect('/dashboard');
-    });
+    // Route::get('/', function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    //     return redirect('/dashboard');
+    // });
+
+    // Route::get('/dashboard', function () {
+    //     return Inertia::render('Dashboard');
+    // })->name('dashboard');
+
+    Route::get('/', [ReportController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [ReportController::class, 'index'])->name('dashboard');
 
     Route::get('/list', [ReportController::class, 'list'])->name('list');
     Route::get('/tasks', [ReportController::class, 'task'])->name('tasks');

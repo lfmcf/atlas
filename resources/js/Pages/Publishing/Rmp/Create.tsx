@@ -170,17 +170,17 @@ const Create: FC = (props: any) => {
         setData(perdata)
     }
 
-    useEffect(() => {
-        let arr = { ...data };
-        metadata.map((mtd, i) => {
-            arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
-                submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
-                r_sequence: '', submission_description: '', remarks: ''
-            })
-        })
-        setData(arr)
-    }, [])
+    // useEffect(() => {
+    //     let arr = { ...data };
+    //     metadata.map((mtd, i) => {
+    //         arr.mt.push({
+    //             id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
+    //             submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
+    //             r_sequence: '', submission_description: '', remarks: ''
+    //         })
+    //     })
+    //     setData(arr)
+    // }, [])
 
     useEffect(() => {
         let date = new Date();
