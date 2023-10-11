@@ -328,14 +328,17 @@ class MenuComponent {
     // Test if item's sub is shown
     private _isItemSubShown = (item: HTMLElement) => {
         let sub = this._getItemSubElement(item)
+
         if (sub) {
             if (this._getItemSubType(item) === 'dropdown') {
                 const subHTMLElement = sub as HTMLElement
+
                 return (
                     subHTMLElement.classList.contains('show') &&
                     subHTMLElement.hasAttribute('data-popper-placement')
                 )
             } else {
+
                 return item.classList.contains('show')
             }
         }

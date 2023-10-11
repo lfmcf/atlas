@@ -109,7 +109,7 @@ const Confirm = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
@@ -626,8 +626,11 @@ const Confirm = (props: any) => {
                     </div>
                 </form>
             </div>
-        </Authenticated>
+        </>
     )
 }
+
+
+Confirm.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Confirm;

@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
 
-const Task: FC = (props: any) => {
+const Task = (props: any) => {
 
     const { formatting, publishing } = props
 
@@ -21,11 +21,13 @@ const Task: FC = (props: any) => {
     })
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <FormattingTable data={formatting} />
             <PublishingTable data={publishing} />
-        </Authenticated>
+        </>
     )
 }
+
+Task.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Task;

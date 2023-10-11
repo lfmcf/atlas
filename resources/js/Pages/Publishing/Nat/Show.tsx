@@ -25,7 +25,7 @@ const Show = (props) => {
     // CKEditor.
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <a href="#" onClick={() => router.get('list')} className="btn btn-sm fw-bold btn-secondary mb-2">
                 <i className="ki-duotone ki-black-left fs-3">
                 </i>
@@ -443,8 +443,10 @@ const Show = (props) => {
                 </div>
             </div>
             <DeliveryMessage show={show.status} id={show.id} form={show.form} />
-        </Authenticated>
+        </>
     )
 }
+
+Show.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Show;

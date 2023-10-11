@@ -487,8 +487,8 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     )
 }
 
-const Dashboard: FC = (props: any) => {
-    const intl = useIntl()
+const Dashboard = (props: any) => {
+    // const intl = useIntl()
     const RequetNumber = props.RequestNumber
     const formattingsCount = props.formattingCount
     const PublishingCount = props.publishingCount
@@ -512,9 +512,9 @@ const Dashboard: FC = (props: any) => {
 
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <PageTitle breadcrumbs={[]}>
-                {intl.formatMessage({ id: 'MENU.DASHBOARD' })}
+                {/* {intl.formatMessage({ id: 'MENU.DASHBOARD' })} */}
             </PageTitle>
             <DashboardPage
                 RequetNumber={RequetNumber}
@@ -528,9 +528,11 @@ const Dashboard: FC = (props: any) => {
                 perMonthPub={perMonthPub}
             />
 
-        </Authenticated>
+        </>
 
     )
 }
+
+Dashboard.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Dashboard;

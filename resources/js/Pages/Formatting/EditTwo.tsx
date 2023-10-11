@@ -11,7 +11,7 @@ import { PageTitle } from '../../_metronic/layout/core';
 import { router } from '@inertiajs/react'
 import StatusComponent from '../../Components/StatusComponent';
 
-const EditTwo: FC = (props: any) => {
+const EditTwo = (props: any) => {
 
     const [isShown, setIsShown] = useState(false);
     const { folder } = props
@@ -48,7 +48,7 @@ const EditTwo: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <PageTitle breadcrumbs={[]}>
                 Edit
             </PageTitle>
@@ -269,9 +269,11 @@ const EditTwo: FC = (props: any) => {
             </div>
 
 
-        </Authenticated >
+        </>
     )
 
 }
+
+EditTwo.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default EditTwo;

@@ -7,7 +7,7 @@ import { Link } from '@inertiajs/react';
 import { MasterInit } from '../_metronic/layout/MasterInit'
 import { ThemeModeProvider } from '../_metronic/partials'
 import { MasterLayout } from '../_metronic/layout/MasterLayout'
-import { QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { MetronicI18nProvider } from '../_metronic/i18n/Metronici18n';
 import { I18nProvider } from '../_metronic/i18n/i18nProvider';
 import { LayoutSplashScreen, LayoutProvider } from '../_metronic/layout/core';
@@ -15,27 +15,35 @@ import { LayoutSplashScreen, LayoutProvider } from '../_metronic/layout/core';
 export default function Authenticated({ auth, children }) {
 
     return (
-        <MasterLayout auth={auth}>
-            {/* <QueryClientProvider client={queryClient}> */}
-            {/* <MetronicI18nProvider> */}
-            <Suspense fallback={<LayoutSplashScreen />}>
-                <I18nProvider>
-                    <LayoutProvider>
-                        <ThemeModeProvider>
-
+        // <MasterLayout auth={auth}>
+        // <QueryClientProvider client={queryClient}>
+        // <MetronicI18nProvider>
+        <Suspense fallback={<LayoutSplashScreen />}>
+            <I18nProvider>
+                <LayoutProvider>
+                    <ThemeModeProvider>
+                        <MasterInit />
+                        <MasterLayout auth={auth} >
                             {children}
-                            <MasterInit />
+                        </MasterLayout>
 
-                        </ThemeModeProvider>
-                    </LayoutProvider>
+                        {/* <MasterLayout auth={auth}>
+                            
+                            
+                        </MasterLayout> */}
 
-                </I18nProvider>
-            </Suspense>
 
-            {/* </MetronicI18nProvider> */}
 
-            {/* </QueryClientProvider> */}
-        </MasterLayout>
+                    </ThemeModeProvider>
+                </LayoutProvider>
+
+            </I18nProvider>
+        </Suspense>
+
+        // </MetronicI18nProvider>
+
+        // </QueryClientProvider>
+        // </MasterLayout>
 
     );
 }

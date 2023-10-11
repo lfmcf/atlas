@@ -9,7 +9,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import StatusComponent from '../../Components/StatusComponent';
 
-const Confirm: FC = (props: any) => {
+const Confirm = (props: any) => {
 
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -109,7 +109,7 @@ const Confirm: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <StatusComponent status={data.status} />
             {/* <span className="badge py-3 px-4 fs-7 badge-light-warning">{data.status}</span> */}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
@@ -409,8 +409,10 @@ const Confirm: FC = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form>
             </div>
-        </Authenticated>
+        </>
     )
 }
+
+Confirm.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Confirm;

@@ -9,7 +9,7 @@ import Select from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 
-const CreateN: FC = (props: any) => {
+const CreateN = (props: any) => {
     const { metadata, folder } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -162,7 +162,7 @@ const CreateN: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
@@ -658,8 +658,10 @@ const CreateN: FC = (props: any) => {
                     </div>
                 </form>
             </div>
-        </Authenticated>
+        </>
     )
 }
+
+CreateN.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default CreateN;
