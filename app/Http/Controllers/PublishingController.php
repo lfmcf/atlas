@@ -666,7 +666,11 @@ class PublishingController extends Controller
 
     public function close(Request $request)
     {
-        $pub = Publishing::findOrfail($request->id);
+
+        $pub = Publishing::find($request->id);
+        if (!$pub) {
+            $pub = PublishingMrp::find($request->id);
+        }
         $pub->status = 'closed';
         $pub->save();
         $user = User::whereIn('current_team_id', [2, 3])->get();

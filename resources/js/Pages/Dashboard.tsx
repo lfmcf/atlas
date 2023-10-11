@@ -38,6 +38,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import Chart from "react-apexcharts";
 import { getCSSVariableValue } from '../_metronic/assets/ts/_utils'
+import { router } from '@inertiajs/react'
 
 
 
@@ -79,7 +80,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className="fs-4 text-white">
                                     <span className="opacity-75">You have </span>
                                     <span className="position-relative d-inline-block">
-                                        <a href="../../demo1/dist/pages/user-profile/projects.html" className="link-white opacity-75-hover fw-bold d-block mb-1">{totalRequet}</a>
+                                        <a href="#" className="link-white opacity-75-hover fw-bold d-block mb-1" onClick={() => { router.get('tasks') }}>{totalRequet}</a>
 
                                         <span className="position-absolute opacity-50 bottom-0 start-0 border-2 border-body border-bottom w-100"></span>
 

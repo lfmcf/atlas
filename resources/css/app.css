@@ -6,19 +6,28 @@
     height: 100%;
 }
 
-#lisTable_wrapper .row:first-child {
+.dataTables_wrapper .dataTables_length {
     display: none;
 }
 
-#lisTable_wrapper {
+.table-responsive {
     overflow: hidden;
 }
 
-#lisTable_paginate {
+.dataTables_wrapper .dataTables_filter {
+    display: none;
+}
+
+.dataTables_wrapper .dataTables_paginate {
     display: none;
 }
 
 #showTable {
     width: 100%;
     white-space: nowrap;
+}
+
+.paginate_row {
+    padding: 1rem 0;
+    /* margin-left: 0.5rem; */
 }

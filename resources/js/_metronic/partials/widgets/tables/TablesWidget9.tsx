@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { KTIcon } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import StatusComponent from '../../../../Components/StatusComponent';
-import DataTable from 'datatables.net-bs5';
+//import DataTable from 'datatables.net-bs5';
 import Select from 'react-select';
 import { router } from '@inertiajs/react';
 import $ from 'jquery';
@@ -26,30 +26,40 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tb, setTb] = useState();
-	const [loading, setloading] = useState(true);
+	const [pageNumbers, setpageNumbers] = useState([]);
+	const [nombrePages, setnombrePages] = useState(0);
+	const [pageLength, setpageLenght] = useState(10);
 
-	// let tb = ''
+	const tableRef = useRef()
+
 	useEffect(() => {
 
-		if (!$.fn.DataTable.isDataTable("#myTable")) {
-			$(document).ready(function () {
-				var datatable = new DataTable('#lisTable', {
-					"info": false,
-					'order': [],
-					'pageLength': 15,
-				})
+		const table = $(tableRef.current).DataTable({
+			"info": false,
+			'order': [],
+			'pageLength': pageLength,
+		})
+		setnombrePages(table.page.info().pages);
 
-				setTb(datatable)
-			})
+		setTb(table)
 
+		return function () {
+			table.destroy()
 		}
-		console.log('render1')
 
-		$.fn.dataTable.ext.errMode = 'none';
+		// $.fn.dataTable.ext.errMode = 'none';
 	}, [])
+
+
+	useEffect(() => {
+		let myarr = Array.from({ length: nombrePages }, (v, i) => i + 1)
+		setpageNumbers(myarr)
+	}, [nombrePages])
+
 
 	const handleSearch = (e) => {
 		tb.search(e.target.value).draw();
+		setnombrePages(tb.page.info().pages);
 	};
 
 	const handleStatuschange = (e) => {
@@ -57,123 +67,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		if (value === 'All') {
 			value = '';
 		}
-		tb.column(3).search(value).draw();
-	}
-
-
-
-	// useEffect(() => {
-	// 	if (!search) return currentPosts;
-
-	// 	var newD = Object.keys(data).filter((id) => {
-	// 		var pn = typeof data[id].product_name == 'object' ? data[id].product_name.value : data[id].product_name
-
-	// 		if (pn.toLowerCase().includes(search.toLowerCase())) {
-	// 			return (pn.toLowerCase().includes(search.toLowerCase()));
-	// 		}
-
-	// 	});
-
-
-
-	// }, [search, data]);
-
-	const ShowData = () => {
-		return (
-			<tbody>
-				{currentPosts ? Object.values(currentPosts).map((row: any, i) => (
-					<tr key={i}>
-						{/* <td>
-								<div className='form-check form-check-sm form-check-custom form-check-solid'>
-									<input className='form-check-input widget-9-check' type='checkbox' value='1' />
-								</div>
-							</td> */}
-						<td>
-							<span className='fs-7'>
-								{typeof row.product_name === 'object' && row.product_name ?
-									row.product_name.value : row.product_name}
-							</span>
-
-							{/* <a href='#' className='text-dark fw-bold text-hover-primary fs-6'></a> */}
-						</td>
-						<td>
-
-							{typeof row.country === 'object' && row.country ?
-								<>
-									<ReactCountryFlag
-										countryCode={row.country.code}
-										aria-label={row.country.value}
-										title={row.country.value}
-										svg
-										style={{
-											width: '1.5em',
-											height: '1.5em',
-										}}
-									/>
-								</> : row.country}
-						</td>
-						<td>
-							<span className='fs-7'>
-								{row.sequence ? row.sequence : 'NA'}
-							</span>
-						</td>
-
-						<td>
-							<StatusComponent status={row.status} />
-						</td>
-						<td>
-							<span className='fs-7'>
-								{row.dossier_type ? row.dossier_type.value : ''}
-							</span>
-						</td>
-						<td>
-							<span className='fs-7'>
-								{row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
-							</span>
-						</td>
-						<td>
-							<span className='fs-7'>
-								{row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''}
-							</span>
-						</td>
-
-						{/* <td>
-								<div className='d-flex justify-content-end flex-shrink-0'>
-									
-									<a
-										href='#'
-										className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-									>
-										<KTIcon iconName='pencil' className='fs-3' />
-									</a>
-									<a
-										href='#'
-										className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-									>
-										<KTIcon iconName='trash' className='fs-3' />
-									</a>
-								</div>
-							</td> */}
-					</tr>
-				)) : ''}
-			</tbody>
-		)
-
-	}
-
-	const pageNumbers = [];
-	var nombrePages;
-
-	if (tb) {
-
-		nombrePages = tb.page.info().pages;
-		for (let i: number = 1; i <= nombrePages; i++) {
-			pageNumbers.push(i)
-		}
+		tb.column(3).search(value).draw('page');
+		setnombrePages(tb.page.info().pages);
 	}
 
 	const pagination = (number) => {
-		console.log(number)
+
 		setCurrentPage(number)
 		tb.page(number - 1).draw('page')
 	}
@@ -189,6 +88,11 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		console.log(number)
 		setCurrentPage(number + 1)
 		tb.page(number).draw('page')
+	}
+
+	const handlePageLengthChange = (e) => {
+		tb.page.len(e.target.value).draw();
+		setnombrePages(tb.page.info().pages);
 	}
 
 	const getCountryCode = (str) => {
@@ -287,7 +191,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					{/* begin::Table container */}
 					<div className='table-responsive'>
 						{/* begin::Table */}
-						<table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4' id='lisTable'>
+						<table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4' id='lisTable' ref={tableRef}>
 							{/* begin::Table head */}
 							<thead>
 								<tr className='fw-bold text-muted'>
@@ -418,10 +322,51 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 						</table>
 						{/* end::Table */}
+						<div className="row paginate_row">
+							<div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+								<div className="dataTables_length" id="kt_profile_overview_table_length">
+									<label>
+										<select name="kt_profile_overview_table_length" aria-controls="kt_profile_overview_table" className="form-select form-select-sm form-select-solid" onChange={handlePageLengthChange}>
+											<option value="5">5</option>
+											<option value="10" selected>10</option>
+											<option value="15">15</option>
+											<option value="50">50</option>
+											<option value="100">100</option>
+										</select>
+									</label>
+								</div>
+							</div>
+							<div className="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+								<div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
+									<ul className="pagination">
+										<li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
+											<a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
+												<i className="previous"></i></a>
+										</li>
+										{/* <li className="paginate_button page-item active"><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
+										</li><li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="2" tabIndex="0" className="page-link">2</a></li>
+										<li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="3" tabIndex="0" className="page-link">3</a></li> */}
+										{
+											pageNumbers.map(number => (
+
+												<li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
+													<button onClick={() => pagination(number)} className="page-link"> {number} </button>
+												</li>
+											))
+										}
+										<li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
+											<a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
+												<i className="next"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
 					</div>
 					{/* end::Table container */}
 				</div>
-				<div className='card-footer'>
+				{/* <div className='card-footer'>
 					<div className='row'>
 						<div className='col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'>
 
@@ -450,7 +395,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 						</div>
 
 					</div>
-				</div>
+				</div> */}
 
 				{/* begin::Body */}
 			</div>
