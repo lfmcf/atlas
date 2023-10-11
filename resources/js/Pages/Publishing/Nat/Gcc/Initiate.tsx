@@ -86,16 +86,33 @@ const Initiate: FC = (props: any) => {
         let date = new Date();
         let hour = date.getHours();
         let delai = data.dossier_type ? data.dossier_type.delai : '';
-        let deadline;
-        if (delai) {
-            if (hour < 12) {
-                deadline = date.setDate(date.getDate() + delai)
-            } else {
-                deadline = date.setDate(date.getDate() + delai + 1)
-            }
-            setData('deadline', new Date(deadline));
+        let deadline = new Date();
+        let count = 1;
+
+        if (hour < 12) {
+            delai = delai
+        } else {
+            delai = delai + 1
         }
 
+        while (count < delai) {
+            deadline = new Date(date.setDate(date.getDate() + 1));
+            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
+                //Date.getDay() gives weekday starting from 0(Sunday) to 6(Saturday)
+                count++;
+            }
+        }
+
+        setData('deadline', new Date(deadline));
+        // let deadline;
+        // if (delai) {
+        //     if (hour < 12) {
+        //         deadline = date.setDate(date.getDate() + delai)
+        //     } else {
+        //         deadline = date.setDate(date.getDate() + delai + 1)
+        //     }
+        //     setData('deadline', new Date(deadline));
+        // }
     }, [data.dossier_type]);
 
     const nextStep = () => {
