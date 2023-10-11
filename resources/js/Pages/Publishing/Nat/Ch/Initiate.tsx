@@ -7,7 +7,7 @@ import Select from 'react-select';
 import moment from 'moment';
 import { useForm } from '@inertiajs/react';
 
-const Initiate: FC = (props: any) => {
+const Initiate = (props: any) => {
 
     var params = new URLSearchParams(window.location.search);
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -174,7 +174,7 @@ const Initiate: FC = (props: any) => {
 
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
@@ -627,8 +627,10 @@ const Initiate: FC = (props: any) => {
                     </div>
                 </form>
             </div>
-        </Authenticated>
+        </>
     )
 }
+
+Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Initiate;

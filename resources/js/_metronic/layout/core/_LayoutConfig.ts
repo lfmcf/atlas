@@ -64,7 +64,7 @@ export const DefaultConfig: ILayout = {
         minimize: {
           desktop: {
             enabled: true,
-            default: false,
+            default: true,
             hoverable: true,
           },
         },

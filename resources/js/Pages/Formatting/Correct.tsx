@@ -19,7 +19,7 @@ const StepperOptions: IStepperOptions = {
     animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
 }
 
-const Correct: FC = (props: any) => {
+const Correct = (props: any) => {
 
     function createMarkup(msg: any) {
         return { __html: msg.message };
@@ -148,7 +148,7 @@ const Correct: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <StatusComponent status={data.status} />
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
@@ -626,8 +626,10 @@ const Correct: FC = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form>
             </div >
-        </Authenticated >
+        </>
     )
 }
+
+Correct.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Correct;

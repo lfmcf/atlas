@@ -11,7 +11,7 @@ import moment from 'moment';
 import { useForm } from '@inertiajs/react';
 //import useDropzone from 'react-dropzone'
 
-const Initiate: FC = (props: any) => {
+const Initiate = (props: any) => {
 
     var params = new URLSearchParams(window.location.search)
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -145,7 +145,7 @@ const Initiate: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             {/* <TablesWidget9 data={formatting} /> */}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
@@ -431,8 +431,10 @@ const Initiate: FC = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form>
             </div>
-        </Authenticated >
+        </>
     )
 }
+
+Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Initiate;

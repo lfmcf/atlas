@@ -26,6 +26,7 @@ const container = document.getElementById('root')
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx')),
+
     setup({ el, App, props }) {
         if (container) {
             const root = createRoot(el);
@@ -34,12 +35,13 @@ createInertiaApp({
 
                 <QueryClientProvider client={queryClient}>
                     <MetronicI18nProvider>
-                        <I18nProvider>
+                        {/* <I18nProvider> */}
 
-                            <App {...props} />
+                        <App {...props} />
 
-                        </I18nProvider>
+                        {/* </I18nProvider> */}
                     </MetronicI18nProvider>
+                    <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
                 // <MasterLayout>
                 //     <QueryClientProvider client={queryClient}>

@@ -11,7 +11,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 
-const Create: FC = (props: any) => {
+const Create = (props: any) => {
 
     const { metadata, folder } = props;
     var params = new URLSearchParams(window.location.search);
@@ -208,7 +208,7 @@ const Create: FC = (props: any) => {
 
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 
@@ -903,9 +903,11 @@ const Create: FC = (props: any) => {
                     </div>
                 </div >
             </div>
-        </Authenticated >
+        </>
     )
 
 }
+
+Create.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default Create;

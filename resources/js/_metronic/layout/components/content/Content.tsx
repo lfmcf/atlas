@@ -8,10 +8,10 @@ import React from 'react'
 
 const Content = ({ children }: WithChildren) => {
     const { config, classes } = useLayout()
-    // const location = useLocation()
-    // useEffect(() => {
-    //   DrawerComponent.hideAll()
-    // }, [location])
+    const location = route().current()
+    useEffect(() => {
+        DrawerComponent.hideAll()
+    }, [location])
 
     const appContentContainer = config.app?.content?.container
     return (

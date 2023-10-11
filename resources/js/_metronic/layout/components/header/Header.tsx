@@ -52,6 +52,8 @@ const updateDOM = (config: ILayout) => {
     }
   }
 
+
+
   const appHeaderDefaultMinimizeEnabled = config.app?.header?.default?.minimize?.enabled
   let appHeaderDefaultMinimizeAttributes: { [attrName: string]: string } = {}
   if (appHeaderDefaultMinimizeEnabled) {
@@ -60,13 +62,16 @@ const updateDOM = (config: ILayout) => {
     }
   }
 
+
   setTimeout(() => {
     const headerElement = document.getElementById('kt_app_header')
+
     // header
     if (headerElement) {
       const headerAttributes = headerElement
         .getAttributeNames()
         .filter((t) => t.indexOf('data-') > -1)
+
       headerAttributes.forEach((attr) => headerElement.removeAttribute(attr))
 
       if (appHeaderDefaultStickyEnabled) {

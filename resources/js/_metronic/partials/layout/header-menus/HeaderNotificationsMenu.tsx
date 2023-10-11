@@ -18,9 +18,6 @@ const handleNavigation = (data, notId) => {
     } else {
         router.get(route('tasks'), { id: data.id, notId: notId })
     }
-
-
-
 }
 
 const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (

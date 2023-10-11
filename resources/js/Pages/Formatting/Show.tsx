@@ -13,7 +13,7 @@ import StatusComponent from '../../Components/StatusComponent';
 import { KTIcon } from '../../_metronic/helpers';
 import { DeliveryMessage } from "../../_metronic/partials/modals/Delivey-Message/DeliveryMessage";
 
-const EditTwo: FC = (props: any) => {
+const EditTwo = (props: any) => {
 
     const [isShown, setIsShown] = useState(false);
     const { folder } = props
@@ -59,7 +59,7 @@ const EditTwo: FC = (props: any) => {
     }
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <PageTitle breadcrumbs={[]}>
                 {/* Show */}
             </PageTitle>
@@ -363,9 +363,11 @@ const EditTwo: FC = (props: any) => {
             </div>
             <DeliveryMessage show={show.status} id={show.id} form={show.form} />
 
-        </Authenticated >
+        </>
     )
 
 }
+
+EditTwo.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default EditTwo;

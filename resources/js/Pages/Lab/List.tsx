@@ -7,7 +7,7 @@ import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
 
-const List: FC = (props: any) => {
+const List = (props: any) => {
 
     const { allDemands } = props
 
@@ -22,10 +22,12 @@ const List: FC = (props: any) => {
     }, [])
 
     return (
-        <Authenticated auth={props.auth}>
+        <>
             <TablesWidget9 data={allDemands} user={props.auth.user} />
-        </Authenticated>
+        </>
     )
 }
+
+List.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
 export default List;

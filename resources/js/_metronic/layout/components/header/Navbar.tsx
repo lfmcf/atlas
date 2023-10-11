@@ -12,22 +12,25 @@ const btnIconClass = 'fs-2'
 const Navbar = ({ auth }) => {
 
     const { config } = useLayout()
+
     let unreadNot = auth.user.unread_notifications.length
+
 
     return (
         <div className='app-navbar flex-shrink-0'>
 
-            <div className={clsx('app-navbar-item', itemClass)}>
+            <div className={clsx('app-navbar-item', itemClass)} >
                 <div
                     data-kt-menu-trigger="{default: 'click'}"
                     data-kt-menu-attach='parent'
                     data-kt-menu-placement='bottom-end'
                     className={clsx('position-relative', btnClass)}
-
                 >
-                    {/* <KTIcon iconName='notification-2' className={btnIconClass} /> */}
-                    <i className="bi bi-bell fa-5x"></i>
-                    <span className="position-absolute text-gray-600" style={{ top: '0', right: '0', fontSize: '12px' }}>{unreadNot > 0 ? unreadNot : ''}</span>
+                    <KTIcon iconName='notification' className={btnIconClass} />
+                    {/* <i className="bi bi-bell fa-5x"></i> */}
+                    <span className="position-absolute text-gray-600" style={{ top: '0', right: '0', fontSize: '12px' }}>
+                        {unreadNot > 0 ? unreadNot : ''}
+                    </span>
                 </div>
                 <HeaderNotificationsMenu auth={auth} />
             </div>
