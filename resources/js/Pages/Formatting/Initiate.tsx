@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { formattingDossierType, formattingProduct, substanceFormattingList } from '../Lab/MetaDataList';
 import moment from 'moment';
 import { useForm } from '@inertiajs/react';
-//import useDropzone from 'react-dropzone'
+import DropZone from '../../Components/Dropzone';
 
 const Initiate = (props: any) => {
 
@@ -345,18 +345,21 @@ const Initiate = (props: any) => {
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
+                                    <label className="col-form-label text-lg-right">Attached documents :</label>
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
 
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <DropZone />
+                                </div>
+                                {/* <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <div className='d-flex align-items-center text-gray-400 h-100'>
                                         {data.doc ? data.doc.map((ele) => (
                                             <span className='me-2 fs-5'>{ele.name}</span>
                                         )) : ''}
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
@@ -429,8 +432,8 @@ const Initiate = (props: any) => {
                         {/* <!--end::Wrapper--> */}
                     </div>
                     {/* <!--end::Actions--> */}
-                </form>
-            </div>
+                </form >
+            </div >
         </>
     )
 }

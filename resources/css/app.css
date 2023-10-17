@@ -31,3 +31,34 @@
     padding: 1rem 0;
     /* margin-left: 0.5rem; */
 }
+
+.dropzone-item {
+    display: flex;
+    align-items: center;
+    margin-top: .75rem;
+    border-radius: .475;
+    padding: .5rem 1rem;
+    background-color: var(--bs-gray-100);
+}
+
+.dropzone-file {
+    flex-grow: 1;
+}
+
+.dropzone-filename {
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--bs-gray-600);
+    text-overflow: ellipsis;
+    margin-right: .5rem;
+}
+
+.dropzone-filename:hover {
+    color: var(--bs-primary);
+    cursor: pointer;
+}
+
+.dropzone-delete:hover {
+    color: var(--bs-primary);
+    cursor: pointer;
+}
