@@ -141,6 +141,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                     <th className='min-w-130px'>Status</th>
                                     <th className='min-w-130px'>Dossier type</th>
                                     <th className='min-w-130px'>Request date</th>
+                                    <th className='min-w-130px'>Last update</th>
                                     <th className='min-w-100px text-end'>Actions</th>
                                 </tr>
                             </thead>
@@ -200,7 +201,11 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                 {row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : ''}
                                             </span>
                                         </td>
-
+                                        <td>
+                                            <span className='fs-7'>
+                                                {row.request_date ? moment(row.updated_at).format("DD-MMM-YYYY") : ''}
+                                            </span>
+                                        </td>
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
                                                 {row.status == 'draft' ?
