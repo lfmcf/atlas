@@ -3,34 +3,7 @@ import { FC, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
 import { PageTitle } from '../../js/_metronic/layout/core'
-import {
-    ListsWidget2,
-    ListsWidget3,
-    ListsWidget4,
-    ListsWidget6,
-    TablesWidget5,
-    TablesWidget10,
-    MixedWidget8,
-    CardsWidget7,
-    CardsWidget17,
-    CardsWidget20,
-    ListsWidget26,
-    EngageWidget10,
-    ChartsWidget6,
-    ChartsWidget8,
-    ChartsWidget7,
-    ChartsWidget5,
-    ChartsWidget4,
-    ChartsWidget3,
-    ChartsWidget2,
-    ChartsWidget1,
-    StatisticsWidget1,
-    StatisticsWidget2,
-    StatisticsWidget3,
-    StatisticsWidget4,
-    StatisticsWidget5,
-    StatisticsWidget6,
-} from '../../js/_metronic/partials/widgets'
+import { ListsWidget6 } from '../../js/_metronic/partials/widgets'
 import Authenticated from '../Layouts/AuthenticatedLayout'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -39,32 +12,208 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import Chart from "react-apexcharts";
 import { getCSSVariableValue } from '../_metronic/assets/ts/_utils'
 import { router } from '@inertiajs/react'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 
 
-
+ChartJS.register(ArcElement, Tooltip, Legend);
 const MySwal = withReactContent(Swal)
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub }) => {
+const choptions = {
+    chart: {
+        fontFamily: 'inherit'
+    },
+    cutoutPercentage: 75,
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '75%',
+    title: {
+        display: false
+    },
+    animation: {
+        animateScale: true,
+        animateRotate: true
+    },
+    tooltips: {
+        enabled: true,
+        intersect: false,
+        mode: 'nearest',
+        bodySpacing: 5,
+        yPadding: 10,
+        xPadding: 10,
+        caretPadding: 0,
+        displayColors: false,
+        backgroundColor: '#20D489',
+        titleFontColor: '#ffffff',
+        cornerRadius: 4,
+        footerSpacing: 0,
+        titleSpacing: 0
+    },
+    plugins: {
+        legend: {
+            display: false
+        }
+    }
+}
+
+const options = {
+    chart: {
+        id: "basic-bar",
+        fontFamily: 'inherit',
+        type: 'bar',
+        toolbar: {
+            show: false
+        }
+    },
+    xaxis: {
+        categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisBorder: {
+            show: false,
+        },
+        axisTicks: {
+            show: false
+        },
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '13px'
+            }
+        },
+        crosshairs: {
+            fill: {
+                gradient: {
+                    opacityFrom: 0,
+                    opacityTo: 0
+                }
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '13px'
+            },
+            formatter: function (val) {
+                return parseInt(val) + 2
+            }
+        }
+    },
+    fill: {
+        opacity: 1
+    },
+    tooltip: {
+        style: {
+            fontSize: '12px'
+        },
+        // y: {
+        //     formatter: function (val) {
+        //         return + val + "K"
+        //     }
+        // }
+    },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '22%',
+            borderRadius: 5,
+            dataLabels: {
+                position: "top" // top, center, bottom
+            },
+        },
+
+    },
+    legend: { show: false },
+    dataLabels: {
+        enabled: true,
+        offsetY: -30,
+        style: {
+            fontSize: '13px',
+            colors: [getCSSVariableValue('--bs-gray-900')]
+        },
+        formatter: function (val) {
+
+            if (val == 0) {
+                return ''
+            } else {
+                return val
+            }
+        }
+    },
+    stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+    },
+    colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-primary-light')],
+    grid: {
+        borderColor: getCSSVariableValue('--bs-border-dashed-color'),
+        strokeDashArray: 4,
+        yaxis: {
+            lines: {
+                show: true
+            }
+        }
+    }
+}
+
+const doptions = {
+    series: [20, 100, 15, 25],
+    chart: {
+        fontFamily: 'inherit',
+        type: 'donut',
+        width: 250,
+    },
+    plotOptions: {
+        pie: {
+            donut: {
+                size: '50%',
+                labels: {
+                    value: {
+                        fontSize: '10px'
+                    }
+                }
+            }
+        }
+    },
+    colors: [
+        getCSSVariableValue('--bs-info'),
+        getCSSVariableValue('--bs-success'),
+        getCSSVariableValue('--bs-primary'),
+        getCSSVariableValue('--bs-danger')
+    ],
+    stroke: {
+        width: 0
+    },
+    labels: ['Approved', 'Change', 'Correction'],
+    legend: {
+        show: false,
+    },
+    fill: {
+        type: 'false',
+    }
+};
+
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed }) => {
 
 
     const handleCallback = (start, end, label) => {
         console.log(start, end, label);
     }
 
-    var options = {
-        chart: {
-            id: "basic-bar"
-        },
-        xaxis: {
-            categories: ['Jun', 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-        }
+    const data = {
+        labels: ['Formatting', 'Publishing', 'Submission'],
+        datasets: [
+            {
+                data: [formattingCount, PublishingCount, 0],
+                backgroundColor: ['#00A3FF', '#50CD89', '#E4E6EF']
+            },
+        ],
     }
-    const series = [
-        {
-            name: "series-1",
-            data: [30, 40, 45, 50, 49, 60, 70, 91]
-        }
-    ]
+
+
+
+
 
 
     return (
@@ -85,7 +234,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         <span className="position-absolute opacity-50 bottom-0 start-0 border-2 border-body border-bottom w-100"></span>
 
                                     </span>
-                                    <span className="opacity-75"> to comlete</span>
+                                    <span className="opacity-75"> to complete</span>
                                 </div>
                             </h3>
 
@@ -159,27 +308,14 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
                         </div>
 
-                        <div className="card-body mt-n20">
+                        <div className="card-body mt-n5">
                             <div className="mt-n20 position-relative">
                                 <div className="row g-3 g-lg-6">
                                     {RequetNumber.map((requet, i) => (
-                                        <div className="col-6" key={i}>
-                                            <div className="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5">
-                                                <div className="symbol symbol-30px me-5 mb-8">
-                                                    <span className="symbol-label">
-                                                        <i className="ki-duotone ki-flask fs-1 text-primary">
-                                                            <span className="path1"></span>
-                                                            <span className="path2"></span>
-                                                        </i>
-                                                    </span>
-                                                </div>
-                                                <div className="m-0">
-
-                                                    <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 mb-1">{requet.total}</span>
-
-                                                    <span className="text-gray-500 fw-semibold fs-6">{requet.status}</span>
-
-                                                </div>
+                                        <div className="col-12" key={i}>
+                                            <div className="bg-gray-100 d-flex align-items-center bg-opacity-70 rounded-2 px-6 py-5">
+                                                <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{requet.total}</span>
+                                                <span className="text-gray-500 fw-semibold fs-6">{requet.status}</span>
                                             </div>
                                         </div>
                                     )
@@ -190,12 +326,170 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
+                <div className="col-lg-6">
+                    <div className="card card-flush h-lg-100">
+                        <div className="card-header mt-6">
+                            <div className="card-title flex-column">
+                                <h3 className="fw-bold mb-1">Total Requests</h3>
+                                <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div>
+                            </div>
+                            <div className="card-toolbar">
+                                <a href="#" className="btn btn-light btn-sm">View Tasks</a>
+                            </div>
+                        </div>
+                        <div className="card-body p-9 pt-5">
+                            <div className="d-flex flex-wrap">
+                                <div className="position-relative d-flex flex-center h-175px w-175px me-15 mb-7">
+                                    <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
+                                        <span className="fs-2qx fw-bold">{formattingCount + PublishingCount}</span>
+                                        <span className="fs-6 fw-semibold text-gray-400">Total Req</span>
+                                    </div>
+                                    <Doughnut data={data} options={choptions} />
+                                </div>
+                                <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5">
+                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                        <div className="bullet bg-primary me-3"></div>
+                                        <div className="text-gray-400">Formatting</div>
+                                        <div className="ms-auto fw-bold text-gray-700">{formattingCount}</div>
+                                    </div>
+                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                        <div className="bullet bg-success me-3"></div>
+                                        <div className="text-gray-400">Publishing</div>
+                                        <div className="ms-auto fw-bold text-gray-700">{PublishingCount}</div>
+                                    </div>
+
+                                    <div className="d-flex fs-6 fw-semibold align-items-center">
+                                        <div className="bullet bg-gray-300 me-3"></div>
+                                        <div className="text-gray-400">Submission</div>
+                                        <div className="ms-auto fw-bold text-gray-700">0</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* <div className="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
                     <CardsWidget17 className='mb-5 mb-xl-10' PublishingCount={PublishingCount} formattingCount={formattingCount} />
+                </div> */}
+                <div className="col-xxl-8">
+                    <div className="card h-xl-100">
+                        <div className="card-header position-relative py-0 border-bottom-2">
+                            <span className="nav-text fw-semibold fs-4 mb-3">Overview</span>
+                        </div>
+                        <div className="card-body pb-3">
+                            <div className="d-flex flex-wrap flex-md-nowrap">
+                                <div className="me-md-5 w-100">
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-timer fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+                                                        <span className="path3"></span>
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Approved</a>
+                                                <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span>
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-element-11 fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+                                                        <span className="path3"></span>
+                                                        <span className="path4"></span>
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Change</a>
+                                                <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span>
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-abstract-24 fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Correction</a>
+                                                <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span>
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
+                                    <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
+                                        Session Attendance
+                                        <br />for Current Academic Year
+                                    </div>
+                                    <Chart options={doptions} series={[acceptance, correction, update]} type='donut' />
+                                    <div className="mx-auto">
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Change</div>
+
+                                        </div>
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-primary me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Correction</div>
+
+                                        </div>
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Approved</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className='col-md-5'>
+                {/* <div className='col-md-5'>
                     <ListsWidget6 className='' acceptance={acceptance} correction={correction} update={update} />
-                </div>
+                </div> */}
             </div>
             <div className='row'>
                 <div className='col-xl-8 mb-5 mb-xl-10'>
@@ -263,107 +557,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_10_tab_content_1">
                                     <Chart
-                                        options={{
-                                            chart: {
-                                                id: "basic-bar",
-                                                fontFamily: 'inherit',
-                                                type: 'bar',
-                                                toolbar: {
-                                                    show: false
-                                                }
-                                            },
-                                            xaxis: {
-                                                categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                                axisBorder: {
-                                                    show: false,
-                                                },
-                                                axisTicks: {
-                                                    show: false
-                                                },
-                                                labels: {
-                                                    style: {
-                                                        colors: getCSSVariableValue('--bs-gray-500'),
-                                                        fontSize: '13px'
-                                                    }
-                                                },
-                                                crosshairs: {
-                                                    fill: {
-                                                        gradient: {
-                                                            opacityFrom: 0,
-                                                            opacityTo: 0
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            yaxis: {
-                                                labels: {
-                                                    style: {
-                                                        colors: getCSSVariableValue('--bs-gray-500'),
-                                                        fontSize: '13px'
-                                                    },
-                                                    formatter: function (val) {
-                                                        return parseInt(val) + 2
-                                                    }
-                                                }
-                                            },
-                                            fill: {
-                                                opacity: 1
-                                            },
-                                            tooltip: {
-                                                style: {
-                                                    fontSize: '12px'
-                                                },
-                                                // y: {
-                                                //     formatter: function (val) {
-                                                //         return + val + "K"
-                                                //     }
-                                                // }
-                                            },
-                                            plotOptions: {
-                                                bar: {
-                                                    horizontal: false,
-                                                    columnWidth: '22%',
-                                                    borderRadius: 5,
-                                                    dataLabels: {
-                                                        position: "top" // top, center, bottom
-                                                    },
-                                                },
-
-                                            },
-                                            legend: { show: false },
-                                            dataLabels: {
-                                                enabled: true,
-                                                offsetY: -30,
-                                                style: {
-                                                    fontSize: '13px',
-                                                    colors: [getCSSVariableValue('--bs-gray-900')]
-                                                },
-                                                formatter: function (val) {
-
-                                                    if (val == 0) {
-                                                        return ''
-                                                    } else {
-                                                        return val
-                                                    }
-                                                }
-                                            },
-                                            stroke: {
-                                                show: true,
-                                                width: 2,
-                                                colors: ['transparent']
-                                            },
-                                            colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-primary-light')],
-                                            grid: {
-                                                borderColor: getCSSVariableValue('--bs-border-dashed-color'),
-                                                strokeDashArray: 4,
-                                                yaxis: {
-                                                    lines: {
-                                                        show: true
-                                                    }
-                                                }
-                                            }
-                                        }}
-
+                                        options={options}
                                         series={[{ name: 'Formatting', data: perMonthFor }]}
                                         type="bar"
                                         height={270}
@@ -371,107 +565,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </div>
                                 <div className='tab-pane fade' id="kt_charts_widget_10_tab_content_2">
                                     <Chart
-                                        options={{
-                                            chart: {
-                                                id: "basic-bar",
-                                                fontFamily: 'inherit',
-                                                type: 'bar',
-                                                toolbar: {
-                                                    show: false
-                                                }
-                                            },
-                                            xaxis: {
-                                                categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                                axisBorder: {
-                                                    show: false,
-                                                },
-                                                axisTicks: {
-                                                    show: false
-                                                },
-                                                labels: {
-                                                    style: {
-                                                        colors: getCSSVariableValue('--bs-gray-500'),
-                                                        fontSize: '13px'
-                                                    }
-                                                },
-                                                crosshairs: {
-                                                    fill: {
-                                                        gradient: {
-                                                            opacityFrom: 0,
-                                                            opacityTo: 0
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            yaxis: {
-                                                labels: {
-                                                    style: {
-                                                        colors: getCSSVariableValue('--bs-gray-500'),
-                                                        fontSize: '13px'
-                                                    },
-                                                    formatter: function (val) {
-                                                        return parseInt(val) + 2
-                                                    }
-                                                }
-                                            },
-                                            fill: {
-                                                opacity: 1
-                                            },
-                                            tooltip: {
-                                                style: {
-                                                    fontSize: '12px'
-                                                },
-                                                // y: {
-                                                //     formatter: function (val) {
-                                                //         return + val + "K"
-                                                //     }
-                                                // }
-                                            },
-                                            plotOptions: {
-                                                bar: {
-                                                    horizontal: false,
-                                                    columnWidth: '22%',
-                                                    borderRadius: 5,
-                                                    dataLabels: {
-                                                        position: "top" // top, center, bottom
-                                                    },
-                                                },
-
-                                            },
-                                            legend: { show: false },
-                                            dataLabels: {
-                                                enabled: true,
-                                                offsetY: -30,
-                                                style: {
-                                                    fontSize: '13px',
-                                                    colors: [getCSSVariableValue('--bs-gray-900')]
-                                                },
-                                                formatter: function (val) {
-
-                                                    if (val == 0) {
-                                                        return ''
-                                                    } else {
-                                                        return val
-                                                    }
-                                                }
-                                            },
-                                            stroke: {
-                                                show: true,
-                                                width: 2,
-                                                colors: ['transparent']
-                                            },
-                                            colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-primary-light')],
-                                            grid: {
-                                                borderColor: getCSSVariableValue('--bs-border-dashed-color'),
-                                                strokeDashArray: 4,
-                                                yaxis: {
-                                                    lines: {
-                                                        show: true
-                                                    }
-                                                }
-                                            }
-                                        }}
-
+                                        options={options}
                                         series={[{ name: 'Publishing', data: perMonthPub }]}
                                         type="bar"
                                         height={270}
@@ -498,6 +592,7 @@ const Dashboard = (props: any) => {
     const perMonthFor = props.perMonthFor
     const perMonthPub = props.perMonthPub
     const totalRequet = Object.values(RequetNumber).reduce((a, b) => a + b['total'], 0)
+    const totalclosed = props.totalclosed
 
     useEffect(() => {
         if (props.flash.message) {
@@ -526,6 +621,7 @@ const Dashboard = (props: any) => {
                 update={update}
                 perMonthFor={perMonthFor}
                 perMonthPub={perMonthPub}
+                totalclosed={totalclosed}
             />
 
         </>
