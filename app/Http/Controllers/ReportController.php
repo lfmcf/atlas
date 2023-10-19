@@ -275,6 +275,15 @@ class ReportController extends Controller
             }
         }
 
+        $totalFclosed = Formating::where('status', 'completed')->orWhere('status', 'closed')
+            ->count();
+        $totalPclosed = Publishing::where('status', 'completed')->orWhere('status', 'closed')
+            ->count();
+        $totalPMclosed = PublishingMrp::where('status', 'completed')->orWhere('status', 'closed')
+            ->count();
+
+        $totalclosed = $totalFclosed + $totalPclosed + $totalPMclosed;
+
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
             'formattingCount' => $totalFormattings,
@@ -283,7 +292,8 @@ class ReportController extends Controller
             'correction' => $correction,
             'update' => $update,
             'perMonthFor' => array_values($my_arr),
-            'perMonthPub' => array_values($my_sec_arr)
+            'perMonthPub' => array_values($my_sec_arr),
+            'totalclosed' => $totalclosed
         ]);
     }
 
