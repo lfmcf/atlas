@@ -284,6 +284,40 @@ class ReportController extends Controller
 
         $totalclosed = $totalFclosed + $totalPclosed + $totalPMclosed;
 
+        $f = Formating::raw(function ($collection) {;
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'status' => ['$nin' => ['draft', 'initiated']]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name.label', 'country' => '$country.value'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+        $p = Publishing::raw(function ($collection) {;
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'status' => ['$nin' => ['draft', 'initiated']]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name', 'country' => '$country'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+        // dd($p);
+
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
             'formattingCount' => $totalFormattings,
