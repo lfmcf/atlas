@@ -194,6 +194,118 @@ const doptions = {
     }
 };
 
+const coptions = {
+    chart: {
+        type: 'area',
+        height: 350,
+        toolbar: {
+            show: false
+        }
+    },
+    legend: {
+        show: false
+    },
+    dataLabels: {
+        enabled: false
+    },
+    fill: {
+        type: 'solid',
+        opacity: 1
+    },
+    stroke: {
+        curve: 'smooth',
+        show: true,
+        width: 3,
+        colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-success')]
+    },
+    xaxis: {
+        categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisBorder: {
+            show: false,
+        },
+        axisTicks: {
+            show: false
+        },
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '12px'
+            }
+        },
+        crosshairs: {
+            position: 'front',
+            stroke: {
+                color: getCSSVariableValue('--bs-primary'),
+                width: 1,
+                dashArray: 3
+            }
+        },
+        tooltip: {
+            enabled: true,
+            formatter: undefined,
+            offsetY: 0,
+            style: {
+                fontSize: '12px'
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '12px',
+            }
+        }
+    },
+    states: {
+        normal: {
+            filter: {
+                type: 'none',
+                value: 0
+            }
+        },
+        hover: {
+            filter: {
+                type: 'none',
+                value: 0
+            }
+        },
+        active: {
+            allowMultipleDataPointsSelection: false,
+            filter: {
+                type: 'none',
+                value: 0
+            }
+        }
+    },
+    tooltip: {
+        style: {
+            fontSize: '12px',
+        },
+        y: {
+            formatter: function (val) {
+                return val + " dossiers"
+            }
+        }
+    },
+    colors: [getCSSVariableValue('--bs-primary-light'), getCSSVariableValue('--bs-success-light')],
+    grid: {
+        borderColor: getCSSVariableValue('--bs-gray-200'),
+        strokeDashArray: 4,
+        yaxis: {
+            lines: {
+                show: true
+            }
+        }
+    },
+    markers: {
+        //size: 5,
+        colors: [getCSSVariableValue('--bs-primary-light'), getCSSVariableValue('--bs-success-light')],
+        strokeColor: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-success')],
+        strokeWidth: 3
+    }
+}
+
 const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed }) => {
 
 
@@ -372,10 +484,12 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                 {/* <div className="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
                     <CardsWidget17 className='mb-5 mb-xl-10' PublishingCount={PublishingCount} formattingCount={formattingCount} />
                 </div> */}
-                <div className="col-xxl-8">
+                <div className="col-lg-7">
                     <div className="card h-xl-100">
-                        <div className="card-header position-relative py-0 border-bottom-2">
-                            <span className="nav-text fw-semibold fs-4 mb-3">Overview</span>
+                        <div className='card-header mb-5'>
+                            <h3 className='card-title align-items-center flex-column'>
+                                <span className='card-label fw-bold text-gray-800'>Some subject</span>
+                            </h3>
                         </div>
                         <div className="card-body pb-3">
                             <div className="d-flex flex-wrap flex-md-nowrap">
@@ -487,13 +601,72 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                {/* <div className='col-md-5'>
-                    <ListsWidget6 className='' acceptance={acceptance} correction={correction} update={update} />
-                </div> */}
-            </div>
-            <div className='row'>
-                <div className='col-xl-8 mb-5 mb-xl-10'>
-                    <div className='card card-flush h-xxl-100'>
+                <div className="col-lg-5">
+                    <div className='card card-flush h-lg-100'>
+                        <div className='card-header pt-7 mb-5'>
+                            <h3 className='card-title align-items-start flex-column'>
+                                <span className='card-label fw-bold text-gray-800'>Product by country</span>
+                                <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span>
+                            </h3>
+                        </div>
+                        <div className='card-body pt-0'>
+                            <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4'>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div className='d-flex align-items-center'>
+                                                <div className='symbol symbol-45px me-2'>
+                                                    <img src='assets/media/flags/united-states.svg' />
+                                                </div>
+                                                <div className='d-flex justify-content-start flex-column'>
+                                                    <span className='text-dark fw-bold text-hover-primary fs-6'>United states</span>
+                                                    <span className='text-muted fw-semibold text-muted d-block fs-7'>US</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
+                                                Staloral
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>10</span>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>7</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div className='d-flex align-items-center'>
+                                                <div className='symbol symbol-45px me-2'>
+                                                    <img src='assets/media/flags/united-states.svg' />
+                                                </div>
+                                                <div className='d-flex justify-content-start flex-column'>
+                                                    <span className='text-dark fw-bold text-hover-primary fs-6'>United states</span>
+                                                    <span className='text-muted fw-semibold text-muted d-block fs-7'>US</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
+                                                Staloral
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>10</span>
+                                        </td>
+                                        <td>
+                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>7</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div className='col-lg-6 col-md-6 mb-5 mb-xl-10'>
+                    <div className='card card-flush h-xxl-100 h-lg-100'>
                         <div className="card-header pt-7">
 
                             <h3 className="card-title align-items-start flex-column">
@@ -553,6 +726,21 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         </div>
                                     </a>
                                 </li>
+                                <li className='nav-item mb-3 me-3 me-lg-6'>
+                                    <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-80px h-85px pt-5 pb-2'
+                                        data-bs-toggle="tab"
+                                        href='#kt_charts_widget_10_tab_content_3'>
+                                        <div className="nav-icon mb-3">
+                                            <i className='ki-duotone ki-ship fs-1 p-0'>
+                                                <span className='path1'></span>
+                                                <span className='path2'></span>
+                                                <span className='path3'></span>
+                                            </i>
+                                            <span className='nav-text text-gray-800 fw-bold fs-6 lh-1'>Both</span>
+                                            <span className='bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary'></span>
+                                        </div>
+                                    </a>
+                                </li>
                             </ul>
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_10_tab_content_1">
@@ -571,12 +759,144 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         height={270}
                                     />
                                 </div>
+                                <div className='tab-pane fade' id="kt_charts_widget_10_tab_content_3">
+                                    <Chart
+                                        options={{
+                                            chart: {
+                                                toolbar: {
+                                                    show: false
+                                                }
+                                            },
+                                            plotOptions: {
+                                                bar: {
+                                                    horizontal: false,
+                                                    columnWidth: '35%',
+                                                    borderRadius: 5,
+                                                    dataLabels: {
+                                                        position: "top" // top, center, bottom
+                                                    },
+                                                },
+                                            },
+                                            dataLabels: {
+                                                enabled: true,
+                                                offsetY: -30,
+                                                style: {
+                                                    fontSize: '13px',
+                                                    colors: [getCSSVariableValue('--bs-gray-900')]
+                                                },
+                                                formatter: function (val) {
+                                                    if (val == 0) {
+                                                        return ''
+                                                    } else {
+                                                        return val
+                                                    }
+                                                }
+                                            },
+                                            stroke: {
+                                                show: true,
+                                                width: 2,
+                                                colors: ['transparent']
+                                            },
+                                            xaxis: {
+                                                categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                                axisBorder: {
+                                                    show: false,
+                                                },
+                                                axisTicks: {
+                                                    show: false
+                                                },
+                                            },
+                                            yaxis: {
+                                                // title: {
+                                                //     text: '$ (thousands)'
+                                                // }
+                                            },
+                                            fill: {
+                                                opacity: 1
+                                            },
+                                            grid: {
+                                                borderColor: getCSSVariableValue('--bs-border-dashed-color'),
+                                                strokeDashArray: 4,
+                                                yaxis: {
+                                                    lines: {
+                                                        show: true
+                                                    }
+                                                }
+                                            },
+                                            states: {
+                                                normal: {
+                                                    filter: {
+                                                        type: 'none',
+                                                        value: 0
+                                                    }
+                                                },
+                                                hover: {
+                                                    filter: {
+                                                        type: 'none',
+                                                        value: 0
+                                                    }
+                                                },
+                                                active: {
+                                                    allowMultipleDataPointsSelection: false,
+                                                    filter: {
+                                                        type: 'none',
+                                                        value: 0
+                                                    }
+                                                }
+                                            },
+                                        }
+                                        }
+                                        series={[{ name: 'Publishing', data: perMonthPub }, { name: 'Formatting', data: perMonthFor }]}
+                                        type="bar"
+                                        height={270}
+                                    />
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
+                <div className="col-lg-6 col-md-6 mb-5 mb-xl-10">
+                    <div className="card card-flush h-lg-100">
+                        <div className="card-header mt-6">
+                            <div className="card-title flex-column">
+                                <h3 className="fw-bold mb-1">Tasks Over Time</h3>
+                                <div className="fs-6 d-flex text-gray-400 fs-6 fw-semibold">
+                                    <div className="d-flex align-items-center me-6">
+                                        <span className="menu-bullet d-flex align-items-center me-2">
+                                            <span className="bullet bg-success"></span>
+                                        </span>Complete</div>
+                                    <div className="d-flex align-items-center">
+                                        <span className="menu-bullet d-flex align-items-center me-2">
+                                            <span className="bullet bg-primary"></span>
+                                        </span>Incomplete</div>
+                                </div>
+                            </div>
+                            <div className="card-toolbar">
+                                <select name="status" data-control="select2" data-hide-search="true" className="form-select form-select-solid form-select-sm fw-bold w-100px">
+                                    <option value="1">2020</option>
+                                    <option value="2">2021</option>
+                                    <option value="3" >2022</option>
+                                    <option value="4" selected>2023</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <div className="card-body pt-10 pb-0 px-5">
+                            <Chart options={coptions} series={[{ name: 'Formatting', data: perMonthFor },
+                            { name: 'Publishing', data: perMonthPub }]}
+                                type='area'
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* <div className='col-md-5'>
+                    <ListsWidget6 className='' acceptance={acceptance} correction={correction} update={update} />
+                </div> */}
             </div>
+            {/* <div className='row'> */}
+
+            {/* </div> */}
         </>
     )
 }
