@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { KTIcon } from '../../../helpers'
+import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import StatusComponent from '../../../../Components/StatusComponent';
@@ -10,6 +10,8 @@ import { router } from '@inertiajs/react';
 import $ from 'jquery';
 import "datatables.net-dt/js/dataTables.dataTables";
 import clsx from 'clsx';
+import { Dropdown1 } from '../../content/dropdown/Dropdown1';
+// import Select2 from 'react-select2/node_modules/react-select2-wrapper'
 
 
 type Props = {
@@ -38,7 +40,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 			"info": false,
 			'order': [],
 			'pageLength': pageLength,
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'excel', 'pdf'
+			]
 		})
+
 		setnombrePages(table.page.info().pages);
 
 		setTb(table)
@@ -63,12 +70,27 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	};
 
 	const handleStatuschange = (e) => {
-		let value = e.value;
-		if (value === 'All') {
-			value = '';
+		let value = e.target.value;
+		if (value === 'all') {
+			value = ''
 		}
-		tb.column(3).search(value).draw('page');
+		tb.column(4).search(value).draw('page');
 		setnombrePages(tb.page.info().pages);
+	}
+
+	const handleRtypechange = (e) => {
+		let value = e.target.value;
+		if (value === 'all') {
+			value = ''
+		}
+		//console.log(tb.columns())
+		tb.column(0).search(value).draw('page');
+		setnombrePages(tb.page.info().pages);
+	}
+
+	const handleDownload = () => {
+		console.log('click');
+
 	}
 
 	const pagination = (number) => {
@@ -141,8 +163,37 @@ const TablesWidget9: React.FC<Props> = (props) => {
 				<div className='card-header align-items-center py-5 gap-2 gap-md-5'>
 					<div className='card-title'>
 						<div className='d-flex align-items-center position-relative my-1'>
-							<KTIcon iconName='magnifier' className='fs-3 position-absolute ms-4' />
-							<input type="text" className='form-control form-control-solid w-250px ps-12' placeholder='Search' onChange={handleSearch} />
+							<div className='text-muted fs-7'>
+								Request Type
+							</div>
+							<select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'
+								onChange={handleRtypechange}>
+								<option value='all'>Show All</option>
+								<option>Formatting</option>
+								<option>Publishing</option>
+							</select>
+							<div className='text-muted fs-7'>
+								Status
+							</div>
+							<select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'
+								onChange={handleStatuschange}>
+								<option value='all'>Show All</option>
+								<option value='initiated'>Initiated</option>
+								<option value='submitted'>Submitted</option>
+								<option value='to verify'>To verify</option>
+								<option value='delivered'>Delivered</option>
+								<option value='to correct'>To correct</option>
+								<option value='closed'>Closed</option>
+							</select>
+							<div className='text-muted fs-7'>
+								Dossier Type
+							</div>
+							<select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'>
+								<option>Show All</option>
+							</select>
+
+							{/* <Select /> */}
+
 						</div>
 					</div>
 					<div className='card-toolbar flex-row-fluid justify-content-end gap-5'>
@@ -156,7 +207,13 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								<KTIcon iconName='arrow-down' className='fs-3' />
 							</button>
 						</div> */}
-						<div className='w-100 mw-150px'>
+						<div className='d-flex align-items-center position-relative my-1'>
+
+
+							<KTIcon iconName='magnifier' className='fs-3 position-absolute ms-4' />
+							<input type="text" className='form-control form-control-solid w-250px ps-12' placeholder='Search' onChange={handleSearch} />
+						</div>
+						{/* <div className='w-100 mw-150px'>
 							<Select options={[
 								{ label: 'All', value: 'All' },
 								{ label: 'Initiated', value: 'Initiated' },
@@ -172,7 +229,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
 								isClearable
 							/>
-						</div>
+						</div> */}
 						{props.user.current_team_id !== 3 ?
 							<a
 								href='#'
@@ -183,6 +240,14 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								<KTIcon iconName='plus' className='fs-3' />
 								New Request
 							</a> : ''}
+						<button className='btn btn-sm btn-icon btn-color-primary btn-active-light-primary'
+							type='button'
+							data-kt-menu-trigger='click'
+							data-kt-menu-placement='bottom-end'
+							data-kt-menu-flip='top-end'>
+							<img src={toAbsoluteUrl("/media/icons/duotune/general/gen053.svg")} />
+						</button>
+						<Dropdown1 handleDownload={handleDownload} />
 					</div>
 				</div>
 				{/* end::Header */}
@@ -206,6 +271,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 											/>
 										</div>
 									</th> */}
+									<th className='min-w-150px' style={{ display: 'none' }}>Form</th>
 									<th className='min-w-150px'>Product</th>
 									<th className='min-w-140px'>Country</th>
 									<th className='min-w-140px'>Sequence</th>
@@ -226,6 +292,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 									<input className='form-check-input widget-9-check' type='checkbox' value='1' />
 								</div>
 							</td> */}
+										<td style={{ display: 'none' }}>{row.form}</td>
 										<td>
 											<span className='fs-7'>
 

@@ -88,6 +88,20 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         setnombrePages(tb.page.info().pages);
     }
 
+    const handleSearch = (e) => {
+        tb.search(e.target.value).draw();
+        setnombrePages(tb.page.info().pages);
+    };
+
+    const handleStatuschange = (e) => {
+        let value = e.target.value;
+        if (value === 'all') {
+            value = ''
+        }
+        tb.column(4).search(value).draw('page');
+        setnombrePages(tb.page.info().pages);
+    }
+
     return (
         <>
             <div className={`card mb-5`}>
@@ -96,23 +110,31 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                         <span className='card-label fw-bold fs-3 mb-1'>Formatting List</span>
                         {/* <span className='text-muted mt-1 fw-semibold fs-7'>Over 500 members</span> */}
                     </h3>
-                    {/* <div
-                        className='card-toolbar'
-                        data-bs-toggle='tooltip'
-                        data-bs-placement='top'
-                        data-bs-trigger='hover'
-                        title='Click to add a user'
-                    >
-                        <a
-                            href='#'
-                            className='btn btn-sm btn-light-primary'
-                            data-bs-toggle='modal'
-                            data-bs-target='#kt_modal_invite_friends'
-                        >
-                            <KTIcon iconName='plus' className='fs-3' />
-                            New Member
-                        </a>
-                    </div> */}
+                    <div className='card-toolbar'>
+                        <div className='text-muted fs-7'>
+                            Status
+                        </div>
+                        <select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'
+                            onChange={handleStatuschange}>
+                            <option value='all'>Show All</option>
+                            <option value='initiated'>Initiated</option>
+                            <option value='submitted'>Submitted</option>
+                            <option value='to verify'>To verify</option>
+                            <option value='delivered'>Delivered</option>
+                            <option value='to correct'>To correct</option>
+                            <option value='closed'>Closed</option>
+                        </select>
+                        <div className='text-muted fs-7'>
+                            Dossier Type
+                        </div>
+                        <select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'>
+                            <option>Show All</option>
+                        </select>
+                        <div className='d-flex align-items-center position-relative my-1'>
+                            <KTIcon iconName='magnifier' className='fs-3 position-absolute ms-4' />
+                            <input type="text" className='form-control form-control-solid w-250px ps-12' placeholder='Search' onChange={handleSearch} />
+                        </div>
+                    </div>
                 </div>
                 {/* end::Header */}
                 {/* begin::Body */}
