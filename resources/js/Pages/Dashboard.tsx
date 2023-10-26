@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
 import { PageTitle } from '../../js/_metronic/layout/core'
@@ -7,13 +7,16 @@ import { ListsWidget6 } from '../../js/_metronic/partials/widgets'
 import Authenticated from '../Layouts/AuthenticatedLayout'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import DateRangePicker from 'react-bootstrap-daterangepicker';
+//import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import Chart from "react-apexcharts";
 import { getCSSVariableValue } from '../_metronic/assets/ts/_utils'
 import { router } from '@inertiajs/react'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import DatePicker from 'react-datepicker';
+import moment from 'moment'
+import "react-datepicker/dist/react-datepicker.css";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -308,6 +311,8 @@ const coptions = {
 
 const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed }) => {
 
+    const [startDate, setStartDate] = useState(1659312000000);
+    const year = moment(startDate).format('yyyy');
 
     const handleCallback = (start, end, label) => {
         console.log(start, end, label);
@@ -677,8 +682,8 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             <div className="card-toolbar">
 
 
-                                <DateRangePicker onCallback={handleCallback}>
-                                    <button className="btn btn-sm btn-light d-flex align-items-center px-4" >
+                                <DatePicker dateFormat="yyyy" showYearPicker selected={startDate} onChange={(date) => setStartDate(date)} className="form-select form-select-solid form-select-sm fw-bold w-100px">
+                                    {/* <button className="btn btn-sm btn-light d-flex align-items-center px-4" >
                                         <div className="text-gray-600 fw-bold">1 Sep 2023 - 30 Sep 2023</div>
 
                                         <i className="ki-duotone ki-calendar-8 fs-1 ms-2 me-0">
@@ -689,8 +694,8 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             <span className="path5"></span>
                                             <span className="path6"></span>
                                         </i>
-                                    </button>
-                                </DateRangePicker>
+                                    </button> */}
+                                </DatePicker>
 
                             </div>
                         </div>

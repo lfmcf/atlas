@@ -316,7 +316,26 @@ class ReportController extends Controller
 
             ]);
         });
-        // dd($p);
+        $pm = PublishingMrp::raw(function ($collection) {;
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'status' => ['$nin' => ['draft', 'initiated']]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name', 'country' => '$country'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+        // $res = collect([$p, $f, $pm]);
+        // foreach ($p as $pr) {
+        //     dd($pr->_id);
+        // }
 
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
