@@ -52,7 +52,7 @@ const Create = (props: any) => {
         r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
     });
 
-    const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
+
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
@@ -134,23 +134,51 @@ const Create = (props: any) => {
         setMultiData(perdata)
     }
 
+    const [isCheck, setIsCheck] = useState([]);
+    const [isCheckAll, setIsCheckAll] = useState(false);
+    //const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
+    const [list, setList] = useState(metadata);
+
+    // useEffect(() => {
+    //     setList(metadata);
+    // }, [list]);
+
+
     const handleMultiCountryChange = (e) => {
 
-        let perdata = [...multicountry]
-        if (e.target.checked) {
-            perdata.push(e.target.value)
-        } else {
-            const index = perdata.indexOf(e.target.value);
-            perdata.splice(index, 1)
+        // let perdata = [...multicountry]
+        // if (e.target.checked) {
+        //     perdata.push(e.target.value)
+        // } else {
+        //     const index = perdata.indexOf(e.target.value);
+        //     perdata.splice(index, 1)
+        // }
+        // setMulticountry(perdata)
+        const { id, checked } = e.target;
+        setIsCheck([...isCheck, parseInt(id)]);
+
+        if (!checked) {
+
+            setIsCheck(isCheck.filter(item => item != id));
         }
-        setMulticountry(perdata)
+
     }
+
+    // console.log(isCheck);
+
+    const handleSelectAll = e => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck(list.map(li => li.id));
+        if (isCheckAll) {
+            setIsCheck([]);
+        }
+    };
 
     const handleSubmitMulti = () => {
         let perdata = { ...data }
 
         perdata.mt.map((cnt, i) => {
-            if (multicountry.includes(cnt.country)) {
+            if (isCheck.includes(cnt.id)) {
                 perdata.mt[i].uuid = multiData.uuid
                 perdata.mt[i].submission_type = multiData.submission_type
                 perdata.mt[i].submission_mode = multiData.submission_mode
@@ -864,14 +892,22 @@ const Create = (props: any) => {
                                             <div className='row'>
                                                 <div className="col-4 d-flex align-items-center mb-5" >
                                                     <div className="me-5 position-relative">
-
+                                                        <div className="symbol symbol-35px symbol-circle">
+                                                            <ReactCountryFlag
+                                                                className="emojiFlag"
+                                                                countryCode="EU"
+                                                                aria-label="Europe"
+                                                                svg
+                                                                style={{ width: '25px', height: '25px', borderRadius: '4px' }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <div className="fw-semibold">
                                                         <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">All Countries</a>
                                                         <div className="text-gray-400">All</div>
                                                     </div>
                                                     <div className="badge badge-light ms-auto">
-                                                        <input type='checkbox' defaultChecked={true} name="multicountry" value='all' onChange={handleMultiCountryChange} />
+                                                        <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
                                                     </div>
                                                 </div>
                                                 {metadata.map((mt: any, i: string) => {
@@ -884,6 +920,8 @@ const Create = (props: any) => {
                                                                         className="emojiFlag"
                                                                         countryCode={mt.code}
                                                                         aria-label={mt.country}
+                                                                        svg
+                                                                        style={{ width: '25px', height: '25px', borderRadius: '4px' }}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -893,7 +931,13 @@ const Create = (props: any) => {
                                                             </div>
 
                                                             <div className="badge badge-light ms-auto">
-                                                                <input type='checkbox' defaultChecked={true} name="multicountry" value={mt.country} onChange={handleMultiCountryChange} />
+                                                                <input type='checkbox'
+                                                                    id={mt.id}
+                                                                    name={mt.country}
+                                                                    value={mt.country}
+                                                                    onChange={handleMultiCountryChange}
+                                                                    checked={isCheck.includes(mt.id) ? true : false}
+                                                                />
                                                             </div>
                                                         </div>
                                                     )
