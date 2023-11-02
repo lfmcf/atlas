@@ -384,7 +384,7 @@ class ReportController extends Controller
         }
 
         foreach ($myparr as $k => $v) {
-            $name = strtok($value['product'], " ");
+            $name = strtok($v['product'], " ");
             $name = rtrim($name, ',');
             array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
         }
