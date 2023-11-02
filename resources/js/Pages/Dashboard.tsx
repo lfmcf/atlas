@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
 import { PageTitle } from '../../js/_metronic/layout/core'
@@ -17,7 +17,14 @@ import { Doughnut } from "react-chartjs-2";
 import DatePicker from 'react-datepicker';
 import moment from 'moment'
 import "react-datepicker/dist/react-datepicker.css";
+import $ from 'jquery';
+import "datatables.net-dt/js/dataTables.dataTables";
+import clsx from 'clsx'
+import countries from 'i18n-iso-countries'
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import ReactCountryFlag from 'react-country-flag'
 
+countries.registerLocale(enLocale)
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const MySwal = withReactContent(Swal)
@@ -309,10 +316,16 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed }) => {
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry }) => {
 
     const [startDate, setStartDate] = useState(1659312000000);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageNumbers, setpageNumbers] = useState([]);
+    const [nombrePages, setnombrePages] = useState(0);
+    const [tb, setTb] = useState();
     const year = moment(startDate).format('yyyy');
+
+    const productTableRef = useRef()
 
     const handleCallback = (start, end, label) => {
         console.log(start, end, label);
@@ -329,6 +342,56 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     }
 
 
+
+    useEffect(() => {
+        const table = $(productTableRef.current).DataTable({
+            "info": false,
+            'order': [],
+            'pageLength': 5,
+        })
+
+        setnombrePages(table.page.info().pages);
+
+        setTb(table)
+
+        return function () {
+            table.destroy()
+        }
+
+
+
+    }, [])
+
+    useEffect(() => {
+        let myarr = Array.from({ length: nombrePages }, (v, i) => i + 1)
+        setpageNumbers(myarr)
+    }, [nombrePages])
+
+
+
+
+    const pagination = (number) => {
+
+        setCurrentPage(number)
+        tb.page(number - 1).draw('page')
+    }
+
+    const handleprevious = () => {
+        let number = tb.page.info().page
+        setCurrentPage(number)
+        tb.page(number - 1).draw('page')
+    }
+
+    const handlenext = () => {
+        let number = tb.page.info().page + 1
+        setCurrentPage(number + 1)
+        tb.page(number).draw('page')
+    }
+
+    const handlePageLengthChange = (e) => {
+        tb.page.len(e.target.value).draw();
+        setnombrePages(tb.page.info().pages);
+    }
 
 
 
@@ -448,7 +511,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
                                 <h3 className="fw-bold mb-1">Total Requests</h3>
-                                <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div>
+                                {/* <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div> */}
                             </div>
                             <div className="card-toolbar">
                                 <a href="#" className="btn btn-light btn-sm">View Tasks</a>
@@ -512,7 +575,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             </div>
                                             <div className="me-2">
                                                 <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Approved</a>
-                                                <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
                                             </div>
                                         </div>
                                         <div className="d-flex align-items-center">
@@ -536,11 +599,11 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             </div>
                                             <div className="me-2">
                                                 <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Change</a>
-                                                <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
                                             </div>
                                         </div>
                                         <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
+                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
                                             <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
                                             <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
                                             <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span>
@@ -558,11 +621,11 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             </div>
                                             <div className="me-2">
                                                 <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Correction</a>
-                                                <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
                                             </div>
                                         </div>
                                         <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
+                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
                                             <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
                                             <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
                                             <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span>
@@ -570,11 +633,11 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
-                                    <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
+                                    {/* <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
                                         Session Attendance
                                         <br />for Current Academic Year
-                                    </div>
-                                    <Chart options={doptions} series={[acceptance, correction, update]} type='donut' />
+                                    </div> */}
+                                    <Chart options={doptions} series={[acceptance, update, correction]} type='donut' />
                                     <div className="mx-auto">
 
                                         <div className="d-flex align-items-center mb-2">
@@ -615,58 +678,95 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             </h3>
                         </div>
                         <div className='card-body pt-0'>
-                            <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4'>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div className='d-flex align-items-center'>
-                                                <div className='symbol symbol-45px me-2'>
-                                                    <img src='assets/media/flags/united-states.svg' />
-                                                </div>
-                                                <div className='d-flex justify-content-start flex-column'>
-                                                    <span className='text-dark fw-bold text-hover-primary fs-6'>United states</span>
-                                                    <span className='text-muted fw-semibold text-muted d-block fs-7'>US</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
-                                                Staloral
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>10</span>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>7</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div className='d-flex align-items-center'>
-                                                <div className='symbol symbol-45px me-2'>
-                                                    <img src='assets/media/flags/united-states.svg' />
-                                                </div>
-                                                <div className='d-flex justify-content-start flex-column'>
-                                                    <span className='text-dark fw-bold text-hover-primary fs-6'>United states</span>
-                                                    <span className='text-muted fw-semibold text-muted d-block fs-7'>US</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
-                                                Staloral
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>10</span>
-                                        </td>
-                                        <td>
-                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>7</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div className='table-responsive'>
+                                <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
+                                    <thead style={{ display: 'none' }}>
+                                        <tr>
+                                            <th className='min-w-130px'>Country</th>
+                                            <th className='min-w-130px'>Produit</th>
+                                            <th className='min-w-130px'>Formatting</th>
+                                            <th className='min-w-130px'>Publishing</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {productCountry.map((val, i) => (
+                                            <tr key={i}>
+                                                <td>
+                                                    <div className='d-flex align-items-center'>
+                                                        <div className='symbol symbol-45px me-2'>
+                                                            {/* <img src='assets/media/flags/united-states.svg' /> */}
+                                                            <ReactCountryFlag
+                                                                countryCode={countries.getAlpha2Code(val.cnt, "en")}
+                                                                svg
+                                                                style={{
+                                                                    width: '2em',
+                                                                    height: '2em',
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <div className='d-flex justify-content-start flex-column'>
+                                                            <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt}</span>
+                                                            <span className='text-muted fw-semibold text-muted d-block fs-7'>{countries.getAlpha2Code(val.cnt, "en")}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
+                                                        {val.pr}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.formatting}</span>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.publishing}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <div className="row paginate_row">
+                                    {/* <div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+                                        <div className="dataTables_length" id="kt_profile_overview_table_length">
+                                            <label>
+                                                <select name="kt_profile_overview_table_length" aria-controls="kt_profile_overview_table" className="form-select form-select-sm form-select-solid" onChange={handlePageLengthChange}>
+                                                    <option value="5">5</option>
+                                                    <option value="10" selected>10</option>
+                                                    <option value="15">15</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div> */}
+                                    <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
+                                        <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
+                                            <ul className="pagination">
+                                                <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
+                                                    <a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
+                                                        <i className="previous"></i></a>
+                                                </li>
+                                                {/* <li className="paginate_button page-item active"><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
+										</li><li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="2" tabIndex="0" className="page-link">2</a></li>
+										<li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="3" tabIndex="0" className="page-link">3</a></li> */}
+                                                {
+                                                    pageNumbers.map(number => (
+
+                                                        <li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
+                                                            <button onClick={() => pagination(number)} className="page-link"> {number} </button>
+                                                        </li>
+                                                    ))
+                                                }
+                                                <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
+                                                    <a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
+                                                        <i className="next"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -731,7 +831,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         </div>
                                     </a>
                                 </li>
-                                <li className='nav-item mb-3 me-3 me-lg-6'>
+                                {/* <li className='nav-item mb-3 me-3 me-lg-6'>
                                     <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-80px h-85px pt-5 pb-2'
                                         data-bs-toggle="tab"
                                         href='#kt_charts_widget_10_tab_content_3'>
@@ -745,7 +845,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             <span className='bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary'></span>
                                         </div>
                                     </a>
-                                </li>
+                                </li> */}
                             </ul>
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_10_tab_content_1">
@@ -764,98 +864,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         height={270}
                                     />
                                 </div>
-                                <div className='tab-pane fade' id="kt_charts_widget_10_tab_content_3">
-                                    <Chart
-                                        options={{
-                                            chart: {
-                                                toolbar: {
-                                                    show: false
-                                                }
-                                            },
-                                            plotOptions: {
-                                                bar: {
-                                                    horizontal: false,
-                                                    columnWidth: '35%',
-                                                    borderRadius: 5,
-                                                    dataLabels: {
-                                                        position: "top" // top, center, bottom
-                                                    },
-                                                },
-                                            },
-                                            dataLabels: {
-                                                enabled: true,
-                                                offsetY: -30,
-                                                style: {
-                                                    fontSize: '13px',
-                                                    colors: [getCSSVariableValue('--bs-gray-900')]
-                                                },
-                                                formatter: function (val) {
-                                                    if (val == 0) {
-                                                        return ''
-                                                    } else {
-                                                        return val
-                                                    }
-                                                }
-                                            },
-                                            stroke: {
-                                                show: true,
-                                                width: 2,
-                                                colors: ['transparent']
-                                            },
-                                            xaxis: {
-                                                categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                                axisBorder: {
-                                                    show: false,
-                                                },
-                                                axisTicks: {
-                                                    show: false
-                                                },
-                                            },
-                                            yaxis: {
-                                                // title: {
-                                                //     text: '$ (thousands)'
-                                                // }
-                                            },
-                                            fill: {
-                                                opacity: 1
-                                            },
-                                            grid: {
-                                                borderColor: getCSSVariableValue('--bs-border-dashed-color'),
-                                                strokeDashArray: 4,
-                                                yaxis: {
-                                                    lines: {
-                                                        show: true
-                                                    }
-                                                }
-                                            },
-                                            states: {
-                                                normal: {
-                                                    filter: {
-                                                        type: 'none',
-                                                        value: 0
-                                                    }
-                                                },
-                                                hover: {
-                                                    filter: {
-                                                        type: 'none',
-                                                        value: 0
-                                                    }
-                                                },
-                                                active: {
-                                                    allowMultipleDataPointsSelection: false,
-                                                    filter: {
-                                                        type: 'none',
-                                                        value: 0
-                                                    }
-                                                }
-                                            },
-                                        }
-                                        }
-                                        series={[{ name: 'Publishing', data: perMonthPub }, { name: 'Formatting', data: perMonthFor }]}
-                                        type="bar"
-                                        height={270}
-                                    />
-                                </div>
                             </div>
 
                         </div>
@@ -870,11 +878,11 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     <div className="d-flex align-items-center me-6">
                                         <span className="menu-bullet d-flex align-items-center me-2">
                                             <span className="bullet bg-success"></span>
-                                        </span>Complete</div>
+                                        </span>Formatting</div>
                                     <div className="d-flex align-items-center">
                                         <span className="menu-bullet d-flex align-items-center me-2">
                                             <span className="bullet bg-primary"></span>
-                                        </span>Incomplete</div>
+                                        </span>Publishing</div>
                                 </div>
                             </div>
                             <div className="card-toolbar">
@@ -918,6 +926,7 @@ const Dashboard = (props: any) => {
     const perMonthPub = props.perMonthPub
     const totalRequet = Object.values(RequetNumber).reduce((a, b) => a + b['total'], 0)
     const totalclosed = props.totalclosed
+    const productCountry = props.productCountry
 
     useEffect(() => {
         if (props.flash.message) {
@@ -947,6 +956,7 @@ const Dashboard = (props: any) => {
                 perMonthFor={perMonthFor}
                 perMonthPub={perMonthPub}
                 totalclosed={totalclosed}
+                productCountry={productCountry}
             />
 
         </>
