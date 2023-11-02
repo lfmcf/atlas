@@ -386,7 +386,7 @@ class ReportController extends Controller
         foreach ($myparr as $k => $v) {
             $name = strtok($value['product'], " ");
             $name = rtrim($name, ',');
-            array_push($myarr, ['pr' => $v['product'], 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
+            array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
         }
 
         return Inertia::render('Dashboard', [
