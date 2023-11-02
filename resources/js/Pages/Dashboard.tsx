@@ -680,12 +680,12 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className='card-body pt-0'>
                             <div className='table-responsive'>
                                 <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
-                                    <thead style={{ display: 'none' }}>
+                                    <thead >
                                         <tr>
-                                            <th className='min-w-130px'>Country</th>
-                                            <th className='min-w-130px'>Produit</th>
-                                            <th className='min-w-130px'>Formatting</th>
-                                            <th className='min-w-130px'>Publishing</th>
+                                            <th >Country</th>
+                                            <th >Produit</th>
+                                            <th >Formatting</th>
+                                            <th >Publishing</th>
                                         </tr>
                                     </thead>
                                     <tbody>
