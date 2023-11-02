@@ -902,11 +902,11 @@ const Create = (props: any) => {
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="fw-semibold">
+                                                    <div className="fw-semibold" style={{ width: '40%' }}>
                                                         <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">All Countries</a>
                                                         <div className="text-gray-400">All</div>
                                                     </div>
-                                                    <div className="badge badge-light ms-auto">
+                                                    <div className="badge badge-light">
                                                         <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
                                                     </div>
                                                 </div>
@@ -925,12 +925,12 @@ const Create = (props: any) => {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <div className="fw-semibold">
+                                                            <div className="fw-semibold" style={{ width: '40%' }}>
                                                                 <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">{mt.country}</a>
                                                                 <div className="text-gray-400">{mt.code}</div>
                                                             </div>
 
-                                                            <div className="badge badge-light ms-auto">
+                                                            <div className="badge badge-light ">
                                                                 <input type='checkbox'
                                                                     id={mt.id}
                                                                     name={mt.country}

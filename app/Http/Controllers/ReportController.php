@@ -95,84 +95,88 @@ class ReportController extends Controller
         $accepublishing = Publishing::where('status', 'closed')->whereNull('correction')->count();
         $accepublishingmrp = PublishingMrp::where('status', 'closed')->whereNull('correction')->count();
 
-        // $corrFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
-        //     ->groupBy('source')
-        //     ->get();
+        $corrFormatting = Formating::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->count('source');
 
-        $corrFormatting = Formating::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'ekemia']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
+        $corrPublishing = Publishing::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->count('source');
 
-        $corrPublishing = Publishing::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'ekemia']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $corrPublishingMrp = PublishingMrp::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'ekemia']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $corrFormatting->isNotEmpty() ? $corrFormatting =  $corrFormatting[0]->Count :  $corrFormatting = 0;
-        $corrPublishing->isNotEmpty() ? $corrPublishing =  $corrPublishing[0]->Count :  $corrPublishing = 0;
-        $corrPublishingMrp->isNotEmpty() ? $corrPublishingMrp =  $corrPublishingMrp[0]->Count :  $corrPublishingMrp = 0;
-
-        $upFormatting = Formating::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'stg']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $upPublishing = Publishing::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'stg']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $upPublishingMrp = PublishingMrp::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$unwind' => '$correction'],
-                    ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-                    ['$match' => ['correction.source' => 'stg']],
-                    ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
+        $corrPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->count('source');
 
 
-        $upFormatting->isNotEmpty() ? $upFormatting =  $upFormatting[0]->Count :  $upFormatting = 0;
-        $upPublishing->isNotEmpty() ? $upPublishing =  $upPublishing[0]->Count :  $upPublishing = 0;
-        $upPublishingMrp->isNotEmpty() ? $upPublishingMrp =  $upPublishingMrp[0]->Count :  $upPublishingMrp = 0;
+        // $corrPublishing = Publishing::raw(function ($collection) {
+        //     return $collection->aggregate(
+        //         [
+        //             ['$unwind' => '$correction'],
+        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
+        //             ['$match' => ['correction.source' => 'ekemia']],
+        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
+        //         ]
+        //     );
+        // });
+
+        // $corrPublishingMrp = PublishingMrp::raw(function ($collection) {
+        //     return $collection->aggregate(
+        //         [
+        //             ['$unwind' => '$correction'],
+        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
+        //             ['$match' => ['correction.source' => 'ekemia']],
+        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
+        //         ]
+        //     );
+        // });
+
+        // $corrFormatting->isNotEmpty() ? $corrFormatting =  $corrFormatting[0]->Count :  $corrFormatting = 0;
+        // $corrPublishing->isNotEmpty() ? $corrPublishing =  $corrPublishing[0]->Count :  $corrPublishing = 0;
+        // $corrPublishingMrp->isNotEmpty() ? $corrPublishingMrp =  $corrPublishingMrp[0]->Count :  $corrPublishingMrp = 0;
+
+        $upFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
+            ->count('source');
+
+        $upPublishing =   Publishing::where('status', 'closed')->where('correction.source', 'stg')
+            ->count('source');
+
+        $upPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'stg')
+            ->count('source');
+
+        // $upFormatting = Formating::raw(function ($collection) {
+        //     return $collection->aggregate(
+        //         [
+        //             ['$unwind' => '$correction'],
+        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
+        //             ['$match' => ['correction.source' => 'stg']],
+        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
+        //         ]
+        //     );
+        // });
+
+        // $upPublishing = Publishing::raw(function ($collection) {
+        //     return $collection->aggregate(
+        //         [
+        //             ['$unwind' => '$correction'],
+        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
+        //             ['$match' => ['correction.source' => 'stg']],
+        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
+        //         ]
+        //     );
+        // });
+
+        // $upPublishingMrp = PublishingMrp::raw(function ($collection) {
+        //     return $collection->aggregate(
+        //         [
+        //             ['$unwind' => '$correction'],
+        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
+        //             ['$match' => ['correction.source' => 'stg']],
+        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
+        //         ]
+        //     );
+        // });
+
+
+        // $upFormatting->isNotEmpty() ? $upFormatting =  $upFormatting[0]->Count :  $upFormatting = 0;
+        // $upPublishing->isNotEmpty() ? $upPublishing =  $upPublishing[0]->Count :  $upPublishing = 0;
+        // $upPublishingMrp->isNotEmpty() ? $upPublishingMrp =  $upPublishingMrp[0]->Count :  $upPublishingMrp = 0;
 
         $acceptance = $acceformatting + $accepublishing + $accepublishingmrp;
         $correction = $corrFormatting +  $corrPublishing + $corrPublishingMrp;
@@ -323,19 +327,65 @@ class ReportController extends Controller
                         'status' => ['$nin' => ['draft', 'initiated']]
                     ]
                 ],
+                ['$unwind' => '$mt'],
                 [
                     '$group' => [
-                        "_id" => ['product' => '$product_name', 'country' => '$country'],
+                        "_id" => ['country' => '$mt.country', 'product' => '$product_name'],
                         'count' => ['$sum' => 1]
                     ]
                 ],
 
             ]);
         });
-        // $res = collect([$p, $f, $pm]);
-        // foreach ($p as $pr) {
-        //     dd($pr->_id);
-        // }
+
+
+        $myfarr = [];
+        foreach ($f as $key => $value) {
+            $myfarr[$key]['count'] = $value->count;
+            $myfarr[$key]['product'] = $value->_id['product'];
+            $myfarr[$key]['country'] = $value->_id['country'];
+        }
+
+        $myparr = [];
+        foreach ($p as $key => $value) {
+            $myparr[$key]['count'] = $value->count;
+            $myparr[$key]['product'] = $value->_id['product'];
+            $myparr[$key]['country'] = $value->_id['country'];
+        }
+
+        $mypmarr = [];
+        foreach ($pm as $key => $value) {
+            $mypmarr[$key]['count'] = $value->count;
+            $mypmarr[$key]['product'] = $value->_id['product'];
+            $mypmarr[$key]['country'] = $value->_id['country'];
+        }
+
+        $myparr = array_merge($myparr, $mypmarr);
+
+        $myarr = [];
+
+        foreach ($myfarr as $ke => $value) {
+            foreach ($myparr as $k => $v) {
+                $name = strtok($value['product'], " ");
+                $name = rtrim($name, ',');
+                $fname = strtok($v['product'], " ");
+                if ($name == $fname && $value['country'] === $v['country']) {
+                    array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => $v['count']]);
+                    unset($myfarr[$ke]);
+                    unset($myparr[$k]);
+                }
+            }
+        }
+
+        foreach ($myfarr as $key => $value) {
+            $name = strtok($value['product'], " ");
+            $name = rtrim($name, ',');
+            array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => 0]);
+        }
+
+        foreach ($myparr as $k => $v) {
+            array_push($myarr, ['pr' => $v['product'], 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
+        }
 
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
@@ -346,7 +396,8 @@ class ReportController extends Controller
             'update' => $update,
             'perMonthFor' => array_values($my_arr),
             'perMonthPub' => array_values($my_sec_arr),
-            'totalclosed' => $totalclosed
+            'totalclosed' => $totalclosed,
+            'productCountry' => $myarr
         ]);
     }
 
