@@ -97,7 +97,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 			country: row.country && typeof row.country === 'object' ? row.country.value : row.country,
 			sequence: row.sequence ? row.sequence : 'NA',
 			status: row.status,
-			dossier_type: row.dossier_type.value,
+			dossier_type: row.dossier_type ? row.dossier_type.value : '',
 			request_date: row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : '',
 			last_update: row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''
 		}));
