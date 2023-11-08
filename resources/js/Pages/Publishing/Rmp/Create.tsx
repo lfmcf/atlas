@@ -14,6 +14,7 @@ import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 const Create = (props: any) => {
 
     const { metadata, folder } = props;
+    console.log(metadata)
     var params = new URLSearchParams(window.location.search);
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -41,11 +42,6 @@ const Create = (props: any) => {
         request_date: new Date()
     })
 
-    // const countires = metadata.map((mp) => {
-
-    //     return { label: mp.country, value: mp.country, code: mp.code }
-    // })
-
     const [multiData, setMultiData] = useState({
         uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
         agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
@@ -56,7 +52,7 @@ const Create = (props: any) => {
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    // const datePicker = useRef() as MutableRefObject<Instance>;
+
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
@@ -136,24 +132,12 @@ const Create = (props: any) => {
 
     const [isCheck, setIsCheck] = useState([]);
     const [isCheckAll, setIsCheckAll] = useState(false);
-    //const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
-    const [list, setList] = useState(metadata);
 
-    // useEffect(() => {
-    //     setList(metadata);
-    // }, [list]);
+    const [list, setList] = useState(metadata);
 
 
     const handleMultiCountryChange = (e) => {
 
-        // let perdata = [...multicountry]
-        // if (e.target.checked) {
-        //     perdata.push(e.target.value)
-        // } else {
-        //     const index = perdata.indexOf(e.target.value);
-        //     perdata.splice(index, 1)
-        // }
-        // setMulticountry(perdata)
         const { id, checked } = e.target;
         setIsCheck([...isCheck, parseInt(id)]);
 
@@ -216,14 +200,7 @@ const Create = (props: any) => {
         let delai = data.dossier_type ? data.dossier_type.delai : 0;
         let deadline = new Date();
         let count = 1;
-        // if (delai) {
-        //     if (hour < 12) {
-        //         deadline = date.setDate(date.getDate() + delai)
-        //     } else {
-        //         deadline = date.setDate(date.getDate() + delai + 1)
-        //     }
-        //     setData('deadline', new Date(deadline));
-        // }
+
         if (hour > 12) {
             delai = delai + 1
         }
@@ -231,7 +208,7 @@ const Create = (props: any) => {
         while (count < delai) {
             deadline = new Date(date.setDate(date.getDate() + 1));
             if (deadline.getDay() != 0 && deadline.getDay() != 6) {
-                //Date.getDay() gives weekday starting from 0(Sunday) to 6(Saturday)
+
                 count++;
             }
         }
@@ -911,7 +888,7 @@ const Create = (props: any) => {
                                                     </div>
                                                 </div>
                                                 {metadata?.map((mt: any, i: string) => {
-
+                                                    console.log(mt.code)
                                                     return (
                                                         <div key={i} className="col-4 d-flex align-items-center mb-5" >
                                                             <div className="me-5 position-relative">
