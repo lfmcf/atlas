@@ -57,6 +57,7 @@
         "clsx": "^2.0.0",
         "datatables.net-bs5": "^1.13.6",
         "datatables.net-dt": "^1.13.6",
+        "file-saver": "^2.0.5",
         "flatpickr": "^4.6.13",
         "formik": "^2.4.3",
         "i18n-iso-countries": "^7.7.0",
@@ -77,10 +78,13 @@
         "react-query": "^3.39.3",
         "react-select": "^5.7.4",
         "react-select2": "^4.0.3",
+        "react-to-print": "^2.14.15",
         "select2": "^4.1.0-rc.0",
+        "sheetjs-style": "^0.15.8",
         "socicon": "^3.0.5",
         "sweetalert2": "^11.7.27",
         "sweetalert2-react-content": "^5.0.7",
+        "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz",
         "yup": "^1.2.0"
     },
     "overrides": {

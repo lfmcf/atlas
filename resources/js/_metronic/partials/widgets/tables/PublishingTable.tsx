@@ -205,12 +205,12 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                             </span>
                                         </td>
                                         <td>
-                                            {typeof row.country === 'object' && row.country ?
+                                            {row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' ?
                                                 <>
                                                     <ReactCountryFlag
-                                                        countryCode={row.country.code}
-                                                        aria-label={row.country.value}
-                                                        title={row.country.value}
+                                                        countryCode="EU"
+                                                        aria-label="Europe"
+                                                        title="Europe"
                                                         svg
                                                         style={{
                                                             width: '1.5em',
@@ -218,16 +218,29 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                         }}
                                                     />
                                                 </> :
-                                                <ReactCountryFlag
-                                                    countryCode={getCountryCode(row.agency_code)}
-                                                    aria-label={row.country}
-                                                    title={row.country}
-                                                    svg
-                                                    style={{
-                                                        width: '1.5em',
-                                                        height: '1.5em',
-                                                    }}
-                                                />}
+                                                typeof row.country === 'object' && row.country ?
+                                                    <>
+                                                        <ReactCountryFlag
+                                                            countryCode={row.country.code}
+                                                            aria-label={row.country.value}
+                                                            title={row.country.value}
+                                                            svg
+                                                            style={{
+                                                                width: '1.5em',
+                                                                height: '1.5em',
+                                                            }}
+                                                        />
+                                                    </> :
+                                                    <ReactCountryFlag
+                                                        countryCode={getCountryCode(row.agency_code)}
+                                                        aria-label={row.country}
+                                                        title={row.country}
+                                                        svg
+                                                        style={{
+                                                            width: '1.5em',
+                                                            height: '1.5em',
+                                                        }}
+                                                    />}
                                         </td>
                                         <td>
                                             <span className='fs-7'>

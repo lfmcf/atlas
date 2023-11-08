@@ -41,10 +41,10 @@ const Create = (props: any) => {
         request_date: new Date()
     })
 
-    const countires = metadata.map((mp) => {
+    // const countires = metadata.map((mp) => {
 
-        return { label: mp.country, value: mp.country, code: mp.code }
-    })
+    //     return { label: mp.country, value: mp.country, code: mp.code }
+    // })
 
     const [multiData, setMultiData] = useState({
         uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
@@ -414,7 +414,7 @@ const Create = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.product_name} name="product_name" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
-                                <div className='col-6'>
+                                {/* <div className='col-6'>
                                     <label className="form-label">Submission country</label>
                                     <Select options={countires}
                                         name="country"
@@ -424,12 +424,9 @@ const Create = (props: any) => {
                                         placeholder=''
                                         isClearable
                                         value={data.country}
-                                    // menuPortalTarget={document.body}
-                                    // styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: '0.8rem' }) }}
+                                    
                                     />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
+                                </div> */}
                                 <div className='col-6'>
 
                                     <label className="form-label">Dossier type</label>
@@ -455,6 +452,9 @@ const Create = (props: any) => {
                                     // styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className="row mb-10">
+
                                 <div className='col-6'>
                                     <label className="form-label">Dossier count</label>
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_count} name="dossier_count" onChange={handleChange} />

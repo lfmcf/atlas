@@ -41,7 +41,7 @@ createInertiaApp({
 
                         {/* </I18nProvider> */}
                     </MetronicI18nProvider>
-                    <ReactQueryDevtools initialIsOpen={false} />
+                    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                 </QueryClientProvider>
                 // <MasterLayout>
                 //     <QueryClientProvider client={queryClient}>

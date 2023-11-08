@@ -12,6 +12,8 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import clsx from 'clsx';
 import { Dropdown1 } from '../../content/dropdown/Dropdown1';
 // import Select2 from 'react-select2/node_modules/react-select2-wrapper'
+import { writeFileXLSX } from "xlsx";
+import XLSX from 'xlsx';
 
 
 type Props = {
@@ -88,10 +90,27 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		setnombrePages(tb.page.info().pages);
 	}
 
-	const handleDownload = () => {
-		console.log('click');
+	const handleDownload = async () => {
 
+		const dataToExport = data.map(row => ({
+			product: row.product_name && typeof row.product_name === 'object' ? row.product_name.value : row.product_name,
+			country: row.country && typeof row.country === 'object' ? row.country.value : row.country,
+			sequence: row.sequence ? row.sequence : 'NA',
+			status: row.status,
+			dossier_type: row.dossier_type.value,
+			request_date: row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : '',
+			last_update: row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''
+		}));
+
+		const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+		writeFileXLSX(workbook, "SheetJSReactExport.xlsx");
 	}
+
+	// const handlePrint = () => {
+	// 	return <ReactToPrint content={() => tableRef} />
+	// }
 
 	const pagination = (number) => {
 
@@ -247,7 +266,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 							data-kt-menu-flip='top-end'>
 							<img src={toAbsoluteUrl("/media/icons/duotune/general/gen053.svg")} />
 						</button>
-						<Dropdown1 handleDownload={handleDownload} />
+						<Dropdown1 handleDownload={handleDownload} content={tableRef} />
 					</div>
 				</div>
 				{/* end::Header */}
@@ -318,28 +337,41 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										</td>
 										<td>
 
-											{typeof row.country === 'object' && row.country ?
+											{row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' ?
 												<>
 													<ReactCountryFlag
-														countryCode={row.country.code}
-														aria-label={row.country.value}
-														title={row.country.value}
+														countryCode="EU"
+														aria-label="Europe"
+														title="Europe"
 														svg
 														style={{
 															width: '1.5em',
 															height: '1.5em',
 														}}
 													/>
-												</> : <ReactCountryFlag
-													countryCode={getCountryCode(row.agency_code)}
-													aria-label={row.country}
-													title={row.country}
-													svg
-													style={{
-														width: '1.5em',
-														height: '1.5em',
-													}}
-												/>}
+												</> :
+												typeof row.country === 'object' && row.country ?
+													<>
+														<ReactCountryFlag
+															countryCode={row.country.code}
+															aria-label={row.country.value}
+															title={row.country.value}
+															svg
+															style={{
+																width: '1.5em',
+																height: '1.5em',
+															}}
+														/>
+													</> : <ReactCountryFlag
+														countryCode={getCountryCode(row.agency_code)}
+														aria-label={row.country}
+														title={row.country}
+														svg
+														style={{
+															width: '1.5em',
+															height: '1.5em',
+														}}
+													/>}
 										</td>
 										<td>
 											<span className='fs-7'>
