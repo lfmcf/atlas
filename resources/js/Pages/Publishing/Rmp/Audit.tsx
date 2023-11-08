@@ -407,7 +407,7 @@ const Audit = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.product_name} name="product_name" onChange={handleChange} />
                                     {/* <!--end::Input--> */}
                                 </div>
-                                <div className='col-6'>
+                                {/* <div className='col-6'>
                                     <label className="form-label">Submission country</label>
                                     <Select options={[]}
                                         name="country"
@@ -417,12 +417,10 @@ const Audit = (props: any) => {
                                         placeholder=''
                                         isClearable
                                         value={data.country}
-                                    // menuPortalTarget={document.body}
-                                    // styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: '0.8rem' }) }}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: '0.8rem' }) }}
                                     />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
+                                </div> */}
                                 <div className='col-6'>
 
                                     <label className="form-label">Dossier type</label>
@@ -448,6 +446,9 @@ const Audit = (props: any) => {
                                     // styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className="row mb-10">
+
                                 <div className='col-6'>
                                     <label className="form-label">Dossier count</label>
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_count} name="dossier_count" onChange={handleChange} />

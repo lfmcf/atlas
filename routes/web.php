@@ -156,6 +156,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('closepublishing', [PublishingController::class, 'close'])->name('closepublishing');
 
     Route::get('/show', [PublishingController::class, 'show'])->name('show');
+
+    Route::get('getFormByYear', [ReportController::class, 'getFormByYear'])->name('getFormByYear');
 });
 
 // ** route for getting country while select product punlishing ** //

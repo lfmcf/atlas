@@ -1,5 +1,6 @@
+import ReactToPrint from "react-to-print";
 /* eslint-disable jsx-a11y/anchor-is-valid */
-export function Dropdown1({ handleDownload }) {
+export function Dropdown1({ handleDownload, content }) {
     return (
         <div className='menu menu-sub menu-sub-dropdown w-200px w-md-200px' data-kt-menu='true'>
             <div className='px-7 py-5'>
@@ -34,9 +35,13 @@ export function Dropdown1({ handleDownload }) {
                 <div className='d-flex align-items-center justify-content-between'>
                     <label className='form-label fw-bold'>Print :</label>
                     <div>
-                        <button className="btn btn-light btn-sm">
-                            <i className="fa-solid fa-print"></i>
-                        </button>
+                        <ReactToPrint
+                            trigger={() => <button className="btn btn-light btn-sm">
+                                <i className="fa-solid fa-print"></i>
+                            </button>}
+                            content={() => content.current}
+                        />
+
                     </div>
                 </div>
 

@@ -102,12 +102,12 @@ const Show = (props) => {
                                             <span className="fw-bold fs-6 text-gray-800">{folder.product_name}</span>
                                         </div>
                                     </div>
-                                    <div className="row mb-7">
+                                    {/* <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission country</label>
                                         <div className="col-lg-8">
                                             <span className="fw-bold fs-6 text-gray-800">{folder.country ? folder.country.value : ''}</span>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Dossier type</label>
                                         <div className="col-lg-8">

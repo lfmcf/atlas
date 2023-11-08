@@ -604,4 +604,109 @@ class ReportController extends Controller
             return $product;
         }
     }
+
+    public function getFormByYear(Request $request)
+    {
+        $year = $request->year;
+        $datey = date('Y', strtotime($year));
+        $stdate = new DateTime($datey . "-1-1");
+        $endate = new DateTime($datey . "-12-31");
+
+        $requestperMonthFor = Formating::raw(function ($collection) use ($stdate, $endate) {;
+
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'created_at' =>
+                        [
+                            '$gt' =>  new MongoDate($stdate),
+                            '$lt' => new MongoDate($endate),
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['$month' => '$created_at'],
+                        'Count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+
+        $requestperMonthPub = Publishing::raw(function ($collection) use ($stdate, $endate) {;
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'created_at' =>
+                        [
+                            '$gt' =>  new MongoDate($stdate),
+                            '$lt' => new MongoDate($endate),
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['$month' => '$created_at'],
+                        'Count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+
+        $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) use ($stdate, $endate) {;
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'created_at' =>
+                        [
+                            '$gt' =>  new MongoDate($stdate),
+                            '$lt' => new MongoDate($endate),
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['$month' => '$created_at'],
+                        'Count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+
+        $my_arr = [];
+        $my_sec_arr = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            foreach ($requestperMonthFor as $x) {
+                if ($x->_id == $i) {
+                    $my_arr[$i] = $x->Count;
+                    break;
+                } else {
+                    $my_arr[$i] = 0;
+                }
+            }
+            foreach ($requestperMonthPub as $y) {
+                if ($y->_id == $i) {
+                    $my_sec_arr[$i] = $y->Count;
+                    break;
+                } else {
+                    $my_sec_arr[$i] = 0;
+                }
+            }
+            foreach ($requestperMonthPubMrp as $z) {
+                if ($z->_id == $i) {
+
+                    $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
+                    break;
+                } else {
+                    $my_sec_arr[$i] = 0;
+                }
+            }
+        }
+
+        return response()->json(['perMonthFor' => array_values($my_arr), 'perMonthPub' => array_values($my_sec_arr)]);
+    }
 }

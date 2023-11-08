@@ -22,7 +22,8 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import clsx from 'clsx'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json';
-import ReactCountryFlag from 'react-country-flag'
+import ReactCountryFlag from 'react-country-flag';
+import axios from 'axios'
 
 countries.registerLocale(enLocale)
 
@@ -318,18 +319,15 @@ const coptions = {
 
 const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry }) => {
 
-    const [startDate, setStartDate] = useState(1659312000000);
+    const [startDate, setStartDate] = useState(new Date());
+    const [dateStart, setDateStart] = useState(new Date());
     const [currentPage, setCurrentPage] = useState(1);
     const [pageNumbers, setpageNumbers] = useState([]);
     const [nombrePages, setnombrePages] = useState(0);
     const [tb, setTb] = useState();
-    const year = moment(startDate).format('yyyy');
+    //const year = moment(startDate).format('yyyy');
 
     const productTableRef = useRef()
-
-    const handleCallback = (start, end, label) => {
-        console.log(start, end, label);
-    }
 
     const data = {
         labels: ['Formatting', 'Publishing', 'Submission'],
@@ -358,8 +356,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             table.destroy()
         }
 
-
-
     }, [])
 
     useEffect(() => {
@@ -368,7 +364,12 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     }, [nombrePages])
 
 
-
+    const handleStartDateChange = (date) => {
+        setStartDate(date)
+        axios.get('getFormByYear', { params: { year: date } }).then(res => {
+            console.log(res)
+        })
+    }
 
     const pagination = (number) => {
 
@@ -387,14 +388,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
         setCurrentPage(number + 1)
         tb.page(number).draw('page')
     }
-
-    const handlePageLengthChange = (e) => {
-        tb.page.len(e.target.value).draw();
-        setnombrePages(tb.page.info().pages);
-    }
-
-
-
 
     return (
         <>
@@ -513,9 +506,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <h3 className="fw-bold mb-1">Total Requests</h3>
                                 {/* <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div> */}
                             </div>
-                            <div className="card-toolbar">
+                            {/* <div className="card-toolbar">
                                 <a href="#" className="btn btn-light btn-sm">View Tasks</a>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="card-body p-9 pt-5">
                             <div className="d-flex flex-wrap">
@@ -552,7 +545,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                 {/* <div className="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
                     <CardsWidget17 className='mb-5 mb-xl-10' PublishingCount={PublishingCount} formattingCount={formattingCount} />
                 </div> */}
-                <div className="col-lg-7">
+                <div className="col-lg-6">
                     <div className="card h-xl-100">
                         <div className='card-header mb-5'>
                             <h3 className='card-title align-items-center flex-column'>
@@ -669,7 +662,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-5">
+                <div className="col-lg-6">
                     <div className='card card-flush h-lg-100'>
                         <div className='card-header pt-7 mb-5'>
                             <h3 className='card-title align-items-start flex-column'>
@@ -780,23 +773,13 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             </h3>
 
                             <div className="card-toolbar">
-
-
-                                <DatePicker dateFormat="yyyy" showYearPicker selected={startDate} onChange={(date) => setStartDate(date)} className="form-select form-select-solid form-select-sm fw-bold w-100px">
-                                    {/* <button className="btn btn-sm btn-light d-flex align-items-center px-4" >
-                                        <div className="text-gray-600 fw-bold">1 Sep 2023 - 30 Sep 2023</div>
-
-                                        <i className="ki-duotone ki-calendar-8 fs-1 ms-2 me-0">
-                                            <span className="path1"></span>
-                                            <span className="path2"></span>
-                                            <span className="path3"></span>
-                                            <span className="path4"></span>
-                                            <span className="path5"></span>
-                                            <span className="path6"></span>
-                                        </i>
-                                    </button> */}
-                                </DatePicker>
-
+                                <DatePicker
+                                    dateFormat="yyyy"
+                                    showYearPicker selected={dateStart}
+                                    onChange={(date) => setDateStart(date)}
+                                    className="form-select form-select-solid form-select-sm fw-bold w-100px"
+                                    yearItemNumber={6}
+                                />
                             </div>
                         </div>
                         <div className='card-body d-flex flex-column justify-content-between pb-5 px-0'>
@@ -886,12 +869,19 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </div>
                             </div>
                             <div className="card-toolbar">
-                                <select name="status" data-control="select2" data-hide-search="true" className="form-select form-select-solid form-select-sm fw-bold w-100px">
+                                {/* <select name="status" data-control="select2" data-hide-search="true" className="form-select form-select-solid form-select-sm fw-bold w-100px">
                                     <option value="1">2020</option>
                                     <option value="2">2021</option>
                                     <option value="3" >2022</option>
                                     <option value="4" selected>2023</option>
-                                </select>
+                                </select> */}
+                                <DatePicker
+                                    dateFormat="yyyy"
+                                    showYearPicker selected={startDate}
+                                    onChange={handleStartDateChange}
+                                    className="form-select form-select-solid form-select-sm fw-bold w-100px"
+                                    yearItemNumber={6}
+                                />
 
                             </div>
                         </div>
