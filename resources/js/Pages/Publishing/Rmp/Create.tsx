@@ -910,7 +910,7 @@ const Create = (props: any) => {
                                                         <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
                                                     </div>
                                                 </div>
-                                                {metadata.map((mt: any, i: string) => {
+                                                {metadata?.map((mt: any, i: string) => {
 
                                                     return (
                                                         <div key={i} className="col-4 d-flex align-items-center mb-5" >
