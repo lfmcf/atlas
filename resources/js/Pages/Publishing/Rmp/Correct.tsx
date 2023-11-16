@@ -837,13 +837,13 @@ const Correct = (props: any) => {
                                     </div>
                                 </div>
                                 <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
+                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
                                         <span className="accordion-icon">
                                             <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
                                         </span>
                                         <h3 className="fs-4 fw-semibold mb-0 ms-4">Delivery comment</h3>
                                     </div>
-                                    <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
+                                    <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10 show" data-bs-parent="#kt_accordion_2">
                                         {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
                                             <div key={i} className='d-flex justify-content-start mb-10'>
                                                 <div className='d-flex flex-column align-items-start'>
@@ -866,13 +866,13 @@ const Correct = (props: any) => {
                                     </div>
                                 </div>
                                 <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_4_item_3">
+                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_4_item_3">
                                         <span className="accordion-icon">
                                             <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
                                         </span>
                                         <h3 className="fs-4 fw-semibold mb-0 ms-4">Correction requests</h3>
                                     </div>
-                                    <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10 show" data-bs-parent="#kt_accordion_2">
+                                    <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
                                         <div className='mb-10'>
                                             {
                                                 folder.correction ? folder.correction.map((msg, i) => (

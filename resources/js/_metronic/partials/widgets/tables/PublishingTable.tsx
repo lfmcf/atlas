@@ -304,19 +304,19 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                             </> : row.status == 'to verify' ?
                                                                 <>
 
-                                                                    <a
+                                                                    {/* <a
                                                                         href='#'
                                                                         onClick={() => router.post(route('confirm-publishing-out', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
                                                                         <KTIcon iconName='check-circle' className='fs-3' />
-                                                                    </a>
+                                                                    </a> */}
                                                                     <a
                                                                         href='#'
                                                                         onClick={() => router.get(route('publishing-audit', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
-                                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                                        <KTIcon iconName='eye' className='fs-3' />
                                                                     </a>
                                                                 </>
                                                                 : row.status == 'in progress' || row.status == 'to correct' ?

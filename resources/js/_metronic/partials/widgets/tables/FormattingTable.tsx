@@ -172,11 +172,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                             <tbody>
                                 {data ? Object.values(data).map((row: any, i) => (
                                     <tr key={i}>
-                                        {/* <td>
-                                            <div className='form-check form-check-sm form-check-custom form-check-solid'>
-                                                <input className='form-check-input widget-9-check' type='checkbox' value='1' />
-                                            </div>
-                                        </td> */}
+
                                         <td>
                                             <span className='fs-7'>
                                                 {row.product_name ? row.product_name.value : ''}
@@ -184,7 +180,6 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
                                         </td>
                                         <td>
-                                            {/* <a href='#' className='text-dark fw-bold text-hover-primary d-block fs-6'> */}
                                             <ReactCountryFlag
                                                 countryCode={row.country.code}
                                                 aria-label={row.country.value}
@@ -195,14 +190,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                     height: '1.5em',
                                                 }}
                                             />
-                                            {/* </a> */}
-                                            {/* <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                                                <ReactCountryFlag
-                                                    className="emojiFlag"
-                                                    countryCode={row.country.code}
-                                                    aria-label={row.country.value}
-                                                /> / {row.country ? row.country.code : ''}
-                                            </span> */}
+
                                         </td>
                                         <td>
                                             <span className='fs-7'>
@@ -266,19 +254,19 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                             : row.status == 'to verify' ?
                                                                 <>
 
-                                                                    <a
+                                                                    {/* <a
                                                                         href='#'
                                                                         onClick={() => router.post(route('confirm-formatting-out', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
                                                                         <KTIcon iconName='check-circle' className='fs-3' />
-                                                                    </a>
+                                                                    </a> */}
                                                                     <a
                                                                         href='#'
                                                                         onClick={() => router.get(route('formatting-audit', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     >
-                                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                                        <KTIcon iconName='eye' className='fs-3' />
                                                                     </a>
                                                                 </>
                                                                 : row.status == 'in progress' || row.status == 'to correct' ?

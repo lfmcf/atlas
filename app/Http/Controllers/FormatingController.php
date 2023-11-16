@@ -194,7 +194,7 @@ class FormatingController extends Controller
                         $filename
                     );
                     $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                    $myarr['link'] = asset('/storage' . $filename);;
                 }
                 return $myarr;
             }, $docs);
@@ -321,7 +321,7 @@ class FormatingController extends Controller
                             $filename
                         );
                         $myarr['name'] = $filename;
-                        $myarr['link'] = asset('storage/documents/' . $filename);;
+                        $myarr['link'] = asset('/storage' . $filename);;
                     }
                     return $myarr;
                 }, $docs);
@@ -447,6 +447,15 @@ class FormatingController extends Controller
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         return redirect()->back()->with('message', 'Request ACK has been susccessfully sent');
+    }
+
+    public function deleteFile(Request $request)
+    {
+
+        $filename = $request->file['name'];
+        $id = $request->id;
+        $folder = Formating::where('_id', $id)->pull('document', ['name' => $filename]);
+        Storage::disk('public')->delete($filename);
     }
 
     // public function setVerify(Request $request)

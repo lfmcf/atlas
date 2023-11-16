@@ -40,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     return Inertia::render('Dashboard');
     // })->name('dashboard');
 
+
+
     Route::get('/', [ReportController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [ReportController::class, 'index'])->name('dashboard');
 
@@ -75,6 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** complete and close demande  ** //
     Route::post('complete-formatting', [FormatingController::class, 'complete'])->name('complete-formatting');
     Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
+
+    // ** delete files from the server  ** //
+    Route::post('delete-file', [FormatingController::class, 'deleteFile'])->name('delete-file');
 
     // ** store orm publishing ** //
     Route::post('/store-publishing', [PublishingController::class, 'store'])->name('store-publishing');

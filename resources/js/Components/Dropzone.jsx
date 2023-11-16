@@ -2,20 +2,27 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { useDropzone } from 'react-dropzone';
 
-const DropZone = () => {
+const DropZone = ({ files, upload, deleletFile, removeAll }) => {
 
     const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
     const [myfiles, setMyFiles] = useState([]);
 
     const handleOnDrop = (files, rejectedFiles) => {
-        var arr = [...myfiles]
-        arr.push(...files)
-        console.log(arr)
-        setMyFiles(arr)
-
+        // var arr = [...myfiles]
+        // arr.push(...files)
+        // setMyFiles(arr)
+        upload(files)
     }
 
+    // const removeAll = () => {
+    //     setMyFiles([])
+    // }
 
+    // const deleletFile = (i) => {
+    //     var arr = [...myfiles]
+    //     arr.splice(i, 1)
+    //     setMyFiles(arr)
+    // }
 
     return (
         <>
@@ -24,10 +31,10 @@ const DropZone = () => {
                     <>
                         <div className="col-lg-10">
                             <a {...getRootProps({ className: 'dropzone' })} className="dropzone-select btn btn-sm btn-primary me-2">Attach files</a>
-                            {myfiles && myfiles.length > 0 ?
+                            {files && files.length > 0 ?
                                 <>
-                                    <a className="dropzone-remove-all btn btn-sm btn-light-primary">Remove all</a>
-                                    {myfiles.map((file, i) => (
+                                    <a className="dropzone-remove-all btn btn-sm btn-light-primary" onClick={removeAll}>Remove all</a>
+                                    {files.map((file, i) => (
                                         <div className="dropzone-items wm-200px mt-5" key={i}>
                                             <div className="dropzone-item">
                                                 <div className="dropzone-file">
@@ -49,7 +56,7 @@ const DropZone = () => {
                                                     </div>
                                                 </div>
                                                 <div className="dropzone-toolbar">
-                                                    <span className="dropzone-delete">
+                                                    <span className="dropzone-delete" onClick={() => deleletFile(i)}>
                                                         <i className="bi bi-x fs-1"></i>
                                                     </span>
                                                 </div>

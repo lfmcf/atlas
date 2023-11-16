@@ -58,34 +58,15 @@ const Initiate = (props: any) => {
     }, [])
 
 
-    // const inputRef = useCallback((node: Node | null) => {
-    //     if (node !== null) {
-    //         datePicker.current = flatpickr(node, {
-    //             defaultDate: data.deadline.toString(),
-    //             dateFormat: "d-M-Y",
-    //         });
-    //     }
-    // }, []);
-
     const nextStep = () => {
-        // setHasError(false)
-
         if (!stepper.current) {
             return
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
         }
 
         if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
         }
 
         stepper.current.goNext()
@@ -95,7 +76,6 @@ const Initiate = (props: any) => {
         if (!stepper.current) {
             return
         }
-
         stepper.current.goPrev()
     }
 
@@ -105,9 +85,20 @@ const Initiate = (props: any) => {
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        instData.doc = []
+        setData(instData)
+    }
+
+    const deleletFile = (i) => {
+        var arr = { ...data }
+        arr.doc.splice(i, 1)
+        setData(arr)
     }
 
     const handleSelectChange = (e, name) => {
@@ -351,7 +342,7 @@ const Initiate = (props: any) => {
 
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <DropZone />
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
                                 </div>
                                 {/* <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <div className='d-flex align-items-center text-gray-400 h-100'>

@@ -8,6 +8,7 @@ import { formattingDossierType, formattingProduct, substanceFormattingList } fro
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import StatusComponent from '../../Components/StatusComponent';
+import axios from 'axios';
 
 const Confirm = (props: any) => {
 
@@ -77,24 +78,16 @@ const Confirm = (props: any) => {
     }
 
     const nextStep = () => {
-        // setHasError(false)
-
         if (!stepper.current) {
             return
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         stepper.current.goNext()
@@ -106,6 +99,14 @@ const Confirm = (props: any) => {
         }
 
         stepper.current.goPrev()
+    }
+
+    const deleletFileFRomServer = (id, i) => {
+
+        axios.post('/delete-file', {
+            id: id,
+            file: i
+        })
     }
 
     return (
@@ -307,12 +308,30 @@ const Confirm = (props: any) => {
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-12 mb-10'>
+                                <div className='col-6 mb-10'>
                                     <label className="form-label">Uploaded documents</label>
-                                    <ul>
+                                    <ul className='list-unstyled'>
                                         {folder.document ? folder.document.map((doc, i) => (
                                             <li key={i}>
-                                                <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
+                                                <div className='dropzone-items d-flex w-500px mt-1'>
+                                                    <div className="dropzone-item">
+                                                        <div className="dropzone-file">
+                                                            <div className="dropzone-filename">
+                                                                <span>
+                                                                    <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="dropzone-toolbar">
+                                                            <span className="dropzone-delete" onClick={() => deleletFileFRomServer(data.id, doc)}>
+                                                                <i className="bi bi-x fs-1"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+
                                             </li>
                                         )) : ''}
                                     </ul>
