@@ -116,6 +116,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
     Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
 
+    Route::get('/publishing-initiate-gcc', [PublishingController::class, 'createGcc'])->name('publishing-initiate-gcc');
+
     Route::post('confirm-rmp-publishing', [PublishingController::class, 'confirmmrp'])->name('confirm-rmp-publishing');
 
     Route::post('audit-rmp-publishing', [PublishingController::class, 'auditmrp'])->name('audit-rmp-publishing');

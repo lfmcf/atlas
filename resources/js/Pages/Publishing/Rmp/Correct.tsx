@@ -30,6 +30,11 @@ const Correct = (props: any) => {
 
     const { metadata, folder } = props;
 
+    const [isCheck, setIsCheck] = useState([]);
+    const [isCheckAll, setIsCheckAll] = useState(false);
+    const [list, setList] = useState(folder.mt);
+
+
     console.log(folder)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -240,6 +245,14 @@ const Correct = (props: any) => {
         arr.correction.message = editorData
         setData(arr)
     }
+
+    const handleSelectAll = e => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck(list.map(li => li.id));
+        if (isCheckAll) {
+            setIsCheck([]);
+        }
+    };
 
     return (
         <>
@@ -495,11 +508,11 @@ const Correct = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {/* {metadata.map((mt: any, i: string) => (
+                                            {folder.mt.map((mt: any, i: string) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a className="nav-link mx-0 my-2" data-bs-toggle="tab" href={"#kt_vtab_pane_" + i}>{mt.country}</a>
                                                 </li>
-                                            ))} */}
+                                            ))}
                                         </div>
                                     </div>
 
@@ -978,122 +991,155 @@ const Correct = (props: any) => {
                                     </div>
                                 </div>
 
-                                <div className='d-flex flex-column'>
+                                <div className=''>
                                     <div className='row mt-10'>
-                                        <div className='col-lg-6 mb-10 mb-lg-0'>
-                                            {/* <form >
-                                                <div className='mb-10'>
-                                                    <label className="form-label">UUID</label>
-                                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0].uuid} onChange={handleMultipleChange} />
+                                        <div className='col-lg-12 mb-10 mb-lg-0'>
+                                            <form className='row'>
+                                                <div className='col-6'>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">UUID</label>
+                                                        <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={folder.mt[0].uuid} onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Submission type</label>
+                                                        <Select options={publishingMrpSubmissionType}
+                                                            name='submission_type'
+                                                            onChange={(e) => handleMultipleSelectChange(e, 'submission_type')}
+                                                            className="basic"
+                                                            classNamePrefix="basic"
+                                                            placeholder=''
+                                                            isClearable
+                                                            value={folder.mt[0].submission_type}
+                                                            menuPortalTarget={document.body}
+                                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                                        />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Submission mode</label>
+                                                        <Select options={[
+                                                            { label: 'Single', value: 'Single' },
+                                                            { label: 'Grouping', value: 'Grouping' },
+                                                            { label: 'Worksharing', value: 'Worksharing' },
+                                                        ]}
+                                                            name='submission_mode'
+                                                            onChange={(e) => handleMultipleSelectChange(e, 'submission_mode')}
+                                                            className="basic"
+                                                            classNamePrefix="basic"
+                                                            placeholder=''
+                                                            isClearable
+                                                            value={folder.mt[0].submission_mode}
+                                                            menuPortalTarget={document.body}
+                                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                                        />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Procedure Tracking N°</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Submission unit</label>
+                                                        <Select options={[
+                                                            { label: 'initial', value: 'initial' },
+                                                            { label: 'validation-response', value: 'validation-response' },
+                                                            { label: 'response', value: 'response' },
+                                                            { label: 'additional-info', value: 'additional-info' },
+                                                            { label: 'closing', value: 'closing' },
+                                                            { label: 'consolidating', value: 'consolidating' },
+                                                            { label: 'corrigendum', value: 'corrigendum' },
+                                                            { label: 'reformat', value: 'reformat' },
+                                                        ]}
+                                                            name='submission_unit'
+                                                            onChange={(e) => handleMultipleSelectChange(e, 'submission_unit')}
+                                                            className="basic"
+                                                            classNamePrefix="basic"
+                                                            placeholder=''
+                                                            isClearable
+                                                            value={folder.mt[0].submission_unit}
+                                                            menuPortalTarget={document.body}
+                                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                                        />
+                                                    </div>
+
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Applicant</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].applicant} name="applicant" onChange={handleMultipleChange} />
+                                                    </div>
                                                 </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Submission type</label>
-                                                    <Select options={publishingMrpSubmissionType}
-                                                        name='submission_type'
-                                                        onChange={(e) => handleMultipleSelectChange(e, 'submission_type')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
-                                                        placeholder=''
-                                                        isClearable
-                                                        value={metadata[0].submission_type}
-                                                        menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                    />
+                                                <div className='col-6'>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Invented name</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].Product} name="inventedName" onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">INN</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].inn} name="inn" onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Sequence</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].sequence} name="sequence" onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Related Sequence</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
+                                                    </div>
+                                                    <div className='mb-10'>
+                                                        <label className="form-label">Submission description</label>
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={folder.mt[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
+                                                    </div>
                                                 </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Submission mode</label>
-                                                    <Select options={[
-                                                        { label: 'Single', value: 'Single' },
-                                                        { label: 'Grouping', value: 'Grouping' },
-                                                        { label: 'Worksharing', value: 'Worksharing' },
-                                                    ]}
-                                                        name='submission_mode'
-                                                        onChange={(e) => handleMultipleSelectChange(e, 'submission_mode')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
-                                                        placeholder=''
-                                                        isClearable
-                                                        value={metadata[0].submission_mode}
-                                                        menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                    />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Procedure Tracking N°</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Submission unit</label>
-                                                    <Select options={[
-                                                        { label: 'initial', value: 'initial' },
-                                                        { label: 'validation-response', value: 'validation-response' },
-                                                        { label: 'response', value: 'response' },
-                                                        { label: 'additional-info', value: 'additional-info' },
-                                                        { label: 'closing', value: 'closing' },
-                                                        { label: 'consolidating', value: 'consolidating' },
-                                                        { label: 'corrigendum', value: 'corrigendum' },
-                                                        { label: 'reformat', value: 'reformat' },
-                                                    ]}
-                                                        name='submission_unit'
-                                                        onChange={(e) => handleMultipleSelectChange(e, 'submission_unit')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
-                                                        placeholder=''
-                                                        isClearable
-                                                        value={metadata[0].submission_unit}
-                                                        menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                    />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Applicant</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].applicant} name="applicant" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Invented name</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].Product} name="inventedName" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">INN</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].inn} name="inn" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Sequence</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].sequence} name="sequence" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Related Sequence</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
-                                                </div>
-                                                <div className='mb-10'>
-                                                    <label className="form-label">Submission description</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
-                                                </div>
-                                            </form> */}
+                                            </form>
                                         </div>
 
-                                        {/* <div className='col-lg-6'>
-                                            <div className='tab-content rounded h-100 bg-light p-10'>
-                                                {metadata.map((mt: any, i: string) => {
+                                        <div className='col-lg-12'>
+                                            <div className='row'>
+                                                <div className="col-4 d-flex align-items-center mb-5" >
+                                                    <div className="me-5 position-relative">
+                                                        <div className="symbol symbol-35px symbol-circle">
+                                                            <ReactCountryFlag
+                                                                className="emojiFlag"
+                                                                countryCode="EU"
+                                                                aria-label="Europe"
+                                                                svg
+                                                                style={{ width: '25px', height: '25px', borderRadius: '4px' }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="fw-semibold" style={{ width: '40%' }}>
+                                                        <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">All Countries</a>
+                                                        <div className="text-gray-400">All</div>
+                                                    </div>
+                                                    <div className="badge badge-light">
+                                                        <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
+                                                    </div>
+                                                </div>
+                                                {folder.mt?.map((mt: any, i: string) => {
 
                                                     return (
-                                                        <div key={i} className="d-flex align-items-center mb-5" >
+                                                        <div key={i} className="col-4 d-flex align-items-center mb-5" >
                                                             <div className="me-5 position-relative">
                                                                 <div className="symbol symbol-35px symbol-circle">
                                                                     <ReactCountryFlag
                                                                         className="emojiFlag"
                                                                         countryCode={mt.code}
                                                                         aria-label={mt.country}
+                                                                        svg
+                                                                        style={{ width: '25px', height: '25px', borderRadius: '4px' }}
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <div className="fw-semibold">
+                                                            <div className="fw-semibold" style={{ width: '40%' }}>
                                                                 <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">{mt.country}</a>
                                                                 <div className="text-gray-400">{mt.code}</div>
                                                             </div>
 
-                                                            <div className="badge badge-light ms-auto">
-                                                                <input type='checkbox' defaultChecked={true} name="multicountry" value={mt.country} onChange={handleMultiCountryChange} />
+                                                            <div className="badge badge-light ">
+                                                                <input type='checkbox'
+                                                                    id={mt.id}
+                                                                    name={mt.country}
+                                                                    value={mt.country}
+                                                                    onChange={handleMultiCountryChange}
+                                                                    checked={isCheck.includes(mt.id) ? true : false}
+                                                                />
                                                             </div>
                                                         </div>
                                                     )
@@ -1101,7 +1147,7 @@ const Correct = (props: any) => {
 
 
                                             </div>
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </div>
 

@@ -47,10 +47,6 @@ class PublishingController extends Controller
             $product = $request->query('product');
         }
 
-
-
-
-
         if ($region == "EU") {
 
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
@@ -134,6 +130,21 @@ class PublishingController extends Controller
                 ]);
             }
         }
+    }
+
+    public function createGcc(Request $request)
+    {
+        $region = $request->query('region');
+        $procedure = $request->query('procedure');
+        $country = $request->query('country');
+        $product = $request->query('product');
+
+        $country = is_array($country) ? $country['value'] : $country;
+        return Inertia::render('Publishing/Nat/Gcc/Initiate_', [
+            'countries' => $country,
+            'products' => $product,
+            'countries' => $country,
+        ]);
     }
 
     /**

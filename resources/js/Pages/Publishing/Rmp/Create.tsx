@@ -14,7 +14,7 @@ import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 const Create = (props: any) => {
 
     const { metadata, folder } = props;
-    console.log(metadata)
+
     var params = new URLSearchParams(window.location.search);
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -147,8 +147,6 @@ const Create = (props: any) => {
         }
 
     }
-
-    // console.log(isCheck);
 
     const handleSelectAll = e => {
         setIsCheckAll(!isCheckAll);
@@ -888,7 +886,7 @@ const Create = (props: any) => {
                                                     </div>
                                                 </div>
                                                 {metadata?.map((mt: any, i: string) => {
-                                                    console.log(mt.code)
+
                                                     return (
                                                         <div key={i} className="col-4 d-flex align-items-center mb-5" >
                                                             <div className="me-5 position-relative">
