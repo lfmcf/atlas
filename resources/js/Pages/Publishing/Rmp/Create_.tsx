@@ -11,7 +11,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 
-const Create = (props: any) => {
+const Create_ = (props: any) => {
 
     const { metadata, folder } = props;
 
@@ -42,11 +42,11 @@ const Create = (props: any) => {
         request_date: new Date()
     })
 
-    const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
-        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
-    });
+    // const [multiData, setMultiData] = useState({
+    //     uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
+    //     agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
+    //     r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+    // });
 
 
 
@@ -66,17 +66,11 @@ const Create = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         stepper.current.goNext()
@@ -108,6 +102,7 @@ const Create = (props: any) => {
 
     const handleMetaChange = (e, id) => {
         let prevData = { ...data }
+
         prevData.mt[id][e.target.name] = e.target.value
         setData(prevData)
     }
@@ -118,74 +113,74 @@ const Create = (props: any) => {
         setData(prevData)
     }
 
-    const handleMultipleSelectChange = (e, name) => {
-        const perdata = { ...multiData }
-        perdata[name] = e
-        setMultiData(perdata)
-    }
+    // const handleMultipleSelectChange = (e, name) => {
+    //     const perdata = { ...multiData }
+    //     perdata[name] = e
+    //     setMultiData(perdata)
+    // }
 
-    const handleMultipleChange = (e) => {
-        const perdata = { ...multiData }
-        perdata[e.target.name] = e.target.value
-        setMultiData(perdata)
-    }
+    // const handleMultipleChange = (e) => {
+    //     const perdata = { ...multiData }
+    //     perdata[e.target.name] = e.target.value
+    //     setMultiData(perdata)
+    // }
 
-    const [isCheck, setIsCheck] = useState([]);
-    const [isCheckAll, setIsCheckAll] = useState(false);
+    // const [isCheck, setIsCheck] = useState([]);
+    // const [isCheckAll, setIsCheckAll] = useState(false);
 
-    const [list, setList] = useState(metadata);
+    // const [list, setList] = useState(metadata);
 
 
-    const handleMultiCountryChange = (e) => {
+    // const handleMultiCountryChange = (e) => {
 
-        const { id, checked } = e.target;
-        setIsCheck([...isCheck, parseInt(id)]);
+    //     const { id, checked } = e.target;
+    //     setIsCheck([...isCheck, parseInt(id)]);
 
-        if (!checked) {
+    //     if (!checked) {
 
-            setIsCheck(isCheck.filter(item => item != id));
-        }
+    //         setIsCheck(isCheck.filter(item => item != id));
+    //     }
 
-    }
+    // }
 
-    const handleSelectAll = e => {
-        setIsCheckAll(!isCheckAll);
-        setIsCheck(list.map(li => li.id));
-        if (isCheckAll) {
-            setIsCheck([]);
-        }
-    };
+    // const handleSelectAll = e => {
+    //     setIsCheckAll(!isCheckAll);
+    //     setIsCheck(list.map(li => li.id));
+    //     if (isCheckAll) {
+    //         setIsCheck([]);
+    //     }
+    // };
 
-    const handleSubmitMulti = () => {
-        let perdata = { ...data }
+    // const handleSubmitMulti = () => {
+    //     let perdata = { ...data }
 
-        perdata.mt.map((cnt, i) => {
-            if (isCheck.includes(cnt.id)) {
-                perdata.mt[i].uuid = multiData.uuid
-                perdata.mt[i].submission_type = multiData.submission_type
-                perdata.mt[i].submission_mode = multiData.submission_mode
-                perdata.mt[i].trackingNumber = multiData.trackingNumber
-                perdata.mt[i].submission_unit = multiData.submission_unit
-                perdata.mt[i].applicant = multiData.applicant
-                perdata.mt[i].agencyCode = multiData.agencyCode
-                perdata.mt[i].inventedName = multiData.inventedName
-                perdata.mt[i].mtd = multiData.mtd
-                perdata.mt[i].inn = multiData.inn
-                perdata.mt[i].sequence = multiData.sequence
-                perdata.mt[i].r_sequence = multiData.r_sequence
-                perdata.mt[i].submission_description = multiData.submission_description
-                perdata.mt[i].remarks = multiData.remarks
-            }
-        })
-        setData(perdata)
-    }
+    //     perdata.mt.map((cnt, i) => {
+    //         if (isCheck.includes(cnt.id)) {
+    //             perdata.mt[i].uuid = multiData.uuid
+    //             perdata.mt[i].submission_type = multiData.submission_type
+    //             perdata.mt[i].submission_mode = multiData.submission_mode
+    //             perdata.mt[i].trackingNumber = multiData.trackingNumber
+    //             perdata.mt[i].submission_unit = multiData.submission_unit
+    //             perdata.mt[i].applicant = multiData.applicant
+    //             perdata.mt[i].agencyCode = multiData.agencyCode
+    //             perdata.mt[i].inventedName = multiData.inventedName
+    //             perdata.mt[i].mtd = multiData.mtd
+    //             perdata.mt[i].inn = multiData.inn
+    //             perdata.mt[i].sequence = multiData.sequence
+    //             perdata.mt[i].r_sequence = multiData.r_sequence
+    //             perdata.mt[i].submission_description = multiData.submission_description
+    //             perdata.mt[i].remarks = multiData.remarks
+    //         }
+    //     })
+    //     setData(perdata)
+    // }
 
     useEffect(() => {
         let arr = { ...data };
         metadata.map((mtd, i) => {
             arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
-                submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
+                id: mtd.id, country: mtd.country, uuid: '', submission_type: '', submission_mode: '', trackingNumber: '',
+                submission_unit: '', applicant: 'STALLERGENES', agencyCode: mtd.agencyCode, inventedName: data.product_name, inn: '', sequence: '',
                 r_sequence: '', submission_description: '', remarks: ''
             })
         })
@@ -215,9 +210,13 @@ const Create = (props: any) => {
 
     }, [data.dossier_type]);
 
+
+
     const handleSubmit = (e, type) => {
+
         e.preventDefault();
-        post(route('initiate-rmp-publishing', { type: type }));
+
+        post(route('initiate-rmp-publishing_', { type: type }));
     }
 
     return (
@@ -442,12 +441,12 @@ const Create = (props: any) => {
                         </div>
 
                         <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='d-flex justify-content-end mb-1'>
+                            {/* <div className='d-flex justify-content-end mb-1'>
                                 <a href='#' className='btn btn-secondary btn-sm' data-bs-toggle='modal' data-bs-target='#kt_modal_multi_data_update'>
                                     <i className="fa-solid fa-plus"></i>
                                 </a>
 
-                            </div>
+                            </div> */}
                             <div className="d-flex flex-column flex-md-row rounded border p-10">
 
                                 <ul className="nav nav-tabs nav-line-tabs border-0 flex-row flex-md-column me-5 mb-3 mb-md-0 fs-6">
@@ -508,7 +507,7 @@ const Create = (props: any) => {
                                             <div className='row mb-10'>
                                                 <div className='col-4'>
                                                     <label className="form-label">Procedure Tracking N°</label>
-                                                    <input type="text" className="form-control form-control-solid" name="tracking" value={mt.trackingNumber} onChange={(e) => handleMetaChange(e, i)} />
+                                                    <input type="text" className="form-control form-control-solid" name="trackingNumber" value={mt.trackingNumber} onChange={(e) => handleMetaChange(e, i)} />
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label">Submission unit</label>
@@ -742,7 +741,7 @@ const Create = (props: any) => {
 
                 {/* multi update modal */}
 
-                <div className='modal fade' id='kt_modal_multi_data_update' aria-hidden='true'>
+                {/* <div className='modal fade' id='kt_modal_multi_data_update' aria-hidden='true'>
                     <div className='modal-dialog modal-xl'>
                         <div className='modal-content rounded'>
                             <div className='modal-header justify-content-end border-0 pb-0'>
@@ -757,9 +756,7 @@ const Create = (props: any) => {
 
                                     <div className='text-muted fw-bold fs-5'>
                                         Apply update for selected countries{' '}
-                                        {/* <a href='#' className='link-primary fw-bolder'>
-                                    Pricing Guidelines
-                                </a> */}
+                                       
                                         .
                                     </div>
                                 </div>
@@ -936,13 +933,13 @@ const Create = (props: any) => {
                             </div>
                         </div>
                     </div>
-                </div >
+                </div > */}
             </div>
         </>
     )
 
 }
 
-Create.layout = page => <Authenticated children={page} auth={page.props.auth} />
+Create_.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-export default Create;
+export default Create_;

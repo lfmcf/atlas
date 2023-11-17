@@ -83,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** store orm publishing ** //
     Route::post('/store-publishing', [PublishingController::class, 'store'])->name('store-publishing');
+    Route::post('/store-publishing_', [PublishingController::class, 'store_'])->name('store-publishing_');
 
     // ** confirm deadline form publishing ** //
     Route::get('/publishing-confirm', [PublishingController::class, 'createConfirm'])->name('publishing-confirm');
@@ -110,6 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** iniatiate and submit form publishing nationale gcc ** //
     Route::post('store-publishing-nat-gcc', [PublishingController::class, 'storeNatGcc'])->name('store-publishing-nat-gcc');
+    Route::post('store-publishing-nat-gcc_', [PublishingController::class, 'storeNatGcc_'])->name('store-publishing-nat-gcc_');
 
     // ** confirm form publishing nationale gcc ** //
     Route::post('confirm-publishing-nat-gcc', [PublishingController::class, 'confirmNatGcc'])->name('confirm-publishing-nat-gcc');
@@ -120,8 +122,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** iniatiate and submit form publishing rmp ** //
     Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
     Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
+    Route::post('initiate-rmp-publishing_', [PublishingController::class, 'storemrp_'])->name('initiate-rmp-publishing_');
 
-    Route::get('/publishing-initiate-gcc', [PublishingController::class, 'createGcc'])->name('publishing-initiate-gcc');
+    Route::get('/publishing-initiate_', [PublishingController::class, 'create_'])->name('publishing-initiate_');
+
 
     Route::post('confirm-rmp-publishing', [PublishingController::class, 'confirmmrp'])->name('confirm-rmp-publishing');
 
@@ -133,6 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** iniatiate and submit form publishing nationale ch ** //
     Route::post('store-publishing-nat-ch', [PublishingController::class, 'storeNatCh'])->name('store-publishing-nat-ch');
+    Route::post('store-publishing-nat-ch_', [PublishingController::class, 'storeNatCh_'])->name('store-publishing-nat-ch_');
 
     // ** confirm form publishing nationale ch ** //
     Route::post('confirm-publishing-nat-ch', [PublishingController::class, 'confirmNatCH'])->name('confirm-publishing-nat-ch');

@@ -32,6 +32,15 @@ const MultiValue = props => (
 );
 const animatedComponents = makeAnimated();
 
+const SelectMenuButton = (props) => {
+    return (
+        <components.MenuList  {...props}>
+            {props.children}
+            <button className='btn btn-sm bn-info'>Add new product</button>
+        </components.MenuList >
+    )
+}
+
 
 type FormValues = {
     form: any,
@@ -166,15 +175,13 @@ const InviteUsers = () => {
 
     const handleLifeCycle = () => {
 
-        if (region_ && region_.value == "GCC") {
-            router.visit('/publishing-initiate-gcc', {
-                method: 'get',
-                data: { form: form_.value, region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-        }
+        router.visit('/publishing-initiate_', {
+            method: 'get',
+            data: { form: form_.value, region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
     }
 
     useEffect(() => {
@@ -266,7 +273,9 @@ const InviteUsers = () => {
                                     className="nav-link active"
                                     data-bs-toggle="tab"
                                     href="#kt_tab_pane_1"
-                                >LifeCycle</a>
+                                >
+                                    New request
+                                </a>
                             </li>
                             <li className="nav-item">
                                 <a
@@ -274,7 +283,7 @@ const InviteUsers = () => {
                                     data-bs-toggle="tab"
                                     href="#kt_tab_pane_2"
                                 >
-                                    New request
+                                    LifeCycle
                                 </a>
                             </li>
                         </ul>
@@ -341,6 +350,7 @@ const InviteUsers = () => {
                                         isClearable
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        components={{ MenuList: SelectMenuButton }}
                                     />
                                 </div>
                                 <div className='my-4'>

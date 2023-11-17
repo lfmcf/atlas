@@ -1,43 +1,41 @@
-import { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
-import Authenticated from '../../../../Layouts/AuthenticatedLayout'
-import { StepperComponent } from '../../../../_metronic/assets/ts/components'
+import { useEffect, useRef } from 'react'
+import Authenticated from '../../../Layouts/AuthenticatedLayout'
+import { StepperComponent } from '../../../_metronic/assets/ts/components'
+import { useForm } from '@inertiajs/react';
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import Select from 'react-select';
-import moment from 'moment';
-import { useForm } from '@inertiajs/react';
-import { gcccountry } from '../../../Lab/MetaDataList';
 
-const Initiate_ = (props: any) => {
+const Initiate = (props: any) => {
+    const { folder, agc } = props;
 
-    var params = new URLSearchParams(window.location.search);
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    const { folder, agc } = props
+    var params = new URLSearchParams(window.location.search);
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
         form: folder ? folder.form : params.get('form'),
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
-        product_name: folder ? folder.product_name : params.get('product'),
+        productName: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
         country: props.countries,
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        tracking: folder ? folder.tracking : '',
-        applicant: 'STALLERGENES',
-        agency_code: agc.agencyCode,
-        atc: folder ? folder.atc : '',
+        uuid: '',
         submission_type: folder ? folder.submission_type : '',
         submission_mode: folder ? folder.submission_mode : '',
-        invented_name: folder ? folder.invented_name : '',
+        tracking: folder ? folder.tracking : '',
+        submission_unit: folder ? folder.submission_unit : '',
+        applicant: 'STALLERGENES',
+        agency_code: agc.agencyCode,
+        invented_name: '',
         inn: '',
         sequence: folder ? folder.sequence : '',
         r_sequence: folder ? folder.r_sequence : '',
-        uuid: folder ? folder.uuid : '',
         submission_description: folder ? folder.submission_description : '',
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
@@ -50,39 +48,27 @@ const Initiate_ = (props: any) => {
         excipient: folder ? folder.excipient : '',
         doc: folder ? folder.doc : '',
         docremarks: folder ? folder.docremarks : '',
-        request_date: new Date,
-        deadline: new Date,
-    });
+        request_date: new Date(),
+        deadline: new Date(),
+    })
+
+    // let tn = metadata.trackingNumber
+    // tn = tn.split(/\r?\n/)
+    // let tno = [];
+    // if (tn.length > 1) {
+    //     tno = tn.map((val) => {
+    //         return { label: val, value: val }
+    //     })
+
+    // } else {
+    //     tno = tn.map((val) => {
+    //         return { label: val, value: val }
+    //     })
+    // }
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
-
-
-    useEffect(() => {
-        let date = new Date();
-        let hour = date.getHours();
-        let delai = data.dossier_type ? data.dossier_type.delai : '';
-        let deadline = new Date();
-        let count = 1;
-
-        if (hour < 12) {
-            delai = delai
-        } else {
-            delai = delai + 1
-        }
-
-        while (count < delai) {
-            deadline = new Date(date.setDate(date.getDate() + 1));
-            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
-
-                count++;
-            }
-        }
-
-        setData('deadline', new Date(deadline));
-
-    }, [data.dossier_type]);
 
     const nextStep = () => {
         // setHasError(false)
@@ -92,17 +78,11 @@ const Initiate_ = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+
         }
 
         stepper.current.goNext()
@@ -131,9 +111,35 @@ const Initiate_ = (props: any) => {
         setData(instData)
     }
 
+    useEffect(() => {
+        let date = new Date();
+        let hour = date.getHours();
+        let delai = data.dossier_type ? data.dossier_type.delai : '';
+
+        let deadline = new Date();
+        let count = 1;
+
+        if (hour < 12) {
+            delai = delai
+        } else {
+            delai = delai + 1
+        }
+
+        while (count < delai) {
+            deadline = new Date(date.setDate(date.getDate() + 1));
+            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
+                count++;
+            }
+
+        }
+
+        setData('deadline', new Date(deadline));
+
+    }, [data.dossier_type]);
+
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('store-publishing-nat-gcc_', { type: type }));
+        post(route('store-publishing_', { type: type }));
     }
 
     return (
@@ -245,34 +251,20 @@ const Initiate_ = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Product</label>
-                                    <input type="text" className="form-control form-control-solid" name="product_name" defaultValue={data.product_name} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="productName" defaultValue={data.productName} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <Select options={gcccountry}
-                                        name="country"
-                                        onChange={(e) => handleSelectChange(e, 'country')}
-                                        className="basic"
-                                        classNamePrefix="basic"
-                                        placeholder=''
-                                        isClearable
-                                        value={[{ label: data.country, value: data.country }]}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>
                                     <Select options={[
-                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
-                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
-                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
-                                        { label: 'Renewal Dossier', value: 'Renewal Dossier', delai: 9 },
                                         { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
                                         { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
-                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier' },
+                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },
                                         { label: 'Current View (Draft seq)', value: 'Current View (Draft seq)', delai: 1 },
                                     ]}
                                         name='dossier_type'
@@ -293,6 +285,7 @@ const Initiate_ = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-12'>
+
                                     <label className="form-label">Remarks</label>
                                     <textarea className="form-control form-control-solid" rows={3} defaultValue={data.remarks} name="remarks" onChange={handleChange} />
                                 </div>
@@ -302,43 +295,62 @@ const Initiate_ = (props: any) => {
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Procedure Tracking N°</label>
-                                    <input className='form-control form-control-solid' type='text' name='tracking' onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Applicant</label>
-                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Agency code</label>
-                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">ATC</label>
-                                    <input type="text" className="form-control form-control-solid" name="atc" defaultValue={data.atc} onChange={handleChange} />
+                                    <label className="form-label">UUID</label>
+                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission type</label>
                                     <Select options={[
-                                        { label: 'Active submission', value: 'Active submission' },
-                                        { label: 'Extension submission', value: 'Extension submission' },
-                                        { label: 'New Marketing Authorization Application - Generics', value: 'New Marketing Authorization Application - Generics' },
-                                        { label: 'New Marketing Authorization Application - New Chemical Entity', value: 'New Marketing Authorization Application - New Chemical Entity' },
-                                        { label: 'New Marketing Authorization Application - Biological Products', value: 'New Marketing Authorization Application - Biological Products' },
-                                        { label: 'New Marketing Authorization Application - Radiopharmaceuticals', value: 'New Marketing Authorization Application - Radiopharmaceuticals' },
-                                        { label: 'None (in the case of reformatting the application)', value: 'None (in the case of reformatting the application)' },
-                                        { label: 'Plasma Master File', value: 'Plasma Master File' },
-                                        { label: 'Periodic Safety Update Report', value: 'Periodic Safety Update Report' },
-                                        { label: 'PSUR single assessment procedure', value: 'PSUR single assessment procedure' },
-                                        { label: 'Renewal (Yearly or 5-Yearly)', value: 'Renewal (Yearly or 5-Yearly)' },
-                                        { label: 'Risk Management Plan', value: 'Risk Management Plan' },
-                                        { label: 'Transfer of Marketing Authorization', value: 'Transfer of Marketing Authorization' },
-                                        { label: 'Urgent Safety Restriction', value: 'Urgent Safety Restriction' },
-                                        { label: 'Variation Type I', value: 'Variation Type I' },
-                                        { label: 'Variation Type II', value: 'Variation Type II' },
-                                        { label: 'Withdrawal during assessment or withdrawal of Marketing Authorization', value: 'Withdrawal during assessment or withdrawal of Marketing Authorization' },
+                                        { label: 'maa', value: 'maa' },
+                                        { label: 'var-type1a', value: 'var-type1a' },
+                                        { label: 'var-type1ain', value: 'var-type1ain' },
+                                        { label: 'var-type1b', value: 'var-type1b' },
+                                        { label: 'var-type2', value: 'var-type2' },
+                                        { label: 'var-nat', value: 'var-nat' },
+                                        { label: 'extension', value: 'extension' },
+                                        { label: 'rup', value: 'rup' },
+                                        { label: 'psur', value: 'psur' },
+                                        { label: 'psusa', value: 'psusa' },
+                                        { label: 'rmp', value: 'rmp' },
+                                        { label: 'renewal', value: 'renewal' },
+                                        { label: 'pam-sob', value: 'pam-sob' },
+                                        { label: 'pam-anx', value: 'pam-anx' },
+                                        { label: 'pam-mea', value: 'pam-mea' },
+                                        { label: 'pam-leg', value: 'pam-leg' },
+                                        { label: 'pam-sda', value: 'pam-sda' },
+                                        { label: 'pam-capa', value: 'pam-capa' },
+                                        { label: 'pam-p45', value: 'pam-p45' },
+                                        { label: 'pam-p46', value: 'pam-p46' },
+                                        { label: 'pam-paes', value: 'pam-paes' },
+                                        { label: 'pam-rec', value: 'pam-rec' },
+                                        { label: 'pass107n', value: 'pass107n' },
+                                        { label: 'pass107q', value: 'pass107q' },
+                                        { label: 'asmf', value: 'asmf' },
+                                        { label: 'pmf', value: 'pmf' },
+                                        { label: 'referral-20', value: 'referral-20' },
+                                        { label: 'referral-294', value: 'referral-294' },
+                                        { label: 'referral-29p', value: 'referral-29p' },
+                                        { label: 'referral-30', value: 'referral-30' },
+                                        { label: 'referral-31', value: 'referral-31' },
+                                        { label: 'referral-35', value: 'referral-35' },
+                                        { label: 'referral-5-3', value: 'referral-5-3' },
+                                        { label: 'referral-107i', value: 'referral-107i' },
+                                        { label: 'referral-16c1c', value: 'referral-16c1c' },
+                                        { label: 'referral-16c4', value: 'referral-16c4' },
+                                        { label: 'annual-reassessment', value: 'annual-reassessment' },
+                                        { label: 'clin-data-pub-rp', value: 'clin-data-pub-rp' },
+                                        { label: 'clin-data-pub-fv', value: 'clin-data-pub-fv' },
+                                        { label: 'paed-7-8-30', value: 'paed-7-8-30' },
+                                        { label: 'paed-29', value: 'paed-29' },
+                                        { label: 'paed-45', value: 'paed-45' },
+                                        { label: 'paed-46', value: 'paed-46' },
+                                        { label: 'articale-58', value: 'articale-58' },
+                                        { label: 'notification-61-3', value: 'notification-61-3' },
+                                        { label: 'transfer-ma', value: 'transfer-ma' },
+                                        { label: 'lifting-suspension', value: 'lifting-suspension' },
+                                        { label: 'withdrawal', value: 'withdrawal' },
+                                        { label: 'cep', value: 'cep' },
+                                        { label: 'none', value: 'none' },
                                     ]}
                                         name='submission_type'
                                         onChange={(e) => handleSelectChange(e, 'submission_type')}
@@ -352,14 +364,11 @@ const Initiate_ = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission unit</label>
+                                    <label className="form-label">Submission mode</label>
                                     <Select options={[
-                                        { label: 'Initial submission to start any regulatory activity', value: 'Initial submission to start any regulatory activity' },
-                                        { label: 'Response to any kind of question, validation issues out-standing information requested by the agency', value: 'Response to any kind of question, validation issues out-standing information requested by the agency' },
-                                        { label: 'Othe additional information (should only be used if response is not suitable)', value: 'Othe additional information (should only be used if response is not suitable)' },
-                                        { label: 'Closing (provides the final documents in the GCC procedure following the decision of the GCC committee)', value: 'Closing (provides the final documents in the GCC procedure following the decision of the GCC committee)' },
-                                        { label: 'Correction of the published annexes in the GCC procedure (usually shortly after approval)', value: 'Correction of the published annexes in the GCC procedure (usually shortly after approval)' },
-                                        { label: 'Reformatting of an existing submission application from any format to Ectd', value: 'Reformatting of an existing submission application from any format to Ectd' },
+                                        { label: 'Single', value: 'Single' },
+                                        { label: 'Grouping', value: 'Grouping' },
+                                        { label: 'Worksharing', value: 'Worksharing' },
                                     ]}
                                         name='submission_mode'
                                         onChange={(e) => handleSelectChange(e, 'submission_mode')}
@@ -375,26 +384,71 @@ const Initiate_ = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Invented name</label>
-                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.product_name} onChange={handleChange} />
+                                    <label className="form-label">Procedure Tracking N°</label>
+                                    <input type='text' name='tracking' className="form-control form-control-solid" onChange={handleChange} />
+                                    {/* <Select options={tno}
+                                        name='tracking'
+                                        onChange={(e) => handleSelectChange(e, 'tracking')}
+                                        className="basic"
+                                        classNamePrefix="basic"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.tracking}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    /> */}
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">INN</label>
+                                    <label className="form-label">Submission unit</label>
+                                    <Select options={[
+                                        { label: 'initial', value: 'initial' },
+                                        { label: 'validation-response', value: 'validation-response' },
+                                        { label: 'response', value: 'response' },
+                                        { label: 'additional-info', value: 'additional-info' },
+                                        { label: 'closing', value: 'closing' },
+                                        { label: 'consolidating', value: 'consolidating' },
+                                        { label: 'corrigendum', value: 'corrigendum' },
+                                        { label: 'reformat', value: 'reformat' },
+                                    ]}
+                                        name='submission_unit'
+                                        onChange={(e) => handleSelectChange(e, 'submission_unit')}
+                                        className="basic"
+                                        classNamePrefix="basic"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.submission_unit}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label">Applicant</label>
+                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
+                                </div>
+
+                            </div>
+                            <div className='row mb-10'>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label">Agency code</label>
+                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className='col-md-4 col-sm-12'>Invented name</label>
+                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.productName} onChange={handleChange} />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className='col-md-4 col-sm-12'>INN</label>
                                     <input type="text" className="form-control form-control-solid" name="inn" defaultValue={data.inn} onChange={handleChange} />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Sequence</label>
                                     <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
                                 </div>
-                            </div>
-                            <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Related Sequence</label>
                                     <input type="text" className="form-control form-control-solid" name="r_sequence" defaultValue={data.r_sequence} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">UUID</label>
-                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission description</label>
@@ -555,6 +609,8 @@ const Initiate_ = (props: any) => {
                             </div>
                         </div>
                     </div>
+
+
                     <div className="d-flex flex-stack">
 
                         <div className="me-2">
@@ -586,9 +642,8 @@ const Initiate_ = (props: any) => {
             </div>
         </>
     )
-
 }
 
-Initiate_.layout = page => <Authenticated children={page} auth={page.props.auth} />
+Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-export default Initiate_;
+export default Initiate;
