@@ -2,7 +2,7 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
-import { PageTitle } from '../../js/_metronic/layout/core'
+import { PageTitle, useLayout } from '../../js/_metronic/layout/core'
 import { ListsWidget6 } from '../../js/_metronic/partials/widgets'
 import Authenticated from '../Layouts/AuthenticatedLayout'
 import Swal from 'sweetalert2'
@@ -168,6 +168,11 @@ const options = {
     }
 }
 
+const labelColor = getCSSVariableValue('--bs-gray-800');
+const borderColor = getCSSVariableValue('--bs-border-dashed-color');
+
+
+
 const doptions = {
     series: [20, 100, 15, 25],
     chart: {
@@ -317,7 +322,7 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry }) => {
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry, totalPerType }) => {
 
     const [startDate, setStartDate] = useState(new Date());
     const [dateStart, setDateStart] = useState(new Date());
@@ -326,7 +331,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     const [nombrePages, setnombrePages] = useState(0);
     const [tb, setTb] = useState();
     //const year = moment(startDate).format('yyyy');
-
+    console.log(totalPerType)
     const productTableRef = useRef()
 
     const data = {
@@ -338,8 +343,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             },
         ],
     }
-
-
 
     useEffect(() => {
         const table = $(productTableRef.current).DataTable({
@@ -389,11 +392,159 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
         tb.page(number).draw('page')
     }
 
+    const dossier_type_options = {
+        chart: {
+            fontFamily: 'inherit',
+            type: 'bar',
+            height: 350,
+            toolbar: {
+                show: false
+            }
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 8,
+                horizontal: true,
+                distributed: true,
+                barHeight: 50,
+                dataLabels: {
+                    position: 'bottom' // use 'bottom' for left and 'top' for right align(textAnchor)
+                }
+            }
+        },
+        dataLabels: {  // Docs: https://apexcharts.com/docs/options/datalabels/
+            enabled: true,
+            textAnchor: 'start',
+            offsetX: 0,
+            style: {
+                fontSize: '10px',
+                fontWeight: '600',
+                align: 'left',
+            },
+            formatter: function (val, opt) {
+                let str = opt.w.globals.labels[opt.dataPointIndex]
+                // var matches = str.match(/\b(\w)/g);
+                // var acronym = matches.join('');
+                return str + ":  " + val
+            },
+        },
+        legend: {
+            show: false
+        },
+        colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
+        xaxis: {
+            categories: totalPerType.cat,
+            labels: {
+                formatter: function (val) {
+                    return ~~val;
+                },
+                style: {
+                    colors: [labelColor],
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    align: 'left'
+                }
+            },
+            axisBorder: {
+                show: false
+            }
+        },
+        yaxis: {
+            show: false,
+            labels: {
+                // formatter: function (val, opt) {
+                //     if (Number.isInteger(val)) {
+                //         return ~~val;
+                //     }
+                // },
+                style: {
+                    colors: labelColor,
+                    fontSize: '14px',
+                    fontWeight: '600'
+                },
+                offsetY: 2,
+                align: 'left'
+            }
+        },
+        grid: {
+            borderColor: borderColor,
+            xaxis: {
+                lines: {
+                    show: true
+                }
+            },
+            yaxis: {
+                lines: {
+                    show: false
+                }
+            },
+            strokeDashArray: 4
+        },
+        tooltip: {
+            style: {
+                fontSize: '12px'
+            },
+            y: {
+                formatter: function (val) {
+                    return ~~val;
+                }
+            }
+        }
+    };
+
     return (
         <>
-            <div className="row g-5 g-xl-10">
-                <div className="col-xl-4 mb-xl-10">
-                    <div className="card card-flush h-xl-100">
+            <div className="row g-5">
+                <div className="col-4">
+                    <div className='card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center border-0 h-md-50 mb-5 mb-xl-10' style={{ backgroundColor: '#080655' }}>
+                        <div className='card-header pt-5'>
+                            <div className='card-title d-flex flex-column'>
+                                <span className='fs-2hx fw-bold text-white me-2 lh-1 ls-n2'>
+                                    {totalRequet}
+                                </span>
+                                <span className='text-white opacity-50 pt-1 fw-semibold fs-6'>
+                                    to complete
+                                </span>
+                            </div>
+                        </div>
+                        <div className='card-body d-flex align-items-end pt-0'>
+                            <div className='d-flex align-items-center flex-column mt-3 w-100'>
+                                <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
+                                    <div className='d-flex align-items-center'>
+                                        <div className='bullet w-8px h-3px rounded-2 bg-success me-3'></div>
+                                        <span>{RequetNumber[0].status}</span>
+                                    </div>
+
+                                    <span>{RequetNumber[0].total}</span>
+                                </div>
+                                <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
+                                    <div className='d-flex align-items-center'>
+                                        <div className='bullet w-8px h-3px rounded-2 bg-warning me-3'></div>
+                                        <span>{RequetNumber[1].status}</span>
+                                    </div>
+
+                                    <span>{RequetNumber[1].total}</span>
+                                </div>
+                                {RequetNumber[2] ?
+                                    <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bullet w-8px h-3px rounded-2 bg-primary me-3'></div>
+                                            <span>{RequetNumber[2].status}</span>
+                                        </div>
+
+                                        <span>{RequetNumber[2].total}</span>
+                                    </div> : ''}
+
+                                {/* {RequetNumber.map((requet, i) => (
+
+                                    
+                                ))} */}
+
+                            </div>
+
+                        </div>
+                    </div>
+                    {/* <div className="card card-flush h-xl-100 h-100">
 
                         <div className="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-start h-250px" style={{ backgroundImage: "url('storage/media/svg/shapes/top-green.png')" }} data-bs-theme="light">
 
@@ -410,74 +561,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     <span className="opacity-75"> to complete</span>
                                 </div>
                             </h3>
-
-                            {/* <div className="card-toolbar pt-5">
-
-                            <button className="btn btn-sm btn-icon btn-active-color-primary btn-color-white bg-white bg-opacity-25 bg-hover-opacity-100 bg-hover-white bg-active-opacity-25 w-20px h-20px" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
-                                <i className="ki-duotone ki-dots-square fs-4">
-                                    <span className="path1"></span>
-                                    <span className="path2"></span>
-                                    <span className="path3"></span>
-                                    <span className="path4"></span>
-                                </i>
-                            </button>
-
-                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px" data-kt-menu="true">
-
-                                <div className="menu-item px-3">
-                                    <div className="menu-content fs-6 text-dark fw-bold px-3 py-4">Quick Actions</div>
-                                </div>
-
-                                <div className="separator mb-3 opacity-75"></div>
-
-                                <div className="menu-item px-3">
-                                    <a href="#" className="menu-link px-3">New Ticket</a>
-                                </div>
-
-                                <div className="menu-item px-3">
-                                    <a href="#" className="menu-link px-3">New Customer</a>
-                                </div>
-
-                                <div className="menu-item px-3" data-kt-menu-trigger="hover" data-kt-menu-placement="right-start">
-
-                                    <a href="#" className="menu-link px-3">
-                                        <span className="menu-title">New Group</span>
-                                        <span className="menu-arrow"></span>
-                                    </a>
-
-                                    <div className="menu-sub menu-sub-dropdown w-175px py-4">
-
-                                        <div className="menu-item px-3">
-                                            <a href="#" className="menu-link px-3">Admin Group</a>
-                                        </div>
-
-                                        <div className="menu-item px-3">
-                                            <a href="#" className="menu-link px-3">Staff Group</a>
-                                        </div>
-
-                                        <div className="menu-item px-3">
-                                            <a href="#" className="menu-link px-3">Member Group</a>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div className="menu-item px-3">
-                                    <a href="#" className="menu-link px-3">New Contact</a>
-                                </div>
-
-                                <div className="separator mt-3 opacity-75"></div>
-
-                                <div className="menu-item px-3">
-                                    <div className="menu-content px-3 py-3">
-                                        <a className="btn btn-primary btn-sm px-4" href="#">Generate Reports</a>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div> */}
 
                         </div>
 
@@ -497,10 +580,10 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <div className="col-lg-6">
-                    <div className="card card-flush h-lg-100">
+                <div className="col-lg-3">
+                    <div className="card card-flush h-100">
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
                                 <h3 className="fw-bold mb-1">Total Requests</h3>
@@ -542,9 +625,31 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                {/* <div className="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
-                    <CardsWidget17 className='mb-5 mb-xl-10' PublishingCount={PublishingCount} formattingCount={formattingCount} />
-                </div> */}
+                <div className='col-5'>
+                    <div className='card card-flush h-lg-100'>
+                        <div className='card-header py-7 mb-3'>
+                            <h3 className='card-title align-items-start flex-column'>
+                                <span className='card-label fw-bold text-gray-800'>
+                                    Doosier per type
+                                </span>
+                            </h3>
+                            <div className="card-toolbar m-0">
+                                {/* <a href="#" className="btn btn-light btn-sm">Formatting</a> */}
+                                <select className='form-select m-0 pt-0 pb-0'>
+                                    <option>Formatting</option>
+                                    <option>Publishing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className='card-body py-0 ps-6 mt-n12'>
+                            <Chart options={dossier_type_options}
+                                series={[{ name: 'Count', data: totalPerType.data }]}
+                                type='bar'
+                                height={365}
+                            />
+                        </div>
+                    </div>
+                </div>
                 <div className="col-lg-6">
                     <div className="card h-xl-100">
                         <div className='card-header mb-5'>
@@ -917,6 +1022,7 @@ const Dashboard = (props: any) => {
     const totalRequet = Object.values(RequetNumber).reduce((a, b) => a + b['total'], 0)
     const totalclosed = props.totalclosed
     const productCountry = props.productCountry
+    const totalPerType = props.totalPerType
 
     useEffect(() => {
         if (props.flash.message) {
@@ -928,13 +1034,55 @@ const Dashboard = (props: any) => {
         }
     }, [])
 
+    const { config, classes } = useLayout()
+    if (!config.app?.toolbar?.display) {
+        return null
+    }
+
+    // const isPageTitleVisible = showPageTitle(
+    //     config.app?.toolbar?.layout,
+    //     config.app?.pageTitle?.display
+    // )
 
 
     return (
         <>
-            <PageTitle breadcrumbs={[]}>
-                {/* {intl.formatMessage({ id: 'MENU.DASHBOARD' })} */}
-            </PageTitle>
+            {/* <PageTitle breadcrumbs={[]}>
+                DASHBOARD
+                
+            </PageTitle> */}
+            {/* <div
+                id='kt_app_toolbar'
+                className={clsx('app-toolbar', classes.toolbar.join(' '), config?.app?.toolbar?.class)}
+            >
+                <div
+                    id='kt_app_toolbar_container'
+                    className={clsx(
+
+                        classes.toolbarContainer.join(' '),
+                        config.app?.toolbar?.containerClass,
+                        config.app?.toolbar?.minimize?.enabled ? 'app-toolbar-minimize' : '',
+                        {
+                            'container-fluid': config.app?.toolbar?.container === 'fluid',
+                            'container-xxl': config.app?.toolbar?.container === 'fixed',
+                        }
+                    )}
+                >
+                    {isPageTitleVisible && <PageTitleWrapper />}
+                    <div className='page-title d-flex flex-column justify-content-center flex-wrap me-3'>
+                        <h1 className='page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0'>
+                            Dashboard
+                        </h1>
+                    </div>
+                    <div className='d-flex align-items-center gap-2 gap-lg-3'>
+                        <a className='btn btn-sm fw-bold btn-secondary'>List</a>
+                        <a className='btn btn-sm fw-bold btn-primary'>
+                            New Request
+                        </a>
+                    </div>
+                    <Toolbar />
+                </div>
+            </div> */}
             <DashboardPage
                 RequetNumber={RequetNumber}
                 totalRequet={totalRequet}
@@ -947,6 +1095,7 @@ const Dashboard = (props: any) => {
                 perMonthPub={perMonthPub}
                 totalclosed={totalclosed}
                 productCountry={productCountry}
+                totalPerType={totalPerType}
             />
 
         </>

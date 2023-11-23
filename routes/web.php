@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FormatingController;
 use App\Http\Controllers\PublishingController;
+use App\Http\Controllers\ProductMetaController;
 use App\Models\Publishing;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -174,6 +175,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // ** route for getting country while select product punlishing ** //
 Route::post('/getProductOrCountry', [ReportController::class, 'getProductOrCountry']);
+
+
+Route::post('addproductmt', [ProductMetaController::class, 'store']);
+Route::post('getProductname', [ProductMetaController::class, 'getProductname']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

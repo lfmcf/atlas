@@ -204,12 +204,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								<option value='to correct'>To correct</option>
 								<option value='closed'>Closed</option>
 							</select>
-							<div className='text-muted fs-7'>
+							{/* <div className='text-muted fs-7'>
 								Dossier Type
 							</div>
 							<select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'>
 								<option>Show All</option>
-							</select>
+							</select> */}
 
 							{/* <Select /> */}
 

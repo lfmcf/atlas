@@ -3,12 +3,15 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import Select from 'react-select';
 import { useForm, router } from '@inertiajs/react';
-
 import { chproduct, eunatcountry, eunatproduct, formattingRegion, gcccountry, gccproduct, publishingRegion } from '../../../../Pages/Lab/MetaDataList';
 import MySelect from '../../../../Components/Myselect';
 import axios from 'axios';
 import { components } from "react-select";
 import makeAnimated from "react-select/animated";
+import $ from 'jquery'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 const Option = (props) => {
     return (
@@ -36,7 +39,11 @@ const SelectMenuButton = (props) => {
     return (
         <components.MenuList  {...props}>
             {props.children}
-            <button className='btn btn-sm bn-info'>Add new product</button>
+            <button className='btn btn-sm bn-info'
+                data-bs-toggle='modal'
+                data-bs-target='kt_modal_select_location'>
+                Add new product
+            </button>
         </components.MenuList >
     )
 }
@@ -59,6 +66,13 @@ const initialState = {
     country_: ''
 };
 
+
+const initialProductState = {
+    region_p: "",
+    procedure_p: "",
+    product_p: ""
+};
+
 const InviteUsers = () => {
 
 
@@ -73,6 +87,7 @@ const InviteUsers = () => {
     // const [country_, setCountry_] = useState();
 
     const [{ form_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
+    const [{ region_p, procedure_p, product_p }, setProductState] = useState(initialProductState)
 
 
     const { data, setData, get, processing, errors, clearErrors, reset } = useForm<FormValues>({
@@ -94,6 +109,7 @@ const InviteUsers = () => {
         myModalEl.addEventListener('hidden.bs.modal', function (event) {
             reset()
             setState({ ...initialState });
+            setProductState({ ...initialProductState })
         })
     }
 
@@ -189,13 +205,31 @@ const InviteUsers = () => {
         if (data.form && data.form.value === 'Publishing') {
             if (data.region && data.region.value == 'GCC') {
                 setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                setProductList(gccproduct);
+                // setProductList(gccproduct);
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                    if (res.status == 200) {
+                        var myarr = []
+                        res.data.map(val => {
+                            myarr.push({ label: val.name, value: val.name })
+                        })
+                        setProductList(myarr);
+                    }
+                })
                 setCountryList(gcccountry);
             } else if (data.region && data.region.value == 'CH') {
                 setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                setProductList(chproduct);
+                // setProductList(chproduct);
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                    if (res.status == 200) {
+                        var myarr = []
+                        res.data.map(val => {
+                            myarr.push({ label: val.name, value: val.name })
+                        })
+                        setProductList(myarr);
+                    }
+                })
                 setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-                // setCountry({ label: 'Switzerland', value: 'Switzerland' })
+
             }
         }
 
@@ -205,13 +239,32 @@ const InviteUsers = () => {
         if (region_ && region_.value == 'GCC') {
             // setProcedure_({ label: 'Nationale', value: 'Nationale' });
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
-            setProductList(gccproduct);
+            // setProductList(gccproduct);
+            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
             setCountryList(gcccountry);
+            setCompselect(false)
         } else if (region_ && region_.value == 'CH') {
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
-            setProductList(chproduct);
+            // setProductList(chproduct);
+            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-            // setCountry({ label: 'Switzerland', value: 'Switzerland' })
+
         }
     }, [region_])
 
@@ -219,15 +272,42 @@ const InviteUsers = () => {
         setData({ ...data, product: '', country: '' })
         if (data.form && data.form.value === 'Publishing') {
             if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized') {
-                setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+                // setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Decentralized' }).then(res => {
+                    if (res.status == 200) {
+                        var myarr = []
+                        res.data.map(val => {
+                            myarr.push({ label: val.name, value: val.name })
+                        })
+                        setProductList(myarr);
+                    }
+                })
                 setCountryList(eunatcountry)
                 setCompselect(true)
             } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition') {
-                setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+                // setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Mutual Recognition' }).then(res => {
+                    if (res.status == 200) {
+                        var myarr = []
+                        res.data.map(val => {
+                            myarr.push({ label: val.name, value: val.name })
+                        })
+                        setProductList(myarr);
+                    }
+                })
                 setCountryList(eunatcountry)
                 setCompselect(true)
             } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
-                setProductList(eunatproduct)
+                // setProductList(eunatproduct)
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                    if (res.status == 200) {
+                        var myarr = []
+                        res.data.map(val => {
+                            myarr.push({ label: val.name, value: val.name })
+                        })
+                        setProductList(myarr);
+                    }
+                })
                 setCountryList(eunatcountry)
                 setCompselect(false)
             }
@@ -236,28 +316,68 @@ const InviteUsers = () => {
 
     useEffect(() => {
         if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
-            setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+            //setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Decentralized' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Mutual Recognition') {
-            setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+            // setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Mutual Recognition' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale' || procedure_ && procedure_.value == 'Centralized') {
-            setProductList(eunatproduct)
+            // setProductList(eunatproduct)
+            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
             setCountryList(eunatcountry)
             setCompselect(false)
         }
     }, [procedure_])
 
     const onChange = (e, name) => {
-
         // const { name, value } = e.target;
         setState(prevState => ({ ...prevState, [name]: e }));
     };
 
+    const handleAddProduct = () => {
+
+        axios.post('addproductmt', { 'product': product_p, 'region': region_p, 'procedure': procedure_p }).then(res => {
+            if (res.status == 200) {
+                setProductState({ ...initialProductState })
+                MySwal.fire({
+                    title: <p>Done !</p>,
+                    icon: 'success',
+                    text: "Product added succesfully",
+                })
+            }
+        })
+    }
+
     return (
-        <div className='modal fade' id='kt_modal_invite_friends' aria-hidden='true'>
+        <div className='modal fade' id='kt_modal_invite_friends' aria-hidden='true' data-backdrop="static">
             <div className='modal-dialog mw-650px'>
                 <div className='modal-content'>
                     <div className='modal-header pb-0 border-0 justify-content-end'>
@@ -285,6 +405,9 @@ const InviteUsers = () => {
                                 >
                                     LifeCycle
                                 </a>
+                            </li>
+                            <li className='nav-item'>
+                                <a className='nav-link' data-bs-toggle="tab" href="#kt_tab_pane_3">New product</a>
                             </li>
                         </ul>
                         <div className="tab-content" id="myTabContent">
@@ -479,6 +602,47 @@ const InviteUsers = () => {
                                 <div className='d-flex mt-5 justify-content-end'>
                                     <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
                                     <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleNavigate}>Validate</button>
+                                </div>
+                            </div>
+                            <div className="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
+                                <div>
+                                    <label className="form-label">Product name</label>
+                                    <input className='form-control' type='text' placeholder='Name' value={product_p} name='product_p' onChange={(e) => setProductState(ps => ({ ...ps, "product_p": e.target.value }))} />
+                                </div>
+                                <div className='my-4'>
+                                    <label className="form-label">Region</label>
+                                    <Select
+                                        options={publishingRegion}
+                                        name="region_p"
+                                        onChange={(e) => setProductState(ps => ({ ...ps, "region_p": e }))}
+                                        placeholder='Region'
+                                        isClearable
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        value={region_p}
+                                    />
+                                </div>
+                                <div className='my-4'>
+                                    <label className="form-label">Procedure</label>
+                                    <Select options={[
+                                        { label: 'Nationale', value: 'Nationale' },
+                                        { label: 'Centralized', value: 'Centralized' },
+                                        { label: 'Decentralized', value: 'Decentralized' },
+                                        { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                    ]}
+                                        name="procedure_p"
+                                        onChange={(e) => setProductState(ps => ({ ...ps, "procedure_p": e }))}
+                                        placeholder='Procedure type'
+                                        isClearable
+                                        value={procedure_p}
+                                        // isDisabled={region_p && region_p.value == 'GCC' || region_p && region_p.value == 'CH' ? true : false}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    />
+                                </div>
+                                <div className='d-flex mt-5 justify-content-end'>
+                                    <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
+                                    <button className="btn btn-sm btn-primary" onClick={handleAddProduct}>Add</button>
                                 </div>
                             </div>
                         </div>
