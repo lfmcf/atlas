@@ -86,6 +86,23 @@ class ReportController extends Controller
             ];
         }
 
+        $tpt = Formating::raw(function ($collection) {
+            return $collection->aggregate(
+                [
+                    ['$match' => ['status' => 'closed']],
+                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
+                ]
+            );
+        });
+
+        $total_per_type = [];
+        if ($tpt) {
+            foreach ($tpt as $t) {
+                $total_per_type['cat'][] = $t->_id;
+                $total_per_type['data'][] = $t->Count;
+            }
+        }
+
         $totalFormattings = Formating::count();
         $totalPublishingNat = Publishing::count();
         $totalPublishingMrp = PublishingMrp::count();
@@ -399,7 +416,8 @@ class ReportController extends Controller
             'perMonthFor' => array_values($my_arr),
             'perMonthPub' => array_values($my_sec_arr),
             'totalclosed' => $totalclosed,
-            'productCountry' => $myarr
+            'productCountry' => $myarr,
+            'totalPerType' => $total_per_type
         ]);
     }
 

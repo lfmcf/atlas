@@ -234,8 +234,8 @@ export const gccproduct = [
 export const chproduct = [
     { label: 'STALORAL 300, 3 Trees', value: 'STALORAL 300, 3 Trees' },
     { label: 'STALORAL 300 Birch', value: 'STALORAL 300 Birch' },
-    { label: 'STALORAL 300, 3 Trees', value: 'STALORAL 300, 3 Trees' },
-    { label: 'STALORAL 300 Birch', value: 'STALORAL 300 Birch' },
+    // { label: 'STALORAL 300, 3 Trees', value: 'STALORAL 300, 3 Trees' },
+    // { label: 'STALORAL 300 Birch', value: 'STALORAL 300 Birch' },
 ]
 
 export const eunatproduct = [
