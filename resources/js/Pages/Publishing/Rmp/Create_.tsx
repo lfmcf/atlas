@@ -10,6 +10,7 @@ import Select, { SingleValue } from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
+import DropZone from '../../../Components/Dropzone'
 
 const Create_ = (props: any) => {
 
@@ -36,7 +37,7 @@ const Create_ = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: folder ? folder.doc : '',
+        doc: folder ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
         request_date: new Date()
@@ -93,10 +94,16 @@ const Create_ = (props: any) => {
         setData(e.target.name, e.target.value)
     }
 
+    // const handleUploadFileChange = (e) => {
+    //     let instData = { ...data }
+    //     instData.doc = []
+    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+    //     setData(instData)
+    // }
+
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -217,6 +224,18 @@ const Create_ = (props: any) => {
         e.preventDefault();
 
         post(route('initiate-rmp-publishing_', { type: type }));
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        instData.doc = []
+        setData(instData)
+    }
+
+    const deleletFile = (i) => {
+        var arr = { ...data }
+        arr.doc.splice(i, 1)
+        setData(arr)
     }
 
     return (
@@ -658,16 +677,17 @@ const Create_ = (props: any) => {
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
                                         {data.doc ? data.doc.map((ele) => (
                                             <span className='me-2 fs-5'>{ele.name}</span>
                                         )) : ''}
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="row mb-10">

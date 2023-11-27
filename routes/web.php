@@ -150,9 +150,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('show-publishing-nat-ch', [PublishingController::class, 'showNatCh'])->name('show-publishing-nat-ch');
 
 
-
-
-
     // ** confirm deadline form publishing rmp ** //
     Route::get('/publishing-rmp-confirm', [PublishingController::class, 'createConfirmrmp'])->name('publishing-rmp-confirm');
     Route::post('confirm-rmp-formatting', [PublishingController::class, 'postConfirmrmp'])->name('confirm-rmp-ormatting');
@@ -168,9 +165,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tocorrectpublishing', [PublishingController::class, 'tocorrect'])->name('tocorrectpublishing');
     Route::post('closepublishing', [PublishingController::class, 'close'])->name('closepublishing');
 
+    // ** delete files from the server  ** //
+    Route::post('delete-file-pub', [PublishingController::class, 'deleteFilePub'])->name('delete-file-pub');
+
     Route::get('/show', [PublishingController::class, 'show'])->name('show');
 
     Route::get('getFormByYear', [ReportController::class, 'getFormByYear'])->name('getFormByYear');
+
+    Route::get('allnotifications', [ReportController::class, 'allnotif']);
+    Route::post('mark-all-as-read', [ReportController::class, 'markallnotifread']);
 });
 
 // ** route for getting country while select product punlishing ** //

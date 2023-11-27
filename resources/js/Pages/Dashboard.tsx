@@ -331,7 +331,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     const [nombrePages, setnombrePages] = useState(0);
     const [tb, setTb] = useState();
     //const year = moment(startDate).format('yyyy');
-    console.log(totalPerType)
+
     const productTableRef = useRef()
 
     const data = {
