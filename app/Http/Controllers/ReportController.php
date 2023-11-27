@@ -727,4 +727,17 @@ class ReportController extends Controller
 
         return response()->json(['perMonthFor' => array_values($my_arr), 'perMonthPub' => array_values($my_sec_arr)]);
     }
+
+    public function allnotif()
+    {
+        return Inertia::render('Lab/AllNotif');
+    }
+
+    public function markallnotifread()
+    {
+        $user = auth()->user();
+        // $user = User::find(1);
+        $user->unreadNotifications()->update(['read_at' => now()]);
+        return response('done', 200);
+    }
 }

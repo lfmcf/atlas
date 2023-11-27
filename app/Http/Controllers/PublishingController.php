@@ -1955,4 +1955,20 @@ class PublishingController extends Controller
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
         return redirect()->route('show-publishing-rmp', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
+
+    public function deleteFilePub(Request $request)
+    {
+
+        $filename = $request->file['name'];
+        $id = $request->id;
+        $folder = Publishing::where('_id', $id);
+        if ($folder) {
+            $folder->pull('document', ['name' => $filename]);
+        } else {
+            $folder = PublishingMrp::where('_id', $id);
+            $folder->pull('document', ['name' => $filename]);
+        }
+        Storage::disk('public')->delete($filename);
+        return response('done', 200);
+    }
 }

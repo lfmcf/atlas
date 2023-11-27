@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useCallback, useEffect, useRef } from 'react'
+import { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import Authenticated from '../../Layouts/AuthenticatedLayout'
 import { StepperComponent } from '../../_metronic/assets/ts/components'
 import { useForm } from '@inertiajs/react';
@@ -9,6 +9,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import StatusComponent from '../../Components/StatusComponent';
 import axios from 'axios';
+import DropZone from '../../Components/Dropzone';
 
 const Confirm = (props: any) => {
 
@@ -16,6 +17,8 @@ const Confirm = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const { folder } = props
+
+    const [files, setFiles] = useState(folder.document)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -70,10 +73,15 @@ const Confirm = (props: any) => {
         setData(e.target.name, e.target.value)
     }
 
+    // const handleUploadFileChange = (e) => {
+    //     let instData = { ...data }
+    //     instData.doc = []
+    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+    //     setData(instData)
+    // }
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -101,11 +109,32 @@ const Confirm = (props: any) => {
         stepper.current.goPrev()
     }
 
+    const deleletFile = (i) => {
+        var arr = { ...data }
+        arr.doc.splice(i, 1)
+        setData(arr)
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        instData.doc = []
+        setData(instData)
+    }
+
     const deleletFileFRomServer = (id, i) => {
 
         axios.post('/delete-file', {
             id: id,
             file: i
+        }).then(res => {
+            if (res.status == 200) {
+                var arr = [...files]
+                var index = arr.indexOf(i)
+                if (index !== -1) {
+                    arr.splice(index, 1);
+                    setFiles(arr);
+                }
+            }
         })
     }
 
@@ -311,7 +340,7 @@ const Confirm = (props: any) => {
                                 <div className='col-6 mb-10'>
                                     <label className="form-label">Uploaded documents</label>
                                     <ul className='list-unstyled'>
-                                        {folder.document ? folder.document.map((doc, i) => (
+                                        {files ? files.map((doc, i) => (
                                             <li key={i}>
                                                 <div className='dropzone-items d-flex w-500px mt-1'>
                                                     <div className="dropzone-item">
@@ -338,15 +367,17 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-6'>
                                     <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
-                                </div>
-                                <div className='col-6'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+                                    <div >
+                                        <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+                                        {/* <div className='d-flex align-items-center text-gray-400 h-100'>
                                         {data.doc ? data.doc.map((ele) => (
                                             <span className='me-2 fs-5'>{ele.name}</span>
                                         )) : ''}
+                                    </div> */}
                                     </div>
                                 </div>
+
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>

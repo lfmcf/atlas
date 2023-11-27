@@ -264,7 +264,7 @@ const InviteUsers = () => {
                 }
             })
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-
+            setCompselect(false)
         }
     }, [region_])
 

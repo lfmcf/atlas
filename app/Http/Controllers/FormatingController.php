@@ -456,6 +456,7 @@ class FormatingController extends Controller
         $id = $request->id;
         $folder = Formating::where('_id', $id)->pull('document', ['name' => $filename]);
         Storage::disk('public')->delete($filename);
+        return response('done', 200);
     }
 
     // public function setVerify(Request $request)
