@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/', [ReportController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [ReportController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard2', [ReportController::class, 'dashboard'])->name('dashboard2');
 
     Route::get('/list', [ReportController::class, 'list'])->name('list');
     Route::get('/tasks', [ReportController::class, 'task'])->name('tasks');
