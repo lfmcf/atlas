@@ -47,10 +47,10 @@ const MasterLayout = ({ auth, children }) => {
 			{/* end:: Drawers */}
 
 			{/* begin:: Modals */}
-			<InviteUsers />
+			{/* <InviteUsers /> */}
 			<UpgradePlan />
 			<MultiDataUpdate />
-			<SelectLocationModal />
+			{/* <SelectLocationModal /> */}
 			{/* end:: Modals */}
 			<ScrollTop />
 		</PageDataProvider>

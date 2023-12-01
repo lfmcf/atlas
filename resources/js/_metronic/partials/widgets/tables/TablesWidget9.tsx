@@ -4,17 +4,16 @@ import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import StatusComponent from '../../../../Components/StatusComponent';
-//import DataTable from 'datatables.net-bs5';
-import Select from 'react-select';
 import { router } from '@inertiajs/react';
 import $ from 'jquery';
 import "datatables.net-dt/js/dataTables.dataTables";
 import clsx from 'clsx';
 import { Dropdown1 } from '../../content/dropdown/Dropdown1';
-// import Select2 from 'react-select2/node_modules/react-select2-wrapper'
 import { writeFileXLSX } from "xlsx";
 import XLSX from 'xlsx';
-
+import { InviteUsers } from '../../modals/invite-users/InviteUsers';
+import AddProduct from '../../modals/add-product/addProduct';
+import axios from 'axios';
 
 type Props = {
 	// className: string
@@ -22,18 +21,29 @@ type Props = {
 	user: any
 }
 
-
+const initialState = {
+	form_: { label: 'Publishing', value: 'Publishing' },
+	region_: "",
+	procedure_: "",
+	product_: "",
+	country_: ''
+};
 
 const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
+
+	const [{ form_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tb, setTb] = useState();
 	const [pageNumbers, setpageNumbers] = useState([]);
 	const [nombrePages, setnombrePages] = useState(0);
 	const [pageLength, setpageLenght] = useState(10);
-
+	const [show, setShow] = useState(false)
+	const [showSec, setShowSec] = useState(false)
+	const [product_name, setProduct_name] = useState();
+	const [update, setUpdate] = useState(false)
 	const tableRef = useRef()
 
 	useEffect(() => {
@@ -108,10 +118,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		writeFileXLSX(workbook, "SheetJSReactExport.xlsx");
 	}
 
-	// const handlePrint = () => {
-	// 	return <ReactToPrint content={() => tableRef} />
-	// }
-
 	const pagination = (number) => {
 
 		setCurrentPage(number)
@@ -147,38 +153,17 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		return chars
 
 	}
-
-
-
+	const handleAddProduct = () => {
+		axios.post('addproductmt', { 'product': product_name, 'region': region_, 'procedure': procedure_ }).then(res => {
+			if (res.status == 200) {
+				setUpdate(true)
+			}
+		})
+	}
 
 	return (
 		<>
 			<div className={`card mb-5`}>
-				{/* begin::Header */}
-				{/* <div className='card-header border-0 pt-5'>
-					<h3 className='card-title align-items-start flex-column'>
-						<span className='card-label fw-bold fs-3 mb-1'>Formatting & Publishing List</span>
-						
-					</h3>
-					{props.user.current_team_id !== 3 ?
-						<div
-							className='card-toolbar'
-							data-bs-toggle='tooltip'
-							data-bs-placement='top'
-							data-bs-trigger='hover'
-							title='Click to add a record'
-						>
-							<a
-								href='#'
-								className='btn btn-sm btn-light-primary'
-								data-bs-toggle='modal'
-								data-bs-target='#kt_modal_invite_friends'
-							>
-								<KTIcon iconName='plus' className='fs-3' />
-								Add New Request
-							</a>
-						</div> : ''}
-				</div> */}
 				<div className='card-header align-items-center py-5 gap-2 gap-md-5'>
 					<div className='card-title'>
 						<div className='d-flex align-items-center position-relative my-1'>
@@ -204,57 +189,25 @@ const TablesWidget9: React.FC<Props> = (props) => {
 								<option value='to correct'>To correct</option>
 								<option value='closed'>Closed</option>
 							</select>
-							{/* <div className='text-muted fs-7'>
-								Dossier Type
-							</div>
-							<select className='form-select form-select-transparent text-dark fs-7 lh-1 fw-bold py-0 ps-3 w-auto select2-hidden-accessible'>
-								<option>Show All</option>
-							</select> */}
-
-							{/* <Select /> */}
 
 						</div>
 					</div>
 					<div className='card-toolbar flex-row-fluid justify-content-end gap-5'>
-						{/* <div className='w-100 mw-50px'>
-							<button className="btn btn-sm btn-light">
-								<KTIcon iconName='printer' className='fs-3' />
-							</button>
-						</div>
-						<div className='w-100 mw-50px'>
-							<button className="btn btn-sm btn-light">
-								<KTIcon iconName='arrow-down' className='fs-3' />
-							</button>
-						</div> */}
+
 						<div className='d-flex align-items-center position-relative my-1'>
 
 
 							<KTIcon iconName='magnifier' className='fs-3 position-absolute ms-4' />
 							<input type="text" className='form-control form-control-solid w-250px ps-12' placeholder='Search' onChange={handleSearch} />
 						</div>
-						{/* <div className='w-100 mw-150px'>
-							<Select options={[
-								{ label: 'All', value: 'All' },
-								{ label: 'Initiated', value: 'Initiated' },
-								{ label: 'Submitted', value: 'Submitted' },
-								{ label: 'To verify', value: 'To verify' },
-								{ label: 'Delivered', value: 'Delivered' },
-								{ label: 'To correct', value: 'To correct' },
-								{ label: 'Closed', value: 'Closed' },
-							]}
-								placeholder='All Forms'
-								onChange={handleStatuschange}
-								menuPortalTarget={document.body}
-								styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-								isClearable
-							/>
-						</div> */}
+
 						{props.user.current_team_id !== 3 ?
 							<a
 								href='#'
 								className='btn btn-sm btn-light-primary'
-								data-bs-toggle='modal'
-								data-bs-target='#kt_modal_invite_friends'
+								// data-bs-toggle='modal'
+								// data-bs-target='#kt_modal_invite_friends'
+								onClick={() => setShow(true)}
 							>
 								<KTIcon iconName='plus' className='fs-3' />
 								New Request
@@ -279,17 +232,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 							{/* begin::Table head */}
 							<thead>
 								<tr className='fw-bold text-muted'>
-									{/* <th className='w-25px'>
-										<div className='form-check form-check-sm form-check-custom form-check-solid'>
-											<input
-												className='form-check-input'
-												type='checkbox'
-												value='1'
-												data-kt-check='true'
-												data-kt-check-target='.widget-9-check'
-											/>
-										</div>
-									</th> */}
 									<th className='min-w-150px' style={{ display: 'none' }}>Form</th>
 									<th className='min-w-150px'>Product</th>
 									<th className='min-w-140px'>Country</th>
@@ -298,19 +240,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 									<th className='min-w-130px'>Dossier type</th>
 									<th className='min-w-130px'>Request date</th>
 									<th className='min-w-130px'>Last update</th>
-									{/* <th className='min-w-100px text-end'>Actions</th> */}
+
 								</tr>
 							</thead>
-
-							{/* <ShowData /> */}
 							<tbody>
 								{data ? Object.values(data).map((row: any, i) => (
 									<tr key={i}>
-										{/* <td>
-								<div className='form-check form-check-sm form-check-custom form-check-solid'>
-									<input className='form-check-input widget-9-check' type='checkbox' value='1' />
-								</div>
-							</td> */}
 										<td style={{ display: 'none' }}>{row.form}</td>
 										<td>
 											<span className='fs-7'>
@@ -332,8 +267,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 															</a>}
 
 											</span>
-
-											{/* <a href='#' className='text-dark fw-bold text-hover-primary fs-6'></a> */}
 										</td>
 										<td>
 
@@ -397,24 +330,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 												{row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''}
 											</span>
 										</td>
-
-										{/* <td>
-								<div className='d-flex justify-content-end flex-shrink-0'>
-									
-									<a
-										href='#'
-										className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-									>
-										<KTIcon iconName='pencil' className='fs-3' />
-									</a>
-									<a
-										href='#'
-										className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-									>
-										<KTIcon iconName='trash' className='fs-3' />
-									</a>
-								</div>
-							</td> */}
 									</tr>
 								)) : ''}
 							</tbody>
@@ -442,9 +357,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 											<a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
 												<i className="previous"></i></a>
 										</li>
-										{/* <li className="paginate_button page-item active"><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
-										</li><li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="2" tabIndex="0" className="page-link">2</a></li>
-										<li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="3" tabIndex="0" className="page-link">3</a></li> */}
 										{
 											pageNumbers.map(number => (
 
@@ -465,39 +377,27 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					</div>
 					{/* end::Table container */}
 				</div>
-				{/* <div className='card-footer'>
-					<div className='row'>
-						<div className='col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'>
-
-						</div>
-						<div className='col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'>
-							<ul className="pagination">
-								<li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} >
-									<a className='page-link' onClick={handleprevious}>
-										<i className="bi bi-chevron-left"></i>
-									</a>
-								</li>
-								{
-									pageNumbers.map(number => (
-
-										<li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
-											<button onClick={() => pagination(number)} className="page-link"> {number} </button>
-										</li>
-									))
-								}
-								<li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} >
-									<a className='page-link' onClick={handlenext}>
-										<i className="bi bi-chevron-right"></i>
-									</a>
-								</li>
-							</ul >
-						</div>
-
-					</div>
-				</div> */}
-
-				{/* begin::Body */}
 			</div>
+			<InviteUsers
+				show={show}
+				setShow={setShow}
+				setShowSec={setShowSec}
+				initialState={initialState}
+				setState={setState}
+				form_={form_}
+				region_={region_}
+				procedure_={procedure_}
+				product_={product_}
+				country_={country_}
+				// handleAddProduct={handleAddProduct}
+				update={update}
+			/>
+			<AddProduct
+				show={showSec}
+				setShow={setShowSec}
+				handleAddProduct={handleAddProduct}
+				setProduct_name={setProduct_name}
+			/>
 		</>
 	)
 }

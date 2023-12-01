@@ -322,7 +322,7 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry, totalPerType }) => {
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry, totalPerType, totalPerTypeP }) => {
 
     const [startDate, setStartDate] = useState(new Date());
     const [dateStart, setDateStart] = useState(new Date());
@@ -395,108 +395,60 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     const dossier_type_options = {
         chart: {
             fontFamily: 'inherit',
-            type: 'bar',
-            height: 350,
-            toolbar: {
-                show: false
-            }
+            type: 'pie',
+            width: '100%',
         },
+        labels: totalPerType.cat,
         plotOptions: {
-            bar: {
-                borderRadius: 8,
-                horizontal: true,
-                distributed: true,
-                barHeight: 50,
+            pie: {
                 dataLabels: {
-                    position: 'bottom' // use 'bottom' for left and 'top' for right align(textAnchor)
+                    offset: -5
                 }
             }
         },
         dataLabels: {  // Docs: https://apexcharts.com/docs/options/datalabels/
-            enabled: true,
-            textAnchor: 'start',
-            offsetX: 0,
-            style: {
-                fontSize: '10px',
-                fontWeight: '600',
-                align: 'left',
-            },
-            formatter: function (val, opt) {
-                let str = opt.w.globals.labels[opt.dataPointIndex]
-                // var matches = str.match(/\b(\w)/g);
-                // var acronym = matches.join('');
-                return str + ":  " + val
-            },
+            formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name, val.toFixed(1) + '%']
+            }
         },
         legend: {
             show: false
         },
-        colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
-        xaxis: {
-            categories: totalPerType.cat,
-            labels: {
-                formatter: function (val) {
-                    return ~~val;
-                },
-                style: {
-                    colors: [labelColor],
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    align: 'left'
+        // colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
+    };
+
+    const dossier_type_options_pub = {
+        chart: {
+            fontFamily: 'inherit',
+            type: 'pie',
+            width: '100%',
+        },
+        labels: totalPerTypeP.cat,
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    offset: -5
                 }
-            },
-            axisBorder: {
-                show: false
             }
         },
-        yaxis: {
-            show: false,
-            labels: {
-                // formatter: function (val, opt) {
-                //     if (Number.isInteger(val)) {
-                //         return ~~val;
-                //     }
-                // },
-                style: {
-                    colors: labelColor,
-                    fontSize: '14px',
-                    fontWeight: '600'
-                },
-                offsetY: 2,
-                align: 'left'
+        dataLabels: {  // Docs: https://apexcharts.com/docs/options/datalabels/
+            formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name, val.toFixed(1) + '%']
             }
         },
-        grid: {
-            borderColor: borderColor,
-            xaxis: {
-                lines: {
-                    show: true
-                }
-            },
-            yaxis: {
-                lines: {
-                    show: false
-                }
-            },
-            strokeDashArray: 4
+        legend: {
+            show: false
         },
-        tooltip: {
-            style: {
-                fontSize: '12px'
-            },
-            y: {
-                formatter: function (val) {
-                    return ~~val;
-                }
-            }
-        }
+        // colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
     };
 
     return (
         <>
             <div className="row g-5">
                 <div className="col-4">
-                    <div className='card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center border-0 h-md-50 mb-5 mb-xl-10' style={{ backgroundColor: '#080655' }}>
+                    {/* <div className='card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center border-0 h-md-50 mb-5 mb-xl-10' style={{ backgroundColor: '#080655' }}>
                         <div className='card-header pt-5'>
                             <div className='card-title d-flex flex-column'>
                                 <span className='fs-2hx fw-bold text-white me-2 lh-1 ls-n2'>
@@ -535,16 +487,11 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         <span>{RequetNumber[2].total}</span>
                                     </div> : ''}
 
-                                {/* {RequetNumber.map((requet, i) => (
-
-                                    
-                                ))} */}
-
                             </div>
 
                         </div>
-                    </div>
-                    {/* <div className="card card-flush h-xl-100 h-100">
+                    </div> */}
+                    <div className="card card-flush h-xl-100 h-100">
 
                         <div className="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-start h-250px" style={{ backgroundImage: "url('storage/media/svg/shapes/top-green.png')" }} data-bs-theme="light">
 
@@ -567,20 +514,55 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className="card-body mt-n5">
                             <div className="mt-n20 position-relative">
                                 <div className="row g-3 g-lg-6">
-                                    {RequetNumber.map((requet, i) => (
-                                        <div className="col-12" key={i}>
-                                            <div className="bg-gray-100 d-flex align-items-center bg-opacity-70 rounded-2 px-6 py-5">
-                                                <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{requet.total}</span>
-                                                <span className="text-gray-500 fw-semibold fs-6">{requet.status}</span>
+                                    <div className="col-12" >
+                                        <div className="bg-gray-100 d-flex justify-content-between bg-opacity-70 rounded-2 px-6 py-5">
+                                            <div className='d-flex align-items-center'>
+                                                <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{RequetNumber[0].total}</span>
+                                                <span className="text-gray-500 fw-semibold fs-6">{RequetNumber[0].status}</span>
                                             </div>
+
+                                            {RequetNumber[2] ?
+                                                <>
+                                                    <div className="vr text-gray-500"></div>
+                                                    <div className='d-flex align-items-center'>
+                                                        <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{RequetNumber[2].total}</span>
+                                                        <span className="text-gray-500 fw-semibold fs-6">{RequetNumber[2].status}</span>
+                                                    </div>
+                                                </>
+                                                : ''}
                                         </div>
+                                    </div>
+
+                                    <div className="col-12" >
+
+                                        <div className="bg-gray-100 d-flex justify-content-between bg-opacity-70 rounded-2 px-6 py-5">
+                                            <div className='d-flex align-items-center'>
+                                                <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{RequetNumber[1].total}</span>
+                                                <span className="text-gray-500 fw-semibold fs-6">{RequetNumber[1].status}</span>
+
+                                            </div>
+
+                                            {RequetNumber[3] ?
+                                                <>
+                                                    <div className="vr text-gray-500"></div>
+                                                    <div className='d-flex align-items-center'>
+                                                        <span className="text-gray-700 fw-bolder d-block fs-2qx lh-1 ls-n1 me-3 ">{RequetNumber[3].total}</span>
+                                                        <span className="text-gray-500 fw-semibold fs-6">{RequetNumber[3].status}</span>
+                                                    </div>
+                                                </>
+                                                : ''}
+                                        </div>
+                                    </div>
+
+                                    {/* {RequetNumber.map((requet, i) => (
+                                        
                                     )
 
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="col-lg-3">
                     <div className="card card-flush h-100">
@@ -634,19 +616,58 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </span>
                             </h3>
                             <div className="card-toolbar m-0">
-                                {/* <a href="#" className="btn btn-light btn-sm">Formatting</a> */}
-                                <select className='form-select m-0 pt-0 pb-0'>
-                                    <option>Formatting</option>
-                                    <option>Publishing</option>
-                                </select>
+                                <ul className='nav nav-pills nav-pills-custom' role='tablist'>
+                                    <li className='nav-item mb-3 me-3 me-lg-6'>
+                                        <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-60px h-60px pt-5 pb-2 active'
+                                            data-bs-toggle="tab"
+                                            href='#kt_charts_widget_11_tab_content_1'>
+                                            <div className='nav-icon mb-2'>
+                                                <i className='ki-duotone ki-ship fs-4 p-0'>
+                                                    <span className='path1'></span>
+                                                    <span className='path2'></span>
+                                                    <span className='path3'></span>
+                                                </i>
+                                                <span className='nav-text text-gray-800 fw-bold fs-9 lh-1'>Formatting</span>
+                                                <span className='bullet-custom position-absolute bottom-0 w-100 h-2px bg-primary'></span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li className='nav-item mb-3 me-3 me-lg-6'>
+                                        <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-60px h-60px pt-5 pb-2'
+                                            data-bs-toggle="tab"
+                                            href='#kt_charts_widget_12_tab_content_2'>
+                                            <div className="nav-icon mb-2">
+                                                <i className='ki-duotone ki-ship fs-4 p-0'>
+                                                    <span className='path1'></span>
+                                                    <span className='path2'></span>
+                                                    <span className='path3'></span>
+                                                </i>
+                                                <span className='nav-text text-gray-800 fw-bold fs-9 lh-1'>Publishing</span>
+                                                <span className='bullet-custom position-absolute bottom-0 w-100 h-2px bg-primary'></span>
+                                            </div>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </div>
                         </div>
                         <div className='card-body py-0 ps-6 mt-n12'>
-                            <Chart options={dossier_type_options}
-                                series={[{ name: 'Count', data: totalPerType.data }]}
-                                type='bar'
-                                height={365}
-                            />
+                            <div className='tab-content ps-4 pe-6'>
+                                <div className='tab-pane fade active show' id="kt_charts_widget_11_tab_content_1">
+                                    <Chart options={dossier_type_options}
+                                        series={totalPerType.data}
+                                        type='pie'
+                                        height={300}
+                                    />
+                                </div>
+                                <div className='tab-pane fade' id="kt_charts_widget_12_tab_content_2">
+                                    <Chart options={dossier_type_options_pub}
+                                        series={totalPerTypeP.data}
+                                        type='pie'
+                                        height={300}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -657,6 +678,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <span className='card-label fw-bold text-gray-800'>Some subject</span>
                             </h3>
                         </div>
+
                         <div className="card-body pb-3">
                             <div className="d-flex flex-wrap flex-md-nowrap">
                                 <div className="me-md-5 w-100">
@@ -772,7 +794,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className='card-header pt-7 mb-5'>
                             <h3 className='card-title align-items-start flex-column'>
                                 <span className='card-label fw-bold text-gray-800'>Product by country</span>
-                                <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span>
+                                {/* <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span> */}
                             </h3>
                         </div>
                         <div className='card-body pt-0'>
@@ -919,21 +941,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         </div>
                                     </a>
                                 </li>
-                                {/* <li className='nav-item mb-3 me-3 me-lg-6'>
-                                    <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-80px h-85px pt-5 pb-2'
-                                        data-bs-toggle="tab"
-                                        href='#kt_charts_widget_10_tab_content_3'>
-                                        <div className="nav-icon mb-3">
-                                            <i className='ki-duotone ki-ship fs-1 p-0'>
-                                                <span className='path1'></span>
-                                                <span className='path2'></span>
-                                                <span className='path3'></span>
-                                            </i>
-                                            <span className='nav-text text-gray-800 fw-bold fs-6 lh-1'>Both</span>
-                                            <span className='bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary'></span>
-                                        </div>
-                                    </a>
-                                </li> */}
+
                             </ul>
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_10_tab_content_1">
@@ -1023,6 +1031,7 @@ const Dashboard = (props: any) => {
     const totalclosed = props.totalclosed
     const productCountry = props.productCountry
     const totalPerType = props.totalPerType
+    const totalPerTypeP = props.totalPerTypeP
 
     useEffect(() => {
         if (props.flash.message) {
@@ -1096,6 +1105,7 @@ const Dashboard = (props: any) => {
                 totalclosed={totalclosed}
                 productCountry={productCountry}
                 totalPerType={totalPerType}
+                totalPerTypeP={totalPerTypeP}
             />
 
         </>

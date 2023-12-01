@@ -33,12 +33,13 @@ const SelectLocationModal: React.FC<Props> = () => {
 		<Modal
 			className='modal fade'
 			id='kt_modal_select_location'
-			data-backdrop='static'
+
 			tabIndex={-1}
 			role='dialog'
 			// show={show}
 			dialogClassName='modal-xl'
 			aria-hidden='true'
+
 		// onHide={dissmissLocation}
 		>
 			<div className='modal-content'>
