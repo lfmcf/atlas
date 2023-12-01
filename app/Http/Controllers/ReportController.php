@@ -95,6 +95,44 @@ class ReportController extends Controller
             );
         });
 
+        $tptp = Publishing::raw(function ($collection) {
+            return $collection->aggregate(
+                [
+                    ['$match' => ['status' => 'closed']],
+                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
+                ]
+            );
+        });
+
+        $tptpm = PublishingMrp::raw(function ($collection) {
+            return $collection->aggregate(
+                [
+                    ['$match' => ['status' => 'closed']],
+                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
+                ]
+            );
+        });
+
+        $merge = $tptp->mergeRecursive($tptpm);
+
+        $total_per_type_p = [];
+        $new = [];
+
+        foreach ($merge as $m) {
+            if (!isset($new[$m['_id']])) {
+                $t = 0;
+            } else {
+                $t = $m['Count'];
+            }
+            $new[$m['_id']]['id'] = $m['_id'];
+            $new[$m['_id']]['qnt'] = $t + $m['Count'];
+        }
+
+        foreach ($new as $n) {
+            $total_per_type_p['cat'][] = $n['id'];
+            $total_per_type_p['data'][] = $n['qnt'];
+        }
+
         $total_per_type = [];
         if ($tpt) {
             foreach ($tpt as $t) {
@@ -417,7 +455,8 @@ class ReportController extends Controller
             'perMonthPub' => array_values($my_sec_arr),
             'totalclosed' => $totalclosed,
             'productCountry' => $myarr,
-            'totalPerType' => $total_per_type
+            'totalPerType' => $total_per_type,
+            'totalPerTypeP' => $total_per_type_p
         ]);
     }
 
@@ -826,6 +865,43 @@ class ReportController extends Controller
                 $total_per_type['data'][] = $t->Count;
             }
         }
+        $tptp = Publishing::raw(function ($collection) {
+            return $collection->aggregate(
+                [
+                    ['$match' => ['status' => 'closed']],
+                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
+                ]
+            );
+        });
+
+        $tptpm = PublishingMrp::raw(function ($collection) {
+            return $collection->aggregate(
+                [
+                    ['$match' => ['status' => 'closed']],
+                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
+                ]
+            );
+        });
+
+        $merge = $tptp->mergeRecursive($tptpm);
+
+        $total_per_type_p = [];
+        $new = [];
+
+        foreach ($merge as $m) {
+            if (!isset($new[$m['_id']])) {
+                $t = 0;
+            } else {
+                $t = $m['Count'];
+            }
+            $new[$m['_id']]['id'] = $m['_id'];
+            $new[$m['_id']]['qnt'] = $t + $m['Count'];
+        }
+
+        foreach ($new as $n) {
+            $total_per_type_p['cat'][] = $n['id'];
+            $total_per_type_p['data'][] = $n['qnt'];
+        }
 
         $totalFormattings = Formating::count();
         $totalPublishingNat = Publishing::count();
@@ -1141,7 +1217,8 @@ class ReportController extends Controller
             'perMonthPub' => array_values($my_sec_arr),
             'totalclosed' => $totalclosed,
             'productCountry' => $myarr,
-            'totalPerType' => $total_per_type
+            'totalPerType' => $total_per_type,
+            'totalPerTypeP' => $total_per_type_p
         ]);
     }
 }

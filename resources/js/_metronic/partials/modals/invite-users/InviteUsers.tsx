@@ -11,6 +11,8 @@ import makeAnimated from "react-select/animated";
 import $ from 'jquery'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import AddProduct from '../add-product/addProduct';
+import { Modal } from 'react-bootstrap'
 const MySwal = withReactContent(Swal)
 
 const Option = (props) => {
@@ -35,20 +37,6 @@ const MultiValue = props => (
 );
 const animatedComponents = makeAnimated();
 
-const SelectMenuButton = (props) => {
-    return (
-        <components.MenuList  {...props}>
-            {props.children}
-            <button className='btn btn-sm bn-info'
-                data-bs-toggle='modal'
-                data-bs-target='kt_modal_select_location'>
-                Add new product
-            </button>
-        </components.MenuList >
-    )
-}
-
-
 type FormValues = {
     form: any,
     region: any,
@@ -58,14 +46,6 @@ type FormValues = {
     country: any
 }
 
-const initialState = {
-    form_: { label: 'Publishing', value: 'Publishing' },
-    region_: "",
-    procedure_: "",
-    product_: "",
-    country_: ''
-};
-
 
 const initialProductState = {
     region_p: "",
@@ -73,20 +53,31 @@ const initialProductState = {
     product_p: ""
 };
 
-const InviteUsers = () => {
 
+
+const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_, region_, procedure_, product_, country_, update }) => {
 
     const [productList, setProductList] = useState(Object);
     const [countryList, setCountryList] = useState(Object);
     const [compselect, setCompselect] = useState(false);
+    // const [show, setShow] = useState(false)
 
-    // const [form_, setForm_] = useState({ label: 'Publishing', value: 'Publishing' });
-    // const [region_, setRegion_] = useState();
-    // const [procedure_, setProcedure_] = useState();
-    // const [product_, setProduct_] = useState();
-    // const [country_, setCountry_] = useState();
+    const SelectMenuButton = (props) => {
+        return (
+            <components.MenuList  {...props}>
+                {props.children}
+                <button className='btn btn-sm bn-info'
+                    // data-bs-toggle='modal'
+                    // data-bs-target='#add_product'
+                    onClick={() => setShowSec(true)}
+                >
+                    Add new product
+                </button>
+            </components.MenuList >
+        )
+    }
 
-    const [{ form_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
+
     const [{ region_p, procedure_p, product_p }, setProductState] = useState(initialProductState)
 
 
@@ -102,17 +93,6 @@ const InviteUsers = () => {
     const handleSelectChange = (e: any, name: any) => {
         setData(name, e)
     }
-
-    var myModalEl = document.getElementById('kt_modal_invite_friends');
-
-    if (myModalEl) {
-        myModalEl.addEventListener('hidden.bs.modal', function (event) {
-            reset()
-            setState({ ...initialState });
-            setProductState({ ...initialProductState })
-        })
-    }
-
 
     const handleSelectCountryChange = (e, name) => {
         if (data.procedure && data.procedure.value == 'Nationale' && e && !data.product) {
@@ -266,7 +246,7 @@ const InviteUsers = () => {
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
             setCompselect(false)
         }
-    }, [region_])
+    }, [region_, update])
 
     useEffect(() => {
         setData({ ...data, product: '', country: '' })
@@ -355,306 +335,300 @@ const InviteUsers = () => {
             setCountryList(eunatcountry)
             setCompselect(false)
         }
-    }, [procedure_])
+    }, [procedure_, update])
 
     const onChange = (e, name) => {
         // const { name, value } = e.target;
         setState(prevState => ({ ...prevState, [name]: e }));
     };
 
-    const handleAddProduct = () => {
-
-        axios.post('addproductmt', { 'product': product_p, 'region': region_p, 'procedure': procedure_p }).then(res => {
-            if (res.status == 200) {
-                setProductState({ ...initialProductState })
-                MySwal.fire({
-                    title: <p>Done !</p>,
-                    icon: 'success',
-                    text: "Product added succesfully",
-                })
-            }
-        })
+    const handleClose = () => {
+        console.log('call')
+        reset()
+        setState({ ...initialState });
+        setProductState({ ...initialProductState })
+        setShow(false)
     }
 
     return (
-        <div className='modal fade' id='kt_modal_invite_friends' aria-hidden='true' data-backdrop="static">
-            <div className='modal-dialog mw-650px'>
-                <div className='modal-content'>
-                    <div className='modal-header pb-0 border-0 justify-content-end'>
-                        <div className='btn btn-sm btn-icon btn-active-color-primary' data-bs-dismiss='modal'>
-                            <KTIcon iconName='cross' className='fs-1' />
-                        </div>
+        <Modal show={show} onHide={handleClose}>
+            {/* <div className='modal-dialog mw-650px'> */}
+            <div className='modal-content '>
+                <div className='modal-header pb-0 border-0 justify-content-end'>
+                    <div className='btn btn-sm btn-icon btn-active-color-primary' onClick={handleClose}>
+                        <KTIcon iconName='cross' className='fs-1' />
                     </div>
-
-                    <div className='modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15'>
-                        <ul className="nav nav-tabs nav-line-tabs mb-5 fs-6">
-                            <li className="nav-item">
-                                <a
-                                    className="nav-link active"
-                                    data-bs-toggle="tab"
-                                    href="#kt_tab_pane_1"
-                                >
-                                    New request
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a
-                                    className="nav-link"
-                                    data-bs-toggle="tab"
-                                    href="#kt_tab_pane_2"
-                                >
-                                    LifeCycle
-                                </a>
-                            </li>
-                            <li className='nav-item'>
-                                <a className='nav-link' data-bs-toggle="tab" href="#kt_tab_pane_3">New product</a>
-                            </li>
-                        </ul>
-                        <div className="tab-content" id="myTabContent">
-                            <div
-                                className="tab-pane fade active show"
-                                id="kt_tab_pane_1"
-                                role="tabpanel"
+                </div>
+                <div className='modal-body scroll-y pt-0 pb-15'>
+                    <ul className="nav nav-tabs nav-line-tabs mb-5 fs-6">
+                        <li className="nav-item">
+                            <a
+                                className="nav-link active"
+                                data-bs-toggle="tab"
+                                href="#kt_tab_pane_1"
                             >
-                                <div>
-                                    <label className="form-label">Request type</label>
-                                    <Select options={[{ label: 'Publishing', value: 'Publishing' }]}
-                                        name="form_"
-                                        // onChange={(e) => handleSelectChange(e, 'form')}
-                                        placeholder='Form'
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{
-                                            menuPortal: base => ({ ...base, zIndex: 9999, }),
-                                            container: base => ({ width: '100%' })
-                                        }}
-                                        defaultValue={[{ label: 'Publishing', value: 'Publishing' }]}
-                                        isDisabled
-                                    />
-                                </div>
-                                <div className='my-4'>
-                                    <label className="form-label">Region</label>
-                                    <Select
-                                        options={publishingRegion}
-                                        name="region_"
-                                        onChange={(e) => onChange(e, 'region_')}
-                                        placeholder='Region'
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        value={region_}
-                                    />
-                                </div>
-                                <div className='my-4'>
-                                    <label className='form-label'>Procedure type</label>
-                                    <Select options={[
-                                        { label: 'Nationale', value: 'Nationale' },
-                                        { label: 'Centralized', value: 'Centralized' },
-                                        { label: 'Decentralized', value: 'Decentralized' },
-                                        { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                    ]}
-                                        name="procedure_"
-                                        onChange={(e) => onChange(e, 'procedure_')}
-                                        placeholder='Procedure type'
-                                        isClearable
-                                        value={procedure_}
-                                        isDisabled={region_ && region_.value == 'GCC' || region_ && region_.value == 'CH' ? true : false}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                </div>
-                                <div className='my-4'>
-                                    <label className='form-label'>Product</label>
-                                    <Select options={productList}
-                                        name="product_"
-                                        onChange={(e) => handleSelectProductChange_(e)}
-                                        placeholder='Product'
-                                        value={product_}
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        components={{ MenuList: SelectMenuButton }}
-                                    />
-                                </div>
-                                <div className='my-4'>
-                                    <label className='form-label'>Country (ies)</label>
-                                    {compselect ?
-                                        <MySelect
-                                            options={countryList ? [...countryList] : ''}
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            hideSelectedOptions={false}
-                                            components={{ Option, MultiValue, animatedComponents }}
-                                            onChange={handleMyselectChange_}
-                                            value={country_}
-                                            allowSelectAll={true}
-                                            menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        />
-                                        : <Select options={countryList}
-                                            onChange={(e) => onChange(e, 'country_')}
-                                            value={country_}
-                                            menuPortalTarget={document.body}
-                                            isClearable
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        />}
-                                </div>
-                                <div className='d-flex mt-5 justify-content-end'>
-                                    <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
-                                    <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleLifeCycle}>Validate</button>
-                                </div>
+                                New request
+                            </a>
+                        </li>
+                        <li className="nav-item">
+                            <a
+                                className="nav-link"
+                                data-bs-toggle="tab"
+                                href="#kt_tab_pane_2"
+                            >
+                                LifeCycle
+                            </a>
+                        </li>
+                        {/* <li className='nav-item'>
+                            <a className='nav-link' data-bs-toggle="tab" href="#kt_tab_pane_3">New product</a>
+                        </li> */}
+                    </ul>
+                    <div className="tab-content" id="myTabContent">
+                        <div
+                            className="tab-pane fade active show"
+                            id="kt_tab_pane_1"
+                            role="tabpanel"
+                        >
+                            <div>
+                                <label className="form-label">Request type</label>
+                                <Select options={[{ label: 'Publishing', value: 'Publishing' }]}
+                                    name="form_"
+                                    // onChange={(e) => handleSelectChange(e, 'form')}
+                                    placeholder='Form'
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999, }),
+                                        container: base => ({ width: '100%' })
+                                    }}
+                                    defaultValue={[{ label: 'Publishing', value: 'Publishing' }]}
+                                    isDisabled
+                                />
                             </div>
-                            <div className="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
-                                <div>
-                                    <label className="form-label">Request type</label>
-                                    <Select options={[
-                                        { label: 'Formatting', value: 'Formatting' },
-                                        { label: 'Publishing', value: 'Publishing' },
-                                        { label: 'Submission', value: 'Submission' },
-                                    ]}
-                                        name="form"
-                                        onChange={(e) => handleSelectChange(e, 'form')}
-                                        placeholder='Form'
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{
-                                            menuPortal: base => ({ ...base, zIndex: 9999, }),
-                                            container: base => ({ width: '100%' })
-                                        }}
-                                        value={data.form}
-                                    />
-                                </div>
-                                <div className='my-4'>
-                                    <label className="form-label">Region</label>
-                                    <Select
-                                        options={data.form && data.form.value == 'Publishing' ? publishingRegion : formattingRegion}
-                                        name="region"
-                                        onChange={(e) => handleSelectChange(e, 'region')}
-                                        placeholder='Region'
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        value={data.region}
-                                    />
-                                </div>
-                                <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                    <label className='form-label'>Procedure type</label>
-                                    <Select options={[
-                                        { label: 'Nationale', value: 'Nationale' },
-                                        { label: 'Centralized', value: 'Centralized' },
-                                        { label: 'Decentralized', value: 'Decentralized' },
-                                        { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                    ]}
-                                        name="procedure"
-                                        onChange={(e) => handleSelectChange(e, 'procedure')}
-                                        placeholder='Procedure type'
-                                        isClearable
-                                        value={data.procedure}
-                                        isDisabled={data.region && data.region.value == 'GCC' || data.region && data.region.value == 'CH' ? true : false}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                </div>
-                                <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                    <label className='form-label'>Product</label>
-                                    <Select options={productList}
-                                        name="product"
-                                        onChange={(e) => handleSelectProductChange(e, 'product')}
-                                        placeholder='Product'
-                                        value={data.product}
-                                        isClearable
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                </div>
-                                <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                    <label className='form-label'>Country (ies)</label>
-                                    {compselect ?
-                                        <MySelect
-                                            options={countryList ? [...countryList] : ''}
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            hideSelectedOptions={false}
-                                            components={{ Option, MultiValue, animatedComponents }}
-                                            onChange={handleMyselectChange}
-                                            value={data.country}
-                                            allowSelectAll={true}
-                                            menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        />
-                                        : <Select options={countryList}
-                                            onChange={(e) => handleSelectCountryChange(e, 'country')}
-                                            value={data.country}
-                                            menuPortalTarget={document.body}
-                                            isClearable
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        />}
-                                </div>
-                                <div className='my-4' style={{ display: data.form && data.form.value == 'Formatting' ? 'flex' : 'none', alignItems: 'center' }}>
-                                    <label className='form-label my-0 me-4'>Core doc</label>
-                                    <label className='form-check form-switch form-check-custom form-check-solid'>
-                                        <input className='form-check-input' type='checkbox' value='1' />
-
-                                        {/* <span className=' fw-bold form-label'>Core doc</span> */}
-                                    </label>
-
-                                </div>
-                                <div className='d-flex mt-5 justify-content-end'>
-                                    <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
-                                    <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleNavigate}>Validate</button>
-                                </div>
+                            <div className='my-4'>
+                                <label className="form-label">Region</label>
+                                <Select
+                                    options={publishingRegion}
+                                    name="region_"
+                                    onChange={(e) => onChange(e, 'region_')}
+                                    placeholder='Region'
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    value={region_}
+                                />
                             </div>
-                            <div className="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
-                                <div>
-                                    <label className="form-label">Product name</label>
-                                    <input className='form-control' type='text' placeholder='Name' value={product_p} name='product_p' onChange={(e) => setProductState(ps => ({ ...ps, "product_p": e.target.value }))} />
-                                </div>
-                                <div className='my-4'>
-                                    <label className="form-label">Region</label>
-                                    <Select
-                                        options={publishingRegion}
-                                        name="region_p"
-                                        onChange={(e) => setProductState(ps => ({ ...ps, "region_p": e }))}
-                                        placeholder='Region'
-                                        isClearable
+                            <div className='my-4'>
+                                <label className='form-label'>Procedure type</label>
+                                <Select options={[
+                                    { label: 'Nationale', value: 'Nationale' },
+                                    { label: 'Centralized', value: 'Centralized' },
+                                    { label: 'Decentralized', value: 'Decentralized' },
+                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                ]}
+                                    name="procedure_"
+                                    onChange={(e) => onChange(e, 'procedure_')}
+                                    placeholder='Procedure type'
+                                    isClearable
+                                    value={procedure_}
+                                    isDisabled={region_ && region_.value == 'GCC' || region_ && region_.value == 'CH' ? true : false}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                />
+                            </div>
+                            <div className='my-4'>
+                                <label className='form-label'>Product</label>
+                                <Select options={productList}
+                                    name="product_"
+                                    onChange={(e) => handleSelectProductChange_(e)}
+                                    placeholder='Product'
+                                    value={product_}
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    components={{ MenuList: SelectMenuButton }}
+                                />
+                            </div>
+                            <div className='my-4'>
+                                <label className='form-label'>Country (ies)</label>
+                                {compselect ?
+                                    <MySelect
+                                        options={countryList ? [...countryList] : ''}
+                                        isMulti
+                                        closeMenuOnSelect={false}
+                                        hideSelectedOptions={false}
+                                        components={{ Option, MultiValue, animatedComponents }}
+                                        onChange={handleMyselectChange_}
+                                        value={country_}
+                                        allowSelectAll={true}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        value={region_p}
                                     />
-                                </div>
-                                <div className='my-4'>
-                                    <label className="form-label">Procedure</label>
-                                    <Select options={[
-                                        { label: 'Nationale', value: 'Nationale' },
-                                        { label: 'Centralized', value: 'Centralized' },
-                                        { label: 'Decentralized', value: 'Decentralized' },
-                                        { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                    ]}
-                                        name="procedure_p"
-                                        onChange={(e) => setProductState(ps => ({ ...ps, "procedure_p": e }))}
-                                        placeholder='Procedure type'
-                                        isClearable
-                                        value={procedure_p}
-                                        // isDisabled={region_p && region_p.value == 'GCC' || region_p && region_p.value == 'CH' ? true : false}
+                                    : <Select options={countryList}
+                                        onChange={(e) => onChange(e, 'country_')}
+                                        value={country_}
                                         menuPortalTarget={document.body}
+                                        isClearable
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                </div>
-                                <div className='d-flex mt-5 justify-content-end'>
-                                    <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
-                                    <button className="btn btn-sm btn-primary" onClick={handleAddProduct}>Add</button>
-                                </div>
+                                    />}
+                            </div>
+                            <div className='d-flex mt-5 justify-content-end'>
+                                <a href="#" className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</a>
+                                <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleLifeCycle}>Validate</button>
                             </div>
                         </div>
-                        {/* <div className='text-center mb-13'>
+                        <div className="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+                            <div>
+                                <label className="form-label">Request type</label>
+                                <Select options={[
+                                    { label: 'Formatting', value: 'Formatting' },
+                                    { label: 'Publishing', value: 'Publishing' },
+                                    { label: 'Submission', value: 'Submission' },
+                                ]}
+                                    name="form"
+                                    onChange={(e) => handleSelectChange(e, 'form')}
+                                    placeholder='Form'
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999, }),
+                                        container: base => ({ width: '100%' })
+                                    }}
+                                    value={data.form}
+                                />
+                            </div>
+                            <div className='my-4'>
+                                <label className="form-label">Region</label>
+                                <Select
+                                    options={data.form && data.form.value == 'Publishing' ? publishingRegion : formattingRegion}
+                                    name="region"
+                                    onChange={(e) => handleSelectChange(e, 'region')}
+                                    placeholder='Region'
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    value={data.region}
+                                />
+                            </div>
+                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
+                                <label className='form-label'>Procedure type</label>
+                                <Select options={[
+                                    { label: 'Nationale', value: 'Nationale' },
+                                    { label: 'Centralized', value: 'Centralized' },
+                                    { label: 'Decentralized', value: 'Decentralized' },
+                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                ]}
+                                    name="procedure"
+                                    onChange={(e) => handleSelectChange(e, 'procedure')}
+                                    placeholder='Procedure type'
+                                    isClearable
+                                    value={data.procedure}
+                                    isDisabled={data.region && data.region.value == 'GCC' || data.region && data.region.value == 'CH' ? true : false}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                />
+                            </div>
+                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
+                                <label className='form-label'>Product</label>
+                                <Select options={productList}
+                                    name="product"
+                                    onChange={(e) => handleSelectProductChange(e, 'product')}
+                                    placeholder='Product'
+                                    value={data.product}
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                />
+                            </div>
+                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
+                                <label className='form-label'>Country (ies)</label>
+                                {compselect ?
+                                    <MySelect
+                                        options={countryList ? [...countryList] : ''}
+                                        isMulti
+                                        closeMenuOnSelect={false}
+                                        hideSelectedOptions={false}
+                                        components={{ Option, MultiValue, animatedComponents }}
+                                        onChange={handleMyselectChange}
+                                        value={data.country}
+                                        allowSelectAll={true}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    />
+                                    : <Select options={countryList}
+                                        onChange={(e) => handleSelectCountryChange(e, 'country')}
+                                        value={data.country}
+                                        menuPortalTarget={document.body}
+                                        isClearable
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    />}
+                            </div>
+                            <div className='my-4' style={{ display: data.form && data.form.value == 'Formatting' ? 'flex' : 'none', alignItems: 'center' }}>
+                                <label className='form-label my-0 me-4'>Core doc</label>
+                                <label className='form-check form-switch form-check-custom form-check-solid'>
+                                    <input className='form-check-input' type='checkbox' value='1' />
+
+                                    {/* <span className=' fw-bold form-label'>Core doc</span> */}
+                                </label>
+
+                            </div>
+                            <div className='d-flex mt-5 justify-content-end'>
+                                <button className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</button>
+                                <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleNavigate}>Validate</button>
+                            </div>
+                        </div>
+                        {/* <div className="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
+                            <div>
+                                <label className="form-label">Product name</label>
+                                <input className='form-control' type='text' placeholder='Name' value={product_p} name='product_p' onChange={(e) => setProductState(ps => ({ ...ps, "product_p": e.target.value }))} />
+                            </div>
+                            <div className='my-4'>
+                                <label className="form-label">Region</label>
+                                <Select
+                                    options={publishingRegion}
+                                    name="region_p"
+                                    onChange={(e) => setProductState(ps => ({ ...ps, "region_p": e }))}
+                                    placeholder='Region'
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                    value={region_p}
+                                />
+                            </div>
+                            <div className='my-4'>
+                                <label className="form-label">Procedure</label>
+                                <Select options={[
+                                    { label: 'Nationale', value: 'Nationale' },
+                                    { label: 'Centralized', value: 'Centralized' },
+                                    { label: 'Decentralized', value: 'Decentralized' },
+                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                ]}
+                                    name="procedure_p"
+                                    onChange={(e) => setProductState(ps => ({ ...ps, "procedure_p": e }))}
+                                    placeholder='Procedure type'
+                                    isClearable
+                                    value={procedure_p}
+                                    
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                />
+                            </div>
+                            <div className='d-flex mt-5 justify-content-end'>
+                                <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
+                                <button className="btn btn-sm btn-primary" onClick={handleAddProduct}>Add</button>
+                            </div>
+                        </div> */}
+                    </div>
+                    {/* <div className='text-center mb-13'>
                             <h1 className='mb-3'>New request</h1>
                         </div> */}
 
 
-                    </div>
                 </div>
             </div>
-        </div>
+            {/* </div> */}
+        </Modal>
+
     )
 }
 

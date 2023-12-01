@@ -4,7 +4,10 @@ import { useDropzone } from 'react-dropzone';
 
 const DropZone = ({ files, upload, deleletFile, removeAll }) => {
 
-    const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+    const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+        noClick: true,
+        noKeyboard: true
+    });
     const [myfiles, setMyFiles] = useState([]);
 
     const handleOnDrop = (files, rejectedFiles) => {

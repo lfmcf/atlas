@@ -2,6 +2,7 @@ import clsx from "clsx";
 import Authenticated from "../../Layouts/AuthenticatedLayout";
 import moment from "moment";
 import { router } from "@inertiajs/react";
+import axios from "axios";
 
 
 const AllNotifs = (props) => {
