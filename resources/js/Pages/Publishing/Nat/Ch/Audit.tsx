@@ -179,7 +179,7 @@ const Audit = (props: any) => {
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">1</span>
@@ -197,7 +197,7 @@ const Audit = (props: any) => {
                         </div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">2</span>
@@ -215,7 +215,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">3</span>
@@ -233,7 +233,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">4</span>
@@ -251,7 +251,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">5</span>
@@ -269,7 +269,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(6)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">6</span>
