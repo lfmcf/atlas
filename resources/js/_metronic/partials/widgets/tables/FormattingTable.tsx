@@ -102,6 +102,8 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         setnombrePages(tb.page.info().pages);
     }
 
+    console.log(data)
+
     return (
         <>
             <div className={`card mb-5`}>
@@ -180,17 +182,17 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
                                         </td>
                                         <td>
-                                            <ReactCountryFlag
-                                                countryCode={row.country.code}
-                                                aria-label={row.country.value}
-                                                title={row.country.value}
-                                                svg
-                                                style={{
-                                                    width: '1.5em',
-                                                    height: '1.5em',
-                                                }}
-                                            />
-
+                                            {row.country ?
+                                                <ReactCountryFlag
+                                                    countryCode={row.country.code}
+                                                    aria-label={row.country.value}
+                                                    title={row.country.value}
+                                                    svg
+                                                    style={{
+                                                        width: '1.5em',
+                                                        height: '1.5em',
+                                                    }}
+                                                /> : ''}
                                         </td>
                                         <td>
                                             <span className='fs-7'>
