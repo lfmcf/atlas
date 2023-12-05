@@ -146,7 +146,7 @@ const Confirm = (props: any) => {
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
 
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -177,7 +177,7 @@ const Confirm = (props: any) => {
                     {/* <!--begin::Step 2--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -208,7 +208,7 @@ const Confirm = (props: any) => {
                     {/* <!--begin::Step 3--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>

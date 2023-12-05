@@ -226,7 +226,7 @@ const Audit = (props: any) => {
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -251,7 +251,7 @@ const Audit = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -278,7 +278,7 @@ const Audit = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -305,7 +305,7 @@ const Audit = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -332,7 +332,7 @@ const Audit = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -359,7 +359,7 @@ const Audit = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(6)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">6</span>
