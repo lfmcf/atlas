@@ -122,6 +122,12 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
         setnombrePages(tb.page.info().pages);
     }
 
+    const pagination = (number) => {
+
+        setCurrentPage(number)
+        tb.page(number - 1).draw('page')
+    }
+
 
     return (
         <>
