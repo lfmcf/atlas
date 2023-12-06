@@ -601,7 +601,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className="fs-4 text-white">
                                     <span className="opacity-75">You have </span>
                                     <span className="position-relative d-inline-block">
-                                        <a href="#" className="link-white opacity-75-hover text-orange fw-bold d-block mb-1" onClick={() => { router.get('tasks') }}>{totalRequet}</a>
+                                        <a href="#" className="link-white opacity-75-hover text-warning fw-bold d-block mb-1" onClick={() => { router.get('tasks') }}>{totalRequet}</a>
 
                                         <span className="position-absolute opacity-50 bottom-0 start-0 border-2 border-body border-bottom w-100"></span>
 
@@ -677,8 +677,8 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             </div> */}
                         </div>
                         <div className="card-body p-9 pt-5">
-                            <div className="d-flex flex-wrap">
-                                <div className="position-relative d-flex flex-center h-175px w-175px me-15 mb-7">
+                            <div className="d-flex flex-wrap justify-content-center">
+                                <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
                                     <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
                                         <span className="fs-2qx fw-bold">{formattingCount + PublishingCount}</span>
                                         <span className="fs-6 fw-semibold text-gray-400">Total Req</span>
@@ -750,9 +750,16 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     </li>
 
                                 </ul>
+                                <DatePicker
+                                    dateFormat="yyyy"
+                                    showYearPicker selected={dateStart}
+                                    onChange={(date) => setDateStart(date)}
+                                    className="form-select form-select-solid form-select-sm fw-bold w-100px"
+                                    yearItemNumber={6}
+                                />
                             </div>
                         </div>
-                        <div className='card-body py-0 ps-6 mt-n12'>
+                        <div className='card-body py-0 ps-6 mt-2'>
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_11_tab_content_1">
                                     <Chart options={dossier_type_options}
