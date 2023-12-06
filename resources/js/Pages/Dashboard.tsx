@@ -156,6 +156,107 @@ const options = {
         width: 2,
         colors: ['transparent']
     },
+    colors: [getCSSVariableValue('--bs-success'), getCSSVariableValue('--bs-success-light')],
+    grid: {
+        borderColor: getCSSVariableValue('--bs-border-dashed-color'),
+        strokeDashArray: 4,
+        yaxis: {
+            lines: {
+                show: true
+            }
+        }
+    }
+}
+
+const options_pub = {
+    chart: {
+        id: "basic-bar",
+        fontFamily: 'inherit',
+        type: 'bar',
+        toolbar: {
+            show: false
+        }
+    },
+    xaxis: {
+        categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisBorder: {
+            show: false,
+        },
+        axisTicks: {
+            show: false
+        },
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '13px'
+            }
+        },
+        crosshairs: {
+            fill: {
+                gradient: {
+                    opacityFrom: 0,
+                    opacityTo: 0
+                }
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: getCSSVariableValue('--bs-gray-500'),
+                fontSize: '13px'
+            },
+            formatter: function (val) {
+                return parseInt(val) + 2
+            }
+        }
+    },
+    fill: {
+        opacity: 1
+    },
+    tooltip: {
+        style: {
+            fontSize: '12px'
+        },
+        // y: {
+        //     formatter: function (val) {
+        //         return + val + "K"
+        //     }
+        // }
+    },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '22%',
+            borderRadius: 5,
+            dataLabels: {
+                position: "top" // top, center, bottom
+            },
+        },
+
+    },
+    legend: { show: false },
+    dataLabels: {
+        enabled: true,
+        offsetY: -30,
+        style: {
+            fontSize: '13px',
+            colors: [getCSSVariableValue('--bs-gray-900')]
+        },
+        formatter: function (val) {
+
+            if (val == 0) {
+                return ''
+            } else {
+                return val
+            }
+        }
+    },
+    stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+    },
     colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-primary-light')],
     grid: {
         borderColor: getCSSVariableValue('--bs-border-dashed-color'),
@@ -500,7 +601,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className="fs-4 text-white">
                                     <span className="opacity-75">You have </span>
                                     <span className="position-relative d-inline-block">
-                                        <a href="#" className="link-white opacity-75-hover fw-bold d-block mb-1" onClick={() => { router.get('tasks') }}>{totalRequet}</a>
+                                        <a href="#" className="link-white opacity-75-hover text-orange fw-bold d-block mb-1" onClick={() => { router.get('tasks') }}>{totalRequet}</a>
 
                                         <span className="position-absolute opacity-50 bottom-0 start-0 border-2 border-body border-bottom w-100"></span>
 
@@ -568,7 +669,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                     <div className="card card-flush h-100">
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
-                                <h3 className="fw-bold mb-1">Total Requests</h3>
+                                <h3 className="fw-bold mb-1">Total requests</h3>
                                 {/* <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div> */}
                             </div>
                             {/* <div className="card-toolbar">
@@ -612,7 +713,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className='card-header py-7 mb-3'>
                             <h3 className='card-title align-items-start flex-column'>
                                 <span className='card-label fw-bold text-gray-800'>
-                                    Doosier per type
+                                    Request per type
                                 </span>
                             </h3>
                             <div className="card-toolbar m-0">
@@ -675,7 +776,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                     <div className="card h-xl-100">
                         <div className='card-header mb-5'>
                             <h3 className='card-title align-items-center flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Some subject</span>
+                                <span className='card-label fw-bold text-gray-800'>Request review</span>
                             </h3>
                         </div>
 
@@ -686,10 +787,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
                                             <div className="symbol symbol-50px me-4">
                                                 <span className="symbol-label">
-                                                    <i className="ki-duotone ki-timer fs-2qx text-primary">
+                                                    <i className="ki-duotone ki-shield-tick fs-2qx text-primary">
                                                         <span className="path1"></span>
                                                         <span className="path2"></span>
-                                                        <span className="path3"></span>
                                                     </i>
                                                 </span>
                                             </div>
@@ -702,18 +802,17 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
                                             <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
                                             <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span>
+                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span> */}
                                         </div>
                                     </div>
                                     <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
                                         <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
                                             <div className="symbol symbol-50px me-4">
                                                 <span className="symbol-label">
-                                                    <i className="ki-duotone ki-element-11 fs-2qx text-primary">
+                                                    <i className="ki-duotone ki-shield fs-2qx text-primary">
                                                         <span className="path1"></span>
                                                         <span className="path2"></span>
-                                                        <span className="path3"></span>
-                                                        <span className="path4"></span>
+
                                                     </i>
                                                 </span>
                                             </div>
@@ -726,14 +825,14 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             <span className="text-dark fw-bolder fs-2x">{update}</span>
                                             <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
                                             <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span>
+                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span> */}
                                         </div>
                                     </div>
                                     <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
                                         <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
                                             <div className="symbol symbol-50px me-4">
                                                 <span className="symbol-label">
-                                                    <i className="ki-duotone ki-abstract-24 fs-2qx text-primary">
+                                                    <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
                                                         <span className="path1"></span>
                                                         <span className="path2"></span>
                                                     </i>
@@ -748,7 +847,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                             <span className="text-dark fw-bolder fs-2x">{correction}</span>
                                             <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
                                             <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span>
+                                            {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
                                         </div>
                                     </div>
                                 </div>
@@ -793,7 +892,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                     <div className='card card-flush h-lg-100'>
                         <div className='card-header pt-7 mb-5'>
                             <h3 className='card-title align-items-start flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Product by country</span>
+                                <span className='card-label fw-bold text-gray-800'>Requests per Product-Country</span>
                                 {/* <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span> */}
                             </h3>
                         </div>
@@ -896,7 +995,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
                             <h3 className="card-title align-items-start flex-column">
                                 <span className="card-label fw-bold text-gray-800">Requests per month</span>
-                                <span className="text-gray-400 mt-1 fw-semibold fs-6">18</span>
+                                {/* <span className="text-gray-400 mt-1 fw-semibold fs-6">18</span> */}
                             </h3>
 
                             <div className="card-toolbar">
@@ -954,7 +1053,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </div>
                                 <div className='tab-pane fade' id="kt_charts_widget_10_tab_content_2">
                                     <Chart
-                                        options={options}
+                                        options={options_pub}
                                         series={[{ name: 'Publishing', data: perMonthPub }]}
                                         type="bar"
                                         height={270}
@@ -969,7 +1068,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                     <div className="card card-flush h-lg-100">
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
-                                <h3 className="fw-bold mb-1">Tasks Over Time</h3>
+                                <h3 className="fw-bold mb-1">Cumulative requests</h3>
                                 <div className="fs-6 d-flex text-gray-400 fs-6 fw-semibold">
                                     <div className="d-flex align-items-center me-6">
                                         <span className="menu-bullet d-flex align-items-center me-2">

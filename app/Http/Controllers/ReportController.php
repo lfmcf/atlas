@@ -57,7 +57,7 @@ class ReportController extends Controller
             $totalRev = $reviewFor + $reviewPub + $reviewPubMrp;
 
             $arr = [
-                ["status" => "Initaited", "total" => $totalIni],
+                ["status" => "Initiated", "total" => $totalIni],
                 ["status" => "To verify", "total" => $totalVery],
                 ["status" => "Delivered", "total" => $totalDeli],
                 ["status" => "In review", "total" => $totalRev]
@@ -82,7 +82,7 @@ class ReportController extends Controller
             $arr = [
                 ["status" => "Submitted", "total" => $totalSubmi],
                 ["status" => "To correct", "total" => $totalCorre],
-                ["status" => "In pregress", "total" => $totalpro]
+                ["status" => "In progress", "total" => $totalpro]
             ];
         }
 
@@ -443,6 +443,8 @@ class ReportController extends Controller
             $name = rtrim($name, ',');
             array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
         }
+
+        // return response('notfound', 404);
 
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
