@@ -8,6 +8,7 @@ import moment from 'moment';
 import { useForm } from '@inertiajs/react';
 import { gcccountry } from '../../../Lab/MetaDataList';
 import DropZone from '../../../../Components/Dropzone';
+import axios from 'axios';
 
 const Initiate_ = (props: any) => {
 
@@ -15,6 +16,7 @@ const Initiate_ = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const { folder, agc } = props
+
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -30,7 +32,7 @@ const Initiate_ = (props: any) => {
         remarks: folder ? folder.remarks : '',
         tracking: folder ? folder.tracking : '',
         applicant: 'STALLERGENES',
-        agency_code: agc.agencyCode,
+        agency_code: agc ? agc.agencyCode : '',
         atc: folder ? folder.atc : '',
         submission_type: folder ? folder.submission_type : '',
         submission_mode: folder ? folder.submission_mode : '',
@@ -49,7 +51,7 @@ const Initiate_ = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: [],
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
         deadline: new Date,
@@ -125,13 +127,6 @@ const Initiate_ = (props: any) => {
         setData(name, e)
     }
 
-    // const handleUploadFileChange = (e) => {
-    //     let instData = { ...data }
-    //     instData.doc = []
-    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
-    //     setData(instData)
-    // }
-
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc.push(...e)
@@ -145,13 +140,27 @@ const Initiate_ = (props: any) => {
 
     const removeAll = () => {
         let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         instData.doc = []
         setData(instData)
     }
 
     const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         var arr = { ...data }
-        arr.doc.splice(i, 1)
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
         setData(arr)
     }
 
@@ -531,15 +540,11 @@ const Initiate_ = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div> */}
+
                                 </div>
                             </div>
                             <div className="row mb-10">

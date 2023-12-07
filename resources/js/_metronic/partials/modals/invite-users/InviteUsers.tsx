@@ -95,6 +95,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     }
 
     const handleSelectCountryChange = (e, name) => {
+
         if (data.procedure && data.procedure.value == 'Nationale' && e && !data.product) {
             axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'country': e.value, }).then(res => {
                 var dt = res.data.map(ct => {
@@ -139,10 +140,22 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         setState(prevState => ({ ...prevState, ['product_']: e }));
         if (procedure_ && procedure_.value == 'Nationale') {
             axios.post('getProductOrCountry', { 'procedure': procedure_.value, 'product': e.value, }).then(res => {
-                var dt = res.data.map(ct => {
-                    return { label: ct.country, value: ct.country }
-                })
-                setCountryList(dt)
+                if (res.data.length > 0) {
+                    var dt = res.data.map(ct => {
+                        return { label: ct.country, value: ct.country }
+                    })
+                    setCountryList(dt)
+                } else {
+                    console.log('here')
+                    if (region_ && region_.value == "EU") {
+                        setCountryList(eunatcountry)
+                    } else if (region_ && region_.value == "GCC") {
+                        setCountryList(gcccountry)
+                    } else {
+                        setCountryList([{ label: "Switzerland", value: "Switzerland" }])
+                    }
+                }
+
                 //setData({ ...data, 'product': e, country: '' })
 
             })
@@ -343,7 +356,6 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     };
 
     const handleClose = () => {
-        console.log('call')
         reset()
         setState({ ...initialState });
         setProductState({ ...initialProductState })
