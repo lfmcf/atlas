@@ -11,6 +11,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 import DropZone from '../../../Components/Dropzone'
+import axios from 'axios'
 
 const Create_ = (props: any) => {
 
@@ -37,7 +38,7 @@ const Create_ = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: folder ? folder.doc : [],
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
         request_date: new Date()
@@ -93,13 +94,6 @@ const Create_ = (props: any) => {
     const handleChange = (e) => {
         setData(e.target.name, e.target.value)
     }
-
-    // const handleUploadFileChange = (e) => {
-    //     let instData = { ...data }
-    //     instData.doc = []
-    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
-    //     setData(instData)
-    // }
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
@@ -228,13 +222,27 @@ const Create_ = (props: any) => {
 
     const removeAll = () => {
         let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         instData.doc = []
         setData(instData)
     }
 
     const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         var arr = { ...data }
-        arr.doc.splice(i, 1)
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
         setData(arr)
     }
 
@@ -679,20 +687,16 @@ const Create_ = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div> */}
+
                                 </div>
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" placeholder="" onChange={handleChange} />
+                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">

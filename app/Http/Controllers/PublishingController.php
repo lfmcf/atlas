@@ -157,7 +157,6 @@ class PublishingController extends Controller
         $country = $request->query('country');
         $product = $request->query('product');
 
-
         if ($region == "EU") {
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
 
@@ -337,6 +336,10 @@ class PublishingController extends Controller
 
         $docs = $request->doc;
 
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
+
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -397,7 +400,11 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $docs;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
@@ -1020,7 +1027,9 @@ class PublishingController extends Controller
     {
 
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1067,7 +1076,11 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $docs;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->deadline = $request->deadline;
         $pub->request_date = $request->request_date;
@@ -1231,7 +1244,9 @@ class PublishingController extends Controller
     {
 
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1292,7 +1307,11 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $request->doc;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
@@ -1612,6 +1631,10 @@ class PublishingController extends Controller
     {
         $docs = $request->doc;
 
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
+
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1671,7 +1694,11 @@ class PublishingController extends Controller
         $pub->drug_product = $request->drug_product;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->document = $request->doc;
+        if (!empty($pub->document)) {
+            $pub->document = [...$pub->document, ...$docs];
+        } else {
+            $pub->document = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
