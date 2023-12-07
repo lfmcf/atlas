@@ -6,6 +6,8 @@ import 'flatpickr/dist/flatpickr.css';
 import Select from 'react-select';
 import moment from 'moment';
 import { useForm } from '@inertiajs/react';
+import DropZone from '../../../../Components/Dropzone';
+import axios from 'axios';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -66,7 +68,7 @@ const Audit = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: folder ? folder.doc : '',
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
         deadline: new Date,
@@ -157,8 +159,7 @@ const Audit = (props: any) => {
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -170,6 +171,32 @@ const Audit = (props: any) => {
     const handleCommentChange = (e) => {
         let arr = { ...data }
         arr.audit.message = e.target.value
+        setData(arr)
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        instData.doc = []
+        setData(instData)
+    }
+
+    const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
         setData(arr)
     }
 
@@ -572,16 +599,13 @@ const Audit = (props: any) => {
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div>
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+
                                 </div>
                             </div>
                             <div className="row mb-10">

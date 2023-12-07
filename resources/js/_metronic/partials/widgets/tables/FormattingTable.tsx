@@ -78,7 +78,6 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
     const handlenext = () => {
         let number = tb.page.info().page + 1
-        console.log(number)
         setCurrentPage(number + 1)
         tb.page(number).draw('page')
     }
@@ -107,8 +106,6 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         setCurrentPage(number)
         tb.page(number - 1).draw('page')
     }
-
-    console.log(data)
 
     return (
         <>

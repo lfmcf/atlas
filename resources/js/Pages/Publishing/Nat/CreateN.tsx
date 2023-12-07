@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useEffect, useRef } from 'react'
+import { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react'
 import Authenticated from '../../../Layouts/AuthenticatedLayout'
 import { StepperComponent } from '../../../_metronic/assets/ts/components'
 import { Instance } from 'flatpickr/dist/types/instance'
@@ -8,6 +8,8 @@ import moment from 'moment'
 import Select from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
+import DropZone from '../../../Components/Dropzone'
+import axios from 'axios'
 
 const CreateN = (props: any) => {
     const { metadata, folder } = props;
@@ -32,6 +34,7 @@ const CreateN = (props: any) => {
         submission_type: folder ? folder.submission_type : '',
         submission_mode: folder ? folder.submission_mode : '',
         tracking: folder ? folder.tracking : '',
+        trackingExtra: folder ? folder.trackingExtra : '',
         submission_unit: folder ? folder.submission_unit : '',
         applicant: metadata.applicant,
         agency_code: metadata.agencyCode,
@@ -48,7 +51,7 @@ const CreateN = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: folder ? folder.doc : '',
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date(),
         deadline: new Date(),
@@ -56,17 +59,23 @@ const CreateN = (props: any) => {
 
     let tn = metadata.trackingNumber
     tn = tn.split(/\r?\n/)
-    let tno = [];
+
+    let tno = []
     if (tn.length > 1) {
         tno = tn.map((val) => {
             return { label: val, value: val }
         })
-
-    } else {
-        tno = tn.map((val) => {
-            return { label: val, value: val }
-        })
     }
+
+
+
+    //     tno = 
+
+    // } else {
+    //     tno = tn.map((val) => {
+    //         return { label: val, value: val }
+    //     })
+    // }
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
@@ -114,8 +123,7 @@ const CreateN = (props: any) => {
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -132,7 +140,6 @@ const CreateN = (props: any) => {
         } else {
             delai = delai + 1
         }
-        console.log(delai)
 
         while (count < delai) {
             deadline = new Date(date.setDate(date.getDate() + 1));
@@ -140,25 +147,41 @@ const CreateN = (props: any) => {
                 //Date.getDay() gives weekday starting from 0(Sunday) to 6(Saturday)
                 count++;
             }
-
         }
 
         setData('deadline', new Date(deadline));
-        // let deadline;
-        // if (delai) {
-        //     if (hour < 12) {
-        //         deadline = date.setDate(date.getDate() + delai)
-        //     } else {
-        //         deadline = date.setDate(date.getDate() + delai + 1)
-        //     }
-        //     setData('deadline', new Date(deadline));
-        // }
+
 
     }, [data.dossier_type]);
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
         post(route('store-publishing', { type: type }));
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        instData.doc = []
+        setData(instData)
+    }
+
+    const deleletFile = (i) => {
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
+        setData(arr)
     }
 
     return (
@@ -404,17 +427,24 @@ const CreateN = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
-                                    <Select options={tno}
-                                        name='tracking'
-                                        onChange={(e) => handleSelectChange(e, 'tracking')}
-                                        className="basic"
-                                        classNamePrefix="basic"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.tracking}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    <div className='d-flex align-items-center'>
+                                        <Select options={tn.map((val) => {
+                                            return { label: val, value: val }
+                                        })}
+                                            name='tracking'
+                                            onChange={(e) => handleSelectChange(e, 'tracking')}
+                                            className="basic"
+                                            classNamePrefix="basic"
+                                            placeholder=''
+                                            isClearable
+                                            defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
+
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '100%' }) }}
+                                        />
+                                        <input type='text' className='form-control form-control-solid' name="trackingExtra" style={{ width: '30%' }} onChange={handleChange} />
+                                    </div>
+
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission unit</label>
@@ -582,16 +612,17 @@ const CreateN = (props: any) => {
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
                                         {data.doc ? data.doc.map((ele) => (
                                             <span className='me-2 fs-5'>{ele.name}</span>
                                         )) : ''}
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="row mb-10">

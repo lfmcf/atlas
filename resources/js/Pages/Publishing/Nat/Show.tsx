@@ -109,7 +109,7 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Dossier type</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.dossier_type.value}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.dossier_type ? folder.dossier_type.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
@@ -137,19 +137,19 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission type</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_type.value}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_type ? folder.submission_type.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission mode</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode.value}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode ? folder.submission_mode.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Procedure Tracking N°</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.tracking.value}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.tracking && typeof folder.tracking === 'object' ? folder.tracking.value : folder.tracking}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">

@@ -13,6 +13,8 @@ use App\Models\User;
 use App\Notifications\InvoiceInitaitedForm;
 use App\Models\PublishingMrp;
 
+use function PHPUnit\Framework\isEmpty;
+
 class PublishingController extends Controller
 {
     /**
@@ -33,12 +35,14 @@ class PublishingController extends Controller
         if ($request->id) {
 
             $pub = Publishing::find($request->id);
+
             if (!$pub) {
                 $pub = PublishingMrp::find($request->id);
             }
+
             $region = $pub->region;
             $procedure = $pub->procedure;
-            $country = $pub->mt;
+            $country = $pub->country;
             $product = $pub->product_name;
         } else {
             $region = $request->query('region');
@@ -46,6 +50,8 @@ class PublishingController extends Controller
             $country = $request->query('country');
             $product = $request->query('product');
         }
+
+
 
 
         if ($region == "EU") {
@@ -58,6 +64,7 @@ class PublishingController extends Controller
                     ['procedure', '=', $procedure],
                     ['country', '=', $country]
                 ])->first();
+
                 if ($md) {
                     return Inertia::render('Publishing/Nat/CreateN', [
                         'metadata' => $md,
@@ -67,10 +74,10 @@ class PublishingController extends Controller
                     ]);
                 }
             } else {
+
                 $listmd = [];
                 if (!$request->id) {
                     for ($i = 0; $i < count($country); $i += 2) {
-                        // dd($country[$i]['label']);
                         $md = MetaData::where([
                             ['Product', '=', $product],
                             ['procedure', '=', $procedure],
@@ -81,16 +88,26 @@ class PublishingController extends Controller
                         }
                     }
                 } else {
-                    for ($i = 0; $i < count($country); $i += 1) {
+                    foreach ($pub->mt as $m) {
                         $md = MetaData::where([
                             ['Product', '=', $product],
                             ['procedure', '=', $procedure],
-                            ['country', '=', $country[$i]['country']]
+                            ['country', '=', $m['country']]
                         ])->first();
                         if ($md) {
                             array_push($listmd, $md);
                         }
                     }
+                    // for ($i = 0; $i < count($country); $i += 1) {
+                    //     $md = MetaData::where([
+                    //         ['Product', '=', $product],
+                    //         ['procedure', '=', $procedure],
+                    //         ['country', '=', $country[$i]['country']]
+                    //     ])->first();
+                    //     if ($md) {
+                    //         array_push($listmd, $md);
+                    //     }
+                    // }
                 }
 
                 return Inertia::render('Publishing/Rmp/Create', [
@@ -214,14 +231,20 @@ class PublishingController extends Controller
      */
     public function store(Request $request)
     {
+
         $docs = $request->doc;
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
 
         if (!empty($docs)) {
+
             $arr = array_map(function ($doc) {
 
                 $myarr = [];
 
-                if ($doc && gettype($doc) != 'string') {
+                if ($doc && gettype($doc) !== 'string') {
+
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
@@ -237,14 +260,15 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        // if ($request->query('type') == 'save') {
+        //     $NewOrOldPub = Publishing::find($request->id);
+        //     $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
+        // } else {
+
+        // }
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -259,7 +283,13 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        $pub->tracking = $request->tracking;
+        // $pub->trackingExtra =  $request->trackingExtra;
+        if ($request->tracking && is_array($request->tracking)) {
+            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        } else {
+            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        }
+
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -276,7 +306,12 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $docs;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
+
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
@@ -468,6 +503,9 @@ class PublishingController extends Controller
     public function postConfirm(Request $request)
     {
         $docs = $request->doc;
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
 
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
@@ -521,8 +559,10 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        if (!empty($docs)) {
-            $pub->document = [...$pub->document, $docs];
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
         }
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
@@ -598,6 +638,9 @@ class PublishingController extends Controller
             Notification::sendNow($user, new InvoiceInitaitedForm($ublishing));
         } else {
             $docs = $request->doc;
+            $docs = array_filter($docs, static function ($element) {
+                return gettype($element) !== 'array';
+            });
             if (!empty($docs)) {
                 $arr = array_map(function ($doc) {
 
@@ -650,8 +693,10 @@ class PublishingController extends Controller
             $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
             $pub->dosage_form = $request->dosage_form;
             $pub->excipient = $request->excipient;
-            if (!empty($docs)) {
-                $pub->document = [...$pub->document, $docs];
+            if (!empty($pub->doc)) {
+                $pub->doc = [...$pub->doc, ...$docs];
+            } else {
+                $pub->doc = $docs;
             }
             $pub->docremarks = $request->docremarks;
             $pub->invented_name = $request->invented_name;
@@ -875,7 +920,9 @@ class PublishingController extends Controller
     public function storemrp(Request $request)
     {
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -922,7 +969,11 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $docs;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->deadline = $request->deadline;
         $pub->request_date = $request->request_date;
@@ -1036,7 +1087,7 @@ class PublishingController extends Controller
         $procedure = $pub->procedure;
 
         $listmd = [];
-        for ($i = 0; $i < count($pub->mt); $i += 1) {
+        for ($i = 0; $i < count($pub->mt); $i += 2) {
 
             $md = MetaData::where([
                 ['Product', '=', $product],
@@ -1061,7 +1112,9 @@ class PublishingController extends Controller
     {
 
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1122,7 +1175,11 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->doc = $request->doc;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
@@ -1244,7 +1301,9 @@ class PublishingController extends Controller
     public function confirmNatGcc(Request $request)
     {
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1297,8 +1356,10 @@ class PublishingController extends Controller
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        if (!empty($docs)) {
-            $pub->document = [...$pub->document, $docs];
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
         }
         $pub->docremarks = $request->docremarks;
         $pub->invented_name = $request->invented_name;
@@ -1330,6 +1391,9 @@ class PublishingController extends Controller
             Notification::sendNow($user, new InvoiceInitaitedForm($ublishing));
         } else {
             $docs = $request->doc;
+            $docs = array_filter($docs, static function ($element) {
+                return gettype($element) !== 'array';
+            });
             if (!empty($docs)) {
                 $arr = array_map(function ($doc) {
 
@@ -1382,10 +1446,11 @@ class PublishingController extends Controller
             $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
             $pub->dosage_form = $request->dosage_form;
             $pub->excipient = $request->excipient;
-            if (!empty($docs)) {
-                $pub->document = [...$pub->document, $docs];
+            if (!empty($pub->doc)) {
+                $pub->doc = [...$pub->doc, ...$docs];
+            } else {
+                $pub->doc = $docs;
             }
-
             $pub->docremarks = $request->docremarks;
             $pub->invented_name = $request->invented_name;
             $pub->request_date = $request->request_date;
@@ -1412,7 +1477,9 @@ class PublishingController extends Controller
     public function storeNatCh(Request $request)
     {
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1472,7 +1539,11 @@ class PublishingController extends Controller
         $pub->drug_product = $request->drug_product;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        $pub->document = $request->doc;
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
         $pub->docremarks = $request->docremarks;
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
@@ -1615,7 +1686,9 @@ class PublishingController extends Controller
     public function confirmNatCH(Request $request)
     {
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1682,8 +1755,10 @@ class PublishingController extends Controller
         $pub->tpa = $request->tpa;
         $pub->application_type = $request->application_type;
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-        if (!empty($docs)) {
-            $pub->document = [...$pub->document, $docs];
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
         }
 
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
@@ -1712,6 +1787,9 @@ class PublishingController extends Controller
             Notification::sendNow($user, new InvoiceInitaitedForm($ublishing));
         } else {
             $docs = $request->doc;
+            $docs = array_filter($docs, static function ($element) {
+                return gettype($element) !== 'array';
+            });
             if (!empty($docs)) {
                 $arr = array_map(function ($doc) {
 
@@ -1777,10 +1855,11 @@ class PublishingController extends Controller
             $pub->tpa = $request->tpa;
             $pub->application_type = $request->application_type;
             $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-            if (!empty($docs)) {
-                $pub->document = [...$pub->document, $docs];
+            if (!empty($pub->doc)) {
+                $pub->doc = [...$pub->doc, ...$docs];
+            } else {
+                $pub->doc = $docs;
             }
-
             $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
             $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
             $pub->docremarks = $request->docremarks;
@@ -1817,7 +1896,9 @@ class PublishingController extends Controller
     public function confirmmrp(Request $request)
     {
         $docs = $request->doc;
-
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1862,10 +1943,11 @@ class PublishingController extends Controller
         $pub->deadline = $request->deadline;
         $pub->request_date = $request->request_date;
         $pub->type = $request->query('type');
-        if (!empty($docs)) {
-            $pub->document = [...$pub->document, $docs];
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
         }
-
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
         $pub->status = 'submitted';
@@ -1892,6 +1974,31 @@ class PublishingController extends Controller
             $user = User::where('current_team_id', 2)->get();
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         } else {
+            $docs = $request->doc;
+            $docs = array_filter($docs, static function ($element) {
+                return gettype($element) !== 'array';
+            });
+            if (!empty($docs)) {
+                $arr = array_map(function ($doc) {
+
+                    $myarr = [];
+
+                    if ($doc && gettype($doc) != 'string') {
+                        $uploadedFile = $doc;
+                        $filename = $uploadedFile->getClientOriginalName();
+                        $path = Storage::putFileAs(
+                            'public',
+                            $uploadedFile,
+                            $filename
+                        );
+                        $myarr['name'] = $filename;
+                        $myarr['link'] = asset('storage/documents/' . $filename);;
+                    }
+                    return $myarr;
+                }, $docs);
+                $docs = $arr;
+            }
+
             $pub->form = $request->form;
             $pub->region = $request->region;
             $pub->procedure = $request->procedure;
@@ -1913,8 +2020,10 @@ class PublishingController extends Controller
             $pub->deadline = $request->deadline;
             $pub->request_date = $request->request_date;
             $pub->type = $request->query('type');
-            if (!empty($docs)) {
-                $pub->document = [...$pub->document, $docs];
+            if (!empty($pub->doc)) {
+                $pub->doc = [...$pub->doc, ...$docs];
+            } else {
+                $pub->doc = $docs;
             }
             $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
             $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
@@ -1959,14 +2068,21 @@ class PublishingController extends Controller
     public function deleteFilePub(Request $request)
     {
 
-        $filename = $request->file['name'];
+        // dd(array_values($request->docs));
+        // $filename = $request->file['name'];
+        $filename = $request->docs;
         $id = $request->id;
-        $folder = Publishing::where('_id', $id);
+        $folder = Publishing::find($id);
+
         if ($folder) {
-            $folder->pull('document', ['name' => $filename]);
+            foreach ($filename as $name) {
+                $folder->pull('doc', ['name' => $name]);
+            }
         } else {
-            $folder = PublishingMrp::where('_id', $id);
-            $folder->pull('document', ['name' => $filename]);
+            $folder = PublishingMrp::find($id);
+            foreach ($filename as $name) {
+                $folder->pull('doc', ['name' => $name]);
+            }
         }
         Storage::disk('public')->delete($filename);
         return response('done', 200);

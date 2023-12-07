@@ -6,6 +6,7 @@ import 'flatpickr/dist/flatpickr.css';
 import { useForm } from '@inertiajs/react';
 import Select from 'react-select'
 import moment from 'moment'
+import DropZone from "../../../Components/Dropzone";
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -53,7 +54,7 @@ const Confirm = (props: any) => {
         drug_product_manufacturer: folder.drug_product_manufacturer,
         dosage_form: folder.dosage_form,
         excipient: folder.excipient,
-        doc: '',
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder.docremarks,
         request_date: folder.request_date,
         deadline: folder.deadline,
@@ -109,8 +110,7 @@ const Confirm = (props: any) => {
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -123,6 +123,31 @@ const Confirm = (props: any) => {
         let arr = { ...data }
         arr.audit.message = e.target.value
         setData(arr)
+    }
+
+    const deleletFile = (i) => {
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
+        setData(arr)
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        instData.doc = []
+        setData(instData)
     }
 
     return (
@@ -563,6 +588,26 @@ const Confirm = (props: any) => {
                             </div>
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
+                            <div className='row mb-10'>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
+                                    <label className="form-label">Attached documents</label>
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+                                </div>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
+                                        {data.doc ? data.doc.map((ele) => (
+                                            <span className='me-2 fs-5'>{ele.name}</span>
+                                        )) : ''}
+                                    </div> */}
+                                </div>
+                            </div>
+                            <div className="row mb-10">
+                                <label className="form-label">Remarks</label>
+                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
+                            </div>
+                        </div>
+                        {/* <div className="flex-column" data-kt-stepper-element="content">
                             <div className='col-12 mb-10'>
                                 <label className="form-label">uploaded documents</label>
                                 <ul>
@@ -590,7 +635,7 @@ const Confirm = (props: any) => {
                                 <label className="form-label">Remarks</label>
                                 <textarea className="form-control form-control-solid" rows={3} name="docremarks" value={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
-                        </div>
+                        </div> */}
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-6'>
