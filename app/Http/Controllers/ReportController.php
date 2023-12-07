@@ -604,16 +604,19 @@ class ReportController extends Controller
         } else if ($user->current_team_id == 2) {
 
             $formattings = Formating::where('status', 'initiated')
+                ->orWhere('status', 'draft')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
                 ->get();
             $publishing = Publishing::where('status', 'initiated')
+                ->orWhere('status', 'draft')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
                 ->get();
             $publishingmrp = PublishingMrp::where('status', 'initiated')
+                ->orWhere('status', 'draft')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
