@@ -8,24 +8,11 @@ const DropZone = ({ files, upload, deleletFile, removeAll }) => {
         noClick: true,
         noKeyboard: true
     });
-    const [myfiles, setMyFiles] = useState([]);
 
     const handleOnDrop = (files, rejectedFiles) => {
-        // var arr = [...myfiles]
-        // arr.push(...files)
-        // setMyFiles(arr)
+
         upload(files)
     }
-
-    // const removeAll = () => {
-    //     setMyFiles([])
-    // }
-
-    // const deleletFile = (i) => {
-    //     var arr = [...myfiles]
-    //     arr.splice(i, 1)
-    //     setMyFiles(arr)
-    // }
 
     return (
         <Dropzone onDrop={handleOnDrop}>
@@ -36,10 +23,7 @@ const DropZone = ({ files, upload, deleletFile, removeAll }) => {
                             <input {...getInputProps()} />
                             Attach files
                         </a>
-                        {/* <div {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            Click me to upload a file!
-                        </div> */}
+
                         {files && files.length > 0 ?
                             <>
                                 <a className="dropzone-remove-all btn btn-sm btn-light-primary" onClick={removeAll}>Remove all</a>
@@ -48,7 +32,7 @@ const DropZone = ({ files, upload, deleletFile, removeAll }) => {
                                         <div className="dropzone-item">
                                             <div className="dropzone-file">
                                                 <div className="dropzone-filename">
-                                                    <span>{file.name} </span>
+                                                    <a href={file.link ? file.link : '#'} target={file.link ? "_blank" : ''} className="text-gray-500">{file.name} </a>
                                                     <strong>
                                                         {"("}
                                                         <span>
@@ -65,7 +49,7 @@ const DropZone = ({ files, upload, deleletFile, removeAll }) => {
                                                 </div>
                                             </div>
                                             <div className="dropzone-toolbar">
-                                                <span className="dropzone-delete" onClick={() => deleletFile(i)}>
+                                                <span className="dropzone-delete" onClick={() => deleletFile(file)}>
                                                     <i className="bi bi-x fs-1"></i>
                                                 </span>
                                             </div>

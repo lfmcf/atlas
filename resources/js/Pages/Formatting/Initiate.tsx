@@ -10,6 +10,7 @@ import { formattingDossierType, formattingProduct, substanceFormattingList } fro
 import moment from 'moment';
 import { useForm } from '@inertiajs/react';
 import DropZone from '../../Components/Dropzone';
+import axios from 'axios';
 
 const Initiate = (props: any) => {
 
@@ -19,6 +20,7 @@ const Initiate = (props: any) => {
     const { folder } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
+        id: folder ? folder._id : '',
         form: folder ? folder.form : params.get('form'),
         region: folder ? folder.region : params.get('region'),
         coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
@@ -32,7 +34,8 @@ const Initiate = (props: any) => {
         deficiency_letter: folder ? folder.deficiency_letter : '',
         chrono: folder ? folder.chrono : '',
         remarks: folder ? folder.remarks : '',
-        doc: [],
+        doc: folder && folder.document !== null ? folder.document : [],
+        docremarks: folder ? folder.docremarks : '',
         request_date: new Date(),
         deadline: new Date(),
         adjusted_deadline: moment(new Date),
@@ -43,8 +46,6 @@ const Initiate = (props: any) => {
         delivery_version: '',
         correction_request: '',
         correction_origin: '',
-        document: '',
-        document_remarks: '',
         status: '',
         created_by: props.auth.user.id
     });
@@ -91,13 +92,27 @@ const Initiate = (props: any) => {
 
     const removeAll = () => {
         let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file', { docs: filesfromserver, id: data.id })
+        }
         instData.doc = []
         setData(instData)
     }
 
     const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file', { docs: filesfromserver, id: data.id })
+        }
         var arr = { ...data }
-        arr.doc.splice(i, 1)
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
         setData(arr)
     }
 
@@ -268,6 +283,8 @@ const Initiate = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.product_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
 
                                 </div>
@@ -281,6 +298,8 @@ const Initiate = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.substance_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 
@@ -296,6 +315,8 @@ const Initiate = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.country}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
@@ -309,6 +330,8 @@ const Initiate = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.dossier_type}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 
@@ -337,24 +360,17 @@ const Initiate = (props: any) => {
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
-                                    <label className="col-form-label text-lg-right">Attached documents :</label>
-                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+                                    <label className="form-label">Attached documents</label>
 
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+
                                 </div>
-                                {/* <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div>
-                                </div> */}
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" placeholder="" onChange={handleChange} />
+                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
                         </div>
 

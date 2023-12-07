@@ -62,3 +62,21 @@
     color: var(--bs-primary);
     cursor: pointer;
 }
+
+.react-select-container:focus-visible {
+    outline: none !important;
+}
+
+.react-select__control {
+    background-color: #f9f9f9 !important;
+    border-color: #f9f9f9 !important;
+}
+
+.react-select__control:hover {
+    background-color: #f1f1f2 !important;
+    border-color: #f1f1f2 !important;
+}
+
+.react-select__control:focus-visible {
+    border-color: #f1f1f2 !important;
+}

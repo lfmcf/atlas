@@ -9,6 +9,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import StatusComponent from '../../Components/StatusComponent';
 import axios from 'axios';
+import DropZone from '../../Components/Dropzone';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 4,
@@ -40,7 +41,8 @@ const Audit = (props: any) => {
         deficiency_letter: folder.deficiency_letter,
         chrono: folder.chrono,
         remarks: folder.remarks,
-        doc: [],
+        doc: folder && folder.document !== null ? folder.document : [],
+        docremarks: folder.docremarks,
         request_date: folder.request_date,
         deadline: folder.deadline,
         adjusted_deadline: new Date,
@@ -51,8 +53,6 @@ const Audit = (props: any) => {
         delivery_version: '',
         correction_request: '',
         correction_origin: '',
-        document: '',
-        document_remarks: '',
         status: folder.status,
         deadlineComments: '',
         audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' }
@@ -89,8 +89,7 @@ const Audit = (props: any) => {
 
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
-        instData.doc = []
-        Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
+        instData.doc.push(...e)
         setData(instData)
     }
 
@@ -124,6 +123,31 @@ const Audit = (props: any) => {
         }
 
         stepper.current.goPrev()
+    }
+
+    const removeAll = () => {
+        let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file', { docs: filesfromserver, id: data.id })
+        }
+        instData.doc = []
+        setData(instData)
+    }
+
+    const deleletFile = (i) => {
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
+        setData(arr)
     }
 
     const handleMessageSend = () => {
@@ -348,31 +372,18 @@ const Audit = (props: any) => {
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-12 mb-10'>
-                                    <label className="form-label">uploaded documents</label>
-                                    <ul>
-                                        {folder.document ? folder.document.map((doc, i) => (
-                                            <li key={i}>
-                                                <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
-                                            </li>
-                                        )) : ''}
-                                    </ul>
-                                </div>
-                                <div className='col-6'>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
+
                                 </div>
-                                <div className='col-6'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+
                                 </div>
                             </div>
                             <div className="row mb-10">
                                 <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" placeholder="" onChange={handleChange} />
+                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
                         </div>
 

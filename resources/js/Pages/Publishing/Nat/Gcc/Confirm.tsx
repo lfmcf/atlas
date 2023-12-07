@@ -56,7 +56,7 @@ const Confirm = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: [],
+        doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
         deadline: new Date,
@@ -144,13 +144,6 @@ const Confirm = (props: any) => {
         setData(name, e)
     }
 
-    // const handleUploadFileChange = (e) => {
-    //     let instData = { ...data }
-    //     instData.doc = []
-    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
-    //     setData(instData)
-    // }
-
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc.push(...e)
@@ -164,31 +157,28 @@ const Confirm = (props: any) => {
 
     const removeAll = () => {
         let instData = { ...data }
+        let filesfromserver = []
+        instData.doc.map((file => {
+            file.link ? filesfromserver.push(file.name) : ''
+        }))
+        if (filesfromserver.length > 0) {
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         instData.doc = []
         setData(instData)
     }
 
     const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
         var arr = { ...data }
-        arr.doc.splice(i, 1)
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
         setData(arr)
-    }
-
-    const deleletFileFRomServer = (id, i) => {
-
-        axios.post('/delete-file-pub', {
-            id: id,
-            file: i
-        }).then(res => {
-            if (res.status == 200) {
-                var arr = [...files]
-                var index = arr.indexOf(i)
-                if (index !== -1) {
-                    arr.splice(index, 1);
-                    setFiles(arr);
-                }
-            }
-        })
     }
 
     return (
@@ -575,44 +565,13 @@ const Confirm = (props: any) => {
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <label className="form-label">Uploaded documents</label>
-                                    <ul className='list-unstyled'>
-                                        {files ? files.map((doc, i) => (
-                                            <li key={i}>
-                                                <div className='dropzone-items d-flex w-500px mt-1'>
-                                                    <div className="dropzone-item">
-                                                        <div className="dropzone-file">
-                                                            <div className="dropzone-filename">
-                                                                <span>
-                                                                    <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="dropzone-toolbar">
-                                                            <span className="dropzone-delete" onClick={() => deleletFileFRomServer(data.id, doc)}>
-                                                                <i className="bi bi-x fs-1"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
+                                <div className='col-md-2 col-lg-2 col-sm-12'>
+                                    <label className="form-label">Attached documents</label>
 
-
-                                                </div>
-
-                                            </li>
-                                        )) : ''}
-                                    </ul>
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <label className="form-label">Attached documents</label>
-                                    <div>
-                                        <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-                                    </div>
-                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div> */}
+                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
+
                                 </div>
                             </div>
                             <div className="row mb-10">

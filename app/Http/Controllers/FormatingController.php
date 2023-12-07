@@ -65,6 +65,10 @@ class FormatingController extends Controller
     {
         $docs = $request->doc;
 
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
+
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -86,13 +90,15 @@ class FormatingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldFor = Formating::find($request->id);
-            $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
-        } else {
-            $NewOrOldFor = Formating::find($request->id);
-            $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
-        }
+        $NewOrOldFor = Formating::find($request->id);
+        $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
+
+        // if ($request->query('type') == 'save') {
+
+        // } else {
+        //     $NewOrOldFor = Formating::find($request->id);
+        //     $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
+        // }
 
         $formatting->form = $request->form;
         $formatting->region = $request->region;
@@ -107,7 +113,12 @@ class FormatingController extends Controller
         $formatting->deficiency_letter = $request->deficiency_letter;
         $formatting->chrono = $request->chrono;
         $formatting->remarks = $request->remarks;
-        $formatting->document = $docs;
+        if (!empty($formatting->document)) {
+            $formatting->document = [...$formatting->document, ...$docs];
+        } else {
+
+            $formatting->document = $docs;
+        }
         $formatting->docremarks = $request->docremarks;
         $formatting->request_date = $request->request_date;
         $formatting->deadline = $request->deadline;
@@ -179,6 +190,9 @@ class FormatingController extends Controller
     public function postConfirm(Request $request)
     {
         $docs = $request->doc;
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
 
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
@@ -212,8 +226,10 @@ class FormatingController extends Controller
         $formatting->deficiency_letter = $request->deficiency_letter;
         $formatting->chrono = $request->chrono;
         $formatting->remarks = $request->remarks;
-        if (!empty($docs)) {
-            $formatting->document = [...$formatting->document, $docs];
+        if (!empty($formatting->document)) {
+            $formatting->document = [...$formatting->document, ...$docs];
+        } else {
+            $formatting->document = $docs;
         }
 
         $formatting->docremarks = $request->docremarks;
@@ -306,7 +322,9 @@ class FormatingController extends Controller
             Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         } else {
             $docs = $request->doc;
-
+            $docs = array_filter($docs, static function ($element) {
+                return gettype($element) !== 'array';
+            });
             if (!empty($docs)) {
                 $arr = array_map(function ($doc) {
 
@@ -338,8 +356,10 @@ class FormatingController extends Controller
             $formatting->deficiency_letter = $request->deficiency_letter;
             $formatting->chrono = $request->chrono;
             $formatting->remarks = $request->remarks;
-            if (!empty($docs)) {
-                $formatting->document = [...$formatting->document, $docs];
+            if (!empty($formatting->document)) {
+                $formatting->document = [...$formatting->document, ...$docs];
+            } else {
+                $formatting->document = $docs;
             }
             $formatting->docremarks = $request->docremarks;
             $formatting->status = 'submitted';
@@ -452,9 +472,16 @@ class FormatingController extends Controller
     public function deleteFile(Request $request)
     {
 
-        $filename = $request->file['name'];
+        $filename = $request->docs;
         $id = $request->id;
-        $folder = Formating::where('_id', $id)->pull('document', ['name' => $filename]);
+        $folder = Formating::where('_id', $id);
+
+        if ($folder) {
+            foreach ($filename as $name) {
+                $folder->pull('document', ['name' => $name]);
+            }
+        }
+
         Storage::disk('public')->delete($filename);
         return response('done', 200);
     }
