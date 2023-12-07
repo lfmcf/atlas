@@ -542,7 +542,12 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        $pub->tracking = $request->tracking;
+        // $pub->tracking = $request->tracking;
+        if ($request->tracking && is_array($request->tracking)) {
+            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        } else {
+            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -607,13 +612,27 @@ class PublishingController extends Controller
                 'metadata' => $listmd
             ]);
         }
+
+        $product = $pub->product_name;
+        $procedure = $pub->procedure;
+        $country = $pub->country;
+
+        $md = MetaData::where([
+            ['Product', '=', $product],
+            ['procedure', '=', $procedure],
+            ['country', '=', $country]
+        ])->first();
+
         if ($pub->region == "EU") {
+
             return Inertia::render('Publishing/Nat/Audit', [
-                'folder' => $pub
+                'folder' => $pub,
+                'metadata' => $md
             ]);
         } else if ($pub->region == "GCC") {
             return Inertia::render('Publishing/Nat/Gcc/Audit', [
-                'folder' => $pub
+                'folder' => $pub,
+                'metadata' => $md
             ]);
         } else if ($pub->region == "CH") {
             return Inertia::render('Publishing/Nat/Ch/Audit', [
@@ -676,7 +695,11 @@ class PublishingController extends Controller
             $pub->uuid = $request->uuid;
             $pub->submission_type = $request->submission_type;
             $pub->submission_mode = $request->submission_mode;
-            $pub->tracking = $request->tracking;
+            if ($request->tracking && is_array($request->tracking)) {
+                $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+            } else {
+                $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+            }
             $pub->submission_unit = $request->submission_unit;
             $pub->applicant = $request->applicant;
             $pub->agency_code = $request->agency_code;
@@ -1158,7 +1181,11 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        $pub->tracking = $request->tracking;
+        if ($request->tracking && is_array($request->tracking)) {
+            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        } else {
+            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -1339,7 +1366,11 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        $pub->tracking = $request->tracking;
+        if ($request->tracking && is_array($request->tracking)) {
+            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        } else {
+            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -1429,7 +1460,11 @@ class PublishingController extends Controller
             $pub->uuid = $request->uuid;
             $pub->submission_type = $request->submission_type;
             $pub->submission_mode = $request->submission_mode;
-            $pub->tracking = $request->tracking;
+            if ($request->tracking && is_array($request->tracking)) {
+                $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+            } else {
+                $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+            }
             $pub->submission_unit = $request->submission_unit;
             $pub->applicant = $request->applicant;
             $pub->agency_code = $request->agency_code;

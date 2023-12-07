@@ -18,7 +18,7 @@ const StepperOptions: IStepperOptions = {
 
 const Confirm = (props: any) => {
 
-    const { folder } = props
+    const { metadata, folder } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
 
@@ -38,6 +38,7 @@ const Confirm = (props: any) => {
         submission_type: folder.submission_type,
         submission_mode: folder.submission_mode,
         tracking: folder.tracking,
+        trackingExtra: folder ? folder.trackingExtra : '',
         submission_unit: folder.submission_unit,
         applicant: folder.applicant,
         agency_code: folder.agency_code,
@@ -67,6 +68,15 @@ const Confirm = (props: any) => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
     }, [])
 
+    let tn = metadata.trackingNumber
+    tn = tn.split(/\r?\n/)
+
+    let tno = []
+    if (tn.length > 1) {
+        tno = tn.map((val) => {
+            return { label: val, value: val }
+        })
+    }
 
     const nextStep = () => {
         // setHasError(false)
@@ -411,17 +421,20 @@ const Confirm = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
-                                    <Select options={[]}
-                                        name='tracking'
-                                        onChange={(e) => handleSelectChange(e, 'tracking')}
-                                        className="basic"
-                                        classNamePrefix="basic"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.tracking}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    <div className='d-flex align-items-center'>
+                                        <Select options={tno}
+                                            name='tracking'
+                                            onChange={(e) => handleSelectChange(e, 'tracking')}
+                                            className="basic"
+                                            classNamePrefix="basic"
+                                            placeholder=''
+                                            isClearable
+                                            defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ ...base, width: '100%' }) }}
+                                        />
+                                        <input type='text' className='form-control form-control-solid' name="trackingExtra" style={{ width: '30%' }} onChange={handleChange} />
+                                    </div>
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission unit</label>

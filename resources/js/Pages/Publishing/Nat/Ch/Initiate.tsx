@@ -354,7 +354,7 @@ const Initiate = (props: any) => {
                                         classNamePrefix="basic"
                                         placeholder=''
                                         isClearable
-                                        value={data.tracking}
+                                        defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />

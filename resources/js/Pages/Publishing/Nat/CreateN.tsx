@@ -438,7 +438,6 @@ const CreateN = (props: any) => {
                                             placeholder=''
                                             isClearable
                                             defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
-
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '100%' }) }}
                                         />
