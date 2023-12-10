@@ -300,8 +300,8 @@ const Confirm = (props: any) => {
                                     <Select options={gcccountry}
                                         name="country"
                                         onChange={(e) => handleSelectChange(e, 'country')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={[{ label: data.country, value: data.country }]}
@@ -323,8 +323,8 @@ const Confirm = (props: any) => {
                                     ]}
                                         name='dossier_type'
                                         onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.dossier_type}
@@ -353,8 +353,8 @@ const Confirm = (props: any) => {
                                         <Select options={tnoptions ? tnoptions : ''}
                                             name='tracking'
                                             onChange={(e) => handleSelectChange(e, 'tracking')}
-                                            className="basic"
-                                            classNamePrefix="basic"
+                                            className="react-select-container"
+                                            classNamePrefix="react-select"
                                             placeholder=''
                                             isClearable
                                             defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
@@ -401,8 +401,8 @@ const Confirm = (props: any) => {
                                     ]}
                                         name='submission_type'
                                         onChange={(e) => handleSelectChange(e, 'submission_type')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.submission_type}
@@ -422,8 +422,8 @@ const Confirm = (props: any) => {
                                     ]}
                                         name='submission_mode'
                                         onChange={(e) => handleSelectChange(e, 'submission_mode')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.submission_mode}
@@ -474,8 +474,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.indication}
@@ -488,8 +488,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.manufacturer}
@@ -508,8 +508,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.drug_substance_manufacturer}
@@ -526,8 +526,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.drug_product_manufacturer}
@@ -542,8 +542,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.dosage_form}
@@ -556,8 +556,8 @@ const Confirm = (props: any) => {
                                     <Select
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.excipient}

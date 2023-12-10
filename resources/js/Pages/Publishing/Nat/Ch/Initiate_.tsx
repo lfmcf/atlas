@@ -312,8 +312,8 @@ const Initiate_ = (props: any) => {
                                     ]}
                                         name='dossier_type'
                                         onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.dossier_type}
@@ -424,8 +424,8 @@ const Initiate_ = (props: any) => {
                                     ]}
                                         name='application_type'
                                         onChange={(e) => handleSelectChange(e, 'application_type')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.application_type}
@@ -448,8 +448,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.indication}
@@ -462,8 +462,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.manufacturer}
@@ -482,8 +482,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.drug_substance_manufacturer}
@@ -500,8 +500,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.drug_product_manufacturer}
@@ -516,8 +516,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.dosage_form}
@@ -530,8 +530,8 @@ const Initiate_ = (props: any) => {
                                     <Select
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.excipient}

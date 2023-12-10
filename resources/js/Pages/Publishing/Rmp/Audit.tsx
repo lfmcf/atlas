@@ -467,8 +467,8 @@ const Audit = (props: any) => {
                                         onChange={(e) => handleSelectChange(e, 'dossier_type')}
                                         placeholder=''
                                         isClearable
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         value={data.dossier_type}
                                     // menuPortalTarget={document.body}
                                     // styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
@@ -524,8 +524,8 @@ const Audit = (props: any) => {
                                                     <Select options={publishingMrpSubmissionType}
                                                         name='submission_type'
                                                         onChange={(e) => handleMetaSelectChange(e, 'submission_type', i)}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={mt.submission_type}
@@ -542,8 +542,8 @@ const Audit = (props: any) => {
                                                     ]}
                                                         name='submission_mode'
                                                         onChange={(e) => handleMetaSelectChange(e, 'submission_mode', i)}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={mt.submission_mode}
@@ -571,8 +571,8 @@ const Audit = (props: any) => {
                                                     ]}
                                                         name='submission_unit'
                                                         onChange={(e) => handleMetaSelectChange(e, 'submission_unit', i)}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={mt.submission_unit}
@@ -631,8 +631,8 @@ const Audit = (props: any) => {
                                     <Select
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.indication}
@@ -645,8 +645,8 @@ const Audit = (props: any) => {
                                     <Select
                                         name='manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.manufacturer}
@@ -665,8 +665,8 @@ const Audit = (props: any) => {
                                     <Select
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.drug_product_manufacturer}
@@ -679,8 +679,8 @@ const Audit = (props: any) => {
                                     <Select
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.dosage_form}
@@ -693,8 +693,8 @@ const Audit = (props: any) => {
                                     <Select
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="basic"
-                                        classNamePrefix="basic"
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         value={data.excipient}
@@ -896,8 +896,8 @@ const Audit = (props: any) => {
                                                     <Select options={publishingMrpSubmissionType}
                                                         name='submission_type'
                                                         onChange={(e) => handleMultipleSelectChange(e, 'submission_type')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={metadata[0].submission_type}
@@ -914,8 +914,8 @@ const Audit = (props: any) => {
                                                     ]}
                                                         name='submission_mode'
                                                         onChange={(e) => handleMultipleSelectChange(e, 'submission_mode')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={metadata[0].submission_mode}
@@ -941,8 +941,8 @@ const Audit = (props: any) => {
                                                     ]}
                                                         name='submission_unit'
                                                         onChange={(e) => handleMultipleSelectChange(e, 'submission_unit')}
-                                                        className="basic"
-                                                        classNamePrefix="basic"
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
                                                         value={metadata[0].submission_unit}
