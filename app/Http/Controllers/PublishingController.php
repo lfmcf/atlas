@@ -51,14 +51,9 @@ class PublishingController extends Controller
             $product = $request->query('product');
         }
 
-
-
-
         if ($region == "EU") {
-
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
                 $country = is_array($country) ? $country['value'] : $country;
-
                 $md = MetaData::where([
                     ['Product', '=', $product],
                     ['procedure', '=', $procedure],
@@ -74,7 +69,6 @@ class PublishingController extends Controller
                     ]);
                 }
             } else {
-
                 $listmd = [];
                 if (!$request->id) {
                     for ($i = 0; $i < count($country); $i += 2) {
@@ -98,16 +92,6 @@ class PublishingController extends Controller
                             array_push($listmd, $md);
                         }
                     }
-                    // for ($i = 0; $i < count($country); $i += 1) {
-                    //     $md = MetaData::where([
-                    //         ['Product', '=', $product],
-                    //         ['procedure', '=', $procedure],
-                    //         ['country', '=', $country[$i]['country']]
-                    //     ])->first();
-                    //     if ($md) {
-                    //         array_push($listmd, $md);
-                    //     }
-                    // }
                 }
 
                 return Inertia::render('Publishing/Rmp/Create', [
@@ -982,6 +966,8 @@ class PublishingController extends Controller
             $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
         }
 
+
+
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;
@@ -1121,10 +1107,8 @@ class PublishingController extends Controller
         $pub = PublishingMrp::findOrfail($request->id);
         $product = $pub->product_name;
         $procedure = $pub->procedure;
-
         $listmd = [];
-        for ($i = 0; $i < count($pub->mt); $i += 2) {
-
+        for ($i = 0; $i < count($pub->mt); $i++) {
             $md = MetaData::where([
                 ['Product', '=', $product],
                 ['procedure', '=', $procedure],

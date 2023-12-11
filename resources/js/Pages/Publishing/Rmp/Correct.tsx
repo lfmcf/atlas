@@ -812,7 +812,7 @@ const Correct = (props: any) => {
                                             data-kt-scroll-max-height="auto">
                                             {
                                                 folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user !== props.auth.user.id ?
+                                                    msg.message && msg.user.id !== props.auth.user.id ?
                                                         <div key={i} className='d-flex justify-content-start mb-10'>
                                                             <div className='d-flex flex-column align-items-start'>
                                                                 <div className='d-flex align-items-center mb-2'>
@@ -821,7 +821,6 @@ const Correct = (props: any) => {
                                                                     </div>
                                                                     <div className='ms-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                     </div>
 
                                                                 </div>
@@ -836,7 +835,7 @@ const Correct = (props: any) => {
 
                                                                     <div className='me-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
                                                                         <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
