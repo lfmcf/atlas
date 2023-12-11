@@ -77,10 +77,6 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         )
     }
 
-
-    const [{ region_p, procedure_p, product_p }, setProductState] = useState(initialProductState)
-
-
     const { data, setData, get, processing, errors, clearErrors, reset } = useForm<FormValues>({
         form: '',
         region: '',
@@ -146,7 +142,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                     })
                     setCountryList(dt)
                 } else {
-                    console.log('here')
+
                     if (region_ && region_.value == "EU") {
                         setCountryList(eunatcountry)
                     } else if (region_ && region_.value == "GCC") {
@@ -172,6 +168,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 }
             })
         } else if (data.form && data.form.value == "Publishing") {
+
             router.visit('/publishing-initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
@@ -264,9 +261,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     useEffect(() => {
         setData({ ...data, product: '', country: '' })
         if (data.form && data.form.value === 'Publishing') {
-            if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized') {
-                // setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Decentralized' }).then(res => {
+            if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
+                axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value }).then(res => {
                     if (res.status == 200) {
                         var myarr = []
                         res.data.map(val => {
@@ -277,21 +273,9 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 })
                 setCountryList(eunatcountry)
                 setCompselect(true)
-            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition') {
-                // setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Mutual Recognition' }).then(res => {
-                    if (res.status == 200) {
-                        var myarr = []
-                        res.data.map(val => {
-                            myarr.push({ label: val.name, value: val.name })
-                        })
-                        setProductList(myarr);
-                    }
-                })
-                setCountryList(eunatcountry)
-                setCompselect(true)
+
             } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
-                // setProductList(eunatproduct)
+
                 axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
                     if (res.status == 200) {
                         var myarr = []

@@ -159,7 +159,6 @@ const Create = (props: any) => {
 
     const handleSubmitMulti = () => {
         let perdata = { ...data }
-
         perdata.mt.map((cnt, i) => {
             if (isCheck.includes(cnt.id)) {
                 perdata.mt[i].uuid = multiData.uuid
