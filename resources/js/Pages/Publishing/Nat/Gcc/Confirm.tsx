@@ -9,6 +9,7 @@ import { useForm } from '@inertiajs/react';
 import { gcccountry } from '../../../Lab/MetaDataList';
 import axios from 'axios';
 import DropZone from '../../../../Components/Dropzone';
+import StatusComponent from '../../../../Components/StatusComponent';
 
 const Confirm = (props: any) => {
 
@@ -63,6 +64,7 @@ const Confirm = (props: any) => {
         deadline: new Date,
         adjusted_deadline: new Date,
         adjustedDeadlineComments: '',
+        status: folder ? folder.status : '',
     });
 
     useEffect(() => {
@@ -184,6 +186,13 @@ const Confirm = (props: any) => {
 
     return (
         <>
+            <div className='d-flex justify-content-between align-items-center'>
+                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                    <i className="ki-duotone ki-black-left fs-3">
+                    </i>
+                </a>
+                <StatusComponent status={data.status} />
+            </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">

@@ -12,6 +12,7 @@ import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 import axios from 'axios'
 import DropZone from '../../../Components/Dropzone'
+import StatusComponent from '../../../Components/StatusComponent'
 
 const Create = (props: any) => {
 
@@ -49,7 +50,8 @@ const Create = (props: any) => {
         deadline: folder.deadline,
         request_date: folder.request_date,
         adjusted_deadline: new Date(),
-        adjustedDeadlineComments: ''
+        adjustedDeadlineComments: '',
+        status: folder ? folder.status : '',
     })
 
     // const countires = metadata.map((mp) => {
@@ -248,6 +250,13 @@ const Create = (props: any) => {
 
     return (
         <>
+            <div className='d-flex justify-content-between align-items-center'>
+                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                    <i className="ki-duotone ki-black-left fs-3">
+                    </i>
+                </a>
+                <StatusComponent status={data.status} />
+            </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 

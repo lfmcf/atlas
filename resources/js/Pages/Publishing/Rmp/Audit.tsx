@@ -13,6 +13,7 @@ import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 import moment from 'moment'
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
+import StatusComponent from '../../../Components/StatusComponent'
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -55,7 +56,8 @@ const Audit = (props: any) => {
         request_date: folder.request_date,
         adjusted_deadline: new Date(),
         adjustedDeadlineComments: '',
-        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' }
+        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' },
+        status: folder ? folder.status : '',
     })
 
     const countires = metadata.map((mp) => {
@@ -260,6 +262,13 @@ const Audit = (props: any) => {
 
     return (
         <>
+            <div className='d-flex justify-content-between align-items-center'>
+                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                    <i className="ki-duotone ki-black-left fs-3">
+                    </i>
+                </a>
+                <StatusComponent status={data.status} />
+            </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 
