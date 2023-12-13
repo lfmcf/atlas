@@ -12,6 +12,7 @@ import { router } from '@inertiajs/react'
 import StatusComponent from '../../Components/StatusComponent';
 import { KTIcon } from '../../_metronic/helpers';
 import { DeliveryMessage } from "../../_metronic/partials/modals/Delivey-Message/DeliveryMessage";
+import clsx from 'clsx';
 
 const EditTwo = (props: any) => {
 
@@ -63,7 +64,7 @@ const EditTwo = (props: any) => {
             <PageTitle breadcrumbs={[]}>
                 {/* Show */}
             </PageTitle>
-            <a href="#" onClick={() => router.get('tasks')} className="btn btn-sm fw-bold btn-secondary mb-2">
+            <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
                 <i className="ki-duotone ki-black-left fs-3">
                 </i>
             </a>
@@ -74,7 +75,7 @@ const EditTwo = (props: any) => {
                             <div className='d-flex align-items-center justify-content-between mb-9'>
                                 <ul className='nav nav-pills nav-pills-custom position-relative  gap-5' role='tablist'>
                                     <li className='nav-item' role='presentation'>
-                                        <a className="nav-link btn btn-color-gray-600 btn-active-color-primary px-0 active d-flex justify-content-center w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_1" aria-selected="true" role="tab">
+                                        <a className={clsx("nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100", folder.status == 'to correct' ? '' : 'active')} data-bs-toggle="pill" href="#kt_aside_tab_1" aria-selected="true" role="tab">
 
                                             <span className="nav-text text-gray-600 fw-bold fs-6">General information</span>
 
@@ -95,7 +96,7 @@ const EditTwo = (props: any) => {
                                         </a>
                                     </li>
                                     <li className='nav-item' role='presentation'>
-                                        <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_4" aria-selected="false" tabIndex={-1} role="tab">
+                                        <a className={clsx("nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100", folder.status == 'to correct' ? 'active' : '')} data-bs-toggle="pill" href="#kt_aside_tab_4" aria-selected="false" tabIndex={-1} role="tab">
                                             <span className="nav-text text-gray-600 fw-bold fs-6">Dossier review</span>
                                             <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
                                         </a>
@@ -108,7 +109,7 @@ const EditTwo = (props: any) => {
 
                             </div>
                             <div className='tab-content'>
-                                <div className='tab-pane fade show active' id='kt_aside_tab_1' role='tabpanel'>
+                                <div className={clsx('tab-pane fade', folder.status == 'to correct' ? '' : 'active show')} id='kt_aside_tab_1' role='tabpanel'>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Dossier contact</label>
                                         <div className="col-lg-8">
@@ -223,7 +224,7 @@ const EditTwo = (props: any) => {
                             </div>
                         </div>
                         <div className='tab-content'>
-                            <div className='tab-pane fade' id='kt_aside_tab_4' role="tabpanel">
+                            <div className={clsx('tab-pane fade', folder.status == 'to correct' ? 'active show' : '')} id='kt_aside_tab_4' role="tabpanel">
                                 <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
                                     <div className="mb-5">
                                         <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
@@ -320,13 +321,13 @@ const EditTwo = (props: any) => {
                                 </div>
                                 <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_4">
                                     <div className="mb-5">
-                                        <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
+                                        <div className={clsx("accordion-header py-3 d-flex", folder.status == 'to correct' ? '' : 'collapsed')} data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
                                             <span className="accordion-icon">
                                                 <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
                                             </span>
                                             <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier Correction</h3>
                                         </div>
-                                        <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_4">
+                                        <div id="kt_accordion_3_item_2" className={clsx("fs-6 collapse p-10", folder.status == 'to correct' ? 'show' : '')} data-bs-parent="#kt_accordion_4">
                                             <div>
                                                 {
                                                     folder.correction ? folder.correction.map((msg, i) => (

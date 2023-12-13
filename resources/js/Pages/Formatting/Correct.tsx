@@ -316,6 +316,8 @@ const Correct = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.product_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
 
                                 </div>
@@ -329,6 +331,8 @@ const Correct = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.substance_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 
@@ -344,6 +348,8 @@ const Correct = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.country}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
                                 <div className='col-6'>
@@ -356,6 +362,8 @@ const Correct = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.dossier_type}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 

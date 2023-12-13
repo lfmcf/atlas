@@ -308,6 +308,9 @@ const Correct = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>
                                     <Select options={[
+                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
+                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
+                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
                                         { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
                                         { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
                                         { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },

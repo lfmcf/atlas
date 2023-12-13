@@ -305,6 +305,8 @@ const Audit = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.product_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
 
                                 </div>
@@ -318,6 +320,8 @@ const Audit = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.substance_name}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 
@@ -333,6 +337,8 @@ const Audit = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.country}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
                                 <div className='col-6'>
@@ -345,6 +351,8 @@ const Audit = (props: any) => {
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.dossier_type}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
                                     />
                                 </div>
 
@@ -509,6 +517,13 @@ const Audit = (props: any) => {
 
                         <!--begin::Wrapper--> */}
                         <div>
+                            {props.auth.user.current_team_id == 3 ?
+                                <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-formatting', { id: data.id }))}>
+                                    <span className="indicator-label">
+                                        ACK
+                                    </span>
+                                </button>
+                                : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit
