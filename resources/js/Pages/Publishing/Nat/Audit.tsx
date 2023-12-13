@@ -3,7 +3,7 @@ import Authenticated from "../../../Layouts/AuthenticatedLayout";
 import { IStepperOptions, StepperComponent } from "../../../_metronic/assets/ts/components";
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import Select from 'react-select'
 import moment from 'moment'
 import DropZone from "../../../Components/Dropzone";
@@ -17,6 +17,7 @@ const StepperOptions: IStepperOptions = {
 }
 
 const Confirm = (props: any) => {
+
 
     const { metadata, folder } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -298,6 +299,9 @@ const Confirm = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>
                                     <Select options={[
+                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
+                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
+                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
                                         { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
                                         { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
                                         { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },
@@ -769,6 +773,13 @@ const Confirm = (props: any) => {
                             </button>
                         </div>
                         <div>
+                            {props.auth.user.current_team_id == 3 ?
+                                <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                    <span className="indicator-label">
+                                        ACK
+                                    </span>
+                                </button>
+                                : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit
@@ -777,6 +788,7 @@ const Confirm = (props: any) => {
                                     Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
                                 </span>
                             </button>
+
 
                             <button type="button" className="btn btn-primary" data-kt-stepper-action='next' onClick={nextStep}>
                                 Continue

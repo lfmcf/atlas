@@ -746,6 +746,7 @@ class PublishingController extends Controller
 
     public function setProgress(Request $request)
     {
+
         $pub = Publishing::find($request->id);
         if (!$pub) {
             $pub = PublishingMrp::find($request->id);
@@ -754,7 +755,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        return redirect()->back()->with('message', 'Request ACK has been susccessfully sent');
+        return redirect('/tasks')->with('message', 'Request ACK has been susccessfully sent');
     }
 
     public function setVerify(Request $request)

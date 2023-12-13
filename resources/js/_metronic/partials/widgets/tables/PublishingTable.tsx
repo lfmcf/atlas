@@ -118,7 +118,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
         if (value === 'all') {
             value = ''
         }
-        tb.column(4).search(value).draw('page');
+        tb.column(3).search(value).draw('page');
         setnombrePages(tb.page.info().pages);
     }
 
@@ -147,6 +147,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                             <option value='initiated'>Initiated</option>
                             <option value='submitted'>Submitted</option>
                             <option value='to verify'>To verify</option>
+                            <option value='in progress'>In progress</option>
                             <option value='delivered'>Delivered</option>
                             <option value='to correct'>To correct</option>
                             <option value='closed'>Closed</option>

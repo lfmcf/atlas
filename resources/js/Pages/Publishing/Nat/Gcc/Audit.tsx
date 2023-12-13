@@ -5,7 +5,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import Select from 'react-select';
 import moment from 'moment';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { gcccountry } from '../../../Lab/MetaDataList';
 import DropZone from '../../../../Components/Dropzone';
 import axios from 'axios';
@@ -728,7 +728,13 @@ const Audit = (props: any) => {
                             </button>
                         </div>
                         <div>
-
+                            {props.auth.user.current_team_id == 3 ?
+                                <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                    <span className="indicator-label">
+                                        ACK
+                                    </span>
+                                </button>
+                                : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit

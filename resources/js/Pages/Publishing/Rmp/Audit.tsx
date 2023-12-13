@@ -5,7 +5,7 @@ import { Instance } from 'flatpickr/dist/types/instance'
 import clsx from 'clsx'
 import ReactCountryFlag from 'react-country-flag'
 import { KTIcon } from '../../../_metronic/helpers'
-import { useForm } from '@inertiajs/react'
+import { router, useForm } from '@inertiajs/react'
 import Select, { SingleValue } from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
@@ -851,6 +851,13 @@ const Audit = (props: any) => {
 
                         <!--begin::Wrapper--> */}
                         <div>
+                            {props.auth.user.current_team_id == 3 ?
+                                <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                    <span className="indicator-label">
+                                        ACK
+                                    </span>
+                                </button>
+                                : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit

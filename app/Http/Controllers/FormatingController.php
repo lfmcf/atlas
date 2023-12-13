@@ -466,7 +466,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        return redirect()->back()->with('message', 'Request ACK has been susccessfully sent');
+        return redirect('tasks')->with('message', 'Request ACK has been susccessfully sent');
     }
 
     public function deleteFile(Request $request)
