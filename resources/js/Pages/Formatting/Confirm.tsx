@@ -130,7 +130,14 @@ const Confirm = (props: any) => {
 
     return (
         <>
-            <StatusComponent status={data.status} />
+            <div className='d-flex justify-content-between align-items-center'>
+                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                    <i className="ki-duotone ki-black-left fs-3">
+                    </i>
+                </a>
+                <StatusComponent status={data.status} />
+            </div>
+
             {/* <span className="badge py-3 px-4 fs-7 badge-light-warning">{data.status}</span> */}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">

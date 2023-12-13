@@ -12,6 +12,7 @@ import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
+import StatusComponent from '../../../Components/StatusComponent'
 
 const Create = (props: any) => {
 
@@ -41,7 +42,8 @@ const Create = (props: any) => {
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
-        request_date: new Date()
+        request_date: new Date(),
+        status: folder ? folder.status : '',
     })
 
     const [multiData, setMultiData] = useState({
@@ -249,6 +251,15 @@ const Create = (props: any) => {
 
     return (
         <>
+            {folder ?
+                <div className='d-flex justify-content-between align-items-center'>
+                    <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                        <i className="ki-duotone ki-black-left fs-3">
+                        </i>
+                    </a>
+                    <StatusComponent status={data.status} />
+                </div>
+                : ''}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
 

@@ -416,13 +416,13 @@ const Show = (props) => {
                                                                 <div className='d-flex flex-column align-items-start'>
                                                                     <div className='d-flex align-items-center mb-2'>
                                                                         <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                            <span className="symbol-label bg-success text-inverse-primary fw-bold text-uppercase">CA</span>
+                                                                            <span className="symbol-label bg-success text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
                                                                         </div>
                                                                         <div className='ms-3'>
                                                                             <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
                                                                         </div>
                                                                     </div>
-                                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px' data-kt-element="message-text">
                                                                         <div key={i} dangerouslySetInnerHTML={createMarkup(msg)} />
                                                                     </div>
                                                                 </div>

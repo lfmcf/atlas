@@ -160,7 +160,13 @@ const Audit = (props: any) => {
 
     return (
         <>
-            <StatusComponent status={data.status} />
+            <div className='d-flex justify-content-between align-items-center'>
+                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                    <i className="ki-duotone ki-black-left fs-3">
+                    </i>
+                </a>
+                <StatusComponent status={data.status} />
+            </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">

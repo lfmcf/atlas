@@ -10,6 +10,7 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
+import StatusComponent from '../../../Components/StatusComponent'
 
 const CreateN = (props: any) => {
     const { metadata, folder } = props;
@@ -55,6 +56,7 @@ const CreateN = (props: any) => {
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date(),
         deadline: new Date(),
+        status: folder ? folder.status : '',
     })
 
     let tn = metadata.trackingNumber
@@ -186,6 +188,15 @@ const CreateN = (props: any) => {
 
     return (
         <>
+            {folder ?
+                <div className='d-flex justify-content-between align-items-center'>
+                    <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                        <i className="ki-duotone ki-black-left fs-3">
+                        </i>
+                    </a>
+                    <StatusComponent status={data.status} />
+                </div>
+                : ''}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
