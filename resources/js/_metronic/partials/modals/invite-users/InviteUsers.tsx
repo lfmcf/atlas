@@ -342,7 +342,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     const handleClose = () => {
         reset()
         setState({ ...initialState });
-        setProductState({ ...initialProductState })
+        //setProductState({ ...initialProductState })
         setShow(false)
     }
 
@@ -363,7 +363,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 data-bs-toggle="tab"
                                 href="#kt_tab_pane_1"
                             >
-                                New request
+                                Initial Request
                             </a>
                         </li>
                         <li className="nav-item">
@@ -446,7 +446,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4'>
-                                <label className='form-label'>Country (ies)</label>
+                                <label className='form-label'>Country</label>
                                 {compselect ?
                                     <MySelect
                                         options={countryList ? [...countryList] : ''}
@@ -537,7 +537,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label'>Country (ies)</label>
+                                <label className='form-label'>Country</label>
                                 {compselect ?
                                     <MySelect
                                         options={countryList ? [...countryList] : ''}
