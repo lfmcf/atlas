@@ -332,7 +332,15 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             setCountryList(eunatcountry)
             setCompselect(false)
         }
-    }, [procedure_, update])
+    }, [procedure_])
+
+    useEffect(() => {
+        if (update.rerender) {
+            setProductList([{ label: update.pName, value: update.pName }])
+            setState(prevState => ({ ...prevState, ['product_']: { label: update.pName, value: update.pName } }));
+        }
+
+    }, [update.rerender])
 
     const onChange = (e, name) => {
         // const { name, value } = e.target;
