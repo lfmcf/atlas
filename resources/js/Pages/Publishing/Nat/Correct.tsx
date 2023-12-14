@@ -485,7 +485,7 @@ const Correct = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="productName" value={data.productName} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className='col-md-4 col-sm-12'>Invented name</label>
+                                    <label className='col-md-4 col-sm-12'>INN</label>
                                     <input type="text" className="form-control form-control-solid" name="inn" value={data.inn} onChange={handleChange} />
                                 </div>
                             </div>
