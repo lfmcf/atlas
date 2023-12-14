@@ -43,7 +43,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	const [show, setShow] = useState(false)
 	const [showSec, setShowSec] = useState(false)
 	const [product_name, setProduct_name] = useState();
-	const [update, setUpdate] = useState(false)
+	const [update, setUpdate] = useState({ rerender: false, pName: '' })
 	const tableRef = useRef()
 
 	useEffect(() => {
@@ -156,7 +156,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	const handleAddProduct = () => {
 		axios.post('addproductmt', { 'product': product_name, 'region': region_, 'procedure': procedure_ }).then(res => {
 			if (res.status == 200) {
-				setUpdate(true)
+				setUpdate({ rerender: true, pName: product_name })
 			}
 		})
 	}
