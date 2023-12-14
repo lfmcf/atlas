@@ -500,19 +500,19 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             width: '100%',
         },
         labels: totalPerType.cat,
-        plotOptions: {
-            pie: {
-                dataLabels: {
-                    offset: -5
-                }
-            }
-        },
-        dataLabels: {  // Docs: https://apexcharts.com/docs/options/datalabels/
-            formatter(val, opts) {
-                const name = opts.w.globals.labels[opts.seriesIndex]
-                return [name, val.toFixed(1) + '%']
-            }
-        },
+        // plotOptions: {
+        //     pie: {
+        //         dataLabels: {
+        //             offset: -5
+        //         }
+        //     }
+        // },
+        // dataLabels: {
+        //     formatter(val, opts) {
+        //         const name = opts.w.globals.labels[opts.seriesIndex]
+        //         return [name, val.toFixed(1) + '%']
+        //     }
+        // },
         legend: {
             show: false
         },
@@ -526,19 +526,19 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             width: '100%',
         },
         labels: totalPerTypeP.cat,
-        plotOptions: {
-            pie: {
-                dataLabels: {
-                    offset: -5
-                }
-            }
-        },
-        dataLabels: {  // Docs: https://apexcharts.com/docs/options/datalabels/
-            formatter(val, opts) {
-                const name = opts.w.globals.labels[opts.seriesIndex]
-                return [name, val.toFixed(1) + '%']
-            }
-        },
+        // plotOptions: {
+        //     pie: {
+        //         dataLabels: {
+        //             offset: -5
+        //         }
+        //     }
+        // },
+        // dataLabels: {
+        //     formatter(val, opts) {
+        //         const name = opts.w.globals.labels[opts.seriesIndex]
+        //         return [name, val.toFixed(1) + '%']
+        //     }
+        // },
         legend: {
             show: false
         },
@@ -842,6 +842,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                     <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
                                                         <span className="path1"></span>
                                                         <span className="path2"></span>
+                                                        <span className="path3"></span>
                                                     </i>
                                                 </span>
                                             </div>
