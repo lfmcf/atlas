@@ -9,11 +9,17 @@ import DropZone from '../../../Components/Dropzone';
 import axios from 'axios';
 
 const Initiate = (props: any) => {
-    const { folder, agc } = props;
+    const { folder, agc, countries } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
+
+    let code = ''
+    if (agc && agc.agencyCode) {
+        var char = agc.agencyCode.split('-')
+        code = char[0]
+    }
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -23,7 +29,7 @@ const Initiate = (props: any) => {
         productName: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
-        country: props.countries,
+        country: { value: countries, code: code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
@@ -286,7 +292,7 @@ const Initiate = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country} />
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>

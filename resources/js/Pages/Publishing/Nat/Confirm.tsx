@@ -278,7 +278,7 @@ const Confirm = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" value={data.country} />
+                                    <input type="text" className="form-control form-control-solid" name="country" value={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>

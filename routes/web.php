@@ -171,7 +171,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/show', [PublishingController::class, 'show'])->name('show');
 
-    Route::get('getFormByYear', [ReportController::class, 'getFormByYear'])->name('getFormByYear');
+    // Route::get('getFormByYear', [ReportController::class, 'getFormByYear'])->name('getFormByYear');
 
     Route::get('allnotifications', [ReportController::class, 'allnotif']);
     Route::post('mark-all-as-read', [ReportController::class, 'markallnotifread']);
@@ -183,6 +183,9 @@ Route::post('/getProductOrCountry', [ReportController::class, 'getProductOrCount
 
 Route::post('addproductmt', [ProductMetaController::class, 'store']);
 Route::post('getProductname', [ProductMetaController::class, 'getProductname']);
+
+Route::post('getRequestPerType', [ReportController::class, 'getRequestPerType']);
+Route::post('getRequestsPerMonth', [ReportController::class, 'getRequestsPerMonth']);
 
 
 Route::middleware('auth')->group(function () {

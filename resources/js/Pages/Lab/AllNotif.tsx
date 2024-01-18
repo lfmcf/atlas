@@ -26,7 +26,7 @@ const AllNotifs = (props) => {
 
     return (
 
-        <div className="text-align-center m-auto w-50" style={{ backgroundColor: 'white' }}>
+        <div className="text-align-center" style={{ backgroundColor: 'white' }}>
             <div className="scroll-y my-5 p-8" style={{ maxHeight: 'calc(100vh - 300px)' }}>
                 {notifications.map((alert, index) => (
                     <div key={`alert${index}`} className={clsx('d-flex flex-stack py-4 mb-1', alert.read_at ? '' : 'rounded bg-light-primary')}>

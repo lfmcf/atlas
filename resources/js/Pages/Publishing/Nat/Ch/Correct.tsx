@@ -42,7 +42,7 @@ const Correct = (props: any) => {
         product_name: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme,
         object: folder ? folder.object : '',
-        country: 'Switzerland',
+        country: folder.country,
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
@@ -350,7 +350,7 @@ const Correct = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>

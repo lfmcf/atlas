@@ -30,7 +30,7 @@ const Initiate = (props: any) => {
         product_name: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
-        country: metadata.country,
+        country: { value: metadata.country, code: metadata.code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
@@ -321,17 +321,18 @@ const Initiate = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <Select options={gcccountry}
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} />
+                                    {/* <Select options={gcccountry}
                                         name="country"
                                         onChange={(e) => handleSelectChange(e, 'country')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
-                                        value={[{ label: data.country, value: data.country }]}
+                                        value={[{ label: data.country, value: data.country, code:  }]}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>

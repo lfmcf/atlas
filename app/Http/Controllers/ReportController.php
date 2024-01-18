@@ -86,61 +86,6 @@ class ReportController extends Controller
             ];
         }
 
-        $tpt = Formating::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$match' => ['status' => 'closed']],
-                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $tptp = Publishing::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$match' => ['status' => 'closed']],
-                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $tptpm = PublishingMrp::raw(function ($collection) {
-            return $collection->aggregate(
-                [
-                    ['$match' => ['status' => 'closed']],
-                    ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
-                ]
-            );
-        });
-
-        $merge = $tptp->mergeRecursive($tptpm);
-
-        $total_per_type_p = [];
-        $new = [];
-
-        foreach ($merge as $m) {
-            if (!isset($new[$m['_id']])) {
-                $t = 0;
-            } else {
-                $t = $m['Count'];
-            }
-            $new[$m['_id']]['id'] = $m['_id'];
-            $new[$m['_id']]['qnt'] = $t + $m['Count'];
-        }
-
-        foreach ($new as $n) {
-            $total_per_type_p['cat'][] = $n['id'];
-            $total_per_type_p['data'][] = $n['qnt'];
-        }
-
-        $total_per_type = [];
-        if ($tpt) {
-            foreach ($tpt as $t) {
-                $total_per_type['cat'][] = $t->_id;
-                $total_per_type['data'][] = $t->Count;
-            }
-        }
-
         $totalFormattings = Formating::count();
         $totalPublishingNat = Publishing::count();
         $totalPublishingMrp = PublishingMrp::count();
@@ -160,32 +105,6 @@ class ReportController extends Controller
             ->count('source');
 
 
-        // $corrPublishing = Publishing::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'ekemia']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $corrPublishingMrp = PublishingMrp::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'ekemia']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $corrFormatting->isNotEmpty() ? $corrFormatting =  $corrFormatting[0]->Count :  $corrFormatting = 0;
-        // $corrPublishing->isNotEmpty() ? $corrPublishing =  $corrPublishing[0]->Count :  $corrPublishing = 0;
-        // $corrPublishingMrp->isNotEmpty() ? $corrPublishingMrp =  $corrPublishingMrp[0]->Count :  $corrPublishingMrp = 0;
-
         $upFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
             ->count('source');
 
@@ -195,144 +114,9 @@ class ReportController extends Controller
         $upPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'stg')
             ->count('source');
 
-        // $upFormatting = Formating::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $upPublishing = Publishing::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $upPublishingMrp = PublishingMrp::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-
-        // $upFormatting->isNotEmpty() ? $upFormatting =  $upFormatting[0]->Count :  $upFormatting = 0;
-        // $upPublishing->isNotEmpty() ? $upPublishing =  $upPublishing[0]->Count :  $upPublishing = 0;
-        // $upPublishingMrp->isNotEmpty() ? $upPublishingMrp =  $upPublishingMrp[0]->Count :  $upPublishingMrp = 0;
-
         $acceptance = $acceformatting + $accepublishing + $accepublishingmrp;
         $correction = $corrFormatting +  $corrPublishing + $corrPublishingMrp;
         $update = $upFormatting + $upPublishing + $upPublishingMrp;
-
-
-        $requestperMonthFor = Formating::raw(function ($collection) {;
-
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-        $requestperMonthPub = Publishing::raw(function ($collection) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-        $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-        // dd($requestperMonthPub);
-
-        $my_arr = [];
-        $my_sec_arr = [];
-
-        for ($i = 1; $i <= 12; $i++) {
-            foreach ($requestperMonthFor as $x) {
-                if ($x->_id == $i) {
-                    $my_arr[$i] = $x->Count;
-                    break;
-                } else {
-                    $my_arr[$i] = 0;
-                }
-            }
-            foreach ($requestperMonthPub as $y) {
-                if ($y->_id == $i) {
-                    $my_sec_arr[$i] = $y->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
-            }
-            foreach ($requestperMonthPubMrp as $z) {
-                if ($z->_id == $i) {
-                    $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
-            }
-        }
 
         $totalFclosed = Formating::where('status', 'completed')->orWhere('status', 'closed')
             ->count();
@@ -343,7 +127,7 @@ class ReportController extends Controller
 
         $totalclosed = $totalFclosed + $totalPclosed + $totalPMclosed;
 
-        $f = Formating::raw(function ($collection) {;
+        $f = Formating::raw(function ($collection) {
             return $collection->aggregate([
                 [
                     '$match' => [
@@ -359,7 +143,7 @@ class ReportController extends Controller
 
             ]);
         });
-        $p = Publishing::raw(function ($collection) {;
+        $p = Publishing::raw(function ($collection) {
             return $collection->aggregate([
                 [
                     '$match' => [
@@ -368,14 +152,14 @@ class ReportController extends Controller
                 ],
                 [
                     '$group' => [
-                        "_id" => ['product' => '$product_name', 'country' => '$country'],
+                        "_id" => ['product' => '$product_name', 'country' => '$country.value'],
                         'count' => ['$sum' => 1]
                     ]
                 ],
 
             ]);
         });
-        $pm = PublishingMrp::raw(function ($collection) {;
+        $pm = PublishingMrp::raw(function ($collection) {
             return $collection->aggregate([
                 [
                     '$match' => [
@@ -392,7 +176,6 @@ class ReportController extends Controller
 
             ]);
         });
-
 
         $myfarr = [];
         foreach ($f as $key => $value) {
@@ -444,7 +227,11 @@ class ReportController extends Controller
             array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
         }
 
-        // return response('notfound', 404);
+        // get all requests with status in progress
+        $inprogressFormatting = Formating::where('status', 'in progress')->get();
+        $inprogressPublishing = Publishing::where('status', 'in progress')->get();
+        $inprogressPublishingMrp = PublishingMrp::where('status', 'in progress')->get();
+        $inprogress = $inprogressPublishing->merge($inprogressPublishingMrp)->merge($inprogressFormatting);
 
         return Inertia::render('Dashboard', [
             "RequestNumber" => $arr,
@@ -453,12 +240,9 @@ class ReportController extends Controller
             'acceptance' => $acceptance,
             'correction' => $correction,
             'update' => $update,
-            'perMonthFor' => array_values($my_arr),
-            'perMonthPub' => array_values($my_sec_arr),
             'totalclosed' => $totalclosed,
             'productCountry' => $myarr,
-            'totalPerType' => $total_per_type,
-            'totalPerTypeP' => $total_per_type_p
+            'inprogress' => $inprogress,
         ]);
     }
 
@@ -653,7 +437,6 @@ class ReportController extends Controller
 
     public function getProductOrCountry(Request $request)
     {
-
         if ($request->product) {
 
             $country = MetaData::where('product', $request->product)->where('procedure', $request->procedure)
@@ -667,110 +450,110 @@ class ReportController extends Controller
         }
     }
 
-    public function getFormByYear(Request $request)
-    {
-        $year = $request->year;
-        $datey = date('Y', strtotime($year));
-        $stdate = new DateTime($datey . "-1-1");
-        $endate = new DateTime($datey . "-12-31");
+    // public function getFormByYear(Request $request)
+    // {
+    //     $year = $request->year;
+    //     $datey = date('Y', strtotime($year));
+    //     $stdate = new DateTime($datey . "-1-1");
+    //     $endate = new DateTime($datey . "-12-31");
 
-        $requestperMonthFor = Formating::raw(function ($collection) use ($stdate, $endate) {;
+    //     $requestperMonthFor = Formating::raw(function ($collection) use ($stdate, $endate) {;
 
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate($stdate),
-                            '$lt' => new MongoDate($endate),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
+    //         return $collection->aggregate([
+    //             [
+    //                 '$match' => [
+    //                     'created_at' =>
+    //                     [
+    //                         '$gt' =>  new MongoDate($stdate),
+    //                         '$lt' => new MongoDate($endate),
+    //                     ]
+    //                 ]
+    //             ],
+    //             [
+    //                 '$group' => [
+    //                     "_id" => ['$month' => '$created_at'],
+    //                     'Count' => ['$sum' => 1]
+    //                 ]
+    //             ],
 
-            ]);
-        });
+    //         ]);
+    //     });
 
-        $requestperMonthPub = Publishing::raw(function ($collection) use ($stdate, $endate) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate($stdate),
-                            '$lt' => new MongoDate($endate),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
+    //     $requestperMonthPub = Publishing::raw(function ($collection) use ($stdate, $endate) {;
+    //         return $collection->aggregate([
+    //             [
+    //                 '$match' => [
+    //                     'created_at' =>
+    //                     [
+    //                         '$gt' =>  new MongoDate($stdate),
+    //                         '$lt' => new MongoDate($endate),
+    //                     ]
+    //                 ]
+    //             ],
+    //             [
+    //                 '$group' => [
+    //                     "_id" => ['$month' => '$created_at'],
+    //                     'Count' => ['$sum' => 1]
+    //                 ]
+    //             ],
 
-            ]);
-        });
+    //         ]);
+    //     });
 
-        $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) use ($stdate, $endate) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate($stdate),
-                            '$lt' => new MongoDate($endate),
-                        ]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['$month' => '$created_at'],
-                        'Count' => ['$sum' => 1]
-                    ]
-                ],
+    //     $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) use ($stdate, $endate) {;
+    //         return $collection->aggregate([
+    //             [
+    //                 '$match' => [
+    //                     'created_at' =>
+    //                     [
+    //                         '$gt' =>  new MongoDate($stdate),
+    //                         '$lt' => new MongoDate($endate),
+    //                     ]
+    //                 ]
+    //             ],
+    //             [
+    //                 '$group' => [
+    //                     "_id" => ['$month' => '$created_at'],
+    //                     'Count' => ['$sum' => 1]
+    //                 ]
+    //             ],
 
-            ]);
-        });
+    //         ]);
+    //     });
 
-        $my_arr = [];
-        $my_sec_arr = [];
+    //     $my_arr = [];
+    //     $my_sec_arr = [];
 
-        for ($i = 1; $i <= 12; $i++) {
-            foreach ($requestperMonthFor as $x) {
-                if ($x->_id == $i) {
-                    $my_arr[$i] = $x->Count;
-                    break;
-                } else {
-                    $my_arr[$i] = 0;
-                }
-            }
-            foreach ($requestperMonthPub as $y) {
-                if ($y->_id == $i) {
-                    $my_sec_arr[$i] = $y->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
-            }
-            foreach ($requestperMonthPubMrp as $z) {
-                if ($z->_id == $i) {
+    //     for ($i = 1; $i <= 12; $i++) {
+    //         foreach ($requestperMonthFor as $x) {
+    //             if ($x->_id == $i) {
+    //                 $my_arr[$i] = $x->Count;
+    //                 break;
+    //             } else {
+    //                 $my_arr[$i] = 0;
+    //             }
+    //         }
+    //         foreach ($requestperMonthPub as $y) {
+    //             if ($y->_id == $i) {
+    //                 $my_sec_arr[$i] = $y->Count;
+    //                 break;
+    //             } else {
+    //                 $my_sec_arr[$i] = 0;
+    //             }
+    //         }
+    //         foreach ($requestperMonthPubMrp as $z) {
+    //             if ($z->_id == $i) {
 
-                    $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
-            }
-        }
+    //                 $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
+    //                 break;
+    //             } else {
+    //                 $my_sec_arr[$i] = 0;
+    //             }
+    //         }
+    //     }
 
-        return response()->json(['perMonthFor' => array_values($my_arr), 'perMonthPub' => array_values($my_sec_arr)]);
-    }
+    //     return response()->json(['perMonthFor' => array_values($my_arr), 'perMonthPub' => array_values($my_sec_arr)]);
+    // }
 
     public function allnotif()
     {
@@ -785,104 +568,65 @@ class ReportController extends Controller
         return response('done', 200);
     }
 
-
-
-    public function dashboard()
+    public function getRequestPerType(Request $request)
     {
-        $user = auth()->user();
-        if ($user->current_team_id == 1) {
-            $requetNumberFor = Formating::where('status', 'draft')->count();
-            $requetNumberPup = Publishing::where('status', 'draft')->count();
-            $requetNumberPubMrp = PublishingMrp::where('status', 'draft')->count();
+        $selectedYear = $request->selecedYear;
 
-            $compFor =  Formating::where('status', 'completed')->count();
-            $compPub =  Publishing::where('status', 'completed')->count();
-            $compPubMrp =  PublishingMrp::where('status', 'completed')->count();
+        $tpt = Formating::raw(function ($collection) use ($selectedYear) {
 
-            $total = $requetNumberPup + $requetNumberFor + $requetNumberPubMrp;
-            $totalComp = $compFor + $compPub + $compPubMrp;
-
-            $arr = [['status' => 'Draft', "total" => $total], ['status' => 'Completed', 'total' => $totalComp]];
-        } else if ($user->current_team_id == 2) {
-            $initiatedFor = Formating::where('status', 'initiated')->count();
-            $verifyFor = Formating::where('status', 'to verify')->count();
-            $deliveredFor = Formating::where('status', 'delivered')->count();
-            $reviewFor = Formating::where('status', ' in review')->count();
-
-            $initiatedPub = Publishing::where('status', 'initiated')->count();
-            $verifyPub = Publishing::where('status', 'to verify')->count();
-            $deliveredPub = Publishing::where('status', 'delivered')->count();
-            $reviewPub = Publishing::where('status', ' in review')->count();
-
-            $initiatedPubMrp = PublishingMrp::where('status', 'initiated')->count();
-            $verifyPubMrp = PublishingMrp::where('status', 'to verify')->count();
-            $deliveredPubMrp = PublishingMrp::where('status', 'delivered')->count();
-            $reviewPubMrp = PublishingMrp::where('status', ' in review')->count();
-
-            $totalIni = $initiatedFor + $initiatedPub + $initiatedPubMrp;
-            $totalVery = $verifyFor + $verifyPub + $verifyPubMrp;
-            $totalDeli = $deliveredFor + $deliveredPub + $deliveredPubMrp;
-            $totalRev = $reviewFor + $reviewPub + $reviewPubMrp;
-
-            $arr = [
-                ["status" => "Initaited", "total" => $totalIni],
-                ["status" => "To verify", "total" => $totalVery],
-                ["status" => "Delivered", "total" => $totalDeli],
-                ["status" => "In review", "total" => $totalRev]
-            ];
-        } else if ($user->current_team_id == 3) {
-            $submittedFor = Formating::where('status', 'submitted')->count();
-            $submittedPub = Publishing::where('status', 'submitted')->count();
-            $submittedPubMrp = PublishingMrp::where('status', 'submitted')->count();
-
-            $correctFor = Formating::where('status', 'to correct')->count();
-            $correctPub = Publishing::where('status', 'to correct')->count();
-            $correctPubMrp = PublishingMrp::where('status', 'to correct')->count();
-
-            $progressFor = Formating::where('status', 'in progress')->count();
-            $progressPub = Publishing::where('status', 'in progress')->count();
-            $progressPubMrp = PublishingMrp::where('status', 'in progress')->count();
-
-            $totalSubmi = $submittedFor + $submittedPub + $submittedPubMrp;
-            $totalCorre = $correctFor + $correctPub + $correctPubMrp;
-            $totalpro = $progressFor + $progressPub + $progressPubMrp;
-
-            $arr = [
-                ["status" => "Submitted", "total" => $totalSubmi],
-                ["status" => "To correct", "total" => $totalCorre],
-                ["status" => "In pregress", "total" => $totalpro]
-            ];
-        }
-
-        $tpt = Formating::raw(function ($collection) {
             return $collection->aggregate(
                 [
-                    ['$match' => ['status' => 'closed']],
+                    [
+                        '$match' => [
+                            'status' => 'closed',
+                            '$expr' => [
+                                '$eq' => [
+                                    ['$year' => '$created_at'],
+                                    (int)$selectedYear
+                                ],
+                            ],
+                        ]
+                    ],
                     ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
                 ]
             );
         });
 
-        $total_per_type = [];
-        if ($tpt) {
-            foreach ($tpt as $t) {
-                $total_per_type['cat'][] = $t->_id;
-                $total_per_type['data'][] = $t->Count;
-            }
-        }
-        $tptp = Publishing::raw(function ($collection) {
+        $tptp = Publishing::raw(function ($collection) use ($selectedYear) {
+
+
             return $collection->aggregate(
                 [
-                    ['$match' => ['status' => 'closed']],
+                    [
+                        '$match' => [
+                            'status' => 'closed',
+                            '$expr' => [
+                                '$eq' => [
+                                    ['$year' => '$created_at'],
+                                    (int)$selectedYear
+                                ],
+                            ],
+                        ]
+                    ],
                     ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
                 ]
             );
         });
 
-        $tptpm = PublishingMrp::raw(function ($collection) {
+        $tptpm = PublishingMrp::raw(function ($collection) use ($selectedYear) {
             return $collection->aggregate(
                 [
-                    ['$match' => ['status' => 'closed']],
+                    [
+                        '$match' => [
+                            'status' => 'closed',
+                            '$expr' => [
+                                '$eq' => [
+                                    ['$year' => '$created_at'],
+                                    (int)$selectedYear
+                                ],
+                            ],
+                        ]
+                    ],
                     ['$group' => ['_id' => '$dossier_type.value', 'Count' => ['$sum' => 1]]],
                 ]
             );
@@ -908,113 +652,32 @@ class ReportController extends Controller
             $total_per_type_p['data'][] = $n['qnt'];
         }
 
-        $totalFormattings = Formating::count();
-        $totalPublishingNat = Publishing::count();
-        $totalPublishingMrp = PublishingMrp::count();
-        $totalPublishings = $totalPublishingNat + $totalPublishingMrp;
+        $total_per_type = [];
+        if ($tpt) {
+            foreach ($tpt as $t) {
+                $total_per_type['cat'][] = $t->_id;
+                $total_per_type['data'][] = $t->Count;
+            }
+        }
 
-        $acceformatting = Formating::where('status', 'closed')->whereNull('correction')->count();
-        $accepublishing = Publishing::where('status', 'closed')->whereNull('correction')->count();
-        $accepublishingmrp = PublishingMrp::where('status', 'closed')->whereNull('correction')->count();
+        return response()->json(['formattingRT' => $total_per_type, 'publishingRT' => $total_per_type_p]);
+    }
 
-        $corrFormatting = Formating::where('status', 'closed')->where('correction.source', 'ekemia')
-            ->count('source');
+    public function getRequestsPerMonth(Request $request)
+    {
+        $selectedYear = $request->selecedYear;
 
-        $corrPublishing = Publishing::where('status', 'closed')->where('correction.source', 'ekemia')
-            ->count('source');
-
-        $corrPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'ekemia')
-            ->count('source');
-
-
-        // $corrPublishing = Publishing::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'ekemia']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $corrPublishingMrp = PublishingMrp::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'ekemia']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $corrFormatting->isNotEmpty() ? $corrFormatting =  $corrFormatting[0]->Count :  $corrFormatting = 0;
-        // $corrPublishing->isNotEmpty() ? $corrPublishing =  $corrPublishing[0]->Count :  $corrPublishing = 0;
-        // $corrPublishingMrp->isNotEmpty() ? $corrPublishingMrp =  $corrPublishingMrp[0]->Count :  $corrPublishingMrp = 0;
-
-        $upFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
-            ->count('source');
-
-        $upPublishing =   Publishing::where('status', 'closed')->where('correction.source', 'stg')
-            ->count('source');
-
-        $upPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'stg')
-            ->count('source');
-
-        // $upFormatting = Formating::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $upPublishing = Publishing::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-        // $upPublishingMrp = PublishingMrp::raw(function ($collection) {
-        //     return $collection->aggregate(
-        //         [
-        //             ['$unwind' => '$correction'],
-        //             ['$project' => ['_id' => 0,  'correction' => 1, 'Count' => 1]],
-        //             ['$match' => ['correction.source' => 'stg']],
-        //             ['$group' => ['_id' => '$_id', 'Count' => ['$sum' => 1]]],
-        //         ]
-        //     );
-        // });
-
-
-        // $upFormatting->isNotEmpty() ? $upFormatting =  $upFormatting[0]->Count :  $upFormatting = 0;
-        // $upPublishing->isNotEmpty() ? $upPublishing =  $upPublishing[0]->Count :  $upPublishing = 0;
-        // $upPublishingMrp->isNotEmpty() ? $upPublishingMrp =  $upPublishingMrp[0]->Count :  $upPublishingMrp = 0;
-
-        $acceptance = $acceformatting + $accepublishing + $accepublishingmrp;
-        $correction = $corrFormatting +  $corrPublishing + $corrPublishingMrp;
-        $update = $upFormatting + $upPublishing + $upPublishingMrp;
-
-
-        $requestperMonthFor = Formating::raw(function ($collection) {;
+        $requestperMonthFor = Formating::raw(function ($collection) use ($selectedYear) {
 
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
+                        '$expr' => [
+                            '$eq' => [
+                                ['$year' => '$created_at'],
+                                (int)$selectedYear
+                            ],
+                        ],
                     ]
                 ],
                 [
@@ -1027,15 +690,16 @@ class ReportController extends Controller
             ]);
         });
 
-        $requestperMonthPub = Publishing::raw(function ($collection) {;
+        $requestperMonthPub = Publishing::raw(function ($collection) use ($selectedYear) {
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
+                        '$expr' => [
+                            '$eq' => [
+                                ['$year' => '$created_at'],
+                                (int)$selectedYear
+                            ],
+                        ],
                     ]
                 ],
                 [
@@ -1048,15 +712,16 @@ class ReportController extends Controller
             ]);
         });
 
-        $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) {;
+        $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) use ($selectedYear) {
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'created_at' =>
-                        [
-                            '$gt' =>  new MongoDate(new DateTime("2023-1-1")),
-                            '$lt' => new MongoDate(new DateTime("2023-12-31")),
-                        ]
+                        '$expr' => [
+                            '$eq' => [
+                                ['$year' => '$created_at'],
+                                (int)$selectedYear
+                            ],
+                        ],
                     ]
                 ],
                 [
@@ -1068,8 +733,6 @@ class ReportController extends Controller
 
             ]);
         });
-
-        // dd($requestperMonthPub);
 
         $my_arr = [];
         $my_sec_arr = [];
@@ -1101,129 +764,6 @@ class ReportController extends Controller
             }
         }
 
-        $totalFclosed = Formating::where('status', 'completed')->orWhere('status', 'closed')
-            ->count();
-        $totalPclosed = Publishing::where('status', 'completed')->orWhere('status', 'closed')
-            ->count();
-        $totalPMclosed = PublishingMrp::where('status', 'completed')->orWhere('status', 'closed')
-            ->count();
-
-        $totalclosed = $totalFclosed + $totalPclosed + $totalPMclosed;
-
-        $f = Formating::raw(function ($collection) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['product' => '$product_name.label', 'country' => '$country.value'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-        $p = Publishing::raw(function ($collection) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['product' => '$product_name', 'country' => '$country'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-        $pm = PublishingMrp::raw(function ($collection) {;
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
-                    ]
-                ],
-                ['$unwind' => '$mt'],
-                [
-                    '$group' => [
-                        "_id" => ['country' => '$mt.country', 'product' => '$product_name'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-
-        $myfarr = [];
-        foreach ($f as $key => $value) {
-            $myfarr[$key]['count'] = $value->count;
-            $myfarr[$key]['product'] = $value->_id['product'];
-            $myfarr[$key]['country'] = $value->_id['country'];
-        }
-
-        $myparr = [];
-        foreach ($p as $key => $value) {
-            $myparr[$key]['count'] = $value->count;
-            $myparr[$key]['product'] = $value->_id['product'];
-            $myparr[$key]['country'] = $value->_id['country'];
-        }
-
-        $mypmarr = [];
-        foreach ($pm as $key => $value) {
-            $mypmarr[$key]['count'] = $value->count;
-            $mypmarr[$key]['product'] = $value->_id['product'];
-            $mypmarr[$key]['country'] = $value->_id['country'];
-        }
-
-        $myparr = array_merge($myparr, $mypmarr);
-
-        $myarr = [];
-
-        foreach ($myfarr as $ke => $value) {
-            foreach ($myparr as $k => $v) {
-                $name = strtok($value['product'], " ");
-                $name = rtrim($name, ',');
-                $fname = strtok($v['product'], " ");
-                if ($name == $fname && $value['country'] === $v['country']) {
-                    array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => $v['count']]);
-                    unset($myfarr[$ke]);
-                    unset($myparr[$k]);
-                }
-            }
-        }
-
-        foreach ($myfarr as $key => $value) {
-            $name = strtok($value['product'], " ");
-            $name = rtrim($name, ',');
-            array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => 0]);
-        }
-
-        foreach ($myparr as $k => $v) {
-            $name = strtok($v['product'], " ");
-            $name = rtrim($name, ',');
-            array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
-        }
-
-        return Inertia::render('Dashboard_', [
-            "RequestNumber" => $arr,
-            'formattingCount' => $totalFormattings,
-            'publishingCount' => $totalPublishings,
-            'acceptance' => $acceptance,
-            'correction' => $correction,
-            'update' => $update,
-            'perMonthFor' => array_values($my_arr),
-            'perMonthPub' => array_values($my_sec_arr),
-            'totalclosed' => $totalclosed,
-            'productCountry' => $myarr,
-            'totalPerType' => $total_per_type,
-            'totalPerTypeP' => $total_per_type_p
-        ]);
+        return response()->json(['formattingReq' => array_values($my_arr), 'publishingReq' => array_values($my_sec_arr)]);
     }
 }

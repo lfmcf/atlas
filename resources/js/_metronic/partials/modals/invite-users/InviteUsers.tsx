@@ -92,21 +92,29 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
     const handleSelectCountryChange = (e, name) => {
 
-        if (data.procedure && data.procedure.value == 'Nationale' && e && !data.product) {
-            axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'country': e.value, }).then(res => {
-                var dt = res.data.map(ct => {
-                    return { label: ct.Product, value: ct.Product }
-                })
-                setProductList(dt)
-                setData({ ...data, 'country': e, product: '' })
-            })
-        } else if (e == null) {
+        if (e == null) {
             setData({ ...data, 'product': '', 'country': '' })
         } else {
             setData(name, e)
-            setProductList(eunatproduct)
-            setCountryList(eunatcountry)
+            // setProductList(eunatproduct)
+            // setCountryList(eunatcountry)
         }
+
+        // if (data.procedure && data.procedure.value == 'Nationale' && e && !data.product) {
+        //     axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'country': e.value, }).then(res => {
+        //         var dt = res.data.map(ct => {
+        //             return { label: ct.Product, value: ct.Product }
+        //         })
+        //         setProductList(dt)
+        //         setData({ ...data, 'country': e, product: '' })
+        //     })
+        // } else if (e == null) {
+        //     setData({ ...data, 'product': '', 'country': '' })
+        // } else {
+        //     setData(name, e)
+        //     setProductList(eunatproduct)
+        //     setCountryList(eunatcountry)
+        // }
     }
 
     const handleMyselectChange = (selected) => {
@@ -123,11 +131,10 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         if (data.procedure && data.procedure.value == 'Nationale') {
             axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
                 var dt = res.data.map(ct => {
-                    return { label: ct.country, value: ct.country }
+                    return { label: ct.country, value: ct.country, code: ct.code }
                 })
                 setCountryList(dt)
                 setData({ ...data, 'product': e, country: '' })
-
             })
         }
     }
@@ -137,6 +144,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         if (procedure_ && procedure_.value == 'Nationale') {
             axios.post('getProductOrCountry', { 'procedure': procedure_.value, 'product': e.value, }).then(res => {
                 if (res.data.length > 0) {
+
                     var dt = res.data.map(ct => {
                         return { label: ct.country, value: ct.country }
                     })
