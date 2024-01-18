@@ -216,6 +216,7 @@ class PublishingController extends Controller
     {
 
         $docs = $request->doc;
+
         $docs = array_filter($docs, static function ($element) {
             return gettype($element) !== 'array';
         });
@@ -245,13 +246,6 @@ class PublishingController extends Controller
 
         $NewOrOldPub = Publishing::find($request->id);
         $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-
-        // if ($request->query('type') == 'save') {
-        //     $NewOrOldPub = Publishing::find($request->id);
-        //     $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        // } else {
-
-        // }
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -345,14 +339,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -402,7 +390,7 @@ class PublishingController extends Controller
         } else {
             $metadata = new MetaData();
             $metadata->procedure = $request->procedure;
-            $metadata->country = $request->country;
+            $metadata->country = $request->country['value'];
             $metadata->Product = $request->productName;
             $metadata->agencyCode = $request->agency_code;
             $metadata->trackingNumber = $request->tracking;
@@ -959,15 +947,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = PublishingMrp::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
-        } else {
-            $NewOrOldPub = PublishingMrp::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
-        }
-
-
+        $NewOrOldPub = PublishingMrp::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -1038,13 +1019,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = PublishingMrp::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
-        } else {
-            $NewOrOldPub = PublishingMrp::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
-        }
+        $NewOrOldPub = PublishingMrp::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new PublishingMrp();
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -1157,13 +1133,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
 
         $pub->form = $request->form;
@@ -1187,6 +1158,7 @@ class PublishingController extends Controller
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
+        $pub->atc = $request->atc;
         $pub->inn = $request->inn;
         $pub->sequence = $request->sequence;
         $pub->r_sequence = $request->r_sequence;
@@ -1253,13 +1225,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
 
         $pub->form = $request->form;
@@ -1279,6 +1246,7 @@ class PublishingController extends Controller
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
+        $pub->atc = $request->atc;
         $pub->inn = $request->inn;
         $pub->sequence = $request->sequence;
         $pub->r_sequence = $request->r_sequence;
@@ -1311,7 +1279,7 @@ class PublishingController extends Controller
 
             $metadata = new MetaData();
             $metadata->procedure = $request->procedure;
-            $metadata->country = $request->country;
+            $metadata->country = $request->country['value'];
             $metadata->Product = $request->product_name;
             $metadata->agencyCode = $request->agency_code;
             $metadata->trackingNumber = $request->tracking;
@@ -1332,9 +1300,11 @@ class PublishingController extends Controller
     public function confirmNatGcc(Request $request)
     {
         $docs = $request->doc;
+
         $docs = array_filter($docs, static function ($element) {
             return gettype($element) !== 'array';
         });
+
         if (!empty($docs)) {
             $arr = array_map(function ($doc) {
 
@@ -1378,6 +1348,7 @@ class PublishingController extends Controller
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
+        $pub->atc = $request->atc;
         $pub->inn = $request->inn;
         $pub->sequence = $request->sequence;
         $pub->r_sequence = $request->r_sequence;
@@ -1472,6 +1443,7 @@ class PublishingController extends Controller
             $pub->submission_unit = $request->submission_unit;
             $pub->applicant = $request->applicant;
             $pub->agency_code = $request->agency_code;
+            $pub->atc = $request->atc;
             $pub->inn = $request->inn;
             $pub->sequence = $request->sequence;
             $pub->r_sequence = $request->r_sequence;
@@ -1540,13 +1512,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -1641,13 +1608,8 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
-        if ($request->query('type') == 'save') {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        } else {
-            $NewOrOldPub = Publishing::find($request->id);
-            $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
-        }
+        $NewOrOldPub = Publishing::find($request->id);
+        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -1679,10 +1641,10 @@ class PublishingController extends Controller
         $pub->drug_product = $request->drug_product;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
-        if (!empty($pub->document)) {
-            $pub->document = [...$pub->document, ...$docs];
+        if (!empty($pub->doc)) {
+            $pub->doc = [...$pub->doc, ...$docs];
         } else {
-            $pub->document = $docs;
+            $pub->doc = $docs;
         }
         $pub->docremarks = $request->docremarks;
         $pub->request_date = $request->request_date;
@@ -1707,7 +1669,7 @@ class PublishingController extends Controller
 
             $metadata = new MetaData();
             $metadata->procedure = $request->procedure;
-            $metadata->country = $request->country;
+            $metadata->country = $request->country['value'];
             $metadata->Product = $request->product_name;
             $metadata->agencyCode = $request->agency_code;
             $metadata->trackingNumber = $request->tracking;
@@ -1733,6 +1695,7 @@ class PublishingController extends Controller
     public function confirmNatCH(Request $request)
     {
         $docs = $request->doc;
+
         $docs = array_filter($docs, static function ($element) {
             return gettype($element) !== 'array';
         });

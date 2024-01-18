@@ -13,6 +13,8 @@ type Props = {
 
 const handleNavigation = (data, notId) => {
 
+    console.log(data)
+
     if (data.status == 'closed' || data.status == 'in progress') {
         router.get(route('list'), { id: data.id, notId: notId })
     } else {
@@ -62,7 +64,7 @@ const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
                                         <span className='fs-8 ps-2 fw-light'>{alert.data.status}</span>
                                     </a>
                                     <div className='text-gray-400 fs-7'>
-                                        {alert.data.product && typeof alert.data.product === 'object' ? alert.data.product.value : alert.data.product} - <span>{alert.data.country ? alert.data.country.code : ''}</span>
+                                        {alert.data.product && typeof alert.data.product === 'object' ? alert.data.product.value : alert.data.product} - <span>{!alert.data.country ? 'EU' : alert.data.country ? alert.data.country.code : ''}</span>
                                     </div>
                                 </div>
                             </div>

@@ -15,7 +15,14 @@ const Initiate_ = (props: any) => {
     var params = new URLSearchParams(window.location.search);
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    const { folder, agc } = props
+    const { folder, agc, countries } = props
+
+    let code = ''
+    if (agc && agc.agencyCode) {
+        var char = agc.agencyCode.split('-')
+        code = char[0]
+    }
+
 
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -26,7 +33,7 @@ const Initiate_ = (props: any) => {
         product_name: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
-        country: props.countries,
+        country: { value: countries, code: code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
@@ -51,7 +58,7 @@ const Initiate_ = (props: any) => {
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        doc: folder && folder.doc !== null ? folder.doc : [],
+        doc: folder && folder.document !== null ? folder.document : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
         deadline: new Date,
@@ -279,7 +286,8 @@ const Initiate_ = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <Select options={gcccountry}
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
+                                    {/* <Select options={gcccountry}
                                         name="country"
                                         onChange={(e) => handleSelectChange(e, 'country')}
                                         className="react-select-container"
@@ -289,7 +297,7 @@ const Initiate_ = (props: any) => {
                                         value={[{ label: data.country, value: data.country }]}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>

@@ -93,13 +93,6 @@ class FormatingController extends Controller
         $NewOrOldFor = Formating::find($request->id);
         $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
 
-        // if ($request->query('type') == 'save') {
-
-        // } else {
-        //     $NewOrOldFor = Formating::find($request->id);
-        //     $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
-        // }
-
         $formatting->form = $request->form;
         $formatting->region = $request->region;
         $formatting->coredoc = $request->coredoc;

@@ -103,7 +103,7 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission country</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.country}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.country.value}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">

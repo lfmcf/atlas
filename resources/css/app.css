@@ -80,3 +80,29 @@
 .react-select__control:focus-visible {
     border-color: #f1f1f2 !important;
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* semi-transparent white */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    transition: all .3s ease;
+    /* Adjust the z-index as needed */
+}
+
+.vis-timeline .vis-item {
+    background-color: transparent;
+    border: 0 !important;
+    border-radius: 0 !important
+}
+
+.vis-timeline {
+    border: 0 !important;
+}

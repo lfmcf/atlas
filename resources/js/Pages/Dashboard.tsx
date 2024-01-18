@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useEffect, useRef, useState } from 'react'
+import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toAbsoluteUrl } from '../../js/_metronic/helpers'
 import { PageTitle, useLayout } from '../../js/_metronic/layout/core'
@@ -23,12 +23,21 @@ import clsx from 'clsx'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import ReactCountryFlag from 'react-country-flag';
-import axios from 'axios'
+import axios from 'axios';
+import Timeline from 'react-vis-timeline-3';
+import PropagateLoader from "react-spinners/PropagateLoader";
+import ContentLoader from 'react-content-loader'
 
 countries.registerLocale(enLocale)
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const MySwal = withReactContent(Swal)
+
+const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+};
 
 const choptions = {
     chart: {
@@ -106,7 +115,7 @@ const options = {
                 fontSize: '13px'
             },
             formatter: function (val) {
-                return parseInt(val) + 2
+                return parseInt(val)
             }
         }
     },
@@ -207,7 +216,7 @@ const options_pub = {
                 fontSize: '13px'
             },
             formatter: function (val) {
-                return parseInt(val) + 2
+                return parseInt(val)
             }
         }
     },
@@ -268,11 +277,6 @@ const options_pub = {
         }
     }
 }
-
-const labelColor = getCSSVariableValue('--bs-gray-800');
-const borderColor = getCSSVariableValue('--bs-border-dashed-color');
-
-
 
 const doptions = {
     series: [20, 100, 15, 25],
@@ -423,17 +427,23 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, perMonthFor, perMonthPub, totalclosed, productCountry, totalPerType, totalPerTypeP }) => {
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, totalclosed, productCountry, inprogress }) => {
 
     const [startDate, setStartDate] = useState(new Date());
-    const [dateStart, setDateStart] = useState(new Date());
+    const [monthReq, setMnthReq] = useState(new Date());
+    const [cumulativeDate, setCumulativeDate] = useState(new Date());
     const [currentPage, setCurrentPage] = useState(1);
     const [pageNumbers, setpageNumbers] = useState([]);
     const [nombrePages, setnombrePages] = useState(0);
+    const [requestPerType, setRequetPerType] = useState({ formattingRT: [], publishingRT: [], labelsf: '', labelsp: '' });
+    const [requestPetMont, setRequestPerMonth] = useState({ formattingR: [], publishingR: [] })
+    const [cumulativeReq, setCumulativeReq] = useState({ formattingCR: [], publishingCR: [] })
+    const [loading, setLoading] = useState(false);
+    const [timelineItems, setTimelineItems] = useState([])
     const [tb, setTb] = useState();
-    //const year = moment(startDate).format('yyyy');
 
     const productTableRef = useRef()
+    const firstRender = useRef(true);
 
     const data = {
         labels: ['Formatting', 'Publishing', 'Submission'],
@@ -446,15 +456,107 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     }
 
     useEffect(() => {
+        if (firstRender.current) {
+            // firstRender.current = false;
+        } else {
+            setLoading(true)
+        }
+
+        callGetRequestPerType()
+    }, [startDate])
+
+    useEffect(() => {
+        if (firstRender.current) {
+            // firstRender.current = false;
+        } else {
+            setLoading(true)
+        }
+        // setLoading(true)
+        callGetRequestsPerMonth()
+    }, [monthReq])
+
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+        } else {
+            setLoading(true)
+        }
+        // setLoading(true)
+        callGetRequestsPerMonth2()
+    }, [cumulativeDate])
+
+    const callGetRequestPerType = () => {
+        const yearSelected = moment(startDate).year()
+        axios.post('getRequestPerType', { selecedYear: yearSelected }).then(res => {
+            setRequetPerType(prevState => ({
+                formattingRT: res.data.formattingRT.data ? res.data.formattingRT.data : [],
+                publishingRT: res.data.publishingRT.data ? res.data.publishingRT.data : [],
+                labelsf: res.data.formattingRT.cat ? res.data.formattingRT.cat : '',
+                labelsp: res.data.publishingRT.cat ? res.data.publishingRT.cat : ''
+            }))
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000)
+
+        });
+    }
+
+    const callGetRequestsPerMonth = () => {
+        const yearSelected = moment(monthReq).year()
+        axios.post('getRequestsPerMonth', { selecedYear: yearSelected }).then(res => {
+            setRequestPerMonth(prevState => ({
+                formattingR: res.data.formattingReq ? res.data.formattingReq : [],
+                publishingR: res.data.publishingReq ? res.data.publishingReq : [],
+            }))
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000)
+
+        });
+    }
+
+    const callGetRequestsPerMonth2 = () => {
+        const yearSelected = moment(cumulativeDate).year()
+        axios.post('getRequestsPerMonth', { selecedYear: yearSelected }).then(res => {
+            setCumulativeReq(prevState => ({
+                formattingCR: res.data.formattingReq ? res.data.formattingReq : [],
+                publishingCR: res.data.publishingReq ? res.data.publishingReq : [],
+            }))
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000)
+
+        });
+    }
+
+
+    useEffect(() => {
+
         const table = $(productTableRef.current).DataTable({
             "info": false,
             'order': [],
             'pageLength': 5,
         })
-
         setnombrePages(table.page.info().pages);
-
         setTb(table)
+        const sitems = inprogress.map((item) => {
+
+            return (
+                {
+                    id: item._id,
+                    group: item.form == 'Formatting' ? 'Formatting' : 'Publishing',
+                    start: new Date(item.created_at),
+                    end: new Date(item.deadline),
+                    content: item.dossier_type.value,
+                    title: "Start : " + moment(item.deadline).format('DD-mm-yy') + " , End : " + moment(item.deadline).format('DD-mm-yy'),
+                    color: item.form == 'Formatting' ? 'primary' : 'success',
+                    type: 'point'
+                }
+            )
+
+        });
+
+        setTimelineItems(sitems)
 
         return function () {
             table.destroy()
@@ -463,17 +565,41 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     }, [])
 
     useEffect(() => {
-        let myarr = Array.from({ length: nombrePages }, (v, i) => i + 1)
-        setpageNumbers(myarr)
-    }, [nombrePages])
+        var numbers = [];
+        var buttons = 5;
+        var half = Math.floor(buttons / 2);
+        var _range = function (len, start) {
+            var end;
 
+            if (typeof start === "undefined") {
+                start = 0;
+                end = len;
 
-    const handleStartDateChange = (date) => {
-        setStartDate(date)
-        axios.get('getFormByYear', { params: { year: date } }).then(res => {
-            console.log(res)
-        })
-    }
+            } else {
+                end = start;
+                start = len;
+            }
+
+            var out = [];
+            for (var i = start; i < end; i++) { out.push(i); }
+
+            return out;
+        };
+        if (nombrePages <= buttons) {
+            numbers = _range(0, nombrePages);
+
+        } else if (currentPage <= half) {
+            numbers = _range(0, buttons);
+
+        } else if (currentPage >= nombrePages - 1 - half) {
+            numbers = _range(nombrePages - buttons, nombrePages);
+
+        } else {
+            numbers = _range(currentPage - half, currentPage + half + 1);
+        }
+        numbers = Array.from(numbers, (i) => i + 1)
+        setpageNumbers(numbers)
+    }, [nombrePages, currentPage])
 
     const pagination = (number) => {
 
@@ -499,20 +625,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             type: 'pie',
             width: '100%',
         },
-        labels: totalPerType.cat,
-        // plotOptions: {
-        //     pie: {
-        //         dataLabels: {
-        //             offset: -5
-        //         }
-        //     }
-        // },
-        // dataLabels: {
-        //     formatter(val, opts) {
-        //         const name = opts.w.globals.labels[opts.seriesIndex]
-        //         return [name, val.toFixed(1) + '%']
-        //     }
-        // },
+        labels: requestPerType.labelsf,
         legend: {
             show: false
         },
@@ -525,73 +638,162 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             type: 'pie',
             width: '100%',
         },
-        labels: totalPerTypeP.cat,
-        // plotOptions: {
-        //     pie: {
-        //         dataLabels: {
-        //             offset: -5
-        //         }
-        //     }
-        // },
-        // dataLabels: {
-        //     formatter(val, opts) {
-        //         const name = opts.w.globals.labels[opts.seriesIndex]
-        //         return [name, val.toFixed(1) + '%']
-        //     }
-        // },
+        labels: requestPerType.labelsp,
         legend: {
             show: false
         },
         // colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
     };
 
+
+    const groups = [
+        {
+            id: "Formatting",
+            content: "Formatting",
+            order: 1,
+            style: "color:#3e97ff"
+        },
+        {
+            id: "Publishing",
+            content: "Publishing",
+            order: 2,
+            style: "color:#50cd89"
+        },
+        // {
+        //     id: "ui",
+        //     content: "UI Design",
+        //     order: 3
+        // },
+        // {
+        //     id: "dev",
+        //     content: "Development",
+        //     order: 4
+        // }
+    ];
+
+
+
+
+    const items = [
+        {
+            id: 1,
+            group: 'research',
+            start: new Date,
+            end: moment(new Date).add(1.5, 'hours'),
+            content: 'Meeting',
+            progress: "60%",
+            color: 'primary',
+            users: [
+                'avatars/300-6.jpg',
+                'avatars/300-1.jpg'
+            ]
+        },
+        {
+            id: 2,
+            group: 'qa',
+            start: moment(new Date).add(1, 'hours'),
+            end: moment(new Date).add(2, 'hours'),
+            content: 'Testing',
+            progress: "47%",
+            color: 'success',
+            users: [
+                'avatars/300-2.jpg'
+            ]
+        },
+        {
+            id: 3,
+            group: 'ui',
+            start: moment(new Date).add(30, 'minutes'),
+            end: moment(new Date).add(2.5, 'hours'),
+            content: 'Landing page',
+            progress: "55%",
+            color: 'danger',
+            users: [
+                'avatars/300-5.jpg',
+                'avatars/300-20.jpg'
+            ]
+        },
+        {
+            id: 4,
+            group: 'dev',
+            start: moment(new Date).add(1.5, 'hours'),
+            end: moment(new Date).add(3, 'hours'),
+            content: 'Products module',
+            progress: "75%",
+            color: 'info',
+            users: [
+                'avatars/300-23.jpg',
+                'avatars/300-12.jpg',
+                'avatars/300-9.jpg'
+            ]
+        },
+    ]
+
+    const timelineoptions = {
+        // height: '500px',
+        zoomable: false,
+        moveable: true,
+        selectable: false,
+        // timeAxis: {
+        //     scale: 'month',
+        //     step: 1,
+        // },
+        margin: {
+            item: {
+                horizontal: 10,
+                vertical: 35
+            }
+        },
+        showCurrentTime: true,
+        xss: {
+            disabled: false,
+            filterOptions: {
+                whiteList: {
+                    div: ['class', 'style'],
+                    img: ['data-kt-timeline-avatar-src', 'alt'],
+                    a: ['href', 'class']
+                },
+            },
+        },
+        template: function (item) {
+            const users = item.users;
+            let userTemplate = '';
+            // users.forEach(user => {
+            //     userTemplate += `<div class="symbol symbol-circle symbol-25px"></div>`;
+            // });
+            return `<div class="rounded-pill bg-${item.color} d-flex align-items-center position-relative h-40px w-100 p-2 overflow-hidden">
+                
+    
+                <div class="d-flex align-items-center position-relative z-index-2">
+                   
+    
+                    <a href="#" class="fw-bold text-white text-hover-dark">${item.content}</a>
+                </div>
+    
+               
+            </div>        
+            `;
+        },
+
+        // Remove block ui on initial draw
+        // onInitialDrawComplete: function () {
+        //     handleAvatarPath();
+
+        //     const target = element.closest('[data-kt-timeline-widget-4-blockui="true"]');
+        //     const blockUI = KTBlockUI.getInstance(target);
+
+        //     if (blockUI.isBlocked()) {
+        //         setTimeout(() => {
+        //             blockUI.release();
+        //         }, 1000);      
+        //     }
+        // }
+    };
+
     return (
         <>
             <div className="row g-5">
                 <div className="col-4">
-                    {/* <div className='card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center border-0 h-md-50 mb-5 mb-xl-10' style={{ backgroundColor: '#080655' }}>
-                        <div className='card-header pt-5'>
-                            <div className='card-title d-flex flex-column'>
-                                <span className='fs-2hx fw-bold text-white me-2 lh-1 ls-n2'>
-                                    {totalRequet}
-                                </span>
-                                <span className='text-white opacity-50 pt-1 fw-semibold fs-6'>
-                                    to complete
-                                </span>
-                            </div>
-                        </div>
-                        <div className='card-body d-flex align-items-end pt-0'>
-                            <div className='d-flex align-items-center flex-column mt-3 w-100'>
-                                <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
-                                    <div className='d-flex align-items-center'>
-                                        <div className='bullet w-8px h-3px rounded-2 bg-success me-3'></div>
-                                        <span>{RequetNumber[0].status}</span>
-                                    </div>
-
-                                    <span>{RequetNumber[0].total}</span>
-                                </div>
-                                <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
-                                    <div className='d-flex align-items-center'>
-                                        <div className='bullet w-8px h-3px rounded-2 bg-warning me-3'></div>
-                                        <span>{RequetNumber[1].status}</span>
-                                    </div>
-
-                                    <span>{RequetNumber[1].total}</span>
-                                </div>
-                                {RequetNumber[2] ?
-                                    <div className='d-flex justify-content-between fw-bold fs-6 text-white opacity-50 w-100 mt-auto mb-2'>
-                                        <div className='d-flex align-items-center'>
-                                            <div className='bullet w-8px h-3px rounded-2 bg-primary me-3'></div>
-                                            <span>{RequetNumber[2].status}</span>
-                                        </div>
-
-                                        <span>{RequetNumber[2].total}</span>
-                                    </div> : ''}
-
-                            </div>
-
-                        </div>
-                    </div> */}
                     <div className="card card-flush h-xl-100 h-100">
 
                         <div className="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-start h-250px" style={{ backgroundImage: "url('storage/media/svg/shapes/top-green.png')" }} data-bs-theme="light">
@@ -654,12 +856,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 : ''}
                                         </div>
                                     </div>
-
-                                    {/* {RequetNumber.map((requet, i) => (
-                                        
-                                    )
-
-                                    )} */}
                                 </div>
                             </div>
                         </div>
@@ -670,11 +866,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
                                 <h3 className="fw-bold mb-1">Total requests</h3>
-                                {/* <div className="fs-6 fw-semibold text-gray-400">24 Overdue Tasks</div> */}
                             </div>
-                            {/* <div className="card-toolbar">
-                                <a href="#" className="btn btn-light btn-sm">View Tasks</a>
-                            </div> */}
                         </div>
                         <div className="card-body p-9 pt-5">
                             <div className="d-flex flex-wrap justify-content-center">
@@ -752,8 +944,8 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </ul>
                                 <DatePicker
                                     dateFormat="yyyy"
-                                    showYearPicker selected={dateStart}
-                                    onChange={(date) => setDateStart(date)}
+                                    showYearPicker selected={startDate}
+                                    onChange={(date) => setStartDate(date)}
                                     className="form-select form-select-solid form-select-sm fw-bold w-100px"
                                     yearItemNumber={6}
                                 />
@@ -763,14 +955,14 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             <div className='tab-content ps-4 pe-6'>
                                 <div className='tab-pane fade active show' id="kt_charts_widget_11_tab_content_1">
                                     <Chart options={dossier_type_options}
-                                        series={totalPerType.data}
+                                        series={requestPerType.formattingRT}
                                         type='pie'
                                         height={300}
                                     />
                                 </div>
                                 <div className='tab-pane fade' id="kt_charts_widget_12_tab_content_2">
                                     <Chart options={dossier_type_options_pub}
-                                        series={totalPerTypeP.data}
+                                        series={requestPerType.publishingRT}
                                         type='pie'
                                         height={300}
                                     />
@@ -921,7 +1113,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 <td>
                                                     <div className='d-flex align-items-center'>
                                                         <div className='symbol symbol-45px me-2'>
-                                                            {/* <img src='assets/media/flags/united-states.svg' /> */}
                                                             <ReactCountryFlag
                                                                 countryCode={countries.getAlpha2Code(val.cnt, "en")}
                                                                 svg
@@ -930,6 +1121,23 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                                     height: '2em',
                                                                 }}
                                                             />
+                                                            {/* {val.cnt == "KSA" ?
+                                                                <ReactCountryFlag
+                                                                    countryCode={countries.getAlpha2Code("Saudi arabia", "en")}
+                                                                    svg
+                                                                    style={{
+                                                                        width: '2em',
+                                                                        height: '2em',
+                                                                    }}
+                                                                />
+                                                                : <ReactCountryFlag
+                                                                    countryCode={countries.getAlpha2Code(val.cnt, "en")}
+                                                                    svg
+                                                                    style={{
+                                                                        width: '2em',
+                                                                        height: '2em',
+                                                                    }}
+                                                                />} */}
                                                         </div>
                                                         <div className='d-flex justify-content-start flex-column'>
                                                             <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt}</span>
@@ -953,29 +1161,14 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     </tbody>
                                 </table>
                                 <div className="row paginate_row">
-                                    {/* <div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
-                                        <div className="dataTables_length" id="kt_profile_overview_table_length">
-                                            <label>
-                                                <select name="kt_profile_overview_table_length" aria-controls="kt_profile_overview_table" className="form-select form-select-sm form-select-solid" onChange={handlePageLengthChange}>
-                                                    <option value="5">5</option>
-                                                    <option value="10" selected>10</option>
-                                                    <option value="15">15</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                    </div> */}
                                     <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
                                         <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
                                             <ul className="pagination">
                                                 <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
-                                                    <a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
-                                                        <i className="previous"></i></a>
+                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
+                                                        <i className="previous"></i></button>
                                                 </li>
-                                                {/* <li className="paginate_button page-item active"><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
-										</li><li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="2" tabIndex="0" className="page-link">2</a></li>
-										<li className="paginate_button page-item "><a href="#" aria-controls="kt_profile_overview_table" data-dt-idx="3" tabIndex="0" className="page-link">3</a></li> */}
+
                                                 {
                                                     pageNumbers.map(number => (
 
@@ -985,9 +1178,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                     ))
                                                 }
                                                 <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
-                                                    <a href="#" aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
+                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
                                                         <i className="next"></i>
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>
@@ -1009,8 +1202,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             <div className="card-toolbar">
                                 <DatePicker
                                     dateFormat="yyyy"
-                                    showYearPicker selected={dateStart}
-                                    onChange={(date) => setDateStart(date)}
+                                    showYearPicker
+                                    selected={monthReq}
+                                    onChange={(date) => setMnthReq(date)}
                                     className="form-select form-select-solid form-select-sm fw-bold w-100px"
                                     yearItemNumber={6}
                                 />
@@ -1054,7 +1248,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className='tab-pane fade active show' id="kt_charts_widget_10_tab_content_1">
                                     <Chart
                                         options={options}
-                                        series={[{ name: 'Formatting', data: perMonthFor }]}
+                                        series={[{ name: 'Formatting', data: requestPetMont.formattingR }]}
                                         type="bar"
                                         height={270}
                                     />
@@ -1062,7 +1256,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className='tab-pane fade' id="kt_charts_widget_10_tab_content_2">
                                     <Chart
                                         options={options_pub}
-                                        series={[{ name: 'Publishing', data: perMonthPub }]}
+                                        series={[{ name: 'Publishing', data: requestPetMont.publishingR }]}
                                         type="bar"
                                         height={270}
                                     />
@@ -1097,8 +1291,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 </select> */}
                                 <DatePicker
                                     dateFormat="yyyy"
-                                    showYearPicker selected={startDate}
-                                    onChange={handleStartDateChange}
+                                    showYearPicker
+                                    selected={cumulativeDate}
+                                    onChange={setCumulativeDate}
                                     className="form-select form-select-solid form-select-sm fw-bold w-100px"
                                     yearItemNumber={6}
                                 />
@@ -1106,10 +1301,29 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             </div>
                         </div>
                         <div className="card-body pt-10 pb-0 px-5">
-                            <Chart options={coptions} series={[{ name: 'Formatting', data: perMonthFor },
-                            { name: 'Publishing', data: perMonthPub }]}
+                            <Chart
+                                options={coptions}
+                                series={[
+                                    { name: 'Formatting', data: cumulativeReq.formattingCR },
+                                    { name: 'Publishing', data: cumulativeReq.publishingCR }
+                                ]}
                                 type='area'
                             />
+                        </div>
+                    </div>
+                </div>
+                <div className='col-12'>
+                    <div className='card h-md-100'>
+                        <div className='card-header position-relative py-0 border-bottom-1'>
+                            <h3 className='card-title text-gray-800 fw-bold'>Active Tasks</h3>
+                        </div>
+                        <div className='card-body pb-0'>
+                            {timelineItems.length > 0 ?
+                                <Timeline
+                                    options={timelineoptions}
+                                    initialGroups={groups}
+                                    initialItems={timelineItems}
+                                /> : ''}
                         </div>
                     </div>
                 </div>
@@ -1120,6 +1334,17 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             {/* <div className='row'> */}
 
             {/* </div> */}
+            {loading && (
+                <div className="overlay">
+                    <PropagateLoader
+                        color="#009ef7"
+                        loading={loading}
+                        // cssOverride={override}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
+                </div>
+            )}
         </>
     )
 }
@@ -1137,8 +1362,7 @@ const Dashboard = (props: any) => {
     const totalRequet = Object.values(RequetNumber).reduce((a, b) => a + b['total'], 0)
     const totalclosed = props.totalclosed
     const productCountry = props.productCountry
-    const totalPerType = props.totalPerType
-    const totalPerTypeP = props.totalPerTypeP
+    const inprogress = props.inprogress
 
     useEffect(() => {
         if (props.flash.message) {
@@ -1207,12 +1431,9 @@ const Dashboard = (props: any) => {
                 acceptance={acceptance}
                 correction={correction}
                 update={update}
-                perMonthFor={perMonthFor}
-                perMonthPub={perMonthPub}
                 totalclosed={totalclosed}
                 productCountry={productCountry}
-                totalPerType={totalPerType}
-                totalPerTypeP={totalPerTypeP}
+                inprogress={inprogress}
             />
 
         </>

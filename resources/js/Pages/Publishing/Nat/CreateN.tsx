@@ -27,7 +27,7 @@ const CreateN = (props: any) => {
         productName: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
-        country: metadata.country,
+        country: { value: metadata.country, code: metadata.code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
@@ -68,16 +68,6 @@ const CreateN = (props: any) => {
             return { label: val, value: val }
         })
     }
-
-
-
-    //     tno = 
-
-    // } else {
-    //     tno = tn.map((val) => {
-    //         return { label: val, value: val }
-    //     })
-    // }
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
@@ -310,7 +300,7 @@ const CreateN = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country} />
+                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dossier type</label>
