@@ -161,6 +161,13 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		})
 	}
 
+	const handleDupliacte = (row) => {
+		if (row.form == 'Formatting') {
+			console.log(row)
+			router.post('duplicate', { "id": row._id })
+		}
+	}
+
 	return (
 		<>
 			<div className={`card mb-5`}>
@@ -240,7 +247,9 @@ const TablesWidget9: React.FC<Props> = (props) => {
 									<th className='min-w-130px'>Dossier type</th>
 									<th className='min-w-130px'>Request date</th>
 									<th className='min-w-130px'>Last update</th>
-
+									{props.user.current_team_id != 3 ?
+										<th className='min-w-130px'>Actions</th> : ''
+									}
 								</tr>
 							</thead>
 							<tbody>
@@ -330,6 +339,13 @@ const TablesWidget9: React.FC<Props> = (props) => {
 												{row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''}
 											</span>
 										</td>
+										{props.user.current_team_id != 3 ?
+											<td>
+												<button className='btn btn-xm' onClick={() => handleDupliacte(row)}>
+													<i className="ki-duotone ki-copy fs-1"></i>
+												</button>
+											</td>
+											: ''}
 									</tr>
 								)) : ''}
 							</tbody>

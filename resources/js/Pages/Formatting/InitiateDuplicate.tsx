@@ -11,18 +11,20 @@ import DropZone from '../../Components/Dropzone';
 import axios from 'axios';
 import StatusComponent from '../../Components/StatusComponent';
 
-const Initiate = (props: any) => {
 
-    var params = new URLSearchParams(window.location.search)
+const InitiateDuplicate = (props: any) => {
+
+    const { folder } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    const { folder } = props
+
+    console.log(folder.document)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
-        region: folder ? folder.region : params.get('region'),
-        coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
+        form: folder ? folder.form : '',
+        region: folder ? folder.region : '',
+        coredoc: folder ? folder.coreDoc : '',
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
         product_name: folder ? folder.product_name : '',
@@ -56,7 +58,6 @@ const Initiate = (props: any) => {
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
-
 
     const nextStep = () => {
         if (!stepper.current) {
@@ -146,20 +147,11 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('initiate-formatting', { type: type }));
+        post(route('initiate-formatting-duplication', { type: type }));
     }
 
     return (
         <>
-            {folder ?
-                <div className='d-flex justify-content-between align-items-center'>
-                    <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
-                        <i className="ki-duotone ki-black-left fs-3">
-                        </i>
-                    </a>
-                    <StatusComponent status={data.status} />
-                </div>
-                : ''}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
@@ -452,6 +444,6 @@ const Initiate = (props: any) => {
     )
 }
 
-Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
+InitiateDuplicate.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-export default Initiate;
+export default InitiateDuplicate;

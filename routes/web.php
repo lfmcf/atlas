@@ -5,6 +5,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FormatingController;
 use App\Http\Controllers\PublishingController;
 use App\Http\Controllers\ProductMetaController;
+use App\Models\Formating;
 use App\Models\Publishing;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** iniatiate and submit form ** //
     Route::get('/formatting-initiate', [FormatingController::class, 'create'])->name('formatting-initiate');
     Route::post('initiate-formatting', [FormatingController::class, 'store'])->name('initiate-formatting');
+    Route::post('initiate-formatting-duplication', [FormatingController::class, 'storeDuplication'])->name('initiate-formatting-duplication');
+
 
     // ** confirm deadline form ** //
     Route::get('/formatting-confirm', [FormatingController::class, 'createConfirm'])->name('formatting-confirm');
@@ -175,6 +178,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('allnotifications', [ReportController::class, 'allnotif']);
     Route::post('mark-all-as-read', [ReportController::class, 'markallnotifread']);
+
+    // ** handle form duplication requests  ** //
+    Route::post('duplicate', [FormatingController::class, 'createDupliaction']);
 });
 
 // ** route for getting country while select product punlishing ** //

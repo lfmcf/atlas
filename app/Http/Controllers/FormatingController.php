@@ -30,6 +30,7 @@ class FormatingController extends Controller
     public function create(Request $request)
     {
         $formatting = "";
+
         if ($request->id) {
             $formatting = Formating::findOrfail($request->id);
             $region = $formatting->region;
@@ -53,6 +54,33 @@ class FormatingController extends Controller
 
         $countries = json_decode($cc->countries);
         return Inertia::render('Formatting/Initiate', [
+            'countries' => $countries,
+            'folder' => $formatting
+        ]);
+    }
+
+    public function createDupliaction(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $region = $formatting->region;
+
+        if ($region == "EU") {
+            $cc = Continent::where('continent', 'europe')->first('countries');
+        } else if ($region == "Asia") {
+            $cc = Continent::where('continent', 'asia')->first('countries');
+        } else if ($region == "GCC") {
+            $cc = Continent::where('continent', 'gcc')->first('countries');
+        } else if ($region == "Africa") {
+            $cc = Continent::where('continent', 'africa')->first('countries');
+        } else if ($region == "US") {
+            $cc = Continent::where('continent', 'us')->first('countries');
+        } else if ($region == "CH") {
+            $cc = Continent::where('continent', 'ch')->first('countries');
+        }
+
+        $countries = json_decode($cc->countries);
+
+        return Inertia::render('Formatting/InitiateDuplicate', [
             'countries' => $countries,
             'folder' => $formatting
         ]);
@@ -108,6 +136,75 @@ class FormatingController extends Controller
         $formatting->remarks = $request->remarks;
         if (!empty($formatting->document)) {
             $formatting->document = [...$formatting->document, ...$docs];
+        } else {
+
+            $formatting->document = $docs;
+        }
+        $formatting->docremarks = $request->docremarks;
+        $formatting->request_date = $request->request_date;
+        $formatting->deadline = $request->deadline;
+
+        $formatting->created_by = $request->created_by;
+
+        if ($request->query('type') == 'save') {
+            $formatting->status = 'draft';
+            $formatting->save();
+            return redirect('/dashboard')->with('message', 'Form has been successfully saved');
+        } else {
+            $formatting->status = 'initiated';
+            $formatting->save();
+            $user = User::where('current_team_id', 2)->get();
+            Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+            return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
+        }
+    }
+
+    public function storeDuplication(Request $request)
+    {
+        $docs = $request->doc;
+
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
+
+        if (!empty($docs)) {
+            $arr = array_map(function ($doc) {
+
+                $myarr = [];
+
+                if ($doc && gettype($doc) != 'string') {
+                    $uploadedFile = $doc;
+                    $filename = $uploadedFile->getClientOriginalName();
+                    $path = Storage::putFileAs(
+                        'public',
+                        $uploadedFile,
+                        $filename
+                    );
+                    $myarr['name'] = $filename;
+                    $myarr['link'] = asset('storage/' . $filename);;
+                }
+                return $myarr;
+            }, $docs);
+            $docs = $arr;
+        }
+
+        $OldFolder = Formating::find($request->id);
+        $formatting = new Formating();
+        $formatting->form = $request->form;
+        $formatting->region = $request->region;
+        $formatting->coredoc = $request->coredoc;
+        $formatting->dossier_contact = $request->dossier_contact;
+        $formatting->object = $request->object;
+        $formatting->product_name = $request->product_name;
+        $formatting->substance_name = $request->substance_name;
+        $formatting->country = $request->country;
+        $formatting->dossier_type = $request->dossier_type;
+        $formatting->document_count = $request->document_count;
+        $formatting->deficiency_letter = $request->deficiency_letter;
+        $formatting->chrono = $request->chrono;
+        $formatting->remarks = $request->remarks;
+        if (!empty($OldFolder->document)) {
+            $formatting->document = [...$OldFolder->document, ...$docs];
         } else {
 
             $formatting->document = $docs;
