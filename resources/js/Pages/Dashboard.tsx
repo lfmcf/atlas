@@ -548,7 +548,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                     start: new Date(item.created_at),
                     end: new Date(item.deadline),
                     content: item.dossier_type.value,
-                    title: "Start : " + moment(item.deadline).format('DD-mm-yy') + " , End : " + moment(item.deadline).format('DD-mm-yy'),
+                    title: "Start : " + moment(item.created_at).format('DD-MM-yyyy') + " , End : " + moment(item.deadline).format('DD-MM-yyyy'),
                     color: item.form == 'Formatting' ? 'primary' : 'success',
                     type: 'point'
                 }
