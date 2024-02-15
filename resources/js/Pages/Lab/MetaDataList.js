@@ -429,3 +429,33 @@ export const publishingMrpSubmissionType = [
     { label: 'cep', value: 'cep' },
     { label: 'none', value: 'none' },
 ]
+
+
+export const EunatCountry = [
+    { label: 'Austria', value: 'Austria', code: 'AT' },
+    { label: 'Bulgaria', value: 'Bulgaria', code: 'BG' },
+    { label: 'Czech republic', value: 'Czech republic', code: 'CZ' },
+    { label: 'Hungary', value: 'Hungary', code: 'HU' },
+    { label: 'Latvia', value: 'Latvia', code: 'LV' },
+    { label: 'Lithuania', value: 'Lithuania', code: 'LT' },
+    { label: 'Luxembourg', value: 'Luxembourg', code: 'LU' },
+    { label: 'Poland', value: 'Poland', code: 'PL' },
+    { label: 'Romania', value: 'Romania', code: 'RO' },
+    { label: 'Slovak Rep', value: 'Slovak Rep', code: 'SK' },
+    { label: 'Slovenia', value: 'Slovenia', code: 'SI' },
+    { label: 'Germany', value: 'Germany', code: 'DE' },
+    { label: 'Italy', value: 'Italy', code: 'IT' },
+    { label: 'Belgium', value: 'Belgium', code: 'BE' },
+    // { label: 'Cyprus', value: 'Cyprus', code: 'CY' },
+    { label: 'Denmark', value: 'Denmark', code: 'DK' },
+    { label: 'Spain', value: 'Spain', code: 'ES' },
+    { label: 'Estonia', value: 'Estonia', code: 'EE' },
+    { label: 'Finland', value: 'Finland', code: 'FI' },
+    { label: 'France', value: 'France', code: 'FR' },
+    // { label: 'Greece', value: 'Greece', code: 'GR' },
+    { label: 'Ireland', value: 'Ireland', code: 'IE' },
+    // { label: 'Malta', value: 'Malta', code: 'MT' },
+    { label: 'Netherlands', value: 'Netherlands', code: 'NL' },
+    { label: 'Portugal', value: 'Portugal', code: 'PT' },
+    { label: 'Sweden', value: 'Sweden', code: 'SE' },
+]

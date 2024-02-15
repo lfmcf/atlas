@@ -89,6 +89,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** store orm publishing ** //
     Route::post('/store-publishing', [PublishingController::class, 'store'])->name('store-publishing');
     Route::post('/store-publishing_', [PublishingController::class, 'store_'])->name('store-publishing_');
+    Route::post('store-publishing-duplication', [PublishingController::class, 'storeDuplication'])->name('store-publishing-duplication');
 
     // ** confirm deadline form publishing ** //
     Route::get('/publishing-confirm', [PublishingController::class, 'createConfirm'])->name('publishing-confirm');
@@ -117,6 +118,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** iniatiate and submit form publishing nationale gcc ** //
     Route::post('store-publishing-nat-gcc', [PublishingController::class, 'storeNatGcc'])->name('store-publishing-nat-gcc');
     Route::post('store-publishing-nat-gcc_', [PublishingController::class, 'storeNatGcc_'])->name('store-publishing-nat-gcc_');
+    Route::post('store-publishing-nat-gcc-duplicate', [PublishingController::class, 'storeNatGccDuplicate'])->name('store-publishing-nat-gcc-duplicate');
 
     // ** confirm form publishing nationale gcc ** //
     Route::post('confirm-publishing-nat-gcc', [PublishingController::class, 'confirmNatGcc'])->name('confirm-publishing-nat-gcc');
@@ -128,6 +130,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
     Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
     Route::post('initiate-rmp-publishing_', [PublishingController::class, 'storemrp_'])->name('initiate-rmp-publishing_');
+    Route::get('/duplicate-publishing', [PublishingController::class, 'createDuplication'])->name('duplicate-publishing');
+    Route::get('/duplicate-publishing-rmp', [PublishingController::class, 'createDuplicationRmp'])->name('duplicate-publishing-rmp');
 
     Route::get('/publishing-initiate_', [PublishingController::class, 'create_'])->name('publishing-initiate_');
 
@@ -181,6 +185,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** handle form duplication requests  ** //
     Route::post('duplicate', [FormatingController::class, 'createDupliaction']);
+
+    Route::post('getMetaDataForDuplicate', [PublishingController::class, 'getMetaData'])->name('getMetadata');
 });
 
 // ** route for getting country while select product punlishing ** //
