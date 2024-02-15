@@ -144,7 +144,7 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission mode</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode ? folder.submission_mode.value : ''}</span>
+                                            {/* <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode ? folder.submission_mode.value : ''}</span> */}
                                         </div>
                                     </div>
                                     <div className="row mb-7">
