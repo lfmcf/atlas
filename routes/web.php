@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('initiate-rmp-publishing_', [PublishingController::class, 'storemrp_'])->name('initiate-rmp-publishing_');
     Route::get('/duplicate-publishing', [PublishingController::class, 'createDuplication'])->name('duplicate-publishing');
     Route::get('/duplicate-publishing-rmp', [PublishingController::class, 'createDuplicationRmp'])->name('duplicate-publishing-rmp');
+    Route::post('initiate-rmp-publishing-duplication', [PublishingController::class, 'storemrpduplication'])->name('initiate-rmp-publishing-duplication');
 
     Route::get('/publishing-initiate_', [PublishingController::class, 'create_'])->name('publishing-initiate_');
 

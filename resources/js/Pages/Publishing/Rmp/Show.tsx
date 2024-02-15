@@ -404,11 +404,12 @@ const Show = (props) => {
                                 <a
                                     href="#"
                                     onClick={() => handleDilivred(folder._id, folder.form)}
-                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                    className='btn btn-sm btn-light-primary'
                                     data-bs-toggle='modal'
                                     data-bs-target='#kt_modal_delivery_message'
                                 >
-                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                    {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
+                                    Accept
                                 </a>
                             </div>
                             :

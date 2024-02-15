@@ -144,7 +144,7 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Submission mode</label>
                                         <div className="col-lg-8">
-                                            {/* <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode ? folder.submission_mode.value : ''}</span> */}
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.submission_mode ? folder.submission_mode.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
@@ -442,11 +442,12 @@ const Show = (props) => {
                                 <a
                                     href="#"
                                     onClick={() => handleDilivred(folder._id, folder.form)}
-                                    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                    className='btn btn-sm btn-light-primary'
                                     data-bs-toggle='modal'
                                     data-bs-target='#kt_modal_delivery_message'
                                 >
-                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                    {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
+                                    Accept
                                 </a>
                             </div>
                             :

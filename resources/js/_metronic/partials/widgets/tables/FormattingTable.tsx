@@ -298,13 +298,13 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                         <>
                                                                             <button
                                                                                 onClick={() => handleCompleted(row._id)}
-                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                className='btn btn-icon btn-light-success btn-sm me-1'
                                                                             >
-                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                                <KTIcon iconName='check-circle' className='fs-3 ' />
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleCorrect(row._id)}
-                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                className='btn btn-icon btn-light-danger btn-sm me-1'
                                                                             >
                                                                                 <KTIcon iconName='cross-circle' className='fs-3' />
                                                                             </button>

@@ -19,7 +19,6 @@ const InitiateDuplicate = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     const { metadata, folder } = props;
 
-    console.log(folder.mt)
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
         form: folder ? folder.form : '',
@@ -32,7 +31,7 @@ const InitiateDuplicate = (props: any) => {
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        mt: folder ? folder.mt : [],
+        mt: metadata,
         indication: folder ? folder.indication : '',
         manufacturer: folder ? folder.manufacturer : '',
         drug_substance: folder ? folder.drug_substance : '',
@@ -133,6 +132,7 @@ const InitiateDuplicate = (props: any) => {
 
     const handleMultipleSelectChange = (e, name) => {
         const perdata = { ...multiData }
+        console.log(perdata[name], e)
         perdata[name] = e
         setMultiData(perdata)
     }
@@ -206,7 +206,7 @@ const InitiateDuplicate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('initiate-rmp-publishing', { type: type }));
+        post(route('initiate-rmp-publishing-duplication', { type: type }));
     }
 
     const removeAll = () => {

@@ -863,13 +863,13 @@ const Audit = (props: any) => {
                             {props.auth.user.current_team_id == 3 ?
                                 <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
                                     <span className="indicator-label">
-                                        ACK
+                                        Accept
                                     </span>
                                 </button>
                                 : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
-                                    Submit
+                                    Reject
                                 </span>
                                 <span className="indicator-progress">
                                     Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>

@@ -189,9 +189,47 @@ class PublishingController extends Controller
     {
 
         $pub = PublishingMrp::find($request->id);
+        $countries  = $request->countries;
+        $listmd = [];
+        foreach ($countries as $country) {
+            $md = MetaData::where([
+                ['Product', '=', $pub->product_name],
+                ['procedure', '=', $pub->procedure],
+                ['country', '=', $country]
+            ])->first();
+            if ($md) {
+                array_push($listmd, $md);
+            }
+        }
+        // $listmd = [];
+        // $found = false;
+        // foreach ($countries as $country) {
+        //     foreach ($pub->mt as $m) {
+        //         if (in_array($country, $m)) {
+        //             array_push($listmd, collect($m));
+        //             $found = true;
+        //             break;
+        //         } else {
+        //             $found = false;
+        //         }
+        //     }
+        //     if (!$found) {
+
+        //         $md = MetaData::where([
+        //             ['Product', '=', $pub->product_name],
+        //             ['procedure', '=', $pub->procedure],
+        //             ['country', '=', $country]
+        //         ])->first();
+        //         if ($md) {
+        //             array_push($listmd, $md);
+        //         }
+        //     }
+        // }
+
+        // dd($listmd);
 
         return Inertia::render('Publishing/Rmp/InitiateDuplicate', [
-            // 'metadata' => $listmd,
+            'metadata' => $listmd,
             'folder' => $pub
         ]);
     }
@@ -1034,6 +1072,7 @@ class PublishingController extends Controller
     public function show(Request $request)
     {
         $pub = Publishing::findOrfail($request->id);
+
         return Inertia::render('Publishing/Nat/Show', [
             'folder' => $pub
         ]);
@@ -1228,6 +1267,81 @@ class PublishingController extends Controller
                 array_push($mtArr, $dt);
             }
             MetaData::insert($mtArr);
+            $pub->status = 'initiated';
+            $pub->save();
+            $user = User::where('current_team_id', 2)->get();
+            Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+            return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
+        }
+    }
+
+
+    public function storemrpduplication(Request $request)
+    {
+        $docs = $request->doc;
+        $docs = array_filter($docs, static function ($element) {
+            return gettype($element) !== 'array';
+        });
+
+        if (!empty($docs)) {
+
+            $arr = array_map(function ($doc) {
+
+                $myarr = [];
+
+                if ($doc && gettype($doc) !== 'string') {
+
+                    $uploadedFile = $doc;
+                    $filename = $uploadedFile->getClientOriginalName();
+                    $path = Storage::putFileAs(
+                        'public',
+                        $uploadedFile,
+                        $filename
+                    );
+                    $myarr['name'] = $filename;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
+                }
+                return $myarr;
+            }, $docs);
+            $docs = $arr;
+        }
+
+        $OldFolder = PublishingMrp::find($request->id);
+        $pub = new PublishingMrp();
+        $pub->form = $request->form;
+        $pub->region = $request->region;
+        $pub->procedure = $request->procedure;
+        $pub->product_name = $request->product_name;
+        $pub->dossier_contact = $request->dossier_contact;
+        $pub->object = $request->object;
+        $pub->country = $request->country;
+        $pub->dossier_type = $request->dossier_type;
+        $pub->dossier_count = $request->dossier_count;
+        $pub->remarks = $request->remarks;
+        $pub->mt = $request->mt;
+        $pub->indication = $request->indication;
+        $pub->manufacturer = $request->manufacturer;
+        $pub->drug_substance = $request->drug_substance;
+        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+        $pub->dosage_form = $request->dosage_form;
+        $pub->excipient = $request->excipient;
+        if (!empty($OldFolder->doc)) {
+            $pub->doc = [...$OldFolder->doc, ...$docs];
+        } else {
+            $pub->doc = $docs;
+        }
+
+        $pub->docremarks = $request->docremarks;
+        $pub->deadline = $request->deadline;
+        $pub->request_date = $request->request_date;
+        $pub->type = $request->query('type');
+
+        if ($request->query('type') == 'save') {
+            $pub->status = 'draft';
+            $pub->save();
+            return redirect('/dashboard')->with('message', 'Form has been successfully saved');
+        } else {
+
             $pub->status = 'initiated';
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
