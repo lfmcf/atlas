@@ -138,7 +138,7 @@ const Create = (props: any) => {
 
     const [list, setList] = useState(metadata);
 
-
+    console.log(isCheck)
     const handleMultiCountryChange = (e) => {
 
         const { id, checked } = e.target;
@@ -169,7 +169,7 @@ const Create = (props: any) => {
                 perdata.mt[i].trackingNumber = multiData.trackingNumber
                 perdata.mt[i].submission_unit = multiData.submission_unit
                 perdata.mt[i].applicant = multiData.applicant
-                perdata.mt[i].agencyCode = multiData.agencyCode
+                // perdata.mt[i].agencyCode = multiData.agencyCode
                 perdata.mt[i].inventedName = multiData.inventedName
                 perdata.mt[i].mtd = multiData.mtd
                 perdata.mt[i].inn = multiData.inn

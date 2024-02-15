@@ -129,7 +129,7 @@ const Show = (props) => {
                             </div>
                             <div className='tab-content'>
                                 <div className='tab-pane fade' id='kt_aside_tab_2' role='tabpanel'>
-                                    <div className="table-responsive">
+                                    <div className="table-responsive" style={{ overflow: 'auto' }}>
                                         <table className="table table-sm table-row-dashed" id="showTable" >
                                             <thead>
                                                 <tr>

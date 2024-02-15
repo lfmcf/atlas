@@ -14,6 +14,7 @@ import XLSX from 'xlsx';
 import { InviteUsers } from '../../modals/invite-users/InviteUsers';
 import AddProduct from '../../modals/add-product/addProduct';
 import axios from 'axios';
+import DuplicateModal from '../../modals/duplicate-modal/duplicateModal';
 
 type Props = {
 	// className: string
@@ -40,10 +41,12 @@ const TablesWidget9: React.FC<Props> = (props) => {
 	const [pageNumbers, setpageNumbers] = useState([]);
 	const [nombrePages, setnombrePages] = useState(0);
 	const [pageLength, setpageLenght] = useState(10);
-	const [show, setShow] = useState(false)
-	const [showSec, setShowSec] = useState(false)
+	const [show, setShow] = useState(false);
+	const [showSec, setShowSec] = useState(false);
+	const [showDup, setShowDup] = useState({ show: false, data: '', id: '' });
 	const [product_name, setProduct_name] = useState();
 	const [update, setUpdate] = useState({ rerender: false, pName: '' })
+	const [modalData, setModalData] = useState();
 	const tableRef = useRef()
 
 	useEffect(() => {
@@ -95,7 +98,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		if (value === 'all') {
 			value = ''
 		}
-		//console.log(tb.columns())
 		tb.column(0).search(value).draw('page');
 		setnombrePages(tb.page.info().pages);
 	}
@@ -132,7 +134,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	const handlenext = () => {
 		let number = tb.page.info().page + 1
-		console.log(number)
 		setCurrentPage(number + 1)
 		tb.page(number).draw('page')
 	}
@@ -161,10 +162,23 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		})
 	}
 
+
+
 	const handleDupliacte = (row) => {
 		if (row.form == 'Formatting') {
-			console.log(row)
 			router.post('duplicate', { "id": row._id })
+		}
+		else if (row.form == 'Publishing' && row.procedure == "Mutual Recognition" || row.procedure == "Decentralized") {
+			setShowDup(prevState => ({
+				...prevState,
+				show: true,
+				data: row.mt,
+				id: row._id
+			}));
+			//setShowDup({ show: true, data: row.mt })
+		}
+		else {
+			router.get('duplicate-publishing', { "id": row._id })
 		}
 	}
 
@@ -413,6 +427,11 @@ const TablesWidget9: React.FC<Props> = (props) => {
 				setShow={setShowSec}
 				handleAddProduct={handleAddProduct}
 				setProduct_name={setProduct_name}
+			/>
+			<DuplicateModal
+				show={showDup}
+				setShow={setShowDup}
+				data={modalData}
 			/>
 		</>
 	)
