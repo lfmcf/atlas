@@ -60,6 +60,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     const [productList, setProductList] = useState(Object);
     const [countryList, setCountryList] = useState(Object);
     const [compselect, setCompselect] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingPr, setIsLoadingPr] = useState(false);
     // const [show, setShow] = useState(false)
 
     const SelectMenuButton = (props) => {
@@ -128,41 +130,55 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
     const handleSelectProductChange = (e, name) => {
         setData(name, e)
-        if (data.procedure && data.procedure.value == 'Nationale') {
+        if (data.procedure && data.procedure.value == 'Nationale' && data.region && data.region.value == 'CH') {
+            setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
+        } else {
+            setIsLoading(true)
             axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
                 var dt = res.data.map(ct => {
                     return { label: ct.country, value: ct.country, code: ct.code }
                 })
                 setCountryList(dt)
                 setData({ ...data, 'product': e, country: '' })
+
+                setTimeout(() => {
+                    setIsLoading(false)
+                }, 1000)
+
             })
         }
     }
 
     const handleSelectProductChange_ = (e) => {
         setState(prevState => ({ ...prevState, ['product_']: e }));
+
         if (procedure_ && procedure_.value == 'Nationale') {
-            axios.post('getProductOrCountry', { 'procedure': procedure_.value, 'product': e.value, }).then(res => {
-                if (res.data.length > 0) {
+            if (region_ && region_.value == "EU") {
+                setCountryList(eunatcountry)
+            } else if (region_ && region_.value == "GCC") {
+                setCountryList(gcccountry)
+            } else {
+                setCountryList([{ label: "Switzerland", value: "Switzerland" }])
+            }
+            //     axios.post('getProductOrCountry', { 'procedure': procedure_.value, 'product': e.value, }).then(res => {
+            //         if (res.data.length > 0) {
 
-                    var dt = res.data.map(ct => {
-                        return { label: ct.country, value: ct.country }
-                    })
-                    setCountryList(dt)
-                } else {
+            //             var dt = res.data.map(ct => {
+            //                 return { label: ct.country, value: ct.country }
+            //             })
+            //             setCountryList(dt)
+            //         } else {
 
-                    if (region_ && region_.value == "EU") {
-                        setCountryList(eunatcountry)
-                    } else if (region_ && region_.value == "GCC") {
-                        setCountryList(gcccountry)
-                    } else {
-                        setCountryList([{ label: "Switzerland", value: "Switzerland" }])
-                    }
-                }
+            //             if (region_ && region_.value == "EU") {
+            //                 setCountryList(eunatcountry)
+            //             } else if (region_ && region_.value == "GCC") {
+            //                 setCountryList(gcccountry)
+            //             } else {
+            //                 setCountryList([{ label: "Switzerland", value: "Switzerland" }])
+            //             }
+            //         }
 
-                //setData({ ...data, 'product': e, country: '' })
-
-            })
+            //     })
         }
     }
 
@@ -203,7 +219,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         if (data.form && data.form.value === 'Publishing') {
             if (data.region && data.region.value == 'GCC') {
                 setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                // setProductList(gccproduct);
+                setIsLoadingPr(true)
                 axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
                     if (res.status == 200) {
                         var myarr = []
@@ -213,10 +229,13 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                         setProductList(myarr);
                     }
                 })
+                setTimeout(() => {
+                    setIsLoadingPr(false)
+                }, 1000)
                 setCountryList(gcccountry);
             } else if (data.region && data.region.value == 'CH') {
                 setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                // setProductList(chproduct);
+                setIsLoadingPr(true)
                 axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
                     if (res.status == 200) {
                         var myarr = []
@@ -226,7 +245,10 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                         setProductList(myarr);
                     }
                 })
-                setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
+                // setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
+                setTimeout(() => {
+                    setIsLoadingPr(false)
+                }, 1000)
 
             }
         }
@@ -270,6 +292,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         setData({ ...data, product: '', country: '' })
         if (data.form && data.form.value === 'Publishing') {
             if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
+                setIsLoadingPr(true)
                 axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value }).then(res => {
                     if (res.status == 200) {
                         var myarr = []
@@ -281,9 +304,12 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 })
                 setCountryList(eunatcountry)
                 setCompselect(true)
+                setTimeout(() => {
+                    setIsLoadingPr(false)
+                }, 1000)
 
             } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
-
+                setIsLoadingPr(true)
                 axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
                     if (res.status == 200) {
                         var myarr = []
@@ -293,9 +319,29 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                         setProductList(myarr);
                     }
                 })
-                setCountryList(eunatcountry)
+                // setCountryList(eunatcountry)
                 setCompselect(false)
+                setTimeout(() => {
+                    setIsLoadingPr(false)
+                }, 1000)
             }
+            // else if (data.region && data.region == 'CH' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
+            //     console.log('called')
+            //     setIsLoadingPr(true)
+            //     axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+            //         if (res.status == 200) {
+            //             var myarr = []
+            //             res.data.map(val => {
+            //                 myarr.push({ label: val.name, value: val.name })
+            //             })
+            //             setProductList(myarr);
+            //         }
+            //     })
+            //     setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
+            //     setTimeout(() => {
+            //         setIsLoadingPr(false)
+            //     }, 1000)
+            // }
         }
     }, [data.procedure])
 
@@ -545,8 +591,9 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 <Select options={productList}
                                     name="product"
                                     onChange={(e) => handleSelectProductChange(e, 'product')}
-                                    placeholder='Product'
+                                    placeholder={isLoadingPr ? 'Loading...' : 'Product'}
                                     value={data.product}
+                                    isLoading={isLoadingPr}
                                     isClearable
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
@@ -572,6 +619,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                         value={data.country}
                                         menuPortalTarget={document.body}
                                         isClearable
+                                        isLoading={isLoading}
+                                        placeholder={isLoading ? 'Loading...' : 'Country'}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                     />}
                             </div>

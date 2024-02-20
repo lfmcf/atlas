@@ -1307,7 +1307,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     { name: 'Formatting', data: cumulativeReq.formattingCR },
                                     { name: 'Publishing', data: cumulativeReq.publishingCR }
                                 ]}
-                                type='area'
+                                type='line'
                             />
                         </div>
                     </div>

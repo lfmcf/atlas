@@ -86,9 +86,9 @@ class ReportController extends Controller
             ];
         }
 
-        $totalFormattings = Formating::count();
-        $totalPublishingNat = Publishing::count();
-        $totalPublishingMrp = PublishingMrp::count();
+        $totalFormattings = Formating::where('status', '!=', 'draft')->count();
+        $totalPublishingNat = Publishing::where('status', '!=', 'draft')->count();
+        $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')->count();
         $totalPublishings = $totalPublishingNat + $totalPublishingMrp;
 
         $acceformatting = Formating::where('status', 'closed')->whereNull('correction')->count();
