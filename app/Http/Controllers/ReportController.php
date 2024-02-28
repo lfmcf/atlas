@@ -764,6 +764,7 @@ class ReportController extends Controller
             }
         }
 
+
         return response()->json(['formattingReq' => array_values($my_arr), 'publishingReq' => array_values($my_sec_arr)]);
     }
 }

@@ -405,7 +405,12 @@ const coptions = {
         },
         y: {
             formatter: function (val) {
-                return val + " dossiers"
+                if (val) {
+                    return parseInt(val) + " dossiers"
+                } else {
+                    return 0 + " dossiers"
+                }
+
             }
         }
     },
@@ -808,7 +813,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         <span className="position-absolute opacity-50 bottom-0 start-0 border-2 border-body border-bottom w-100"></span>
 
                                     </span>
-                                    <span className="opacity-75"> to complete</span>
+                                    <span className="opacity-75"> task to complete</span>
                                 </div>
                             </h3>
 
