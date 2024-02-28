@@ -277,9 +277,9 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                             <div className='d-flex justify-content-end flex-shrink-0'>
                                                 {row.status == 'draft' ?
                                                     <a
-
                                                         onClick={() => router.get(route('publishing-initiate', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        title='Update and Submit the form'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
                                                     </a>

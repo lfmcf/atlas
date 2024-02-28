@@ -226,6 +226,8 @@ const TablesWidget9: React.FC<Props> = (props) => {
 							<a
 								href='#'
 								className='btn btn-sm btn-light-primary'
+								data-bs-toggle="tooltip"
+								title="Create New Request"
 								// data-bs-toggle='modal'
 								// data-bs-target='#kt_modal_invite_friends'
 								onClick={() => setShow(true)}
@@ -355,7 +357,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										</td>
 										{props.user.current_team_id != 3 ?
 											<td>
-												<button className='btn btn-xm' onClick={() => handleDupliacte(row)}>
+												<button className='btn btn-xm' title='Duplicate the current form' onClick={() => handleDupliacte(row)}>
 													<i className="ki-duotone ki-copy fs-1"></i>
 												</button>
 											</td>
@@ -372,7 +374,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 									<label>
 										<select name="kt_profile_overview_table_length" aria-controls="kt_profile_overview_table" className="form-select form-select-sm form-select-solid" onChange={handlePageLengthChange}>
 											<option value="5">5</option>
-											<option value="10" selected>10</option>
+											<option value="10" defaultChecked>10</option>
 											<option value="15">15</option>
 											<option value="50">50</option>
 											<option value="100">100</option>

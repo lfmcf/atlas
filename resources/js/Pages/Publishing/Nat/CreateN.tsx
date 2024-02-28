@@ -13,7 +13,7 @@ import axios from 'axios'
 import StatusComponent from '../../../Components/StatusComponent'
 
 const CreateN = (props: any) => {
-    const { metadata, folder } = props;
+    const { metadata, folder, metapro } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
@@ -289,21 +289,21 @@ const CreateN = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" readOnly onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Object</label>
+                                    <label className="form-label" title='Enter a Dossier Title. Ex : ORALAIR_EU_Seq 0137'>Object</label>
                                     <input type="text" className="form-control form-control-solid" name="object" defaultValue={data.object} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Product</label>
+                                    <label className="form-label" title='The product selected in the previous form'>Product</label>
                                     <input type="text" className="form-control form-control-solid" name="productName" defaultValue={data.productName} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission country</label>
+                                    <label className="form-label" title='The country selected in the previous form'>Submission country</label>
                                     <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier type</label>
+                                    <label className="form-label" title='Choose the Dossier type '>Dossier type (*)</label>
                                     <Select options={[
                                         { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                         { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -325,7 +325,7 @@ const CreateN = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier count</label>
+                                    <label className="form-label" title='Enter the number of documents in Publishing dossier'>Dossier count (*)</label>
                                     <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} onChange={handleChange} />
                                 </div>
                             </div>
@@ -341,11 +341,11 @@ const CreateN = (props: any) => {
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">UUID</label>
+                                    <label className="form-label" title='Universal Unique Identifier. A unique identifier of the Publishing dossier'>UUID</label>
                                     <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission type</label>
+                                    <label className="form-label" title='Choose the submission type'>Submission type (*)</label>
                                     <Select options={[
                                         { label: 'maa', value: 'maa' },
                                         { label: 'var-type1a', value: 'var-type1a' },
@@ -410,7 +410,7 @@ const CreateN = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission mode</label>
+                                    <label className="form-label" title='Choose the submission mode'>Submission mode (*)</label>
                                     <Select options={[
                                         { label: 'Single', value: 'Single' },
                                         { label: 'Grouping', value: 'Grouping' },
@@ -450,7 +450,7 @@ const CreateN = (props: any) => {
 
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission unit</label>
+                                    <label className="form-label" title='Choose the applicable submission unit'>Submission unit (*)</label>
                                     <Select options={[
                                         { label: 'initial', value: 'initial' },
                                         { label: 'validation-response', value: 'validation-response' },
@@ -473,36 +473,36 @@ const CreateN = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Applicant</label>
+                                    <label className="form-label" title='Name of the company submitting the eCTD'>Applicant</label>
                                     <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
                                 </div>
 
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Agency code</label>
+                                    <label className="form-label" title='Name of the agency code of the concerned country'>Agency code</label>
                                     <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className='col-md-4 col-sm-12'>Invented name</label>
+                                    <label className='col-md-4 col-sm-12' title='Product name'>Invented name</label>
                                     <input type="text" className="form-control form-control-solid" name="productName" defaultValue={data.productName} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className='col-md-4 col-sm-12'>INN</label>
+                                    <label className='col-md-4 col-sm-12' title='INN - Mandatory for sequence 0000'>INN</label>
                                     <input type="text" className="form-control form-control-solid" name="inn" defaultValue={data.inn} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Sequence</label>
+                                    <label className="form-label" title='Enter the sequence number'>Sequence (*)</label>
                                     <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Related Sequence</label>
+                                    <label className="form-label" title='Enter the related sequence number'>Related Sequence</label>
                                     <input type="text" className="form-control form-control-solid" name="r_sequence" defaultValue={data.r_sequence} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission description</label>
+                                    <label className="form-label" title='Submission description'>Submission description</label>
                                     <input type="text" className="form-control form-control-solid" name="submission_description" defaultValue={data.submission_description} onChange={handleChange} />
                                 </div>
                             </div>
@@ -517,7 +517,7 @@ const CreateN = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select
+                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -529,29 +529,25 @@ const CreateN = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Manufacturer</label>
-                                    <Select
-                                        name='manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'manufacturer')}
+                                    <label className="form-label">Drug substance</label>
+                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                        name='drug_substance'
+                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
-                                        value={data.manufacturer}
+                                        isMulti
+                                        value={data.drug_substance}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <input type="text" className="form-control form-control-solid" name="drug_substance" defaultValue={data.drug_substance} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select
+                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -563,13 +559,26 @@ const CreateN = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <input type="text" className="form-control form-control-solid" name="drug_product" defaultValue={data.drug_product} onChange={handleChange} />
+                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                        name='drug_product'
+                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.drug_product}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select
+                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -581,11 +590,9 @@ const CreateN = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
-                            </div>
-                            <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select
+                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -597,15 +604,19 @@ const CreateN = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select
+                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
+                                        isMulti
                                         value={data.excipient}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}

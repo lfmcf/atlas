@@ -132,12 +132,15 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         setData(name, e)
         if (data.procedure && data.procedure.value == 'Nationale' && data.region && data.region.value == 'CH') {
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
+        } else if (data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized') {
+            setCountryList(eunatcountry)
         } else {
             setIsLoading(true)
             axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
                 var dt = res.data.map(ct => {
                     return { label: ct.country, value: ct.country, code: ct.code }
                 })
+
                 setCountryList(dt)
                 setData({ ...data, 'product': e, country: '' })
 
@@ -423,6 +426,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                             <a
                                 className="nav-link active"
                                 data-bs-toggle="tab"
+                                data-toggle="tooltip"
+                                title="Selct Initial Request For New Marketing Authorization Application"
                                 href="#kt_tab_pane_1"
                             >
                                 Initial Request
@@ -432,6 +437,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                             <a
                                 className="nav-link"
                                 data-bs-toggle="tab"
+                                data-toggle="tooltip"
+                                title='For Formatting and Lifecycle maintenance Requests (ex: variation, RtQ…)'
                                 href="#kt_tab_pane_2"
                             >
                                 LifeCycle
@@ -463,8 +470,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                     isDisabled
                                 />
                             </div>
-                            <div className='my-4'>
-                                <label className="form-label">Region</label>
+                            <div className='my-4' >
+                                <label className="form-label" data-toggle="tooltip" title='Select the concerned region for the Initial Publishing'>Region</label>
                                 <Select
                                     options={publishingRegion}
                                     name="region_"
@@ -475,9 +482,10 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                     value={region_}
                                 />
+
                             </div>
                             <div className='my-4'>
-                                <label className='form-label'>Procedure type</label>
+                                <label className='form-label' data-toggle="tooltip" title='Select the concerned procedure  for the Initial Publishing'>Procedure type</label>
                                 <Select options={[
                                     { label: 'Nationale', value: 'Nationale' },
                                     { label: 'Centralized', value: 'Centralized' },
@@ -495,7 +503,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4'>
-                                <label className='form-label'>Product</label>
+                                <label className='form-label' data-toggle="tooltip" title="Choose the product for the Initial Publishing. If not listed, click 'New Product' at the list's end">Product</label>
                                 <Select options={productList}
                                     name="product_"
                                     onChange={(e) => handleSelectProductChange_(e)}
@@ -508,7 +516,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4'>
-                                <label className='form-label'>Country</label>
+                                <label className='form-label' data-toggle="tooltip" title='Select a country for the Initial Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
                                 {compselect ?
                                     <MySelect
                                         options={countryList ? [...countryList] : ''}
@@ -537,7 +545,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                         </div>
                         <div className="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
                             <div>
-                                <label className="form-label">Request type</label>
+                                <label className="form-label" data-toggle='tooltip' title='Select a Request type'>Request type</label>
                                 <Select options={[
                                     { label: 'Formatting', value: 'Formatting' },
                                     { label: 'Publishing', value: 'Publishing' },
@@ -556,7 +564,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4'>
-                                <label className="form-label">Region</label>
+                                <label className="form-label" data-toggle='tooltip' title='Select the region for the dossier to be formatted'>Region</label>
                                 <Select
                                     options={data.form && data.form.value == 'Publishing' ? publishingRegion : formattingRegion}
                                     name="region"
@@ -569,7 +577,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label'>Procedure type</label>
+                                <label className='form-label' data-toggle='tooltip' title='Select the concerned procedure  for the Lifecyle Publishing'>Procedure type</label>
                                 <Select options={[
                                     { label: 'Nationale', value: 'Nationale' },
                                     { label: 'Centralized', value: 'Centralized' },
@@ -587,7 +595,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label'>Product</label>
+                                <label className='form-label' data-toggle='tooltip' title='Select the concerned Product for the Lifecycle Publishing '>Product</label>
                                 <Select options={productList}
                                     name="product"
                                     onChange={(e) => handleSelectProductChange(e, 'product')}
@@ -600,7 +608,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 />
                             </div>
                             <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label'>Country</label>
+                                <label className='form-label' data-toggle='tooltip' title='Select a country for the Lifecycle Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
                                 {compselect ?
                                     <MySelect
                                         options={countryList ? [...countryList] : ''}
@@ -625,7 +633,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                     />}
                             </div>
                             <div className='my-4' style={{ display: data.form && data.form.value == 'Formatting' ? 'flex' : 'none', alignItems: 'center' }}>
-                                <label className='form-label my-0 me-4'>Core doc</label>
+                                <label className='form-label my-0 me-4' data-toggle='tooltip' title='Specify if the dossier is Core Documentation'>Core doc</label>
                                 <label className='form-check form-switch form-check-custom form-check-solid'>
                                     <input className='form-check-input' type='checkbox' value='1' />
 

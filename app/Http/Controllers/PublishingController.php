@@ -7,6 +7,7 @@ use App\Models\Publishing;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\MetaData;
+use App\Models\MetaProduct;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -52,6 +53,17 @@ class PublishingController extends Controller
             $product = $request->query('product');
         }
 
+        // $metaPro = MetaProduct::where('product', 'LIKE', '%' . $product . '%')->get();
+        $findstring = explode(' ', $product);
+
+        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+            foreach ($findstring as $value) {
+                $rvalue = rtrim($value, ",");
+                $q->orWhere('product', 'like', "%{$rvalue}%");
+            }
+        })->first();
+
+
         if ($region == "EU") {
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
                 $country = is_array($country) ? $country['value'] : $country;
@@ -66,7 +78,8 @@ class PublishingController extends Controller
                         'metadata' => $md,
                         'countries' => $country,
                         'products' => $product,
-                        'folder' => $pub
+                        'folder' => $pub,
+                        'metapro' => $metaPro
                     ]);
                 }
             } else {
@@ -97,7 +110,8 @@ class PublishingController extends Controller
 
                 return Inertia::render('Publishing/Rmp/Create', [
                     'metadata' => $listmd,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "CH") {
@@ -113,7 +127,8 @@ class PublishingController extends Controller
                     'metadata' => $md,
                     'countries' => $country,
                     'products' => $product,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "GCC") {
@@ -129,7 +144,8 @@ class PublishingController extends Controller
                     'metadata' => $md,
                     'countries' => $country,
                     'products' => $product,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         }
@@ -617,6 +633,14 @@ class PublishingController extends Controller
         $procedure = $pub->procedure;
         $country = is_array($country) ? $country['value'] : $country;
 
+        $findstring = explode(' ', $product);
+        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+            foreach ($findstring as $value) {
+                $rvalue = rtrim($value, ",");
+                $q->orWhere('product', 'like', "%{$rvalue}%");
+            }
+        })->first();
+
         if ($region == "EU") {
 
             $md = MetaData::where([
@@ -630,7 +654,8 @@ class PublishingController extends Controller
                     'metadata' => $md,
                     'countries' => $country,
                     'products' => $product,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "CH") {
@@ -645,7 +670,8 @@ class PublishingController extends Controller
                     'metadata' => $md,
                     'countries' => $country,
                     'products' => $product,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "GCC") {
@@ -660,7 +686,8 @@ class PublishingController extends Controller
                     'metadata' => $md,
                     'countries' => $country,
                     'products' => $product,
-                    'folder' => $pub
+                    'folder' => $pub,
+                    'metapro' => $metaPro
                 ]);
             }
         }
@@ -670,7 +697,7 @@ class PublishingController extends Controller
     {
         $publishing = Publishing::findOrfail($request->id);
         return Inertia::render('Publishing/Validate', [
-            'folder' => $publishing
+            'folder' => $publishing,
         ]);
     }
 
@@ -1355,6 +1382,15 @@ class PublishingController extends Controller
         $pub = PublishingMrp::findOrfail($request->id);
         $product = $pub->product_name;
         $procedure = $pub->procedure;
+
+        $findstring = explode(' ', $product);
+        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+            foreach ($findstring as $value) {
+                $rvalue = rtrim($value, ",");
+                $q->orWhere('product', 'like', "%{$rvalue}%");
+            }
+        })->first();
+
         $listmd = [];
         for ($i = 0; $i < count($pub->mt); $i++) {
             $md = MetaData::where([
@@ -1369,7 +1405,8 @@ class PublishingController extends Controller
 
         return Inertia::render('Publishing/Rmp/Confirm', [
             'folder' => $pub,
-            'metadata' => $listmd
+            'metadata' => $listmd,
+            'metapro' => $metaPro
         ]);
     }
 

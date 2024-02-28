@@ -281,7 +281,7 @@ const Initiate = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" readOnly onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Object</label>
+                                    <label className="form-label" title='Enter a Dossier Title. Ex : ORALAIR_EU_Seq 0137'>Object</label>
                                     <input type="text" className="form-control form-control-solid" name="object" defaultValue={data.object} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>

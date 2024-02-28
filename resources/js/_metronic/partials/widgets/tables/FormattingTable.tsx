@@ -230,6 +230,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                         href='#'
                                                         onClick={() => router.get(route('formatting-initiate', { id: row._id }))}
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        title='Update and Submit the form'
                                                     >
                                                         <KTIcon iconName='pencil' className='fs-3' />
                                                     </a>

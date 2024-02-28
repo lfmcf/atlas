@@ -16,7 +16,7 @@ import StatusComponent from '../../../Components/StatusComponent'
 
 const Create = (props: any) => {
 
-    const { metadata, folder } = props;
+    const { metadata, folder, metapro } = props;
     var params = new URLSearchParams(window.location.search);
 
     const [files, setFiles] = useState(folder.document)
@@ -614,10 +614,10 @@ const Create = (props: any) => {
                             </div>
                         </div>
                         <div className="flex-column" data-kt-stepper-element="content">
-                            <div className="row mb-10">
+                            <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select
+                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -629,29 +629,56 @@ const Create = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Manufacturer</label>
-                                    <Select
-                                        name='manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'manufacturer')}
+                                    <label className="form-label">Drug substance</label>
+                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                        name='drug_substance'
+                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
-                                        value={data.manufacturer}
+                                        isMulti
+                                        value={data.drug_substance}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.drug_substance} name="drug_substance" onChange={handleChange} />
+                                    <label className="form-label">Drug substance manufacturer</label>
+                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                        name='drug_substance_manufacturer'
+                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.drug_substance_manufacturer}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
                                 </div>
                             </div>
-                            <div className="row mb-10">
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacture</label>
-                                    <Select
+                                    <label className="form-label">Drug product</label>
+                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                        name='drug_product'
+                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.drug_product}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label">Drug product manufacturer</label>
+                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -665,7 +692,7 @@ const Create = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select
+                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -677,15 +704,19 @@ const Create = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select
+                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
+                                        isMulti
                                         value={data.excipient}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}

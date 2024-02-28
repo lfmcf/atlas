@@ -337,7 +337,7 @@ const coptions = {
         curve: 'smooth',
         show: true,
         width: 3,
-        colors: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-success')]
+        colors: [getCSSVariableValue('--bs-success'), getCSSVariableValue('--bs-primary')]
     },
     xaxis: {
         categories: ['Jun', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -409,7 +409,7 @@ const coptions = {
             }
         }
     },
-    colors: [getCSSVariableValue('--bs-primary-light'), getCSSVariableValue('--bs-success-light')],
+    colors: [getCSSVariableValue('--bs-success'), getCSSVariableValue('--bs-primary')],
     grid: {
         borderColor: getCSSVariableValue('--bs-gray-200'),
         strokeDashArray: 4,
@@ -422,7 +422,7 @@ const coptions = {
     markers: {
         //size: 5,
         colors: [getCSSVariableValue('--bs-primary-light'), getCSSVariableValue('--bs-success-light')],
-        strokeColor: [getCSSVariableValue('--bs-primary'), getCSSVariableValue('--bs-success')],
+        strokeColor: [getCSSVariableValue('--bs-success'), getCSSVariableValue('--bs-primary')],
         strokeWidth: 3
     }
 }
@@ -756,7 +756,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             },
         },
         template: function (item) {
-            const users = item.users;
+            // const users = item.users;
             let userTemplate = '';
             // users.forEach(user => {
             //     userTemplate += `<div class="symbol symbol-circle symbol-25px"></div>`;
@@ -767,7 +767,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                 <div class="d-flex align-items-center position-relative z-index-2">
                    
     
-                    <a href="#" class="fw-bold text-white text-hover-dark">${item.content}</a>
+                    <a class="fw-bold text-white">${item.content}</a>
                 </div>
     
                
@@ -993,7 +993,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 </span>
                                             </div>
                                             <div className="me-2">
-                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Approved</a>
+                                                <span className="text-gray-800 fs-6 fw-bold">Approved</span>
                                                 {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
                                             </div>
                                         </div>
@@ -1016,7 +1016,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 </span>
                                             </div>
                                             <div className="me-2">
-                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Change</a>
+                                                <span className="text-gray-800 fs-6 fw-bold">Change</span>
                                                 {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
                                             </div>
                                         </div>
@@ -1039,7 +1039,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 </span>
                                             </div>
                                             <div className="me-2">
-                                                <a href="#" className="text-gray-800 text-hover-primary fs-6 fw-bold">Correction</a>
+                                                <span className="text-gray-800 fs-6 fw-bold">Correction</span>
                                                 {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
                                             </div>
                                         </div>
@@ -1213,7 +1213,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         <div className='card-body d-flex flex-column justify-content-between pb-5 px-0'>
                             <ul className='nav nav-pills nav-pills-custom mb-3 mx-9' role='tablist'>
                                 <li className='nav-item mb-3 me-3 me-lg-6'>
-                                    <a className='nav-link btn btn-outline btn-flex btn-active-color-primary flex-column overflow-hidden w-80px h-85px pt-5 pb-2 active'
+                                    <a className='nav-link btn btn-outline btn-flex btn-active-color-success flex-column overflow-hidden w-80px h-85px pt-5 pb-2 active'
                                         data-bs-toggle="tab"
                                         href='#kt_charts_widget_10_tab_content_1'>
                                         <div className='nav-icon mb-3'>
@@ -1223,7 +1223,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                                 <span className='path3'></span>
                                             </i>
                                             <span className='nav-text text-gray-800 fw-bold fs-6 lh-1'>Formatting</span>
-                                            <span className='bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary'></span>
+                                            <span className='bullet-custom position-absolute bottom-0 w-100 h-4px bg-success'></span>
                                         </div>
                                     </a>
                                 </li>
