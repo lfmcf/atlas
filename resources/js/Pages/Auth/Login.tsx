@@ -124,7 +124,7 @@ export default function Login() {
                                 <h1 className="text-dark fw-bolder mb-3">Sign In</h1>
                                 {/* <!--end::Title--> */}
                                 {/* <!--begin::Subtitle--> */}
-                                <div className="text-gray-500 fw-semibold fs-6">Your Social Campaigns</div>
+                                {/* <div className="text-gray-500 fw-semibold fs-6">Your Social Campaigns</div> */}
                                 {/* <!--end::Subtitle=--> */}
                             </div>
                             {/* <!--begin::Heading-->
