@@ -194,8 +194,6 @@ const Initiate = (props: any) => {
                 }
             })
         }
-
-
         setData(name, e)
     }
 
@@ -268,7 +266,6 @@ const Initiate = (props: any) => {
         } else {
             stepper.current?.goto(i)
         }
-
     }
 
     return (
@@ -401,9 +398,7 @@ const Initiate = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-
                                     <label htmlFor='product_name' className="form-label" title='Choose the product name to appear in document headers' style={{ color: myErrors.product_name ? 'red' : '' }}>Product name (*)</label>
-
                                     <Select options={formattingProduct}
                                         name="product_name"
                                         onChange={(e) => handleSelectChange(e, 'product_name')}
@@ -415,7 +410,6 @@ const Initiate = (props: any) => {
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                     />
-
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <label className="form-label" title='Choose the substance name to appear in document headers' style={{ color: myErrors.substance_name ? 'red' : '' }}>Substance name (*)</label>
@@ -449,7 +443,6 @@ const Initiate = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-
                                     <label className="form-label" title='Choose the Dossier type ' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={formattingDossierType}
                                         name="dossier_type"

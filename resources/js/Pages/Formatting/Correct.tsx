@@ -30,6 +30,7 @@ const Correct = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const { folder } = props
+    const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
     // const [comment, setComment] = useState('');
     // const [source, setSource] = useState('');
 
@@ -80,10 +81,42 @@ const Correct = (props: any) => {
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'product_name') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    product_name: ''
+                }
+            })
+        }
+        if (name == 'substance_name') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    substance_name: ''
+                }
+            })
+        }
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'document_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    document_count: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
@@ -120,10 +153,43 @@ const Correct = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+            if (!data.product_name || !data.substance_name || !data.dossier_type || !data.document_count) {
+
+                if (!data.product_name) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            product_name: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.substance_name) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            substance_name: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.document_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            document_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
         if (stepper.current.getCurrentStepIndex() === 4) {
@@ -135,6 +201,13 @@ const Correct = (props: any) => {
 
         stepper.current.goNext()
     }
+
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
 
     const prevStep = () => {
         if (!stepper.current) {
@@ -167,6 +240,47 @@ const Correct = (props: any) => {
         let index = arr.doc.map((el) => el.name).indexOf(i.name);
         arr.doc.splice(index, 1)
         setData(arr)
+    }
+
+    const goNextStep = (i) => {
+
+        if (!data.product_name || !data.substance_name || !data.dossier_type || !data.document_count) {
+
+            if (!data.product_name) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        product_name: 'this field is required'
+                    }
+                })
+            }
+            if (!data.substance_name) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        substance_name: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.document_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        document_count: 'this field is required'
+                    }
+                })
+            }
+        } else {
+            stepper.current?.goto(i)
+        }
     }
 
     return (
@@ -206,7 +320,7 @@ const Correct = (props: any) => {
                     {/* <!--begin::Step 2--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -235,7 +349,7 @@ const Correct = (props: any) => {
                     {/* <!--end::Step 2--> */}
 
                     {/* <!--begin::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                         {/* <!--begin::Wrapper--> */}
                         <div className="stepper-wrapper d-flex align-items-center">
                             {/* <!--begin::Icon--> */}
@@ -264,7 +378,7 @@ const Correct = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     {/* <!--end::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-wrapper d-flex align-items-center">
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -306,33 +420,32 @@ const Correct = (props: any) => {
                                 </div>
                             </div>
                             <div className="row mb-10">
-                                <div className='col-6'>
-                                    <label className="form-label">Product name</label>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <label htmlFor='product_name' className="form-label" title='Choose the product name to appear in document headers' style={{ color: myErrors.product_name ? 'red' : '' }}>Product name (*)</label>
                                     <Select options={formattingProduct}
                                         name="product_name"
                                         onChange={(e) => handleSelectChange(e, 'product_name')}
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.product_name)}
                                         value={data.product_name}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                     />
-
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Substance name</label>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <label className="form-label" title='Choose the substance name to appear in document headers' style={{ color: myErrors.substance_name ? 'red' : '' }}>Substance name (*)</label>
                                     <Select options={substanceFormattingList}
                                         name="substance_name"
                                         onChange={(e) => handleSelectChange(e, 'substance_name')}
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         value={data.substance_name}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
+                                        styles={selectStyles(myErrors.substance_name)}
                                     />
                                 </div>
 
@@ -352,15 +465,15 @@ const Correct = (props: any) => {
                                         classNamePrefix="react-select"
                                     />
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Dossier type</label>
+                                <div className='col-md-6 col-lg-6 col-sm-12'>
+                                    <label className="form-label" title='Choose the Dossier type ' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={formattingDossierType}
                                         name="dossier_type"
                                         onChange={(e) => handleSelectChange(e, 'dossier_type')}
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                         value={data.dossier_type}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
@@ -369,9 +482,9 @@ const Correct = (props: any) => {
 
                             </div>
                             <div className='row mb-10'>
-                                <div className='col-4'>
-                                    <label className="form-label">Document Count</label>
-                                    <input type="number" className="form-control form-control-solid" value={data.document_count} name="document_count" onChange={handleChange} />
+                                <div className='col-md-4 col-lg-4 col-sm-12'>
+                                    <label className="form-label" title='Enter the number of documents for formatting' style={{ color: myErrors.document_count ? 'red' : '' }}>Document Count (*)</label>
+                                    <input type="number" className="form-control form-control-solid" defaultValue={data.document_count} style={{ borderColor: myErrors.document_count ? 'red' : '' }} name="document_count" onChange={handleChange} />
                                 </div>
                                 <div className='col-4'>
                                     <label className="form-label">Deficiency Letter</label>

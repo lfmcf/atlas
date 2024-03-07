@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react'
+import { FC, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import Authenticated from '../../../Layouts/AuthenticatedLayout'
 import { StepperComponent } from '../../../_metronic/assets/ts/components'
 import { Instance } from 'flatpickr/dist/types/instance'
@@ -13,11 +13,13 @@ import axios from 'axios'
 import StatusComponent from '../../../Components/StatusComponent'
 
 const CreateN = (props: any) => {
+
     const { metadata, folder, metapro } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -81,17 +83,65 @@ const CreateN = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+            if (!data.dossier_type || !data.dossier_count) {
+
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+        if (stepper.current.getCurrentStepIndex() === 2) {
+            if (!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) {
+                if (!data.submission_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.submission_mode) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_mode: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.submission_unit) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_unit: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.sequence) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            sequence: 'this field is required'
+                        }
+                    })
+                }
+                return
+            }
         }
 
         stepper.current.goNext()
@@ -106,10 +156,66 @@ const CreateN = (props: any) => {
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (e.target.name == 'sequence') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    sequence: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
+        if (name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (name == 'submission_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_type: ''
+                }
+            })
+        }
+        if (name == 'submission_mode') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_mode: ''
+                }
+            })
+        }
+        if (name == 'submission_unit') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_unit: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
@@ -176,6 +282,82 @@ const CreateN = (props: any) => {
         setData(arr)
     }
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
+    const goNextStep = (i) => {
+
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
+
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_count: 'this field is required'
+                    }
+                })
+            }
+            return
+
+        }
+        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5)) {
+            if (!data.submission_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.submission_mode) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_mode: 'this field is required'
+                    }
+                })
+            }
+            if (!data.submission_unit) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_unit: 'this field is required'
+                    }
+                })
+            }
+            if (!data.sequence) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        sequence: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+        stepper.current?.goto(i)
+    }
+
+    const handleSelectChangeTracking = (e, action) => {
+        if (action.action == 'clear') {
+            setData('tracking', '')
+        } else {
+            setData('tracking', e.value)
+        }
+    }
+
     return (
         <>
             {folder ?
@@ -208,7 +390,7 @@ const CreateN = (props: any) => {
                         </div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">2</span>
@@ -226,7 +408,7 @@ const CreateN = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">3</span>
@@ -244,7 +426,7 @@ const CreateN = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">4</span>
@@ -262,7 +444,7 @@ const CreateN = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(5)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">5</span>
@@ -303,7 +485,7 @@ const CreateN = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the Dossier type '>Dossier type (*)</label>
+                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={[
                                         { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                         { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -321,12 +503,12 @@ const CreateN = (props: any) => {
                                         isClearable
                                         value={data.dossier_type}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the number of documents in Publishing dossier'>Dossier count (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -345,7 +527,7 @@ const CreateN = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the submission type'>Submission type (*)</label>
+                                    <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type ? 'red' : '' }}>Submission type (*)</label>
                                     <Select options={[
                                         { label: 'maa', value: 'maa' },
                                         { label: 'var-type1a', value: 'var-type1a' },
@@ -406,11 +588,11 @@ const CreateN = (props: any) => {
                                         isClearable
                                         value={data.submission_type}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.submission_type)}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the submission mode'>Submission mode (*)</label>
+                                    <label className="form-label" title='Choose the submission mode' style={{ color: myErrors.submission_mode ? 'red' : '' }}>Submission mode (*)</label>
                                     <Select options={[
                                         { label: 'Single', value: 'Single' },
                                         { label: 'Grouping', value: 'Grouping' },
@@ -424,7 +606,7 @@ const CreateN = (props: any) => {
                                         isClearable
                                         value={data.submission_mode}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.submission_mode)}
                                     />
                                 </div>
                             </div>
@@ -436,21 +618,20 @@ const CreateN = (props: any) => {
                                             return { label: val, value: val }
                                         })}
                                             name='tracking'
-                                            onChange={(e) => handleSelectChange(e, 'tracking')}
+                                            onChange={(e, action) => handleSelectChangeTracking(e, action)}
                                             className="react-select-container me-1"
                                             classNamePrefix="react-select"
                                             placeholder=''
                                             isClearable
                                             defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                             menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '100%' }) }}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '50%' }) }}
                                         />
-                                        <input type='text' className='form-control form-control-solid' name="trackingExtra" style={{ width: '30%' }} onChange={handleChange} />
+                                        <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
                                     </div>
-
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the applicable submission unit'>Submission unit (*)</label>
+                                    <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit ? 'red' : '' }}>Submission unit (*)</label>
                                     <Select options={[
                                         { label: 'initial', value: 'initial' },
                                         { label: 'validation-response', value: 'validation-response' },
@@ -469,7 +650,7 @@ const CreateN = (props: any) => {
                                         isClearable
                                         value={data.submission_unit}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.submission_unit)}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
@@ -494,8 +675,8 @@ const CreateN = (props: any) => {
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the sequence number'>Sequence (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence ? 'red' : '' }}>Sequence (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} style={{ borderColor: myErrors.sequence ? 'red' : '' }} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Enter the related sequence number'>Related Sequence</label>

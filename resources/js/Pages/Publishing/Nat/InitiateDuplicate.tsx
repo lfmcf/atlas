@@ -10,11 +10,12 @@ import 'flatpickr/dist/flatpickr.css';
 
 const InitiateDuplicate = (props: any) => {
 
-    const { metadata, folder, countries, products } = props;
+    const { metadata, folder, countries, products, metapro } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [trOptions, setTrOptions] = useState([])
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -76,9 +77,65 @@ const InitiateDuplicate = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
+            if (!data.dossier_type || !data.dossier_count) {
+
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 3) {
+        if (stepper.current.getCurrentStepIndex() === 2) {
+            if (!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) {
+                if (!data.submission_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.submission_mode) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_mode: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.submission_unit) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_unit: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.sequence) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            sequence: 'this field is required'
+                        }
+                    })
+                }
+                return
+            }
         }
         stepper.current.goNext()
     }
@@ -91,10 +148,66 @@ const InitiateDuplicate = (props: any) => {
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (e.target.name == 'sequence') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    sequence: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
+        if (name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (name == 'submission_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_type: ''
+                }
+            })
+        }
+        if (name == 'submission_mode') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_mode: ''
+                }
+            })
+        }
+        if (name == 'submission_unit') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_unit: ''
+                }
+            })
+        }
         if (name == "productName") {
             setData(name, e.value)
         } else {
@@ -187,6 +300,82 @@ const InitiateDuplicate = (props: any) => {
         })
     }, [data.productName, data.country])
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
+    const goNextStep = (i) => {
+
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
+
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_count: 'this field is required'
+                    }
+                })
+            }
+            return
+
+        }
+        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5)) {
+            if (!data.submission_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.submission_mode) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_mode: 'this field is required'
+                    }
+                })
+            }
+            if (!data.submission_unit) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_unit: 'this field is required'
+                    }
+                })
+            }
+            if (!data.sequence) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        sequence: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+        stepper.current?.goto(i)
+    }
+
+    const handleSelectChangeTracking = (e, action) => {
+        if (action.action == 'clear') {
+            setData('tracking', '')
+        } else {
+            setData('tracking', e.value)
+        }
+    }
+
     return (
         <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
             <div className="stepper-nav flex-center flex-wrap mb-10">
@@ -209,7 +398,7 @@ const InitiateDuplicate = (props: any) => {
                     </div>
                 </div>
                 <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-icon w-40px h-40px">
                             <i className="stepper-check fas fa-check"></i>
                             <span className="stepper-number">2</span>
@@ -227,7 +416,7 @@ const InitiateDuplicate = (props: any) => {
                     <div className="stepper-line h-40px"></div>
                 </div>
                 <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-icon w-40px h-40px">
                             <i className="stepper-check fas fa-check"></i>
                             <span className="stepper-number">3</span>
@@ -245,7 +434,7 @@ const InitiateDuplicate = (props: any) => {
                     <div className="stepper-line h-40px"></div>
                 </div>
                 <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-icon w-40px h-40px">
                             <i className="stepper-check fas fa-check"></i>
                             <span className="stepper-number">4</span>
@@ -263,7 +452,7 @@ const InitiateDuplicate = (props: any) => {
                     <div className="stepper-line h-40px"></div>
                 </div>
                 <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(5)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-icon w-40px h-40px">
                             <i className="stepper-check fas fa-check"></i>
                             <span className="stepper-number">5</span>
@@ -332,7 +521,7 @@ const InitiateDuplicate = (props: any) => {
                                 />
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Dossier type</label>
+                                <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                 <Select options={[
                                     { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                     { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -350,12 +539,12 @@ const InitiateDuplicate = (props: any) => {
                                     isClearable
                                     value={data.dossier_type}
                                     menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    styles={selectStyles(myErrors.dossier_type)}
                                 />
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Dossier count</label>
-                                <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} onChange={handleChange} />
+                                <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
+                                <input type="text" className="form-control form-control-solid" name="dossier_count" style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} defaultValue={data.dossier_count} onChange={handleChange} />
                             </div>
                         </div>
                         <div className="row mb-10">
@@ -374,7 +563,7 @@ const InitiateDuplicate = (props: any) => {
                                 <input type="text" className="form-control form-control-solid" name="uuid" value={data.uuid} onChange={handleChange} />
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Submission type</label>
+                                <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type ? 'red' : '' }}>Submission type (*)</label>
                                 <Select options={[
                                     { label: 'maa', value: 'maa' },
                                     { label: 'var-type1a', value: 'var-type1a' },
@@ -435,11 +624,11 @@ const InitiateDuplicate = (props: any) => {
                                     isClearable
                                     value={data.submission_type}
                                     menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    styles={selectStyles(myErrors.submission_type)}
                                 />
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Submission mode</label>
+                                <label className="form-label" title='Choose the submission mode' style={{ color: myErrors.submission_mode ? 'red' : '' }}>Submission mode (*)</label>
                                 <Select options={[
                                     { label: 'Single', value: 'Single' },
                                     { label: 'Grouping', value: 'Grouping' },
@@ -453,7 +642,7 @@ const InitiateDuplicate = (props: any) => {
                                     isClearable
                                     value={data.submission_mode}
                                     menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    styles={selectStyles(myErrors.submission_mode)}
                                 />
                             </div>
                         </div>
@@ -463,21 +652,21 @@ const InitiateDuplicate = (props: any) => {
                                 <div className='d-flex align-items-center'>
                                     <Select options={trOptions}
                                         name='tracking'
-                                        onChange={(e) => handleSelectChange(e, 'tracking')}
+                                        onChange={(e, action) => handleSelectChangeTracking(e, action)}
                                         className="react-select-container me-1"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
                                         defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '100%' }) }}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '50%' }) }}
                                     />
-                                    <input type='text' className='form-control form-control-solid' name="trackingExtra" style={{ width: '30%' }} onChange={handleChange} />
+                                    <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
                                 </div>
 
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Submission unit</label>
+                                <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit ? 'red' : '' }}>Submission unit (*)</label>
                                 <Select options={[
                                     { label: 'initial', value: 'initial' },
                                     { label: 'validation-response', value: 'validation-response' },
@@ -496,7 +685,7 @@ const InitiateDuplicate = (props: any) => {
                                     isClearable
                                     value={data.submission_unit}
                                     menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    styles={selectStyles(myErrors.submission_unit)}
                                 />
                             </div>
                             <div className='col-md-4 col-sm-12'>
@@ -521,8 +710,8 @@ const InitiateDuplicate = (props: any) => {
                         </div>
                         <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Sequence</label>
-                                <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
+                                <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence ? 'red' : '' }}>Sequence</label>
+                                <input type="text" className="form-control form-control-solid" name="sequence" style={{ borderColor: myErrors.sequence ? 'red' : '' }} defaultValue={data.sequence} onChange={handleChange} />
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Related Sequence</label>
@@ -544,7 +733,7 @@ const InitiateDuplicate = (props: any) => {
                         <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Indication</label>
-                                <Select
+                                <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
                                     name='indication'
                                     onChange={(e) => handleSelectChange(e, 'indication')}
                                     className="react-select-container"
@@ -556,29 +745,25 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
+
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Manufacturer</label>
-                                <Select
-                                    name='manufacturer'
-                                    onChange={(e) => handleSelectChange(e, 'manufacturer')}
+                                <label className="form-label">Drug substance</label>
+                                <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    name='drug_substance'
+                                    onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                     className="react-select-container"
                                     classNamePrefix="react-select"
                                     placeholder=''
                                     isClearable
-                                    value={data.manufacturer}
+                                    isMulti
+                                    value={data.drug_substance}
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Drug substance</label>
-                                <input type="text" className="form-control form-control-solid" name="drug_substance" defaultValue={data.drug_substance} onChange={handleChange} />
-                            </div>
-                        </div>
-                        <div className='row mb-10'>
-                            <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug substance manufacturer</label>
-                                <Select
+                                <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
                                     name='drug_substance_manufacturer'
                                     onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                     className="react-select-container"
@@ -590,13 +775,26 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
+                        </div>
+                        <div className='row mb-10'>
+
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug product</label>
-                                <input type="text" className="form-control form-control-solid" name="drug_product" defaultValue={data.drug_product} onChange={handleChange} />
+                                <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    name='drug_product'
+                                    onChange={(e) => handleSelectChange(e, 'drug_product')}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    placeholder=''
+                                    isClearable
+                                    value={data.drug_product}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                />
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug product manufacturer</label>
-                                <Select
+                                <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
                                     name='drug_product_manufacturer'
                                     onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                     className="react-select-container"
@@ -608,11 +806,9 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
-                        </div>
-                        <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Dosage form</label>
-                                <Select
+                                <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
                                     name='dosage_form'
                                     onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                     className="react-select-container"
@@ -624,15 +820,19 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
+                        </div>
+                        <div className='row mb-10'>
+
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Excipient</label>
-                                <Select
+                                <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
                                     name='excipient'
                                     onChange={(e) => handleSelectChange(e, 'excipient')}
                                     className="react-select-container"
                                     classNamePrefix="react-select"
                                     placeholder=''
                                     isClearable
+                                    isMulti
                                     value={data.excipient}
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}

@@ -24,12 +24,9 @@ const Audit = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [tnoptions, setTnoptions] = useState();
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', sequence: '' })
 
-    const { folder } = props
-
-    console.log(folder.tracking)
-
-    const { metadata } = props;
+    const { folder, metadata, metapro } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -127,17 +124,40 @@ const Audit = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+            if (!data.dossier_type || !data.dossier_count) {
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+        if (stepper.current.getCurrentStepIndex() === 2) {
+            if (!data.sequence) {
+                if (!data.sequence) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            sequence: 'this field is required'
+                        }
+                    })
+                }
+                return
+            }
         }
 
         stepper.current.goNext()
@@ -152,10 +172,34 @@ const Audit = (props: any) => {
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (e.target.name == 'sequence') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    sequence: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
@@ -202,6 +246,51 @@ const Audit = (props: any) => {
         setData(arr)
     }
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
+    const goNextStep = (i) => {
+
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)) {
+            console.log(i)
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_count: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+
+        if ((!data.sequence) && (i == 3 || i == 4 || i == 5 || i == 6)) {
+            if (!data.sequence) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        sequence: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+        stepper.current?.goto(i)
+
+    }
+
 
     return (
         <>
@@ -233,7 +322,7 @@ const Audit = (props: any) => {
                         </div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">2</span>
@@ -251,7 +340,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">3</span>
@@ -269,7 +358,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">4</span>
@@ -287,7 +376,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(5)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">5</span>
@@ -305,7 +394,7 @@ const Audit = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(6)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(6)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">6</span>
@@ -346,7 +435,7 @@ const Audit = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier type</label>
+                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={[
                                         { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                         { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -365,12 +454,12 @@ const Audit = (props: any) => {
                                         isClearable
                                         value={data.dossier_type}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier count</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -453,8 +542,8 @@ const Audit = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="tpa" defaultValue={data.tpa} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">eCTD Sequence</label>
-                                    <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence ? 'red' : '' }}>eCTD Sequence (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="sequence" style={{ borderColor: myErrors.sequence ? 'red' : '' }} defaultValue={data.sequence} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -510,7 +599,7 @@ const Audit = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select
+                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -522,29 +611,25 @@ const Audit = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Manufacturer</label>
-                                    <Select
-                                        name='manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'manufacturer')}
+                                    <label className="form-label">Drug substance</label>
+                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                        name='drug_substance'
+                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
-                                        value={data.manufacturer}
+                                        isMulti
+                                        value={data.drug_substance}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <input type="text" className="form-control form-control-solid" name="drug_substance" defaultValue={data.drug_substance} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select
+                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -556,13 +641,26 @@ const Audit = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <input type="text" className="form-control form-control-solid" name="drug_product" defaultValue={data.drug_product} onChange={handleChange} />
+                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                        name='drug_product'
+                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.drug_product}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select
+                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -574,11 +672,9 @@ const Audit = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
-                            </div>
-                            <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select
+                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -590,15 +686,19 @@ const Audit = (props: any) => {
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
+
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select
+                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder=''
                                         isClearable
+                                        isMulti
                                         value={data.excipient}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
@@ -647,7 +747,7 @@ const Audit = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-6'>
-                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
                                     <Flatpickr
                                         data-enable-time
                                         value={data.adjusted_deadline}
@@ -740,20 +840,30 @@ const Audit = (props: any) => {
                         </div>
                         <div>
                             {props.auth.user.current_team_id == 3 ?
-                                <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                <>
+                                    <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                        <span className="indicator-label">
+                                            Accept
+                                        </span>
+                                    </button>
+                                    <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
+                                        <span className="indicator-label">
+                                            Reject
+                                        </span>
+                                        <span className="indicator-progress">
+                                            Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
+                                    </button>
+                                </>
+                                : <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                     <span className="indicator-label">
-                                        Accept
+                                        Submit
+                                    </span>
+                                    <span className="indicator-progress">
+                                        Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
                                     </span>
                                 </button>
-                                : ''}
-                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
-                                <span className="indicator-label">
-                                    Reject
-                                </span>
-                                <span className="indicator-progress">
-                                    Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                </span>
-                            </button>
+                            }
 
                             <button type="button" className="btn btn-primary" data-kt-stepper-action='next' onClick={nextStep}>
                                 Continue

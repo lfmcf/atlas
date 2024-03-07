@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useCallback, useEffect, useRef } from 'react'
+import { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import Authenticated from '../../Layouts/AuthenticatedLayout'
 import { StepperComponent } from '../../_metronic/assets/ts/components'
 import Flatpickr from "react-flatpickr";
@@ -17,8 +17,8 @@ const InitiateDuplicate = (props: any) => {
     const { folder } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
+    const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
 
-    console.log(folder.document)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -65,6 +65,43 @@ const InitiateDuplicate = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
+            if (!data.product_name || !data.substance_name || !data.dossier_type || !data.document_count) {
+
+                if (!data.product_name) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            product_name: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.substance_name) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            substance_name: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.document_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            document_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
         if (stepper.current.getCurrentStepIndex() === 3) {
@@ -80,7 +117,22 @@ const InitiateDuplicate = (props: any) => {
         stepper.current.goPrev()
     }
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
     const handleChange = (e) => {
+        if (e.target.name == 'document_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    document_count: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
@@ -117,6 +169,30 @@ const InitiateDuplicate = (props: any) => {
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'product_name') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    product_name: ''
+                }
+            })
+        }
+        if (name == 'substance_name') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    substance_name: ''
+                }
+            })
+        }
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
@@ -148,6 +224,47 @@ const InitiateDuplicate = (props: any) => {
     const handleSubmit = (e, type) => {
         e.preventDefault();
         post(route('initiate-formatting-duplication', { type: type }));
+    }
+
+    const goNextStep = (i) => {
+
+        if (!data.product_name || !data.substance_name || !data.dossier_type || !data.document_count) {
+
+            if (!data.product_name) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        product_name: 'this field is required'
+                    }
+                })
+            }
+            if (!data.substance_name) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        substance_name: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.document_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        document_count: 'this field is required'
+                    }
+                })
+            }
+        } else {
+            stepper.current?.goto(i)
+        }
     }
 
     return (
@@ -187,7 +304,7 @@ const InitiateDuplicate = (props: any) => {
                     {/* <!--begin::Step 2--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -218,7 +335,7 @@ const InitiateDuplicate = (props: any) => {
                     {/* <!--begin::Step 3--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -272,7 +389,7 @@ const InitiateDuplicate = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
 
-                                    <label className="form-label">Product name</label>
+                                    <label className="form-label" title='Choose the product name to appear in document headers' style={{ color: myErrors.product_name ? 'red' : '' }}>Product name (*)</label>
 
                                     <Select options={formattingProduct}
                                         name="product_name"
@@ -280,7 +397,7 @@ const InitiateDuplicate = (props: any) => {
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.product_name)}
                                         value={data.product_name}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
@@ -288,14 +405,14 @@ const InitiateDuplicate = (props: any) => {
 
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <label className="form-label">Substance name</label>
+                                    <label className="form-label" title='Choose the substance name to appear in document headers' style={{ color: myErrors.substance_name ? 'red' : '' }}>Substance name (*)</label>
                                     <Select options={substanceFormattingList}
                                         name="substance_name"
                                         onChange={(e) => handleSelectChange(e, 'substance_name')}
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.substance_name)}
                                         value={data.substance_name}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
@@ -320,14 +437,14 @@ const InitiateDuplicate = (props: any) => {
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
 
-                                    <label className="form-label">Dossier type</label>
+                                    <label className="form-label" title='Choose the Dossier type ' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={formattingDossierType}
                                         name="dossier_type"
                                         onChange={(e) => handleSelectChange(e, 'dossier_type')}
                                         placeholder=''
                                         isClearable
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                         value={data.dossier_type}
                                         className="react-select-container"
                                         classNamePrefix="react-select"
@@ -337,8 +454,8 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-lg-4 col-sm-12'>
-                                    <label className="form-label">Document Count</label>
-                                    <input type="number" className="form-control form-control-solid" defaultValue={data.document_count} name="document_count" onChange={handleChange} />
+                                    <label className="form-label" title='Enter the number of documents for formatting' style={{ color: myErrors.document_count ? 'red' : '' }}>Document Count (*)</label>
+                                    <input type="number" className="form-control form-control-solid" defaultValue={data.document_count} style={{ borderColor: myErrors.document_count ? 'red' : '' }} name="document_count" onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-lg-4 col-sm-12'>
                                     <label className="form-label">Deficiency Letter</label>

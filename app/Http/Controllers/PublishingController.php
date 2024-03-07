@@ -377,11 +377,13 @@ class PublishingController extends Controller
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
         // $pub->trackingExtra =  $request->trackingExtra;
-        if ($request->tracking && is_array($request->tracking)) {
-            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-        } else {
-            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-        }
+        // if ($request->tracking && is_array($request->tracking)) {
+        //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        // } else {
+        //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        // }
+
+        $pub->tracking = $request->tracking;
 
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
@@ -743,12 +745,12 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        // $pub->tracking = $request->tracking;
-        if ($request->tracking && is_array($request->tracking)) {
-            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-        } else {
-            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-        }
+        $pub->tracking = $request->tracking;
+        // if ($request->tracking && is_array($request->tracking)) {
+        //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        // } else {
+        //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        // }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -896,11 +898,12 @@ class PublishingController extends Controller
             $pub->uuid = $request->uuid;
             $pub->submission_type = $request->submission_type;
             $pub->submission_mode = $request->submission_mode;
-            if ($request->tracking && is_array($request->tracking)) {
-                $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-            } else {
-                $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-            }
+            $pub->tracking = $request->tracking;
+            // if ($request->tracking && is_array($request->tracking)) {
+            //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+            // } else {
+            //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+            // }
             $pub->submission_unit = $request->submission_unit;
             $pub->applicant = $request->applicant;
             $pub->agency_code = $request->agency_code;
@@ -1458,11 +1461,12 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        if ($request->tracking && is_array($request->tracking)) {
-            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-        } else {
-            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-        }
+        $pub->tracking = $request->tracking;
+        // if ($request->tracking && is_array($request->tracking)) {
+        //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        // } else {
+        //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        // }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -1737,11 +1741,12 @@ class PublishingController extends Controller
         $pub->uuid = $request->uuid;
         $pub->submission_type = $request->submission_type;
         $pub->submission_mode = $request->submission_mode;
-        if ($request->tracking && is_array($request->tracking)) {
-            $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-        } else {
-            $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-        }
+        $pub->tracking = $request->tracking;
+        // if ($request->tracking && is_array($request->tracking)) {
+        //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+        // } else {
+        //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+        // }
         $pub->submission_unit = $request->submission_unit;
         $pub->applicant = $request->applicant;
         $pub->agency_code = $request->agency_code;
@@ -1832,11 +1837,12 @@ class PublishingController extends Controller
             $pub->uuid = $request->uuid;
             $pub->submission_type = $request->submission_type;
             $pub->submission_mode = $request->submission_mode;
-            if ($request->tracking && is_array($request->tracking)) {
-                $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-            } else {
-                $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-            }
+            $pub->tracking = $request->tracking;
+            // if ($request->tracking && is_array($request->tracking)) {
+            //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+            // } else {
+            //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+            // }
             $pub->submission_unit = $request->submission_unit;
             $pub->applicant = $request->applicant;
             $pub->agency_code = $request->agency_code;

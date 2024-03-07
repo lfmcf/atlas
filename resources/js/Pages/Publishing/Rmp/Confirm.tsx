@@ -24,6 +24,7 @@ const Create = (props: any) => {
     const [isCheck, setIsCheck] = useState([]);
     const [isCheckAll, setIsCheckAll] = useState(false);
     const [list, setList] = useState(metadata);
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: new Array(), submission_mode: new Array(), submission_unit: new Array(), sequence: new Array() })
 
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -40,9 +41,10 @@ const Create = (props: any) => {
         remarks: folder.remarks,
         mt: folder.mt,
         indication: folder.indication,
-        manufacturer: folder.manufacturer,
+        drug_substance_manufacturer: folder.drug_substance_manufacturer,
         drug_substance: folder.drug_substance,
         drug_product_manufacturer: folder.drug_product_manufacturer,
+        drug_product: folder.drug_product,
         dosage_form: folder.dosage_form,
         excipient: folder.excipient,
         doc: folder && folder.doc !== null ? folder.doc : [],
@@ -83,17 +85,90 @@ const Create = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+            if (!data.dossier_type || !data.dossier_count) {
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+        let check = false;
+
+        if (stepper.current.getCurrentStepIndex() === 2) {
+            for (let j = 0; j < data.mt.length; j++) {
+                if (!data.mt[j].submission_type) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_type.length) {
+                            newVal.submission_type[j] = 'this field is required';
+                        }
+                        else {
+                            newVal.submission_type.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                    check = true;
+                }
+                if (!data.mt[j].submission_mode) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_mode.length) {
+                            newVal.submission_mode[j] = 'this field is required';
+                        }
+                        else {
+                            newVal.submission_mode.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                    check = true;
+                }
+                if (!data.mt[j].submission_unit) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_unit.length) {
+                            newVal.submission_unit[j] = 'this field is required';
+                        }
+                        else {
+                            newVal.submission_unit.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                    check = true;
+                }
+                if (!data.mt[j].sequence) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.sequence.length) {
+                            newVal.sequence[j] = 'this field is required';
+                        }
+                        else {
+                            newVal.sequence.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                    check = true;
+                }
+
+            };
+        }
+
+        if (check) {
+            return
         }
 
         stepper.current.goNext()
@@ -109,10 +184,26 @@ const Create = (props: any) => {
 
 
     const handleSelectChange = (e, name) => {
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
@@ -123,18 +214,39 @@ const Create = (props: any) => {
     }
 
     const handleMetaChange = (e, id) => {
+        if (e.target.name == 'sequence') {
+            let arr = { ...myErrors }
+            arr.sequence[id] = ''
+            setMyErroes(arr)
+        }
         let prevData = { ...data }
         prevData.mt[id][e.target.name] = e.target.value
         setData(prevData)
     }
 
     const handleMetaSelectChange = (e, name, id) => {
+        if (name == 'submission_type') {
+            let arr = { ...myErrors }
+            arr.submission_type[id] = ''
+            setMyErroes(arr)
+        }
+        if (name == 'submission_unit') {
+            let arr = { ...myErrors }
+            arr.submission_unit[id] = ''
+            setMyErroes(arr)
+        }
+        if (name == 'submission_mode') {
+            let arr = { ...myErrors }
+            arr.submission_mode[id] = ''
+            setMyErroes(arr)
+        }
         let prevData = { ...data }
         prevData.mt[id][name] = e
         setData(prevData)
     }
 
     const handleMultipleSelectChange = (e, name) => {
+
         const perdata = { ...multiData }
         perdata[name] = e
         setMultiData(perdata)
@@ -166,9 +278,21 @@ const Create = (props: any) => {
 
     const handleSubmitMulti = () => {
         let perdata = { ...data }
-
+        let myarr = { ...myErrors }
         perdata.mt.map((cnt, i) => {
             if (multicountry.includes(cnt.country)) {
+                if (multiData.submission_type) {
+                    myarr.submission_type[i] = ''
+                }
+                if (multiData.submission_mode) {
+                    myarr.submission_mode[i] = ''
+                }
+                if (multiData.submission_unit) {
+                    myarr.submission_unit[i] = ''
+                }
+                if (multiData.sequence) {
+                    myarr.sequence[i] = ''
+                }
                 perdata.mt[i].uuid = multiData.uuid
                 perdata.mt[i].submission_type = multiData.submission_type
                 perdata.mt[i].submission_mode = multiData.submission_mode
@@ -185,6 +309,7 @@ const Create = (props: any) => {
                 perdata.mt[i].remarks = multiData.remarks
             }
         })
+        setMyErroes(myarr)
         setData(perdata)
     }
 
@@ -248,6 +373,106 @@ const Create = (props: any) => {
         setData(arr)
     }
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
+    const goNextStep = (i) => {
+
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
+
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_count: 'this field is required'
+                    }
+                })
+            }
+            return
+
+        }
+
+        let check = false;
+
+        for (let j = 0; j < data.mt.length; j++) {
+
+            if ((!data.mt[j].submission_type || !data.mt[j].submission_mode || !data.mt[j].submission_unit || !data.mt[j].sequence) && (i == 3 || i == 4 || i == 5)) {
+
+                if (!data.mt[j].submission_type) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_type.length) {
+                            newVal.submission_type[j] = 'this field is required';
+                        }
+                        else {
+
+                            newVal.submission_type.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                }
+                if (!data.mt[j].submission_mode) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_type.length) {
+                            newVal.submission_mode[j] = 'this field is required';
+                        }
+                        else {
+
+                            newVal.submission_mode.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                }
+                if (!data.mt[j].submission_unit) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_type.length) {
+                            newVal.submission_unit[j] = 'this field is required';
+                        }
+                        else {
+
+                            newVal.submission_unit.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                }
+                if (!data.mt[j].sequence) {
+                    setMyErroes((prevState) => {
+                        const newVal = { ...prevState };
+                        if (j >= 0 && j < newVal.submission_type.length) {
+                            newVal.sequence[j] = 'this field is required';
+                        }
+                        else {
+
+                            newVal.sequence.push('this field is required');
+                        }
+                        return newVal;
+                    });
+                }
+                check = true;
+            }
+        };
+
+        if (check) {
+            return
+        }
+
+        stepper.current?.goto(i)
+    }
+
     return (
         <>
             <div className='d-flex justify-content-between align-items-center'>
@@ -286,7 +511,7 @@ const Create = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -313,7 +538,7 @@ const Create = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -340,7 +565,7 @@ const Create = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -367,7 +592,7 @@ const Create = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(5)} style={{ cursor: 'pointer' }}>
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -440,7 +665,7 @@ const Create = (props: any) => {
                                 </div> */}
                                 <div className='col-6'>
 
-                                    <label className="form-label">Dossier type</label>
+                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={[
                                         { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                         { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -459,6 +684,7 @@ const Create = (props: any) => {
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         value={data.dossier_type}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                     // menuPortalTarget={document.body}
                                     // styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
@@ -467,8 +693,8 @@ const Create = (props: any) => {
                             <div className="row mb-10">
 
                                 <div className='col-6'>
-                                    <label className="form-label">Dossier count</label>
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_count} name="dossier_count" onChange={handleChange} />
+                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
+                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_count} name="dossier_count" style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -493,7 +719,14 @@ const Create = (props: any) => {
 
                                             {metadata.map((mt: any, i: string) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
-                                                    <a className="nav-link mx-0 my-2" data-bs-toggle="tab" href={"#kt_vtab_pane_" + i}>{mt.country}</a>
+                                                    <a
+                                                        className="nav-link mx-0 my-2"
+                                                        data-bs-toggle="tab"
+                                                        href={"#kt_vtab_pane_" + i}
+                                                        style={{ color: myErrors.submission_type[i] || myErrors.submission_unit[i] || myErrors.submission_mode[i] || myErrors.sequence[i] ? 'red' : '' }}
+                                                    >
+                                                        {mt.country}
+                                                    </a>
                                                 </li>
                                             ))}
                                         </div>
@@ -509,7 +742,7 @@ const Create = (props: any) => {
                                                     <input type="text" className="form-control form-control-solid" value={mt.uuid} name="uuid" onChange={(e) => handleMetaChange(e, i)} />
                                                 </div>
                                                 <div className='col-4'>
-                                                    <label className="form-label">Submission type</label>
+                                                    <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type[i] ? 'red' : '' }}>Submission type (*)</label>
                                                     <Select options={publishingMrpSubmissionType}
                                                         name='submission_type'
                                                         onChange={(e) => handleMetaSelectChange(e, 'submission_type', i)}
@@ -519,11 +752,11 @@ const Create = (props: any) => {
                                                         isClearable
                                                         value={mt.submission_type}
                                                         menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                        styles={selectStyles(myErrors.submission_type[i])}
                                                     />
                                                 </div>
                                                 <div className='col-4'>
-                                                    <label className="form-label">Submission mode</label>
+                                                    <label className="form-label" title='Choose the submission mode' style={{ color: myErrors.submission_mode[i] ? 'red' : '' }}>Submission mode (*)</label>
                                                     <Select options={[
                                                         { label: 'Single', value: 'Single' },
                                                         { label: 'Grouping', value: 'Grouping' },
@@ -537,7 +770,8 @@ const Create = (props: any) => {
                                                         isClearable
                                                         value={mt.submission_mode}
                                                         menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                        styles={selectStyles(myErrors.submission_mode[i])}
+
                                                     />
                                                 </div>
                                             </div>
@@ -547,7 +781,7 @@ const Create = (props: any) => {
                                                     <input type="text" className="form-control form-control-solid" name="tracking" value={mt.trackingNumber} onChange={(e) => handleMetaChange(e, i)} />
                                                 </div>
                                                 <div className='col-4'>
-                                                    <label className="form-label">Submission unit</label>
+                                                    <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit[i] ? 'red' : '' }}>Submission unit (*)</label>
                                                     <Select options={[
                                                         { label: 'initial', value: 'initial' },
                                                         { label: 'validation-response', value: 'validation-response' },
@@ -566,7 +800,7 @@ const Create = (props: any) => {
                                                         isClearable
                                                         value={mt.submission_unit}
                                                         menuPortalTarget={document.body}
-                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                        styles={selectStyles(myErrors.submission_unit[i])}
                                                     />
                                                 </div>
                                                 <div className='col-4'>
@@ -590,8 +824,8 @@ const Create = (props: any) => {
                                             </div>
                                             <div className='row mb-10'>
                                                 <div className='col-4'>
-                                                    <label className="form-label">Sequence</label>
-                                                    <input type="text" className="form-control form-control-solid" name="sequence" value={mt.sequence} onChange={(e) => handleMetaChange(e, i)} />
+                                                    <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence[i] ? 'red' : '' }}>Sequence (*)</label>
+                                                    <input type="text" className="form-control form-control-solid" name="sequence" style={{ borderColor: myErrors.sequence[i] ? 'red' : '' }} value={mt.sequence} onChange={(e) => handleMetaChange(e, i)} />
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label">Related Sequence</label>

@@ -225,49 +225,50 @@ const Show = (props) => {
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Indication</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication ? folder.indication.value : ''}</span>
                                         </div>
                                     </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Manufacturer</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
-                                        </div>
-                                    </div>
+
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Drug substance</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_substance}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_substance ? folder.drug_substance.map((sub) => (
+                                                <li>{sub.value}</li>
+                                            )) : ''}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Drug substance manufacturer</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_substance_manufacturer ? folder.drug_substance_manufacturer.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Drug product</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_product}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_product ? folder.drug_product.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Drug product manufacturer</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.drug_product_manufacturer ? folder.drug_product_manufacturer.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Dosage form</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.dosage_form ? folder.dosage_form.value : ''}</span>
                                         </div>
                                     </div>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Excipient</label>
                                         <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.indication}</span>
+                                            <span className="fw-bold fs-6 text-gray-800">{folder.excipient ? folder.excipient.map((ex) => (
+                                                <li>{ex.value}</li>
+                                            )) : ''}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

@@ -16,6 +16,7 @@ const Confirm = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [tnoptions, setTnoptions] = useState();
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', sequence: '' })
 
     const { folder, metapro, metadata } = props
 
@@ -116,17 +117,40 @@ const Confirm = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 1) {
-            // if (!checkAppBasic()) {
-            //     setHasError(true)
-            //     return
-            // }
+            if (!data.dossier_type || !data.dossier_count) {
+                if (!data.dossier_type) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_type: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.dossier_count) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            dossier_count: 'this field is required'
+                        }
+                    })
+                }
+
+                return
+            }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 3) {
-            // if (!checkAppDataBase()) {
-            //     setHasError(true)
-            //     return
-            // }
+        if (stepper.current.getCurrentStepIndex() === 2) {
+            if (!data.sequence) {
+                if (!data.sequence) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            sequence: 'this field is required'
+                        }
+                    })
+                }
+                return
+            }
         }
 
         stepper.current.goNext()
@@ -141,10 +165,34 @@ const Confirm = (props: any) => {
     }
 
     const handleChange = (e) => {
+        if (e.target.name == 'dossier_count') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_count: ''
+                }
+            })
+        }
+        if (e.target.name == 'sequence') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    sequence: ''
+                }
+            })
+        }
         setData(e.target.name, e.target.value)
     }
 
     const handleSelectChange = (e, name) => {
+        if (name == 'dossier_type') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    dossier_type: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
@@ -185,6 +233,51 @@ const Confirm = (props: any) => {
         setData(arr)
     }
 
+    const selectStyles = (hasErrors) => ({
+        control: (styles) => ({
+            ...styles,
+            ...(hasErrors && { borderColor: 'red !important' }),
+        }),
+    });
+
+    const goNextStep = (i) => {
+
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
+            console.log(i)
+            if (!data.dossier_type) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_type: 'this field is required'
+                    }
+                })
+            }
+            if (!data.dossier_count) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        dossier_count: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+
+        if ((!data.sequence) && (i == 3 || i == 4 || i == 5)) {
+            if (!data.sequence) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        sequence: 'this field is required'
+                    }
+                })
+            }
+            return
+        }
+        stepper.current?.goto(i)
+
+    }
+
     return (
         <>
             <div className='d-flex justify-content-between align-items-center'>
@@ -215,7 +308,7 @@ const Confirm = (props: any) => {
                         </div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(2)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">2</span>
@@ -233,7 +326,7 @@ const Confirm = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(3)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">3</span>
@@ -251,7 +344,7 @@ const Confirm = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(4)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">4</span>
@@ -269,7 +362,7 @@ const Confirm = (props: any) => {
                         <div className="stepper-line h-40px"></div>
                     </div>
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(5)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(5)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
                                 <span className="stepper-number">5</span>
@@ -310,7 +403,7 @@ const Confirm = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier type</label>
+                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
                                     <Select options={[
                                         { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
                                         { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
@@ -329,12 +422,12 @@ const Confirm = (props: any) => {
                                         isClearable
                                         value={data.dossier_type}
                                         menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        styles={selectStyles(myErrors.dossier_type)}
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier count</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -417,8 +510,8 @@ const Confirm = (props: any) => {
                                     <input type="text" className="form-control form-control-solid" name="tpa" defaultValue={data.tpa} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">eCTD Sequence</label>
-                                    <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} onChange={handleChange} />
+                                    <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence ? 'red' : '' }}>eCTD Sequence (*)</label>
+                                    <input type="text" className="form-control form-control-solid" name="sequence" style={{ borderColor: myErrors.sequence ? 'red' : '' }} defaultValue={data.sequence} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -622,7 +715,7 @@ const Confirm = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-6'>
-                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
                                     <Flatpickr
                                         data-enable-time
                                         value={data.adjusted_deadline}
