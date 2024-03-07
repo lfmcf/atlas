@@ -15,7 +15,8 @@ import StatusComponent from '../../../Components/StatusComponent'
 const CreateN = (props: any) => {
 
     const { metadata, folder, metapro } = props;
-
+    var trigramme = props.auth.user.trigramme;
+    trigramme = trigramme?.toUpperCase;
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
@@ -27,7 +28,7 @@ const CreateN = (props: any) => {
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
         productName: folder ? folder.product_name : params.get('product'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
+        dossier_contact: folder ? folder.dossier_contact : trigramme,
         object: folder ? folder.object : '',
         country: { value: metadata.country, code: metadata.code },
         dossier_type: folder ? folder.dossier_type : '',
