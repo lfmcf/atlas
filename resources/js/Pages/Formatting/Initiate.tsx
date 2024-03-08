@@ -18,13 +18,14 @@ const Initiate = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
     const { folder } = props
-
+    var trigramme = props.auth.user.trigramme
+    trigramme = trigramme?.toUpperCase()
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
         form: folder ? folder.form : params.get('form'),
         region: folder ? folder.region : params.get('region'),
         coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
+        dossier_contact: folder ? folder.dossier_contact : trigramme,
         object: folder ? folder.object : '',
         product_name: folder ? folder.product_name : '',
         substance_name: folder ? folder.substance_name : '',

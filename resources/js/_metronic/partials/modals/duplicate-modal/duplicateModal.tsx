@@ -8,12 +8,15 @@ import { router } from '@inertiajs/react'
 
 const duplicateModal = ({ show, setShow, data }) => {
 
-    const [isCheck, setIsCheck] = useState();
+    const [isCheck, setIsCheck] = useState(new Array());
 
+    const [isCheckAll, setIsCheckAll] = useState(false);
+    const [list, setList] = useState(EunatCountry);
 
     useEffect(() => {
         if (show.data) {
             const countryArrays = show.data.map(obj => obj.country)
+
             setIsCheck(countryArrays)
         }
     }, [show.data])
@@ -29,6 +32,14 @@ const duplicateModal = ({ show, setShow, data }) => {
         // axios.get('/duplicate-publishing-rmp', { 'id': show.id })
         router.get(route('duplicate-publishing-rmp', { id: show.id, countries: isCheck }))
     }
+
+    const handleSelectAll = e => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck(list.map(li => li.value));
+        if (isCheckAll) {
+            setIsCheck([]);
+        }
+    };
 
 
 
@@ -47,12 +58,32 @@ const duplicateModal = ({ show, setShow, data }) => {
                 </div>
                 <div className='modal-body'>
                     <div className='row'>
+                        <div className="col-3 d-flex align-items-center mb-5" >
+                            <div className="me-5 position-relative">
+                                <div className="symbol symbol-35px symbol-circle">
+                                    <ReactCountryFlag
+                                        className="emojiFlag"
+                                        countryCode="EU"
+                                        aria-label="Europe"
+                                        svg
+                                        style={{ width: '25px', height: '25px', borderRadius: '4px' }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="fw-semibold" style={{ width: '40%' }}>
+                                <label className="fs-9 fw-bold text-gray-900 text-hover-primary">All Countries</label>
+                                <div className="fs-10 text-gray-400">All</div>
+                            </div>
+                            <div className="badge badge-light">
+                                <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
+                            </div>
+                        </div>
                         {EunatCountry.map((mt, i) => {
                             // var ccode = mt.agencyCode.split('-');
                             // ccode = ccode[0]
-                            if (show.data) {
-                                var ress = show.data?.some(obj => Object.values(obj).includes(mt.label))
-                            }
+                            // if (show.data) {
+                            //     var ress = show.data?.some(obj => Object.values(obj).includes(mt.label))
+                            // }
 
                             //var ress = isCheck?.includes(mt.label)
 
@@ -70,17 +101,17 @@ const duplicateModal = ({ show, setShow, data }) => {
                                         </div>
                                     </div>
                                     <div className="fw-semibold" style={{ width: '40%' }}>
-                                        <p className="fs-9 fw-bold text-gray-900 text-hover-primary">{mt.label}</p>
+                                        <label className="fs-9 fw-bold text-gray-900 text-hover-primary">{mt.label}</label>
                                         <div className="fs-10 text-gray-400">{mt.code}</div>
                                     </div>
                                     <div className="badge badge-light ">
                                         <input type='checkbox'
                                             id={mt.id}
-                                            name="country"
+                                            name={mt.value}
                                             value={mt.label}
                                             onChange={handleMultiCountryChange}
-                                            // checked={ress ? true : false}
-                                            defaultChecked={ress ? true : false}
+                                            checked={isCheck.includes(mt.value) ? true : false}
+                                        // defaultChecked={ress ? true : false}
                                         />
                                     </div>
                                 </div>)

@@ -16,7 +16,7 @@ const CreateN = (props: any) => {
 
     const { metadata, folder, metapro } = props;
     var trigramme = props.auth.user.trigramme;
-    trigramme = trigramme?.toUpperCase;
+    trigramme = trigramme?.toUpperCase();
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
