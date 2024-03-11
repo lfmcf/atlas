@@ -96,6 +96,8 @@ return [
             'driver' => 'mongodb',
             'dsn' => env('DB_URI', 'mongodb://localhost:27017'),
             'database' => 'test_pubformat',
+            'username' => 'root',
+            'password' => 'eKemia2023@',
         ]
 
     ],
