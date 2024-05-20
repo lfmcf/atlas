@@ -16,6 +16,7 @@ use App\Notifications\InvoiceInitaitedForm;
 use App\Models\PublishingMrp;
 use App\Models\Product_meta;
 use Response;
+use App\Mail\PublishingSubmitted;
 
 class PublishingController extends Controller
 {
@@ -412,6 +413,7 @@ class PublishingController extends Controller
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
         $pub->type = $request->query('type');
+        $pub->created_by = $request->created_by;
 
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
@@ -785,7 +787,7 @@ class PublishingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($pub));
+        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -1202,7 +1204,7 @@ class PublishingController extends Controller
         $pub->deadline = $request->deadline;
         $pub->request_date = $request->request_date;
         $pub->type = $request->query('type');
-
+        $pub->created_by = $request->created_by;
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
             $pub->save();
@@ -1494,6 +1496,7 @@ class PublishingController extends Controller
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
         $pub->type = $request->query('type');
+        $pub->created_by = $request->created_by;
 
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
@@ -1779,7 +1782,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
+        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -1967,7 +1970,7 @@ class PublishingController extends Controller
         $pub->application_type = $request->application_type;
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->type = $request->query('type');
-
+        $pub->created_by = $request->created_by;
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
             $pub->save();
@@ -2180,7 +2183,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
+        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -2367,7 +2370,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
+        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 

@@ -59,6 +59,7 @@ const Initiate = (props: any) => {
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date(),
         deadline: new Date(),
+        created_by: props.auth.user.id
     })
 
     // let tn = metadata.trackingNumber

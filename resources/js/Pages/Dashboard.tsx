@@ -432,7 +432,7 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, totalclosed, productCountry, inprogress }) => {
+const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, totalclosed, productCountry, inprogress, currentUser }) => {
 
     const [startDate, setStartDate] = useState(new Date());
     const [monthReq, setMnthReq] = useState(new Date());
@@ -507,8 +507,10 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
     }
 
     const callGetRequestsPerMonth = () => {
+
         const yearSelected = moment(monthReq).year()
         axios.post('getRequestsPerMonth', { selecedYear: yearSelected }).then(res => {
+
             setRequestPerMonth(prevState => ({
                 formattingR: res.data.formattingReq ? res.data.formattingReq : [],
                 publishingR: res.data.publishingReq ? res.data.publishingReq : [],
@@ -797,7 +799,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
     return (
         <>
-            <div className="row g-5">
+            <div className="row g-5 g-xl-10 mb-5 mb-xl-1">
                 <div className="col-4">
                     <div className="card card-flush h-xl-100 h-100">
 
@@ -882,7 +884,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     </div>
                                     <Doughnut data={data} options={choptions} />
                                 </div>
-                                <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5">
+                                <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
                                     <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
                                         <div className="bullet bg-primary me-3"></div>
                                         <div className="text-gray-400">Formatting</div>
@@ -961,235 +963,16 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                 <div className='tab-pane fade active show' id="kt_charts_widget_11_tab_content_1">
                                     <Chart options={dossier_type_options}
                                         series={requestPerType.formattingRT}
-                                        type='pie'
+                                        type='donut'
                                         height={300}
                                     />
                                 </div>
                                 <div className='tab-pane fade' id="kt_charts_widget_12_tab_content_2">
                                     <Chart options={dossier_type_options_pub}
                                         series={requestPerType.publishingRT}
-                                        type='pie'
+                                        type='donut'
                                         height={300}
                                     />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-lg-6">
-                    <div className="card h-xl-100">
-                        <div className='card-header mb-5'>
-                            <h3 className='card-title align-items-center flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Request review</span>
-                            </h3>
-                        </div>
-
-                        <div className="card-body pb-3">
-                            <div className="d-flex flex-wrap flex-md-nowrap">
-                                <div className="me-md-5 w-100">
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield-tick fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Approved</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span> */}
-                                        </div>
-                                    </div>
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Change</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span> */}
-                                        </div>
-                                    </div>
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-                                                        <span className="path3"></span>
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Correction</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
-                                    {/* <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
-                                        Session Attendance
-                                        <br />for Current Academic Year
-                                    </div> */}
-                                    <Chart options={doptions} series={[acceptance, update, correction]} type='donut' />
-                                    <div className="mx-auto">
-
-                                        <div className="d-flex align-items-center mb-2">
-
-                                            <div className="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
-
-                                            <div className="fs-8 fw-semibold text-muted">Change</div>
-
-                                        </div>
-
-                                        <div className="d-flex align-items-center mb-2">
-
-                                            <div className="bullet bullet-dot w-8px h-7px bg-primary me-2"></div>
-
-                                            <div className="fs-8 fw-semibold text-muted">Correction</div>
-
-                                        </div>
-
-                                        <div className="d-flex align-items-center mb-2">
-
-                                            <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
-
-                                            <div className="fs-8 fw-semibold text-muted">Approved</div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-lg-6">
-                    <div className='card card-flush h-lg-100'>
-                        <div className='card-header pt-7 mb-5'>
-                            <h3 className='card-title align-items-start flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Requests per Product-Country</span>
-                                {/* <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span> */}
-                            </h3>
-                        </div>
-                        <div className='card-body pt-0'>
-                            <div className='table-responsive'>
-                                <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
-                                    <thead >
-                                        <tr>
-                                            <th >Country</th>
-                                            <th >Produit</th>
-                                            <th >Formatting</th>
-                                            <th >Publishing</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {productCountry.map((val, i) => (
-                                            <tr key={i}>
-                                                <td>
-                                                    <div className='d-flex align-items-center'>
-                                                        <div className='symbol symbol-45px me-2'>
-                                                            <ReactCountryFlag
-                                                                countryCode={countries.getAlpha2Code(val.cnt, "en")}
-                                                                svg
-                                                                style={{
-                                                                    width: '2em',
-                                                                    height: '2em',
-                                                                }}
-                                                            />
-                                                            {/* {val.cnt == "KSA" ?
-                                                                <ReactCountryFlag
-                                                                    countryCode={countries.getAlpha2Code("Saudi arabia", "en")}
-                                                                    svg
-                                                                    style={{
-                                                                        width: '2em',
-                                                                        height: '2em',
-                                                                    }}
-                                                                />
-                                                                : <ReactCountryFlag
-                                                                    countryCode={countries.getAlpha2Code(val.cnt, "en")}
-                                                                    svg
-                                                                    style={{
-                                                                        width: '2em',
-                                                                        height: '2em',
-                                                                    }}
-                                                                />} */}
-                                                        </div>
-                                                        <div className='d-flex justify-content-start flex-column'>
-                                                            <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt}</span>
-                                                            <span className='text-muted fw-semibold text-muted d-block fs-7'>{countries.getAlpha2Code(val.cnt, "en")}</span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
-                                                        {val.pr}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.formatting}</span>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.publishing}</span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <div className="row paginate_row">
-                                    <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
-                                        <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
-                                            <ul className="pagination">
-                                                <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
-                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
-                                                        <i className="previous"></i></button>
-                                                </li>
-
-                                                {
-                                                    pageNumbers.map(number => (
-
-                                                        <li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
-                                                            <button onClick={() => pagination(number)} className="page-link"> {number} </button>
-                                                        </li>
-                                                    ))
-                                                }
-                                                <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
-                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
-                                                        <i className="next"></i>
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1317,21 +1100,254 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                <div className='col-12'>
-                    <div className='card h-md-100'>
-                        <div className='card-header position-relative py-0 border-bottom-1'>
-                            <h3 className='card-title text-gray-800 fw-bold'>Active Tasks</h3>
+
+                <div className="col-lg-6">
+                    <div className='card card-flush h-lg-100'>
+                        <div className='card-header pt-7 mb-5'>
+                            <h3 className='card-title align-items-start flex-column'>
+                                <span className='card-label fw-bold text-gray-800'>Requests per Product-Country</span>
+                                {/* <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span> */}
+                            </h3>
                         </div>
-                        <div className='card-body pb-0'>
-                            {timelineItems.length > 0 ?
-                                <Timeline
-                                    options={timelineoptions}
-                                    initialGroups={groups}
-                                    initialItems={timelineItems}
-                                /> : ''}
+                        <div className='card-body pt-0'>
+                            <div className='table-responsive'>
+                                <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
+                                    <thead >
+                                        <tr>
+                                            <th >Country</th>
+                                            <th >Produit</th>
+                                            <th >Formatting</th>
+                                            <th >Publishing</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {productCountry.map((val, i) => (
+                                            <tr key={i}>
+                                                <td>
+                                                    <div className='d-flex align-items-center'>
+                                                        <div className='symbol symbol-45px me-2'>
+                                                            {/* <ReactCountryFlag
+                                                                countryCode={countries.getAlpha2Code(val.cnt, "en")}
+                                                                svg
+                                                                style={{
+                                                                    width: '2em',
+                                                                    height: '2em',
+                                                                }}
+                                                            /> */}
+                                                            {val.cnt == "KSA" ?
+                                                                <ReactCountryFlag
+                                                                    countryCode={countries.getAlpha2Code("Saudi arabia", "en")}
+                                                                    svg
+                                                                    style={{
+                                                                        width: '2em',
+                                                                        height: '2em',
+                                                                    }}
+                                                                /> :
+                                                                val.cnt == "EU" ? <ReactCountryFlag countryCode="EU"
+                                                                    aria-label="Europe"
+                                                                    title="Europe"
+                                                                    svg
+                                                                    style={{
+                                                                        width: '2em',
+                                                                        height: '2em',
+                                                                    }} />
+                                                                    : <ReactCountryFlag
+                                                                        countryCode={countries.getAlpha2Code(val.cnt, "en")}
+                                                                        svg
+                                                                        style={{
+                                                                            width: '2em',
+                                                                            height: '2em',
+                                                                        }}
+                                                                    />}
+                                                        </div>
+                                                        <div className='d-flex justify-content-start flex-column'>
+                                                            <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt == "EU" ? "Europe" : val.cnt}</span>
+                                                            <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                                                                {val.cnt == "EU" ? "EU" : countries.getAlpha2Code(val.cnt, "en")}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
+                                                        {val.pr}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.formatting}</span>
+                                                </td>
+                                                <td>
+                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.publishing}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <div className="row paginate_row">
+                                    <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
+                                        <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
+                                            <ul className="pagination">
+                                                <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
+                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
+                                                        <i className="previous"></i></button>
+                                                </li>
+
+                                                {
+                                                    pageNumbers.map(number => (
+
+                                                        <li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
+                                                            <button onClick={() => pagination(number)} className="page-link"> {number} </button>
+                                                        </li>
+                                                    ))
+                                                }
+                                                <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
+                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
+                                                        <i className="next"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div className="col-lg-6">
+                    <div className="card card-flush h-lg-100">
+                        <div className='card-header pt-7 mb-5'>
+                            <h3 className='card-title align-items-center flex-column'>
+                                <span className='card-label fw-bold text-gray-800'>Request review</span>
+                            </h3>
+                        </div>
+
+                        <div className="card-body pt-0">
+                            <div className="d-flex flex-wrap flex-md-nowrap">
+                                <div className="me-md-5 w-100">
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-shield-tick fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <span className="text-gray-800 fs-6 fw-bold">Approved</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span> */}
+                                        </div>
+                                    </div>
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-shield fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <span className="text-gray-800 fs-6 fw-bold">Change</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span> */}
+                                        </div>
+                                    </div>
+                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                            <div className="symbol symbol-50px me-4">
+                                                <span className="symbol-label">
+                                                    <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
+                                                        <span className="path1"></span>
+                                                        <span className="path2"></span>
+                                                        <span className="path3"></span>
+                                                    </i>
+                                                </span>
+                                            </div>
+                                            <div className="me-2">
+                                                <span className="text-gray-800 fs-6 fw-bold">Correction</span>
+                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
+                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                            {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
+                                    {/* <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
+                                        Session Attendance
+                                        <br />for Current Academic Year
+                                    </div> */}
+                                    <Chart options={doptions} series={[acceptance, update, correction]} type='donut' />
+                                    <div className="mx-auto">
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Change</div>
+
+                                        </div>
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-primary me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Correction</div>
+
+                                        </div>
+
+                                        <div className="d-flex align-items-center mb-2">
+
+                                            <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
+
+                                            <div className="fs-8 fw-semibold text-muted">Approved</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {currentUser == 3 ?
+                    <div className='col-12'>
+                        <div className='card h-md-100'>
+                            <div className='card-header position-relative py-0 border-bottom-1'>
+                                <h3 className='card-title text-gray-800 fw-bold'>Active Tasks</h3>
+                            </div>
+                            <div className='card-body pb-0'>
+                                {timelineItems.length > 0 ?
+                                    <Timeline
+                                        options={timelineoptions}
+                                        initialGroups={groups}
+                                        initialItems={timelineItems}
+                                    /> : ''}
+                            </div>
+                        </div>
+                    </div>
+                    : ""
+                }
                 {/* <div className='col-md-5'>
                     <ListsWidget6 className='' acceptance={acceptance} correction={correction} update={update} />
                 </div> */}
@@ -1392,10 +1408,9 @@ const Dashboard = (props: any) => {
 
     return (
         <>
-            {/* <PageTitle breadcrumbs={[]}>
-                DASHBOARD
-                
-            </PageTitle> */}
+            <PageTitle breadcrumbs={[]}>
+                Dashboard
+            </PageTitle>
             {/* <div
                 id='kt_app_toolbar'
                 className={clsx('app-toolbar', classes.toolbar.join(' '), config?.app?.toolbar?.class)}
@@ -1439,6 +1454,7 @@ const Dashboard = (props: any) => {
                 totalclosed={totalclosed}
                 productCountry={productCountry}
                 inprogress={inprogress}
+                currentUser={props.auth.user.current_team_id}
             />
 
         </>

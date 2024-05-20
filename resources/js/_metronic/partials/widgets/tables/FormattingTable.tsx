@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { KTIcon } from '../../../helpers'
+import { KTIcon, KTSVG } from '../../../helpers'
 import moment from 'moment';
 import ReactCountryFlag from "react-country-flag"
 import { router } from '@inertiajs/react';
@@ -229,18 +229,23 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                     <a
                                                         href='#'
                                                         onClick={() => router.get(route('formatting-initiate', { id: row._id }))}
-                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        className='btn btn-icon btn-sm me-1'
                                                         title='Update and Submit the form'
+                                                        style={{ backgroundColor: '#f8f5ff' }}
                                                     >
-                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                        <i className="bi bi-pencil-fill text-info fs-5"></i>
+                                                        {/* <KTIcon iconName='pencil' className='fs-3' /> */}
+
                                                     </a>
                                                     : row.status == 'initiated' ?
                                                         <a
                                                             href='#'
                                                             onClick={() => router.get(route('formatting-confirm', { id: row._id }))}
-                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                            className='btn btn-icon btn-sm me-1'
+                                                            style={{ backgroundColor: '#fff8dd' }}
                                                         >
-                                                            <KTIcon iconName='pencil' className='fs-3' />
+                                                            <i className="bi bi-pencil-fill text-warning fs-5"></i>
+                                                            {/* <KTIcon iconName='pencil' className='fs-3' /> */}
                                                         </a> : row.status == 'submitted' ?
                                                             <>
 
@@ -248,33 +253,30 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                     href='#'
                                                                     onClick={() => router.post(route('progress-formatting', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    style={{ backgroundColor: '#e8fff3' }}
                                                                 >
-                                                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                    {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
                                                                 </a>
                                                                 <a
                                                                     href='#'
                                                                     onClick={() => router.get(route('formatting-audit', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    style={{ backgroundColor: '#fff8dd' }}
                                                                 >
-                                                                    <KTIcon iconName='pencil' className='fs-3' />
+                                                                    <i className="bi bi-pencil-fill text-warning fs-5"></i>
+                                                                    {/* <KTIcon iconName='pencil' className='fs-3' /> */}
                                                                 </a>
                                                             </>
                                                             : row.status == 'to verify' ?
                                                                 <>
-
-                                                                    {/* <a
-                                                                        href='#'
-                                                                        onClick={() => router.post(route('confirm-formatting-out', { id: row._id }))}
-                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                    >
-                                                                        <KTIcon iconName='check-circle' className='fs-3' />
-                                                                    </a> */}
                                                                     <a
                                                                         href='#'
                                                                         onClick={() => router.get(route('formatting-audit', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                        style={{ backgroundColor: '#fff5f8' }}
                                                                     >
-                                                                        <KTIcon iconName='eye' className='fs-3' />
+                                                                        <i className="bi bi-eye text-danger fs-5"></i>
                                                                     </a>
                                                                 </>
                                                                 : row.status == 'in progress' || row.status == 'to correct' ?
@@ -282,40 +284,47 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                         <button
                                                                             onClick={() => handleShow(row._id)}
                                                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            style={{ backgroundColor: '#ffc700' }}
                                                                         >
-                                                                            <KTIcon iconName='eye' className='fs-3' />
+                                                                            <i className="bi bi-eye text-white fs-5"></i>
+                                                                            {/* <KTIcon iconName='eye' className='fs-3' /> */}
                                                                         </button>
                                                                         <a
                                                                             href='#'
                                                                             onClick={() => handleDilivred(row._id, row.form)}
                                                                             data-bs-toggle='modal'
                                                                             data-bs-target='#kt_modal_delivery_message'
-                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            className='btn btn-icon btn-bg-success btn-active-color-primary btn-sm me-1'
                                                                         >
-                                                                            <KTIcon iconName='check-circle' className='fs-3' />
+                                                                            <i className="bi bi-check text-white fs-5"></i>
                                                                         </a>
                                                                     </>
                                                                     : row.status == 'delivered' ?
                                                                         <>
                                                                             <button
                                                                                 onClick={() => handleCompleted(row._id)}
-                                                                                className='btn btn-icon btn-light-success btn-sm me-1'
+                                                                                className='btn btn-icon btn-sm me-1'
+                                                                                style={{ backgroundColor: '#d1f7c4' }}
                                                                             >
-                                                                                <KTIcon iconName='check-circle' className='fs-3 ' />
+                                                                                <i className="bi bi-check text-success fs-5"></i>
+                                                                                {/* <KTIcon iconName='check-circle' className='fs-3 ' /> */}
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleCorrect(row._id)}
-                                                                                className='btn btn-icon btn-light-danger btn-sm me-1'
+                                                                                className='btn btn-icon btn-sm me-1'
+                                                                                style={{ backgroundColor: '#f8d7da' }}
                                                                             >
-                                                                                <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                                <i className="bi bi-x text-danger fs-5"></i>
+                                                                                {/* <KTIcon iconName='cross-circle' className='fs-3' /> */}
                                                                             </button>
                                                                         </>
                                                                         : row.status == 'completed' ?
                                                                             <button
                                                                                 onClick={() => handleClose(row._id)}
-                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                className='btn btn-icon btn-sm me-1'
+                                                                                style={{ backgroundColor: '#d1f7c4' }}
                                                                             >
-                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                                <i className="bi bi-check text-success fs-5"></i>
                                                                             </button>
                                                                             : ''
                                                 }

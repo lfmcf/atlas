@@ -13,8 +13,6 @@ type Props = {
 
 const handleNavigation = (data, notId) => {
 
-    console.log(data)
-
     if (data.status == 'closed' || data.status == 'in progress') {
         router.get(route('list'), { id: data.id, notId: notId })
     } else {
@@ -22,7 +20,7 @@ const handleNavigation = (data, notId) => {
     }
 }
 
-const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
+const HeaderNotificationsMenu = ({ auth }) => (
     <div className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px' data-kt-menu='true'>
         <div
             className='d-flex flex-column bgi-no-repeat rounded-top'
@@ -51,13 +49,6 @@ const HeaderNotificationsMenu: FC<Props> = ({ auth }) => (
                     {auth.user.notifications.map((alert, index) => (
                         <div key={`alert${index}`} className={clsx('d-flex flex-stack py-4 mb-1', alert.read_at ? '' : 'rounded bg-light-primary')}>
                             <div className='d-flex align-items-center'>
-                                {/* <div className='symbol symbol-35px me-4'>
-                                    <span className={clsx('symbol-label', `bg-light-${alert.state}`)}>
-                                        {' '}
-                                        <KTIcon iconName={alert.icon} className={`fs-2 text-${alert.state}`} />
-                                    </span>
-                                </div> */}
-
                                 <div className='mb-0 ms-2 me-2'>
                                     <a href='#' className='fs-6 text-gray-800 text-hover-primary fw-bolder' onClick={() => handleNavigation(alert.data, alert.id)}>
                                         {alert.data ? alert.data.title : ''}

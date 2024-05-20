@@ -23,13 +23,13 @@ class ReportController extends Controller
     {
         $user = auth()->user();
         if ($user->current_team_id == 1) {
-            $requetNumberFor = Formating::where('status', 'draft')->count();
-            $requetNumberPup = Publishing::where('status', 'draft')->count();
-            $requetNumberPubMrp = PublishingMrp::where('status', 'draft')->count();
+            $requetNumberFor = Formating::where('status', 'draft')->where('created_by', $user->id)->count();
+            $requetNumberPup = Publishing::where('status', 'draft')->where('created_by', $user->id)->count();
+            $requetNumberPubMrp = PublishingMrp::where('status', 'draft')->where('created_by', $user->id)->count();
 
             $compFor =  Formating::where('status', 'completed')->count();
             $compPub =  Publishing::where('status', 'completed')->count();
-            $compPubMrp =  PublishingMrp::where('status', 'completed')->count();
+            $compPubMrp = PublishingMrp::where('status', 'completed')->count();
 
             $total = $requetNumberPup + $requetNumberFor + $requetNumberPubMrp;
             $totalComp = $compFor + $compPub + $compPubMrp;
@@ -39,17 +39,20 @@ class ReportController extends Controller
             $initiatedFor = Formating::where('status', 'initiated')->count();
             $verifyFor = Formating::where('status', 'to verify')->count();
             $deliveredFor = Formating::where('status', 'delivered')->count();
-            $reviewFor = Formating::where('status', ' in review')->count();
+            // $reviewFor = Formating::where('status', ' in review')->count();
+            $reviewFor = Formating::where('status', 'draft')->where('created_by', $user->id)->count();
 
             $initiatedPub = Publishing::where('status', 'initiated')->count();
             $verifyPub = Publishing::where('status', 'to verify')->count();
             $deliveredPub = Publishing::where('status', 'delivered')->count();
-            $reviewPub = Publishing::where('status', ' in review')->count();
+            // $reviewPub = Publishing::where('status', ' in review')->count();
+            $reviewPub = Publishing::where('status', 'draft')->where('created_by', $user->id)->count();
 
             $initiatedPubMrp = PublishingMrp::where('status', 'initiated')->count();
             $verifyPubMrp = PublishingMrp::where('status', 'to verify')->count();
             $deliveredPubMrp = PublishingMrp::where('status', 'delivered')->count();
-            $reviewPubMrp = PublishingMrp::where('status', ' in review')->count();
+            // $reviewPubMrp = PublishingMrp::where('status', ' in review')->count();
+            $reviewPubMrp = PublishingMrp::where('status', 'draft')->where('created_by', $user->id)->count();
 
             $totalIni = $initiatedFor + $initiatedPub + $initiatedPubMrp;
             $totalVery = $verifyFor + $verifyPub + $verifyPubMrp;
@@ -57,10 +60,10 @@ class ReportController extends Controller
             $totalRev = $reviewFor + $reviewPub + $reviewPubMrp;
 
             $arr = [
+                ["status" => "Draft", "total" => $totalRev],
+                ["status" => "Delivered", "total" => $totalDeli],
                 ["status" => "Initiated", "total" => $totalIni],
                 ["status" => "To verify", "total" => $totalVery],
-                ["status" => "Delivered", "total" => $totalDeli],
-                ["status" => "In review", "total" => $totalRev]
             ];
         } else if ($user->current_team_id == 3) {
             $submittedFor = Formating::where('status', 'submitted')->count();
@@ -89,6 +92,7 @@ class ReportController extends Controller
         $totalFormattings = Formating::where('status', '!=', 'draft')->count();
         $totalPublishingNat = Publishing::where('status', '!=', 'draft')->count();
         $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')->count();
+
         $totalPublishings = $totalPublishingNat + $totalPublishingMrp;
 
         $acceformatting = Formating::where('status', 'closed')->whereNull('correction')->count();
@@ -159,6 +163,8 @@ class ReportController extends Controller
 
             ]);
         });
+
+        // dd($p);
         $pm = PublishingMrp::raw(function ($collection) {
             return $collection->aggregate([
                 [
@@ -169,7 +175,7 @@ class ReportController extends Controller
                 ['$unwind' => '$mt'],
                 [
                     '$group' => [
-                        "_id" => ['country' => '$mt.country', 'product' => '$product_name'],
+                        "_id" => ['product' => '$product_name'],
                         'count' => ['$sum' => 1]
                     ]
                 ],
@@ -195,7 +201,7 @@ class ReportController extends Controller
         foreach ($pm as $key => $value) {
             $mypmarr[$key]['count'] = $value->count;
             $mypmarr[$key]['product'] = $value->_id['product'];
-            $mypmarr[$key]['country'] = $value->_id['country'];
+            $mypmarr[$key]['country'] = "EU";
         }
 
         $myparr = array_merge($myparr, $mypmarr);
@@ -374,37 +380,82 @@ class ReportController extends Controller
         }
 
         if ($user->current_team_id == 1) {
-            $formattings = Formating::where('status', 'draft')
+            $formattings = Formating::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
                 ->orWhere('status', 'completed')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $publishing = Publishing::where('status', 'draft')
-                ->orWhere('status', 'completed')
-                ->get();
+            // $formattings = Formating::where('status', 'draft')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'completed')
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
 
-            $publishingmrp = PublishingMrp::where('status', 'draft')
+            $publishing = Publishing::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
                 ->orWhere('status', 'completed')
                 ->get();
+            // $publishing = Publishing::where('status', 'draft')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'completed')
+            //     ->get();
+            $publishingmrp = PublishingMrp::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
+                ->orWhere('status', 'completed')
+                ->get();
+            // $publishingmrp = PublishingMrp::where('status', 'draft')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'completed')
+            //     ->get();
         } else if ($user->current_team_id == 2) {
-
-            $formattings = Formating::where('status', 'initiated')
-                ->orWhere('status', 'draft')
+            $formattings = Formating::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
+                ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $publishing = Publishing::where('status', 'initiated')
-                ->orWhere('status', 'draft')
+            // $formattings = Formating::where('status', 'initiated')
+            //     ->orWhere('status', 'draft')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'to verify')
+            //     ->orWhere('status', 'delivered')
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
+            $publishing = Publishing::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
+                ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $publishingmrp = PublishingMrp::where('status', 'initiated')
-                ->orWhere('status', 'draft')
+            // $publishing = Publishing::where('status', 'initiated')
+            //     ->orWhere('status', 'draft')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'to verify')
+            //     ->orWhere('status', 'delivered')
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
+            $publishingmrp = PublishingMrp::where(function ($query) use ($user) {
+                $query->where('status', 'draft')->where('created_by', $user->id);
+            })
+                ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
                 ->orderBy('created_at', 'desc')
                 ->get();
+            // $publishingmrp = PublishingMrp::where('status', 'initiated')
+            //     ->where('created_by', $user->id)
+            //     ->orWhere('status', 'draft')
+            //     ->orWhere('status', 'to verify')
+            //     ->orWhere('status', 'delivered')
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'submitted')
                 ->orWhere('status', 'in progress')
@@ -672,6 +723,7 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
+
                         '$expr' => [
                             '$eq' => [
                                 ['$year' => '$created_at'],
@@ -694,12 +746,14 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
+
                         '$expr' => [
                             '$eq' => [
                                 ['$year' => '$created_at'],
                                 (int)$selectedYear
                             ],
                         ],
+                        'status' => ['$not' => ['$eq' => 'draft']]
                     ]
                 ],
                 [
@@ -716,12 +770,14 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
+
                         '$expr' => [
                             '$eq' => [
                                 ['$year' => '$created_at'],
                                 (int)$selectedYear
                             ],
                         ],
+                        'status' => ['$not' => ['$eq' => 'draft']]
                     ]
                 ],
                 [
@@ -737,33 +793,36 @@ class ReportController extends Controller
         $my_arr = [];
         $my_sec_arr = [];
 
+        // Iterate over the results and organize counts into an array of months
+        foreach ($requestperMonthFor as $record) {
+            $month = Carbon::createFromDate(null, $record['_id'], null)->format('m');
+            $my_arr[$month] = $record['Count'];
+        }
+
+        foreach ($requestperMonthPub as $record) {
+            $month = Carbon::createFromDate(null, $record['_id'], null)->format('m');
+            $my_sec_arr[$month] = $record['Count'];
+        }
+
+        foreach ($requestperMonthPubMrp as $record) {
+            $month = Carbon::createFromDate(null, $record['_id'], null)->format('m');
+            $my_sec_arr[$month] = $record['Count'] + $my_sec_arr[$month];
+        }
+
+        // Fill in missing months with zero counts
         for ($i = 1; $i <= 12; $i++) {
-            foreach ($requestperMonthFor as $x) {
-                if ($x->_id == $i) {
-                    $my_arr[$i] = $x->Count;
-                    break;
-                } else {
-                    $my_arr[$i] = 0;
-                }
+            $monthName = Carbon::createFromDate(null, $i, null)->format('m');
+            if (!isset($my_arr[$monthName])) {
+                $my_arr[$monthName] = 0;
             }
-            foreach ($requestperMonthPub as $y) {
-                if ($y->_id == $i) {
-                    $my_sec_arr[$i] = $y->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
-            }
-            foreach ($requestperMonthPubMrp as $z) {
-                if ($z->_id == $i) {
-                    $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
-                    break;
-                } else {
-                    $my_sec_arr[$i] = 0;
-                }
+
+            if (!isset($my_sec_arr[$monthName])) {
+                $my_sec_arr[$monthName] = 0;
             }
         }
 
+        ksort($my_arr);
+        ksort($my_sec_arr);
 
         return response()->json(['formattingReq' => array_values($my_arr), 'publishingReq' => array_values($my_sec_arr)]);
     }

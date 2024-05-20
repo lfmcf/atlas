@@ -47,11 +47,11 @@ const Create_ = (props: any) => {
         request_date: new Date()
     })
 
-    // const [multiData, setMultiData] = useState({
-    //     uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
-    //     agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-    //     r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
-    // });
+    const [multiData, setMultiData] = useState({
+        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
+        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
+        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+    });
 
 
 
@@ -231,67 +231,64 @@ const Create_ = (props: any) => {
         setData(prevData)
     }
 
-    // const handleMultipleSelectChange = (e, name) => {
-    //     const perdata = { ...multiData }
-    //     perdata[name] = e
-    //     setMultiData(perdata)
-    // }
+    const handleMultipleSelectChange = (e, name) => {
+        const perdata = { ...multiData }
+        perdata[name] = e
+        setMultiData(perdata)
+    }
 
-    // const handleMultipleChange = (e) => {
-    //     const perdata = { ...multiData }
-    //     perdata[e.target.name] = e.target.value
-    //     setMultiData(perdata)
-    // }
+    const handleMultipleChange = (e) => {
+        const perdata = { ...multiData }
+        perdata[e.target.name] = e.target.value
+        setMultiData(perdata)
+    }
 
-    // const [isCheck, setIsCheck] = useState([]);
-    // const [isCheckAll, setIsCheckAll] = useState(false);
+    const [isCheck, setIsCheck] = useState([]);
+    const [isCheckAll, setIsCheckAll] = useState(false);
 
-    // const [list, setList] = useState(metadata);
+    const [list, setList] = useState(metadata);
 
 
-    // const handleMultiCountryChange = (e) => {
+    const handleMultiCountryChange = (e) => {
 
-    //     const { id, checked } = e.target;
-    //     setIsCheck([...isCheck, parseInt(id)]);
+        const { id, checked } = e.target;
+        setIsCheck([...isCheck, parseInt(id)]);
+        if (!checked) {
+            setIsCheck(isCheck.filter(item => item != id));
+        }
+    }
 
-    //     if (!checked) {
+    const handleSelectAll = e => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck(list.map(li => li.id));
+        if (isCheckAll) {
+            setIsCheck([]);
+        }
+    };
 
-    //         setIsCheck(isCheck.filter(item => item != id));
-    //     }
+    const handleSubmitMulti = () => {
+        let perdata = { ...data }
 
-    // }
-
-    // const handleSelectAll = e => {
-    //     setIsCheckAll(!isCheckAll);
-    //     setIsCheck(list.map(li => li.id));
-    //     if (isCheckAll) {
-    //         setIsCheck([]);
-    //     }
-    // };
-
-    // const handleSubmitMulti = () => {
-    //     let perdata = { ...data }
-
-    //     perdata.mt.map((cnt, i) => {
-    //         if (isCheck.includes(cnt.id)) {
-    //             perdata.mt[i].uuid = multiData.uuid
-    //             perdata.mt[i].submission_type = multiData.submission_type
-    //             perdata.mt[i].submission_mode = multiData.submission_mode
-    //             perdata.mt[i].trackingNumber = multiData.trackingNumber
-    //             perdata.mt[i].submission_unit = multiData.submission_unit
-    //             perdata.mt[i].applicant = multiData.applicant
-    //             perdata.mt[i].agencyCode = multiData.agencyCode
-    //             perdata.mt[i].inventedName = multiData.inventedName
-    //             perdata.mt[i].mtd = multiData.mtd
-    //             perdata.mt[i].inn = multiData.inn
-    //             perdata.mt[i].sequence = multiData.sequence
-    //             perdata.mt[i].r_sequence = multiData.r_sequence
-    //             perdata.mt[i].submission_description = multiData.submission_description
-    //             perdata.mt[i].remarks = multiData.remarks
-    //         }
-    //     })
-    //     setData(perdata)
-    // }
+        perdata.mt.map((cnt, i) => {
+            if (isCheck.includes(cnt.id)) {
+                perdata.mt[i].uuid = multiData.uuid
+                perdata.mt[i].submission_type = multiData.submission_type
+                perdata.mt[i].submission_mode = multiData.submission_mode
+                perdata.mt[i].trackingNumber = multiData.trackingNumber
+                perdata.mt[i].submission_unit = multiData.submission_unit
+                perdata.mt[i].applicant = multiData.applicant
+                perdata.mt[i].agencyCode = multiData.agencyCode
+                perdata.mt[i].inventedName = multiData.inventedName
+                perdata.mt[i].mtd = multiData.mtd
+                perdata.mt[i].inn = multiData.inn
+                perdata.mt[i].sequence = multiData.sequence
+                perdata.mt[i].r_sequence = multiData.r_sequence
+                perdata.mt[i].submission_description = multiData.submission_description
+                perdata.mt[i].remarks = multiData.remarks
+            }
+        })
+        setData(perdata)
+    }
 
     useEffect(() => {
         let arr = { ...data };
@@ -686,12 +683,12 @@ const Create_ = (props: any) => {
                         </div>
 
                         <div className="flex-column" data-kt-stepper-element="content">
-                            {/* <div className='d-flex justify-content-end mb-1'>
+                            <div className='d-flex justify-content-end mb-1'>
                                 <a href='#' className='btn btn-secondary btn-sm' data-bs-toggle='modal' data-bs-target='#kt_modal_multi_data_update'>
                                     <i className="fa-solid fa-plus"></i>
                                 </a>
 
-                            </div> */}
+                            </div>
                             <div className="d-flex flex-column flex-md-row rounded border p-10">
 
                                 <ul className="nav nav-tabs nav-line-tabs border-0 flex-row flex-md-column me-5 mb-3 mb-md-0 fs-6">
@@ -699,10 +696,10 @@ const Create_ = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {metadata.map((mt: any, i: string) => (
+                                            {metadata.map((mt: any, i: number) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a
-                                                        className="nav-link mx-0 my-2"
+                                                        className={"nav-link mx-0 my-2" + (i === 0 ? ' active' : '')}
                                                         data-bs-toggle="tab"
                                                         href={"#kt_vtab_pane_" + i}
                                                         style={{ color: myErrors.submission_type[i] || myErrors.submission_unit[i] || myErrors.submission_mode[i] || myErrors.sequence[i] ? 'red' : '' }}
@@ -717,7 +714,7 @@ const Create_ = (props: any) => {
                                 </ul>
                                 <div className='tab-content w-100'>
                                     {data.mt.map((mt, i) => (
-                                        <div className='tab-pane fade' id={"kt_vtab_pane_" + i} key={i}>
+                                        <div className={'tab-pane fade' + (i === 0 ? ' active show' : '')} id={"kt_vtab_pane_" + i} key={i}>
                                             <div className='row mb-10'>
                                                 <div className='col-4'>
                                                     <label className="form-label">UUID</label>
@@ -1021,7 +1018,7 @@ const Create_ = (props: any) => {
 
                 {/* multi update modal */}
 
-                {/* <div className='modal fade' id='kt_modal_multi_data_update' aria-hidden='true'>
+                <div className='modal fade' id='kt_modal_multi_data_update' aria-hidden='true'>
                     <div className='modal-dialog modal-xl'>
                         <div className='modal-content rounded'>
                             <div className='modal-header justify-content-end border-0 pb-0'>
@@ -1036,7 +1033,7 @@ const Create_ = (props: any) => {
 
                                     <div className='text-muted fw-bold fs-5'>
                                         Apply update for selected countries{' '}
-                                       
+
                                         .
                                     </div>
                                 </div>
@@ -1213,7 +1210,7 @@ const Create_ = (props: any) => {
                             </div>
                         </div>
                     </div>
-                </div > */}
+                </div >
             </div>
         </>
     )

@@ -717,10 +717,10 @@ const Create = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {metadata.map((mt: any, i: string) => (
+                                            {metadata.map((mt: any, i: number) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a
-                                                        className="nav-link mx-0 my-2"
+                                                        className={"nav-link mx-0 my-2" + (i === 0 ? ' active' : '')}
                                                         data-bs-toggle="tab"
                                                         href={"#kt_vtab_pane_" + i}
                                                         style={{ color: myErrors.submission_type[i] || myErrors.submission_unit[i] || myErrors.submission_mode[i] || myErrors.sequence[i] ? 'red' : '' }}
@@ -735,7 +735,7 @@ const Create = (props: any) => {
                                 </ul>
                                 <div className='tab-content w-100'>
                                     {data.mt.map((mt, i) => (
-                                        <div className='tab-pane fade' id={"kt_vtab_pane_" + i} key={i}>
+                                        <div className={'tab-pane fade' + (i === 0 ? ' active show' : '')} id={"kt_vtab_pane_" + i} key={i}>
                                             <div className='row mb-10'>
                                                 <div className='col-4'>
                                                     <label className="form-label">UUID</label>

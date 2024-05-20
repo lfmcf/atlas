@@ -16,9 +16,9 @@ import { useLayout } from './core'
 export function MasterInit() {
     const { config } = useLayout()
     const isFirstRun = useRef(true)
-    console.log(isFirstRun.current)
     const pluginsInitialization = () => {
         isFirstRun.current = false
+        console.log(isFirstRun.current)
         ThemeModeComponent.init()
         setTimeout(() => {
             ToggleComponent.bootstrap()

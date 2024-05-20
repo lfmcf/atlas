@@ -62,6 +62,7 @@ const Initiate = (props: any) => {
         request_date: new Date,
         deadline: new Date,
         status: folder ? folder.status : '',
+        created_by: props.auth.user.id
     });
 
     useEffect(() => {

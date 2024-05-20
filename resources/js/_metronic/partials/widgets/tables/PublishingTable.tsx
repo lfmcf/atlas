@@ -11,9 +11,10 @@ import "datatables.net-dt/js/dataTables.dataTables";
 
 type Props = {
     data: any[] | any;
+    currentUser: number
 }
 
-const PublishingTable: React.FC<Props> = ({ data }) => {
+const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
     const [show, setShow] = useState({ 'status': false, id: '', form: '' });
     const [currentPage, setCurrentPage] = useState(1);
@@ -128,7 +129,6 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
         tb.page(number - 1).draw('page')
     }
 
-
     return (
         <>
             <div className={`card mb-5`}>
@@ -200,11 +200,7 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                             <tbody>
                                 {data ? Object.values(data).map((row: any, i) => (
                                     <tr key={i}>
-                                        {/* <td>
-                                            <div className='form-check form-check-sm form-check-custom form-check-solid'>
-                                                <input className='form-check-input widget-9-check' type='checkbox' value='1' />
-                                            </div>
-                                        </td> */}
+
                                         <td>
                                             <span className='fs-7'>
                                                 {typeof row.product_name === 'object' && row.product_name ?
@@ -278,10 +274,12 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                 {row.status == 'draft' ?
                                                     <a
                                                         onClick={() => router.get(route('publishing-initiate', { id: row._id }))}
-                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                        className='btn btn-icon btn-sm me-1'
                                                         title='Update and Submit the form'
+                                                        style={{ backgroundColor: '#f8f5ff' }}
                                                     >
-                                                        <KTIcon iconName='pencil' className='fs-3' />
+                                                        <i className="bi bi-pencil-fill text-info fs-5"></i>
+                                                        {/* <KTIcon iconName='pencil' className='fs-3' /> */}
                                                     </a>
 
                                                     :
@@ -289,41 +287,39 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                         <a
                                                             href='#'
                                                             onClick={() => router.get(route('publishing-confirm', { id: row._id }))}
-                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                            className='btn btn-icon btn-sm me-1'
+                                                            style={{ backgroundColor: '#fff8dd' }}
                                                         >
-                                                            <KTIcon iconName='pencil' className='fs-3' />
+                                                            <i className="bi bi-pencil-fill text-warning fs-5"></i>
+                                                            {/* <KTIcon iconName='pencil' className='fs-3' /> */}
                                                         </a> : row.status == 'submitted' ?
                                                             <>
                                                                 <a
                                                                     href='#'
                                                                     onClick={() => router.post(route('progress-publishing', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    style={{ backgroundColor: '#e8fff3' }}
                                                                 >
-                                                                    <KTIcon iconName='check-circle' className='fs-3' />
+                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                    {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
                                                                 </a>
                                                                 <a
                                                                     href='#'
                                                                     onClick={() => router.get(route('publishing-audit', { id: row._id }))}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                    style={{ backgroundColor: '#fff8dd' }}
                                                                 >
-                                                                    <KTIcon iconName='pencil' className='fs-3' />
+                                                                    <i className="bi bi-pencil-fill text-warning fs-5"></i>
                                                                 </a>
                                                             </> : row.status == 'to verify' ?
                                                                 <>
-
-                                                                    {/* <a
-                                                                        href='#'
-                                                                        onClick={() => router.post(route('confirm-publishing-out', { id: row._id }))}
-                                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                                    >
-                                                                        <KTIcon iconName='check-circle' className='fs-3' />
-                                                                    </a> */}
                                                                     <a
                                                                         href='#'
                                                                         onClick={() => router.get(route('publishing-audit', { id: row._id }))}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                        style={{ backgroundColor: '#fff5f8' }}
                                                                     >
-                                                                        <KTIcon iconName='eye' className='fs-3' />
+                                                                        <i className="bi bi-eye text-danger fs-5"></i>
                                                                     </a>
                                                                 </>
                                                                 : row.status == 'in progress' || row.status == 'to correct' ?
@@ -331,17 +327,20 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                                         <button
                                                                             onClick={() => handleShow(row._id, row.region, row.procedure)}
                                                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            style={{ backgroundColor: '#ffc700' }}
                                                                         >
-                                                                            <KTIcon iconName='eye' className='fs-3' />
+                                                                            <i className="bi bi-eye text-white fs-5"></i>
+                                                                            {/* <KTIcon iconName='eye' className='fs-3' /> */}
                                                                         </button>
                                                                         <a
                                                                             href='#'
                                                                             onClick={() => handleDilivred(row._id, row.form)}
                                                                             data-bs-toggle='modal'
                                                                             data-bs-target='#kt_modal_delivery_message_pub'
-                                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                            className='btn btn-icon btn-bg-success btn-active-color-primary btn-sm me-1'
                                                                         >
-                                                                            <KTIcon iconName='check-circle' className='fs-3' />
+                                                                            <i className="bi bi-check text-white fs-5"></i>
+                                                                            {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
                                                                         </a>
                                                                     </>
 
@@ -350,29 +349,35 @@ const PublishingTable: React.FC<Props> = ({ data }) => {
                                                                             <button
                                                                                 onClick={() => handleCompleted(row._id)}
                                                                                 className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                style={{ backgroundColor: '#d1f7c4' }}
                                                                             >
-                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                                <i className="bi bi-check text-success fs-5"></i>
+                                                                                {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleCorrect(row._id)}
                                                                                 className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                style={{ backgroundColor: '#f8d7da' }}
                                                                             >
-                                                                                <KTIcon iconName='cross-circle' className='fs-3' />
+                                                                                <i className="bi bi-x text-danger fs-5"></i>
+                                                                                {/* <KTIcon iconName='cross-circle' className='fs-3' /> */}
                                                                             </button>
                                                                         </>
 
                                                                         : row.status == 'completed' ?
                                                                             <button
                                                                                 onClick={() => handleClose(row._id)}
-                                                                                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                                                className='btn btn-icon btn-sm me-1'
+                                                                                style={{ backgroundColor: '#d1f7c4' }}
                                                                             >
-                                                                                <KTIcon iconName='check-circle' className='fs-3' />
+                                                                                <i className="bi bi-check text-success fs-5"></i>
                                                                             </button>
                                                                             : ''
                                                 }
 
                                             </div>
                                         </td>
+
                                     </tr>
                                 )) : ''}
                             </tbody>

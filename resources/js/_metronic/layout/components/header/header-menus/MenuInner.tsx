@@ -2,20 +2,63 @@ import { useIntl } from 'react-intl'
 import { MenuItem } from './MenuItem'
 import { MenuInnerWithSub } from './MenuInnerWithSub'
 import { MegaMenu } from './MegaMenu'
+import { KTIcon } from '../../../../helpers'
+import { InviteUsers } from '../../../../partials/modals/invite-users/InviteUsers'
+import { useState } from 'react'
+import AddProduct from '../../../../partials/modals/add-product/addProduct'
+import axios from 'axios'
+
+const initialState = {
+    form_: { label: 'Publishing', value: 'Publishing' },
+    region_: "",
+    procedure_: "",
+    product_: "",
+    country_: ''
+};
+
 
 export function MenuInner() {
-    // const intl = useIntl()
+    const intl = useIntl()
+    const [show, setShow] = useState(false);
+    const [showSec, setShowSec] = useState(false);
+    const [showDup, setShowDup] = useState({ show: false, data: '', id: '' });
+    const [update, setUpdate] = useState({ rerender: false, pName: '' })
+    const [{ form_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
+    const [product_name, setProduct_name] = useState();
+
+    const handleAddProduct = () => {
+        axios.post('addproductmt', { 'product': product_name, 'region': region_, 'procedure': procedure_ }).then(res => {
+            if (res.status == 200) {
+                setUpdate({ rerender: true, pName: product_name })
+            }
+        })
+    }
+
     return (
         <>
-            {/* <MenuItem title={intl.formatMessage({id: 'MENU.DASHBOARD'})} to='/dashboard' /> */}
-            <MenuItem title='Layout Builder' to='/builder' />
+            {/* <MenuItem title="New Request" to='#' onClick={ } /> */}
+            <div className='menu-item me-lg-1'>
+                <a
+                    href='#'
+                    className='btn menu-link py-3'
+                    data-bs-toggle="tooltip"
+                    title="Create New Request"
+                    // data-bs-toggle='modal'
+                    // data-bs-target='#kt_modal_invite_friends'
+                    onClick={() => setShow(true)}
+                >
+                    <KTIcon iconName='plus' className='fs-3' />
+                    New Request
+                </a>
+            </div>
+            {/* <MenuItem title='Layout Builder' to='/builder' /> */}
             {/* <MenuInnerWithSub
                 title='Crafted'
                 to='/crafted'
                 menuPlacement='bottom-start'
                 menuTrigger='click'
             >
-               
+
                 <MenuInnerWithSub
                     title='Pages'
                     to='/crafted/pages'
@@ -55,7 +98,7 @@ export function MenuInner() {
                     </MenuInnerWithSub>
                 </MenuInnerWithSub>
 
-                
+
                 <MenuInnerWithSub
                     title='Accounts'
                     to='/crafted/accounts'
@@ -68,7 +111,7 @@ export function MenuInner() {
                     <MenuItem to='/crafted/account/settings' title='Settings' hasBullet={true} />
                 </MenuInnerWithSub>
 
-                
+
                 <MenuInnerWithSub
                     title='Errors'
                     to='/error'
@@ -81,7 +124,7 @@ export function MenuInner() {
                     <MenuItem to='/error/500' title='Error 500' hasBullet={true} />
                 </MenuInnerWithSub>
 
-               
+
                 <MenuInnerWithSub
                     title='Widgets'
                     to='/crafted/widgets'
@@ -97,10 +140,10 @@ export function MenuInner() {
                     <MenuItem to='/crafted/widgets/tables' title='Tables' hasBullet={true} />
                     <MenuItem to='/crafted/widgets/feeds' title='Feeds' hasBullet={true} />
                 </MenuInnerWithSub>
-            </MenuInnerWithSub> */}
+            </MenuInnerWithSub>
 
-            {/* <MenuInnerWithSub title='Apps' to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
-               
+            <MenuInnerWithSub title='Apps' to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
+
                 <MenuInnerWithSub
                     title='Chat'
                     to='/apps/chat'
@@ -125,6 +168,28 @@ export function MenuInner() {
             >
                 <MegaMenu />
             </MenuInnerWithSub> */}
+
+            <InviteUsers
+                show={show}
+                setShow={setShow}
+                setShowSec={setShowSec}
+                initialState={initialState}
+                setState={setState}
+                form_={form_}
+                region_={region_}
+                procedure_={procedure_}
+                product_={product_}
+                country_={country_}
+                // handleAddProduct={handleAddProduct}
+                update={update}
+            />
+
+            <AddProduct
+                show={showSec}
+                setShow={setShowSec}
+                handleAddProduct={handleAddProduct}
+                setProduct_name={setProduct_name}
+            />
         </>
     )
 }

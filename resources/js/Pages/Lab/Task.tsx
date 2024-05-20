@@ -23,7 +23,7 @@ const Task = (props: any) => {
     return (
         <>
             <FormattingTable data={formatting} />
-            <PublishingTable data={publishing} />
+            <PublishingTable data={publishing} currentUser={props.auth.user.id} />
         </>
     )
 }

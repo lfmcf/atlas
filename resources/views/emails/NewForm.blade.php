@@ -2,9 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <body class="font-sans antialiased">
-    <p>Bonjour,</p>
-    <p>Veuillez trouver ci-joint une demande de création d'un amendment pour le produit {{ $prductName }}</p>
-    <p>Cordialement.</p>
+    <p>Hello,</p>
+    <p>New request has been submitted for the product {{ $prductName }}</p>
+    <p>Regards.</p>
 </body>
 
 </html>
