@@ -49,7 +49,7 @@ class MetaData extends Model
 
     public function drugSubstance()
     {
-        return $this->hasMany(drugSubstance::class, 'meta_data_id');
+        return $this->hasMany(DrugSubstance::class, 'meta_data_id');
     }
 
     public function drugSubstanceManufacturer()

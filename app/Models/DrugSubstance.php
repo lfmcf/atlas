@@ -13,9 +13,4 @@ class DrugSubstance extends Model
         'product_meta_data_id',
         'substance',
     ];
-
-    public function productMetaData()
-    {
-        return $this->belongsTo(ProductMetaData::class, 'product_meta_data_id');
-    }
 }
