@@ -13,7 +13,7 @@ class MetaData extends Model
         'procedure',
         'region',
         'country',
-        'product',
+        'invented_name',
         'agencyCode',
         'uuid',
         'applicant',
