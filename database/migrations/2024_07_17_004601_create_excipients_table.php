@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('formatings', function (Blueprint $table) {
+        Schema::create('excipients', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('meta_data_id');
+            $table->string('excipient');
+            $table->foreign('meta_data_id')->references('id')->on('meta_data')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('formatings');
+        Schema::dropIfExists('excipients');
     }
 };

@@ -490,13 +490,13 @@ class ReportController extends Controller
     {
         if ($request->product) {
 
-            $country = MetaData::where('product', $request->product)->where('procedure', $request->procedure)
+            $country = MetaData::where('invented_name', $request->product)->where('procedure', $request->procedure)
                 ->get('country');
             return $country;
         } else {
 
             $product = MetaData::where('country', $request->country)->where('procedure', $request->procedure)
-                ->get('Product');
+                ->get('invented_name');
             return $product;
         }
     }

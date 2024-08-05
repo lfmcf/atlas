@@ -62,7 +62,17 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     const [compselect, setCompselect] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingPr, setIsLoadingPr] = useState(false);
-    // const [show, setShow] = useState(false)
+    const [selectedCheckbox, setSelectedCheckbox] = useState('LifeCycle');
+
+    const handleCheckboxChange = (event) => {
+        const { name } = event.target;
+        if (selectedCheckbox === name) {
+            setSelectedCheckbox(null); // Uncheck if the same checkbox is clicked again
+        } else {
+            setSelectedCheckbox(name);
+        }
+    };
+
 
     const SelectMenuButton = (props) => {
         return (
@@ -98,25 +108,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             setData({ ...data, 'product': '', 'country': '' })
         } else {
             setData(name, e)
-            // setProductList(eunatproduct)
-            // setCountryList(eunatcountry)
-        }
 
-        // if (data.procedure && data.procedure.value == 'Nationale' && e && !data.product) {
-        //     axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'country': e.value, }).then(res => {
-        //         var dt = res.data.map(ct => {
-        //             return { label: ct.Product, value: ct.Product }
-        //         })
-        //         setProductList(dt)
-        //         setData({ ...data, 'country': e, product: '' })
-        //     })
-        // } else if (e == null) {
-        //     setData({ ...data, 'product': '', 'country': '' })
-        // } else {
-        //     setData(name, e)
-        //     setProductList(eunatproduct)
-        //     setCountryList(eunatcountry)
-        // }
+        }
     }
 
     const handleMyselectChange = (selected) => {
@@ -163,30 +156,11 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             } else {
                 setCountryList([{ label: "Switzerland", value: "Switzerland" }])
             }
-            //     axios.post('getProductOrCountry', { 'procedure': procedure_.value, 'product': e.value, }).then(res => {
-            //         if (res.data.length > 0) {
-
-            //             var dt = res.data.map(ct => {
-            //                 return { label: ct.country, value: ct.country }
-            //             })
-            //             setCountryList(dt)
-            //         } else {
-
-            //             if (region_ && region_.value == "EU") {
-            //                 setCountryList(eunatcountry)
-            //             } else if (region_ && region_.value == "GCC") {
-            //                 setCountryList(gcccountry)
-            //             } else {
-            //                 setCountryList([{ label: "Switzerland", value: "Switzerland" }])
-            //             }
-            //         }
-
-            //     })
         }
     }
 
-    const handleNavigate = () => {
-        if (data.form && data.form.value == "Formatting") {
+    const handleNavigate = (ReqType) => {
+        if (ReqType == "formatting") {
             router.visit('/formatting-initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, coreDoc: data.coreDoc },
@@ -194,7 +168,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
             })
-        } else if (data.form && data.form.value == "Publishing") {
+        } else if (ReqType == "publishing") {
 
             router.visit('/publishing-initiate', {
                 method: 'get',
@@ -219,50 +193,49 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
     useEffect(() => {
         setData({ ...data, 'procedure': '', 'product': '', 'country': '' })
-        if (data.form && data.form.value === 'Publishing') {
-            if (data.region && data.region.value == 'GCC') {
-                setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                setIsLoadingPr(true)
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-                    if (res.status == 200) {
-                        var myarr = []
-                        res.data.map(val => {
-                            myarr.push({ label: val.name, value: val.name })
-                        })
-                        setProductList(myarr);
-                    }
-                })
-                setTimeout(() => {
-                    setIsLoadingPr(false)
-                }, 1000)
-                setCountryList(gcccountry);
-            } else if (data.region && data.region.value == 'CH') {
-                setData('procedure', { label: 'Nationale', value: 'Nationale' });
-                setIsLoadingPr(true)
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-                    if (res.status == 200) {
-                        var myarr = []
-                        res.data.map(val => {
-                            myarr.push({ label: val.name, value: val.name })
-                        })
-                        setProductList(myarr);
-                    }
-                })
-                // setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-                setTimeout(() => {
-                    setIsLoadingPr(false)
-                }, 1000)
 
-            }
+        if (data.region && data.region.value == 'GCC') {
+            setData('procedure', { label: 'Nationale', value: 'Nationale' });
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
+            setCountryList(gcccountry);
+        } else if (data.region && data.region.value == 'CH') {
+            setData('procedure', { label: 'Nationale', value: 'Nationale' });
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
+
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
+
         }
 
     }, [data.region])
 
     useEffect(() => {
         if (region_ && region_.value == 'GCC') {
-            // setProcedure_({ label: 'Nationale', value: 'Nationale' });
+
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
-            // setProductList(gccproduct);
+
             axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -276,7 +249,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             setCompselect(false)
         } else if (region_ && region_.value == 'CH') {
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
-            // setProductList(chproduct);
+
             axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -293,64 +266,47 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
     useEffect(() => {
         setData({ ...data, product: '', country: '' })
-        if (data.form && data.form.value === 'Publishing') {
-            if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
-                setIsLoadingPr(true)
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value }).then(res => {
-                    if (res.status == 200) {
-                        var myarr = []
-                        res.data.map(val => {
-                            myarr.push({ label: val.name, value: val.name })
-                        })
-                        setProductList(myarr);
-                    }
-                })
-                setCountryList(eunatcountry)
-                setCompselect(true)
-                setTimeout(() => {
-                    setIsLoadingPr(false)
-                }, 1000)
 
-            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
-                setIsLoadingPr(true)
-                axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-                    if (res.status == 200) {
-                        var myarr = []
-                        res.data.map(val => {
-                            myarr.push({ label: val.name, value: val.name })
-                        })
-                        setProductList(myarr);
-                    }
-                })
-                // setCountryList(eunatcountry)
-                setCompselect(false)
-                setTimeout(() => {
-                    setIsLoadingPr(false)
-                }, 1000)
-            }
-            // else if (data.region && data.region == 'CH' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
-            //     console.log('called')
-            //     setIsLoadingPr(true)
-            //     axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-            //         if (res.status == 200) {
-            //             var myarr = []
-            //             res.data.map(val => {
-            //                 myarr.push({ label: val.name, value: val.name })
-            //             })
-            //             setProductList(myarr);
-            //         }
-            //     })
-            //     setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-            //     setTimeout(() => {
-            //         setIsLoadingPr(false)
-            //     }, 1000)
-            // }
+        if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
+            setCountryList(eunatcountry)
+            setCompselect(true)
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
+
+        } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+                console.log(res)
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val.name, value: val.name })
+                    })
+                    setProductList(myarr);
+                }
+            })
+
+            setCompselect(false)
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
         }
     }, [data.procedure])
 
     useEffect(() => {
         if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
-            //setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+
             axios.post('getProductname', { 'region': region_.value, 'procedure': 'Decentralized' }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -363,7 +319,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Mutual Recognition') {
-            // setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+
             axios.post('getProductname', { 'region': region_.value, 'procedure': 'Mutual Recognition' }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -376,7 +332,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale' || procedure_ && procedure_.value == 'Centralized') {
-            // setProductList(eunatproduct)
+
             axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -400,20 +356,19 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     }, [update.rerender])
 
     const onChange = (e, name) => {
-        // const { name, value } = e.target;
+
         setState(prevState => ({ ...prevState, [name]: e }));
     };
 
     const handleClose = () => {
         reset()
         setState({ ...initialState });
-        //setProductState({ ...initialProductState })
         setShow(false)
     }
 
     return (
         <Modal show={show} onHide={handleClose}>
-            {/* <div className='modal-dialog mw-650px'> */}
+
             <div className='modal-content '>
                 <div className='modal-header pb-0 border-0 justify-content-end'>
                     <div className='btn btn-sm btn-icon btn-active-color-primary' onClick={handleClose}>
@@ -430,7 +385,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 title="Selct Initial Request For New Marketing Authorization Application"
                                 href="#kt_tab_pane_1"
                             >
-                                Initial Request
+                                Formatting
                             </a>
                         </li>
                         <li className="nav-item">
@@ -441,12 +396,10 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                 title='For Formatting and Lifecycle maintenance Requests (ex: variation, RtQ…)'
                                 href="#kt_tab_pane_2"
                             >
-                                LifeCycle
+                                Publishing
                             </a>
                         </li>
-                        {/* <li className='nav-item'>
-                            <a className='nav-link' data-bs-toggle="tab" href="#kt_tab_pane_3">New product</a>
-                        </li> */}
+
                     </ul>
                     <div className="tab-content" id="myTabContent">
                         <div
@@ -454,115 +407,6 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                             id="kt_tab_pane_1"
                             role="tabpanel"
                         >
-                            <div>
-                                <label className="form-label">Request type</label>
-                                <Select options={[{ label: 'Publishing', value: 'Publishing' }]}
-                                    name="form_"
-                                    // onChange={(e) => handleSelectChange(e, 'form')}
-                                    placeholder='Form'
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999, }),
-                                        container: base => ({ width: '100%' })
-                                    }}
-                                    defaultValue={[{ label: 'Publishing', value: 'Publishing' }]}
-                                    isDisabled
-                                />
-                            </div>
-                            <div className='my-4' >
-                                <label className="form-label" data-toggle="tooltip" title='Select the concerned region for the Initial Publishing'>Region</label>
-                                <Select
-                                    options={publishingRegion}
-                                    name="region_"
-                                    onChange={(e) => onChange(e, 'region_')}
-                                    placeholder='Region'
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    value={region_}
-                                />
-
-                            </div>
-                            <div className='my-4'>
-                                <label className='form-label' data-toggle="tooltip" title='Select the concerned procedure  for the Initial Publishing'>Procedure type</label>
-                                <Select options={[
-                                    { label: 'Nationale', value: 'Nationale' },
-                                    { label: 'Centralized', value: 'Centralized' },
-                                    { label: 'Decentralized', value: 'Decentralized' },
-                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                ]}
-                                    name="procedure_"
-                                    onChange={(e) => onChange(e, 'procedure_')}
-                                    placeholder='Procedure type'
-                                    isClearable
-                                    value={procedure_}
-                                    isDisabled={region_ && region_.value == 'GCC' || region_ && region_.value == 'CH' ? true : false}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                />
-                            </div>
-                            <div className='my-4'>
-                                <label className='form-label' data-toggle="tooltip" title="Choose the product for the Initial Publishing. If not listed, click 'New Product' at the list's end">Product</label>
-                                <Select options={productList}
-                                    name="product_"
-                                    onChange={(e) => handleSelectProductChange_(e)}
-                                    placeholder='Product'
-                                    value={product_}
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    components={{ MenuList: SelectMenuButton }}
-                                />
-                            </div>
-                            <div className='my-4'>
-                                <label className='form-label' data-toggle="tooltip" title='Select a country for the Initial Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
-                                {compselect ?
-                                    <MySelect
-                                        options={countryList ? [...countryList] : ''}
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        hideSelectedOptions={false}
-                                        components={{ Option, MultiValue, animatedComponents }}
-                                        onChange={handleMyselectChange_}
-                                        value={country_}
-                                        allowSelectAll={true}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                    : <Select options={countryList}
-                                        onChange={(e) => onChange(e, 'country_')}
-                                        value={country_}
-                                        menuPortalTarget={document.body}
-                                        isClearable
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />}
-                            </div>
-                            <div className='d-flex mt-5 justify-content-end'>
-                                <a href="#" className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</a>
-                                <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleLifeCycle}>Validate</button>
-                            </div>
-                        </div>
-                        <div className="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
-                            <div>
-                                <label className="form-label" data-toggle='tooltip' title='Select a Request type'>Request type</label>
-                                <Select options={[
-                                    { label: 'Formatting', value: 'Formatting' },
-                                    { label: 'Publishing', value: 'Publishing' },
-                                    { label: 'Submission', value: 'Submission' },
-                                ]}
-                                    name="form"
-                                    onChange={(e) => handleSelectChange(e, 'form')}
-                                    placeholder='Form'
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999, }),
-                                        container: base => ({ width: '100%' })
-                                    }}
-                                    value={data.form}
-                                />
-                            </div>
                             <div className='my-4'>
                                 <label className="form-label" data-toggle='tooltip' title='Select the region for the dossier to be formatted'>Region</label>
                                 <Select
@@ -576,126 +420,189 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                     value={data.region}
                                 />
                             </div>
-                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label' data-toggle='tooltip' title='Select the concerned procedure  for the Lifecyle Publishing'>Procedure type</label>
-                                <Select options={[
-                                    { label: 'Nationale', value: 'Nationale' },
-                                    { label: 'Centralized', value: 'Centralized' },
-                                    { label: 'Decentralized', value: 'Decentralized' },
-                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                ]}
-                                    name="procedure"
-                                    onChange={(e) => handleSelectChange(e, 'procedure')}
-                                    placeholder='Procedure type'
-                                    isClearable
-                                    value={data.procedure}
-                                    isDisabled={data.region && data.region.value == 'GCC' || data.region && data.region.value == 'CH' ? true : false}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                />
-                            </div>
-                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label' data-toggle='tooltip' title='Select the concerned Product for the Lifecycle Publishing '>Product</label>
-                                <Select options={productList}
-                                    name="product"
-                                    onChange={(e) => handleSelectProductChange(e, 'product')}
-                                    placeholder={isLoadingPr ? 'Loading...' : 'Product'}
-                                    value={data.product}
-                                    isLoading={isLoadingPr}
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                />
-                            </div>
-                            <div className='my-4' style={{ display: data.form && data.form.value == 'Publishing' ? 'block' : 'none' }}>
-                                <label className='form-label' data-toggle='tooltip' title='Select a country for the Lifecycle Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
-                                {compselect ?
-                                    <MySelect
-                                        options={countryList ? [...countryList] : ''}
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        hideSelectedOptions={false}
-                                        components={{ Option, MultiValue, animatedComponents }}
-                                        onChange={handleMyselectChange}
-                                        value={data.country}
-                                        allowSelectAll={true}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />
-                                    : <Select options={countryList}
-                                        onChange={(e) => handleSelectCountryChange(e, 'country')}
-                                        value={data.country}
-                                        menuPortalTarget={document.body}
-                                        isClearable
-                                        isLoading={isLoading}
-                                        placeholder={isLoading ? 'Loading...' : 'Country'}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    />}
-                            </div>
-                            <div className='my-4' style={{ display: data.form && data.form.value == 'Formatting' ? 'flex' : 'none', alignItems: 'center' }}>
+                            <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
                                 <label className='form-label my-0 me-4' data-toggle='tooltip' title='Specify if the dossier is Core Documentation'>Core doc</label>
                                 <label className='form-check form-switch form-check-custom form-check-solid'>
                                     <input className='form-check-input' type='checkbox' value='1' />
-
-                                    {/* <span className=' fw-bold form-label'>Core doc</span> */}
                                 </label>
 
                             </div>
                             <div className='d-flex mt-5 justify-content-end'>
                                 <button className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</button>
-                                <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleNavigate}>Validate</button>
+                                <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={() => handleNavigate('formatting')}>Validate</button>
                             </div>
                         </div>
-                        {/* <div className="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
-                            <div>
-                                <label className="form-label">Product name</label>
-                                <input className='form-control' type='text' placeholder='Name' value={product_p} name='product_p' onChange={(e) => setProductState(ps => ({ ...ps, "product_p": e.target.value }))} />
+                        <div className="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+                            <div className='mt-5 my-4'>
+                                <div className='d-flex align-items-center'>
+                                    <label className='form-check form-check-custom form-check-solid me-10'>
+                                        <input className='form-check-input h-20px w-20px' type='checkbox' name='LifeCycle' checked={selectedCheckbox === 'LifeCycle'} onChange={handleCheckboxChange} />
+                                        <span className='form-check-label fw-semibold'>LifeCycle</span>
+                                    </label>
+                                    <label className='form-check form-check-custom form-check-solid me-10'>
+                                        <input className='form-check-input h-20px w-20px' type='checkbox' name='InitialRequest' checked={selectedCheckbox === 'InitialRequest'} onChange={handleCheckboxChange} />
+                                        <span className='form-check-label fw-semibold'>Initial Request</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div className='my-4'>
-                                <label className="form-label">Region</label>
-                                <Select
-                                    options={publishingRegion}
-                                    name="region_p"
-                                    onChange={(e) => setProductState(ps => ({ ...ps, "region_p": e }))}
-                                    placeholder='Region'
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                    value={region_p}
-                                />
-                            </div>
-                            <div className='my-4'>
-                                <label className="form-label">Procedure</label>
-                                <Select options={[
-                                    { label: 'Nationale', value: 'Nationale' },
-                                    { label: 'Centralized', value: 'Centralized' },
-                                    { label: 'Decentralized', value: 'Decentralized' },
-                                    { label: 'Mutual Recognition', value: 'Mutual Recognition' },
-                                ]}
-                                    name="procedure_p"
-                                    onChange={(e) => setProductState(ps => ({ ...ps, "procedure_p": e }))}
-                                    placeholder='Procedure type'
-                                    isClearable
-                                    value={procedure_p}
-                                    
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                />
-                            </div>
-                            <div className='d-flex mt-5 justify-content-end'>
-                                <a href="#" data-bs-dismiss='modal' className="btn btn-sm btn-light-primary me-3">Cancel</a>
-                                <button className="btn btn-sm btn-primary" onClick={handleAddProduct}>Add</button>
-                            </div>
-                        </div> */}
-                    </div>
-                    {/* <div className='text-center mb-13'>
-                            <h1 className='mb-3'>New request</h1>
-                        </div> */}
+                            {selectedCheckbox === 'LifeCycle' ?
+                                <>
+                                    <div className='my-4'>
+                                        <label className="form-label" data-toggle='tooltip' title='Select the region for the dossier to be formatted'>Region</label>
+                                        <Select
+                                            options={publishingRegion}
+                                            name="region"
+                                            onChange={(e) => handleSelectChange(e, 'region')}
+                                            placeholder='Region'
+                                            isClearable
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            value={data.region}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle='tooltip' title='Select the concerned procedure  for the Lifecyle Publishing'>Procedure type</label>
+                                        <Select options={[
+                                            { label: 'Nationale', value: 'Nationale' },
+                                            { label: 'Centralized', value: 'Centralized' },
+                                            { label: 'Decentralized', value: 'Decentralized' },
+                                            { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                        ]}
+                                            name="procedure"
+                                            onChange={(e) => handleSelectChange(e, 'procedure')}
+                                            placeholder='Procedure type'
+                                            isClearable
+                                            value={data.procedure}
+                                            isDisabled={data.region && data.region.value == 'GCC' || data.region && data.region.value == 'CH' ? true : false}
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        />
+                                    </div>
+                                    <div className='my-4' >
+                                        <label className='form-label' data-toggle='tooltip' title='Select the concerned Product for the Lifecycle Publishing '>Product</label>
+                                        <Select options={productList}
+                                            name="product"
+                                            onChange={(e) => handleSelectProductChange(e, 'product')}
+                                            placeholder={isLoadingPr ? 'Loading...' : 'Product'}
+                                            value={data.product}
+                                            isLoading={isLoadingPr}
+                                            isClearable
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle='tooltip' title='Select a country for the Lifecycle Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
+                                        {compselect ?
+                                            <MySelect
+                                                options={countryList ? [...countryList] : ''}
+                                                isMulti
+                                                closeMenuOnSelect={false}
+                                                hideSelectedOptions={false}
+                                                components={{ Option, MultiValue, animatedComponents }}
+                                                onChange={handleMyselectChange}
+                                                value={data.country}
+                                                allowSelectAll={true}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            />
+                                            : <Select options={countryList}
+                                                onChange={(e) => handleSelectCountryChange(e, 'country')}
+                                                value={data.country}
+                                                menuPortalTarget={document.body}
+                                                isClearable
+                                                isLoading={isLoading}
+                                                placeholder={isLoading ? 'Loading...' : 'Country'}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            />}
+                                    </div>
+                                    <div className='d-flex mt-5 justify-content-end'>
+                                        <button className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</button>
+                                        <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={() => handleNavigate('publishing')}>Validate</button>
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <div className='my-4' >
+                                        <label className="form-label" data-toggle="tooltip" title='Select the concerned region for the Initial Publishing'>Region</label>
+                                        <Select
+                                            options={publishingRegion}
+                                            name="region_"
+                                            onChange={(e) => onChange(e, 'region_')}
+                                            placeholder='Region'
+                                            isClearable
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            value={region_}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle="tooltip" title='Select the concerned procedure  for the Initial Publishing'>Procedure type</label>
+                                        <Select options={[
+                                            { label: 'Nationale', value: 'Nationale' },
+                                            { label: 'Centralized', value: 'Centralized' },
+                                            { label: 'Decentralized', value: 'Decentralized' },
+                                            { label: 'Mutual Recognition', value: 'Mutual Recognition' },
+                                        ]}
+                                            name="procedure_"
+                                            onChange={(e) => onChange(e, 'procedure_')}
+                                            placeholder='Procedure type'
+                                            isClearable
+                                            value={procedure_}
+                                            isDisabled={region_ && region_.value == 'GCC' || region_ && region_.value == 'CH' ? true : false}
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle="tooltip" title="Choose the product for the Initial Publishing. If not listed, click 'New Product' at the list's end">Product</label>
+                                        <Select options={productList}
+                                            name="product_"
+                                            onChange={(e) => handleSelectProductChange_(e)}
+                                            placeholder='Product'
+                                            value={product_}
+                                            isClearable
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            components={{ MenuList: SelectMenuButton }}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle="tooltip" title='Select a country for the Initial Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
+                                        {compselect ?
+                                            <MySelect
+                                                options={countryList ? [...countryList] : ''}
+                                                isMulti
+                                                closeMenuOnSelect={false}
+                                                hideSelectedOptions={false}
+                                                components={{ Option, MultiValue, animatedComponents }}
+                                                onChange={handleMyselectChange_}
+                                                value={country_}
+                                                allowSelectAll={true}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            />
+                                            : <Select options={countryList}
+                                                onChange={(e) => onChange(e, 'country_')}
+                                                value={country_}
+                                                menuPortalTarget={document.body}
+                                                isClearable
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            />}
+                                    </div>
+                                    <div className='d-flex mt-5 justify-content-end'>
+                                        <a href="#" className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</a>
+                                        <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleLifeCycle}>Validate</button>
+                                    </div>
+                                </>
+                            }
+                        </div>
 
+                    </div>
 
                 </div>
             </div>
-            {/* </div> */}
+
         </Modal>
 
     )

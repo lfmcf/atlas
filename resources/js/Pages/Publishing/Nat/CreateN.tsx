@@ -14,6 +14,7 @@ import StatusComponent from '../../../Components/StatusComponent'
 
 const CreateN = (props: any) => {
 
+    console.log(props.metadata)
     const { metadata, folder, metapro } = props;
     var trigramme = props.auth.user.trigramme;
     trigramme = trigramme?.toUpperCase();
@@ -63,15 +64,16 @@ const CreateN = (props: any) => {
         created_by: props.auth.user.id
     })
 
-    let tn = metadata.trackingNumber
-    tn = tn.split(/\r?\n/)
+    // let tn = metadata.tracking_numbers
+    // console.log(tn.number)
+    // tn = tn.split(/\r?\n/)
 
-    let tno = []
-    if (tn.length > 1) {
-        tno = tn.map((val) => {
-            return { label: val, value: val }
-        })
-    }
+    // let tno = []
+    // if (tn.length > 1) {
+    //     tno = tn.map((val) => {
+    //         return { label: val, value: val }
+    //     })
+    // }
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
@@ -616,8 +618,8 @@ const CreateN = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
                                     <div className='d-flex align-items-center'>
-                                        <Select options={tn.map((val) => {
-                                            return { label: val, value: val }
+                                        <Select options={metadata.tracking_numbers.map((val) => {
+                                            return { label: val.numbers, value: val.numbers }
                                         })}
                                             name='tracking'
                                             onChange={(e, action) => handleSelectChangeTracking(e, action)}
@@ -715,7 +717,9 @@ const CreateN = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_substance.map((val) =>
+                                        ({ label: val.substance, value: val.substance })
+                                    )}
                                         name='drug_substance'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
@@ -730,7 +734,9 @@ const CreateN = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_substance_manufacturer.map((val) =>
+                                        ({ label: val.substance_manufacturer, value: val.substance_manufacturer })
+                                    )}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -747,7 +753,9 @@ const CreateN = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_product.map((val) =>
+                                        ({ label: val.drug_product, value: val.drug_product })
+                                    )}
                                         name='drug_product'
                                         onChange={(e) => handleSelectChange(e, 'drug_product')}
                                         className="react-select-container"
@@ -761,7 +769,9 @@ const CreateN = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_product_manufacturer.map((val) =>
+                                        ({ label: val.product_manufacturer, value: val.product_manufacturer })
+                                    )}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -775,7 +785,9 @@ const CreateN = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.dosage_form.map((val) =>
+                                        ({ label: val.form, value: val.form })
+                                    )}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -792,7 +804,9 @@ const CreateN = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.excipients.map((val) =>
+                                        ({ label: val.excipient, value: val.excipient })
+                                    )}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
@@ -811,15 +825,11 @@ const CreateN = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div> */}
+
                                 </div>
                             </div>
                             <div className="row mb-10">

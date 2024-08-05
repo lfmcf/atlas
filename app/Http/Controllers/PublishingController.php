@@ -15,7 +15,6 @@ use App\Models\User;
 use App\Notifications\InvoiceInitaitedForm;
 use App\Models\PublishingMrp;
 use App\Models\Product_meta;
-use Response;
 use App\Mail\PublishingSubmitted;
 
 class PublishingController extends Controller
@@ -54,33 +53,53 @@ class PublishingController extends Controller
             $product = $request->query('product');
         }
 
-        // $metaPro = MetaProduct::where('product', 'LIKE', '%' . $product . '%')->get();
-        $findstring = explode(' ', $product);
 
-        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
-            foreach ($findstring as $value) {
-                $rvalue = rtrim($value, ",");
-                $q->orWhere('product', 'like', "%{$rvalue}%");
-            }
-        })->first();
+        // $findstring = explode(' ', $product);
+
+        // $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+        //     foreach ($findstring as $value) {
+        //         $rvalue = rtrim($value, ",");
+        //         $q->orWhere('product', 'like', "%{$rvalue}%");
+        //     }
+        // })->first();
+
+        // $meta_data = MetaData::where('product', $product)->get();
 
 
         if ($region == "EU") {
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
                 $country = is_array($country) ? $country['value'] : $country;
-                $md = MetaData::where([
-                    ['Product', '=', $product],
+                // $md = MetaData::where([
+                //     ['Product', '=', $product],
+                //     ['procedure', '=', $procedure],
+                //     ['country', '=', $country]
+                // ])->first();
+
+                $meta_data = MetaData::where([
+                    ['invented_name', '=', $product],
                     ['procedure', '=', $procedure],
                     ['country', '=', $country]
-                ])->first();
+                ])
+                    ->with([
+                        'trackingNumbers',
+                        'dosageForm',
+                        'drugProduct',
+                        'drugProductManufacturer',
+                        'drugSubstanceManufacturer',
+                        'excipients',
+                        'drugSubstance',
+                        'indications'
+                    ])
+                    ->first();
 
-                if ($md) {
+
+                if ($meta_data) {
                     return Inertia::render('Publishing/Nat/CreateN', [
-                        'metadata' => $md,
+                        'metadata' => $meta_data,
                         'countries' => $country,
                         'products' => $product,
                         'folder' => $pub,
-                        'metapro' => $metaPro
+                        // 'metapro' => $metaPro
                     ]);
                 }
             } else {
@@ -112,7 +131,7 @@ class PublishingController extends Controller
                 return Inertia::render('Publishing/Rmp/Create', [
                     'metadata' => $listmd,
                     'folder' => $pub,
-                    'metapro' => $metaPro
+                    // 'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "CH") {
@@ -129,7 +148,7 @@ class PublishingController extends Controller
                     'countries' => $country,
                     'products' => $product,
                     'folder' => $pub,
-                    'metapro' => $metaPro
+                    // 'metapro' => $metaPro
                 ]);
             }
         } else if ($region == "GCC") {
@@ -146,7 +165,7 @@ class PublishingController extends Controller
                     'countries' => $country,
                     'products' => $product,
                     'folder' => $pub,
-                    'metapro' => $metaPro
+                    // 'metapro' => $metaPro
                 ]);
             }
         }
@@ -161,7 +180,7 @@ class PublishingController extends Controller
         $region = $pub->region;
         $procedure = $pub->procedure;
 
-        $product = Product_meta::where('region', $region)->where('procedure', $procedure)->first(['product']);
+        $product = Meta_Data::where('region', $region)->where('procedure', $procedure)->first(['product']);
         $product = json_decode($product['product']);
 
         if ($region == "EU") {
@@ -218,32 +237,6 @@ class PublishingController extends Controller
                 array_push($listmd, $md);
             }
         }
-        // $listmd = [];
-        // $found = false;
-        // foreach ($countries as $country) {
-        //     foreach ($pub->mt as $m) {
-        //         if (in_array($country, $m)) {
-        //             array_push($listmd, collect($m));
-        //             $found = true;
-        //             break;
-        //         } else {
-        //             $found = false;
-        //         }
-        //     }
-        //     if (!$found) {
-
-        //         $md = MetaData::where([
-        //             ['Product', '=', $pub->product_name],
-        //             ['procedure', '=', $pub->procedure],
-        //             ['country', '=', $country]
-        //         ])->first();
-        //         if ($md) {
-        //             array_push($listmd, $md);
-        //         }
-        //     }
-        // }
-
-        // dd($listmd);
 
         return Inertia::render('Publishing/Rmp/InitiateDuplicate', [
             'metadata' => $listmd,
@@ -2518,6 +2511,6 @@ class PublishingController extends Controller
             ['country', '=', $country]
         ])->first(['agencyCode', 'uuid', 'trackingNumber', 'applicant', 'inn']);
 
-        return Response::json($md);
+        return response()->json($md);
     }
 }

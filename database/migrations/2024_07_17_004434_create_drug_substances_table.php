@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('publishings', function (Blueprint $table) {
+        Schema::create('drug_substances', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('meta_data_id');
+            $table->string('substance')->nullable();
+            $table->foreign('meta_data_id')->references('id')->on('meta_data')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('publishings');
+        Schema::dropIfExists('drug_substances');
     }
 };
