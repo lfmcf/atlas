@@ -12,6 +12,7 @@ use App\Models\MetaData;
 use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 
 class ReportController extends Controller
@@ -488,15 +489,26 @@ class ReportController extends Controller
 
     public function getProductOrCountry(Request $request)
     {
+        dd($request->product);
         if ($request->product) {
 
-            $country = MetaData::where('invented_name', $request->product)->where('procedure', $request->procedure)
-                ->get('country');
+            // $country = MetaData::where('invented_name', $request->product)->where('procedure', $request->procedure)
+            //     ->get('country');
+            $country = DB::table('meta_data')
+                ->where('invented_name', $request->product)
+                ->where('procedure', $request->procedure)
+                ->pluck('country');
+
+
             return $country;
         } else {
 
-            $product = MetaData::where('country', $request->country)->where('procedure', $request->procedure)
-                ->get('invented_name');
+            // $product = MetaData::where('country', $request->country)->where('procedure', $request->procedure)
+            //     ->get('invented_name');
+            $product = DB::table('meta_data')
+                ->where('country', $request->country)
+                ->where('procedure', $request->procedure)
+                ->pluck('invented_name');
             return $product;
         }
     }
