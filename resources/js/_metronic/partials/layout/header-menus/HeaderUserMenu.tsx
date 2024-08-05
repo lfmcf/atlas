@@ -4,13 +4,19 @@ import { Link, router } from '@inertiajs/react'
 // import {useAuth} from '../../../../app/modules/auth'
 import { Languages } from './Languages'
 import { toAbsoluteUrl } from '../../../helpers'
+import axios from 'axios'
 
 const HeaderUserMenu = ({ user }) => {
 
     // const {currentUser, logout} = useAuth()
-    const logout = () => {
-        router.post(route('logout'))
-        document.location.reload()
+    const logout = async () => {
+
+
+        // axios.post(route('logout')).then(() => {
+        //     router.get(route('login'))
+        // })
+        await router.post(route('logout'))
+        window.location.reload();
     }
     return (
         <div

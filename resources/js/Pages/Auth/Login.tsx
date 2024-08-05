@@ -82,6 +82,7 @@ export default function Login() {
     };
 
     useEffect(() => {
+
         for (var i in styles.body) {
             document.body.style[i] = styles.body[i];
         }
