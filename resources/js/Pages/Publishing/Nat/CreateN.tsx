@@ -14,8 +14,10 @@ import StatusComponent from '../../../Components/StatusComponent'
 
 const CreateN = (props: any) => {
 
-    console.log(props.metadata)
+
+
     const { metadata, folder, metapro } = props;
+    console.log(metadata)
     var trigramme = props.auth.user.trigramme;
     trigramme = trigramme?.toUpperCase();
     const stepperRef = useRef<HTMLDivElement | null>(null)
@@ -702,7 +704,7 @@ const CreateN = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
