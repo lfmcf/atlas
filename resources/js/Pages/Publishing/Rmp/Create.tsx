@@ -18,6 +18,8 @@ const Create = (props: any) => {
 
     const { metadata, folder, metapro } = props;
 
+    console.log(metadata)
+
     var params = new URLSearchParams(window.location.search);
 
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: new Array(), submission_mode: new Array(), submission_unit: new Array(), sequence: new Array() })

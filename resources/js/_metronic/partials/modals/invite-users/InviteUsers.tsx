@@ -304,6 +304,46 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 setIsLoadingPr(false)
             }, 1000)
         }
+    }, [data.procedure])
+
+    useEffect(() => {
+        setData({ ...data, product: '', country: '' })
+
+        if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value, 'product_family': data.product_family.value }).then(res => {
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val, value: val })
+                    })
+                    setProductList(myarr);
+                }
+            })
+            setCountryList(eunatcountry)
+            setCompselect(true)
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
+
+        } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
+            setIsLoadingPr(true)
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale', 'product_family': data.product_family.value }).then(res => {
+                console.log(res)
+                if (res.status == 200) {
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val, value: val })
+                    })
+                    setProductList(myarr);
+                }
+            })
+
+            setCompselect(false)
+            setTimeout(() => {
+                setIsLoadingPr(false)
+            }, 1000)
+        }
     }, [data.product_family])
 
     useEffect(() => {

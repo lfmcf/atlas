@@ -107,7 +107,7 @@ class PublishingController extends Controller
                 if (!$request->id) {
                     for ($i = 0; $i < count($country); $i += 2) {
                         $md = MetaData::where([
-                            ['Product', '=', $product],
+                            ['invented_name', '=', $product],
                             ['procedure', '=', $procedure],
                             ['country', '=', $country[$i]['label']]
                         ])->first();
@@ -118,7 +118,7 @@ class PublishingController extends Controller
                 } else {
                     foreach ($pub->mt as $m) {
                         $md = MetaData::where([
-                            ['Product', '=', $product],
+                            ['invented_name', '=', $product],
                             ['procedure', '=', $procedure],
                             ['country', '=', $m['country']]
                         ])->first();
@@ -137,7 +137,7 @@ class PublishingController extends Controller
         } else if ($region == "CH") {
             $country = is_array($country) ? $country['value'] : $country;
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
             ])->first();
@@ -154,7 +154,7 @@ class PublishingController extends Controller
         } else if ($region == "GCC") {
             $country = is_array($country) ? $country['value'] : $country;
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
             ])->first();
@@ -2297,9 +2297,7 @@ class PublishingController extends Controller
         ]);
     }
 
-    public function correctNatCh(Request $request)
-    {
-    }
+    public function correctNatCh(Request $request) {}
 
 
     public function confirmmrp(Request $request)
