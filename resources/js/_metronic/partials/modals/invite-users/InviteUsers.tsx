@@ -42,6 +42,7 @@ type FormValues = {
     region: any,
     coreDoc: boolean,
     procedure: any,
+    product_family: any,
     product: any,
     country: any
 }
@@ -94,6 +95,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
         region: '',
         coreDoc: false,
         procedure: '',
+        product_family: '',
         product: '',
         country: ''
     })
@@ -201,7 +203,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 if (res.status == 200) {
                     var myarr = []
                     res.data.map(val => {
-                        myarr.push({ label: val.name, value: val.name })
+                        myarr.push({ label: val, value: val })
                     })
                     setProductList(myarr);
                 }
@@ -217,7 +219,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 if (res.status == 200) {
                     var myarr = []
                     res.data.map(val => {
-                        myarr.push({ label: val.name, value: val.name })
+                        myarr.push({ label: val, value: val })
                     })
                     setProductList(myarr);
                 }
@@ -269,11 +271,11 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
         if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
             setIsLoadingPr(true)
-            axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value }).then(res => {
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value, 'product_family': data.product_family.value }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
                     res.data.map(val => {
-                        myarr.push({ label: val.name, value: val.name })
+                        myarr.push({ label: val, value: val })
                     })
                     setProductList(myarr);
                 }
@@ -286,12 +288,12 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
 
         } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
             setIsLoadingPr(true)
-            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
+            axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale', 'product_family': data.product_family.value }).then(res => {
                 console.log(res)
                 if (res.status == 200) {
                     var myarr = []
                     res.data.map(val => {
-                        myarr.push({ label: val.name, value: val.name })
+                        myarr.push({ label: val, value: val })
                     })
                     setProductList(myarr);
                 }
@@ -302,7 +304,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 setIsLoadingPr(false)
             }, 1000)
         }
-    }, [data.procedure])
+    }, [data.product_family])
 
     useEffect(() => {
         if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
@@ -474,6 +476,23 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                             isClearable
                                             value={data.procedure}
                                             isDisabled={data.region && data.region.value == 'GCC' || data.region && data.region.value == 'CH' ? true : false}
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                        />
+                                    </div>
+                                    <div className='my-4' style={{ display: data.procedure && data.procedure.value == 'Nationale' && data.region && data.region.value == 'EU' ? 'block' : 'none' }}>
+                                        <label className='form-label' data-toggle='tooltip' title='Select the product family for the Lifecycle Publishing'>Product family</label>
+                                        <Select options={[
+                                            { label: 'Staloral', value: 'Staloral' },
+                                            { label: 'Venins', value: 'Venins' },
+                                            { label: 'Alustal', value: 'Alustal' },
+                                            { label: 'Alyostal', value: 'Alyostal' },
+                                            { label: 'Diluant', value: 'Diluant' },
+                                        ]}
+                                            name='product_family'
+                                            onChange={(e) => handleSelectChange(e, 'product_family')}
+                                            placeholder='Product family'
+                                            isClearable
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                         />

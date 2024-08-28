@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product_meta;
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Region;
+use App\Models\Procedure;
+use App\Models\ProductFamilies;
 
 class ProductMetaController extends Controller
 {
@@ -75,9 +79,44 @@ class ProductMetaController extends Controller
     public function getProductname(Request $request)
     {
 
-        $names = Product_meta::where('region', $request->region)->where('procedure', $request->procedure)->first();
-        $products = $names->product;
-        $products = json_decode($products);
+        $region = $request->input('region');
+        $procedure = $request->input('procedure');
+        $productFamily = $request->input('product_family');
+
+        $regionId = Region::where('region_name', $region)->firstOrFail()->id;
+        $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
+
+
+        if (isset($productFamily)) {
+
+
+            $productFamilyId = ProductFamilies::where('familly_name', $productFamily)->firstOrFail()->id;
+
+            $products = Product::where('product_family_id', $productFamilyId)
+                ->whereHas('regions', function ($query) use ($regionId) {
+                    $query->where('regions.id', $regionId);
+                })
+                ->whereHas('procedures', function ($query) use ($procedureId) {
+                    $query->where('procedures.id', $procedureId);
+                })
+                ->pluck('name');
+        } else {
+            //$products = Product_meta::where('region', $request->region)->where('procedure', $request->procedure)->first();
+            // $products = $names->product;
+            // $products = json_decode($products);
+
+            $products = Product::whereHas('regions', function ($query) use ($regionId) {
+                $query->where('regions.id', $regionId);
+            })
+                ->whereHas('procedures', function ($query) use ($procedureId) {
+                    $query->where('procedures.id', $procedureId);
+                })
+                ->pluck('name');
+        }
+
+
+
+
 
         return response($products, 200);
     }
