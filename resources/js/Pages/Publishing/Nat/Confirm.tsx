@@ -11,7 +11,8 @@ import StatusComponent from "../../../Components/StatusComponent";
 
 const Confirm = (props: any) => {
 
-    const { metadata, folder, metapro } = props
+    const { metadata, folder } = props
+
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
@@ -673,7 +674,7 @@ const Confirm = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.indications.map((val) => ({ label: val, value: val }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -688,7 +689,7 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.drug_substance.map((val) => ({ label: val, value: val }))}
                                         name='drug_substance'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
@@ -703,7 +704,7 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.drug_substance_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -720,7 +721,7 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.drug_product.map((val) => ({ label: val, value: val }))}
                                         name='drug_product'
                                         onChange={(e) => handleSelectChange(e, 'drug_product')}
                                         className="react-select-container"
@@ -734,7 +735,7 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.drug_product_manufacturer.map((val) => ({ label: val, value: val }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -748,7 +749,7 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.dosage_form.map((val) => ({ label: val, value: val }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -765,7 +766,7 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.excipients.map((val) => ({ label: val, value: val }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"

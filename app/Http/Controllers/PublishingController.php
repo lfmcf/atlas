@@ -631,20 +631,30 @@ class PublishingController extends Controller
         $country = is_array($country) ? $country['value'] : $country;
 
         $findstring = explode(' ', $product);
-        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+        $metaPro = MetaData::where(function ($q) use ($findstring) {
             foreach ($findstring as $value) {
                 $rvalue = rtrim($value, ",");
-                $q->orWhere('product', 'like', "%{$rvalue}%");
+                $q->orWhere('invented_name', 'like', "%{$rvalue}%");
             }
         })->first();
 
         if ($region == "EU") {
 
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
-            ])->first();
+            ])
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct',
+                    'drugProductManufacturer',
+                    'drugSubstanceManufacturer',
+                    'excipients',
+                    'drugSubstance',
+                    'indications'
+                ])->first();
 
             if ($md) {
                 return Inertia::render('Publishing/Nat/Confirm', [
@@ -657,7 +667,7 @@ class PublishingController extends Controller
             }
         } else if ($region == "CH") {
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
             ])->first();
@@ -673,7 +683,7 @@ class PublishingController extends Controller
             }
         } else if ($region == "GCC") {
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
             ])->first();
@@ -797,7 +807,7 @@ class PublishingController extends Controller
             for ($i = 0; $i < count($pub->mt); $i += 1) {
 
                 $md = MetaData::where([
-                    ['Product', '=', $product],
+                    ['invented_name', '=', $product],
                     ['procedure', '=', $procedure],
                     ['country', '=', $pub->mt[$i]['country']]
                 ])->first();
@@ -816,10 +826,21 @@ class PublishingController extends Controller
         $country = $pub->country;
 
         $md = MetaData::where([
-            ['Product', '=', $product],
+            ['invented_name', '=', $product],
             ['procedure', '=', $procedure],
             ['country', '=', $country]
-        ])->first();
+        ])
+            ->with([
+                'trackingNumbers',
+                'dosageForm',
+                'drugProduct',
+                'drugProductManufacturer',
+                'drugSubstanceManufacturer',
+                'excipients',
+                'drugSubstance',
+                'indications'
+            ])
+            ->first();
 
         if ($pub->region == "EU") {
 
