@@ -333,7 +333,7 @@ class FormatingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
+        //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 

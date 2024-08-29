@@ -16,6 +16,9 @@ use App\Notifications\InvoiceInitaitedForm;
 use App\Models\PublishingMrp;
 use App\Models\Product_meta;
 use App\Mail\PublishingSubmitted;
+use App\Models\Product;
+use App\Models\Region;
+use App\Models\Procedure;
 
 class PublishingController extends Controller
 {
@@ -180,8 +183,18 @@ class PublishingController extends Controller
         $region = $pub->region;
         $procedure = $pub->procedure;
 
-        $product = Meta_Data::where('region', $region)->where('procedure', $procedure)->first(['product']);
-        $product = json_decode($product['product']);
+        $regionId = Region::where('region_name', $region)->firstOrFail()->id;
+        $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
+
+        // $product = Product::where('region', $region)->where('procedure', $procedure)->first(['invented_name']);
+        // $product = json_decode($product['invented_name']);
+        $product = Product::whereHas('regions', function ($query) use ($regionId) {
+            $query->where('regions.id', $regionId);
+        })
+            ->whereHas('procedures', function ($query) use ($procedureId) {
+                $query->where('procedures.id', $procedureId);
+            })
+            ->pluck('name');
 
         if ($region == "EU") {
 
@@ -790,7 +803,7 @@ class PublishingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -1796,7 +1809,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -2197,7 +2210,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        //Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -2382,7 +2395,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        //Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 

@@ -617,7 +617,9 @@ const Confirm = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
                                     <div className='d-flex align-items-center'>
-                                        {/* <Select options={tno}
+                                        <Select options={metadata.tracking_numbers.map((val) => {
+                                            return { label: val.numbers, value: val.numbers }
+                                        })}
                                             name='tracking'
                                             onChange={(e, action) => handleSelectChangeTracking(e, action)}
                                             className="react-select-container"
@@ -627,7 +629,7 @@ const Confirm = (props: any) => {
                                             defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ ...base, width: '50%' }) }}
-                                        /> */}
+                                        />
                                         <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
                                     </div>
                                 </div>
