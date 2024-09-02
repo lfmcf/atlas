@@ -26,7 +26,7 @@ const Confirm = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
         product_name: folder ? folder.product_name : params.get('product'),
