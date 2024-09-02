@@ -1,25 +1,33 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Link, router } from '@inertiajs/react'
 // import {useAuth} from '../../../../app/modules/auth'
 import { Languages } from './Languages'
 import { toAbsoluteUrl } from '../../../helpers'
 import axios from 'axios'
 
-const HeaderUserMenu = ({ user }) => {
-
+const HeaderUserMenu = ({ user, logout }) => {
+    // const [reload, setRload] = useState(false)
     // const {currentUser, logout} = useAuth()
-    const logout = async () => {
+    // const logout = async () => {
 
 
-        // axios.post(route('logout')).then(() => {
-        //     router.get(route('login'))
-        // })
-        await router.post(route('logout')).then(() => {
-            window.location.reload();
-        })
+    //     // axios.post(route('logout')).then(() => {
+    //     //     router.get(route('login'))
+    //     // })
 
-    }
+    //     await router.post(route('logout'));
+    //     setRload(true)
+
+    // }
+
+    // useEffect(() => {
+
+    //     console.log('reload')
+    //     window.location.reload();
+
+    // }, []);
+
     return (
         <div
             className='menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px'
