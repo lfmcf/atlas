@@ -2,8 +2,9 @@ import { FC, useEffect } from 'react'
 import { ILayout, useLayout } from '../../core'
 import { MenuInner } from './header-menus'
 
-const Header: FC = () => {
+const Header: FC = ({ team_member }) => {
     const { config } = useLayout()
+
     useEffect(() => {
         updateDOM(config)
     }, [config])
@@ -24,7 +25,7 @@ const Header: FC = () => {
             id='kt_app_header_menu'
             data-kt-menu='true'
         >
-            <MenuInner />
+            <MenuInner team_member={team_member} />
         </div>
     )
 }

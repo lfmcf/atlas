@@ -15,8 +15,10 @@ const HeaderUserMenu = ({ user }) => {
         // axios.post(route('logout')).then(() => {
         //     router.get(route('login'))
         // })
-        await router.post(route('logout'))
-        window.location.reload();
+        await router.post(route('logout')).then(() => {
+            window.location.reload();
+        })
+
     }
     return (
         <div

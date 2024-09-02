@@ -93,7 +93,7 @@ export function HeaderWrapper({ auth }) {
                                 data-kt-swapper-mode="{default: 'append', lg: 'prepend'}"
                                 data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}"
                             >
-                                <Header />
+                                <Header team_member={auth?.user?.current_team_id} />
                             </div>
                         )}
                     <Navbar auth={auth} />

@@ -17,7 +17,7 @@ const initialState = {
 };
 
 
-export function MenuInner() {
+export function MenuInner({ team_member }) {
     const intl = useIntl()
     const [show, setShow] = useState(false);
     const [showSec, setShowSec] = useState(false);
@@ -37,7 +37,7 @@ export function MenuInner() {
     return (
         <>
             {/* <MenuItem title="New Request" to='#' onClick={ } /> */}
-            <div className='menu-item me-lg-1'>
+            <div className='menu-item me-lg-1' style={{ display: team_member == 3 ? 'none' : '' }}>
                 <a
                     href='#'
                     className='btn menu-link py-3'
