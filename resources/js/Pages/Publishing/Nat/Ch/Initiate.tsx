@@ -34,10 +34,10 @@ const Initiate = (props: any) => {
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        tracking: metadata.trackingNumber,
+        tracking: metadata.tracking_numbers[0].numbers,
         submission_description: folder ? folder.submission_description : '',
         invented_name: folder ? folder.invented_name : metadata.invented_name,
-        galenic_form: metadata.galenic_form,
+        galenic_form: metadata.swiss_meta_data[0].galenic_form,
         swissmedic: metadata.swiss_meta_data[0].swissmedic,
         galenic_name: metadata.swiss_meta_data[0].gemran,
         dmf: metadata.swiss_meta_data[0].dmf_number,
@@ -451,7 +451,8 @@ const Initiate = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Application number</label>
-                                    <Select options={tnoptions ? tnoptions : ''}
+                                    <input type="text" className="form-control form-control-solid" name="tracking" defaultValue={data.tracking} onChange={handleChange} />
+                                    {/* <Select options={tnoptions ? tnoptions : ''}
                                         name='tracking'
                                         onChange={(e) => handleSelectChange(e, 'tracking')}
                                         className="react-select-container"
@@ -461,7 +462,7 @@ const Initiate = (props: any) => {
                                         defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission description</label>
@@ -475,7 +476,8 @@ const Initiate = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Galenic form</label>
-                                    <Select options={[]}
+                                    <input type="text" className="form-control form-control-solid" name="galenic_form" defaultValue={data.galenic_form} onChange={handleChange} />
+                                    {/* <Select options={[]}
                                         name='galenic_form'
                                         onChange={(e) => handleSelectChange(e, 'galenic_form')}
                                         className="react-select-container"
@@ -485,7 +487,7 @@ const Initiate = (props: any) => {
                                         value={data.galenic_form}
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Authorization number (Swissmedic)</label>
