@@ -2,8 +2,6 @@ import clsx from 'clsx'
 import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import { HeaderNotificationsMenu, HeaderUserMenu, Search, ThemeModeSwitcher } from '../../../partials'
 import { useLayout } from '../../core'
-import { useEffect, useState } from 'react'
-import { router } from '@inertiajs/react'
 
 const itemClass = 'ms-1 ms-md-4'
 const btnClass =
@@ -14,26 +12,8 @@ const btnIconClass = 'fs-2'
 const Navbar = ({ auth }) => {
 
     // const { config } = useLayout()
-    const [reload, setRload] = useState(false)
+
     const unreadNot = auth.user.unread_notifications.length
-
-    const logout = () => {
-
-        // axios.post(route('logout')).then(() => {
-        //     router.get(route('login'))
-        // })
-
-        router.post(route('logout'));
-        window.location.reload();
-
-    }
-
-    // useEffect(() => {
-
-    //     console.log('reload')
-    //     window.location.reload();
-
-    // }, [reload]);
 
 
     return (
@@ -67,7 +47,7 @@ const Navbar = ({ auth }) => {
                     </div>
                     {/* <img src={toAbsoluteUrl('/media/avatars/300-3.jpg')} alt='' /> */}
                 </div>
-                <HeaderUserMenu user={auth.user} logout={logout} />
+                <HeaderUserMenu user={auth.user} />
             </div>
 
             {/* {config.app?.header?.default?.menu?.display && (

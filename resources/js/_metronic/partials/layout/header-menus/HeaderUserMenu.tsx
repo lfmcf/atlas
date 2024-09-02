@@ -6,27 +6,17 @@ import { Languages } from './Languages'
 import { toAbsoluteUrl } from '../../../helpers'
 import axios from 'axios'
 
-const HeaderUserMenu = ({ user, logout }) => {
+const HeaderUserMenu = ({ user }) => {
     // const [reload, setRload] = useState(false)
     // const {currentUser, logout} = useAuth()
-    // const logout = async () => {
+    const logout = () => {
+
+        localStorage.setItem('reloaded', 'true');
+        router.post(route('logout'));
+
+    }
 
 
-    //     // axios.post(route('logout')).then(() => {
-    //     //     router.get(route('login'))
-    //     // })
-
-    //     await router.post(route('logout'));
-    //     setRload(true)
-
-    // }
-
-    // useEffect(() => {
-
-    //     console.log('reload')
-    //     window.location.reload();
-
-    // }, []);
 
     return (
         <div

@@ -83,6 +83,15 @@ export default function Login() {
 
     useEffect(() => {
 
+        if (localStorage.getItem('reloaded')) {
+
+            // Reload the page
+            window.location.reload();
+
+            // Mark the page as reloaded
+            localStorage.removeItem('reloaded');
+        }
+
         for (var i in styles.body) {
             document.body.style[i] = styles.body[i];
         }
