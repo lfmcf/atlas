@@ -22,7 +22,7 @@ const Initiate = (props: any) => {
     trigramme = trigramme?.toUpperCase()
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
+        form: folder ? folder.form : 'Formatting',
         region: folder ? folder.region : params.get('region'),
         coredoc: folder ? folder.coreDoc : params.get('coreDoc'),
         dossier_contact: folder ? folder.dossier_contact : trigramme,

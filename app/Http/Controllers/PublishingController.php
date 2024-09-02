@@ -113,7 +113,18 @@ class PublishingController extends Controller
                             ['invented_name', '=', $product],
                             ['procedure', '=', $procedure],
                             ['country', '=', $country[$i]['label']]
-                        ])->first();
+                        ])
+                            ->with([
+                                'trackingNumbers',
+                                'dosageForm',
+                                'drugProduct',
+                                'drugProductManufacturer',
+                                'drugSubstanceManufacturer',
+                                'excipients',
+                                'drugSubstance',
+                                'indications'
+                            ])
+                            ->first();
                         if ($md) {
                             array_push($listmd, $md);
                         }
@@ -143,7 +154,19 @@ class PublishingController extends Controller
                 ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
-            ])->first();
+            ])
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct',
+                    'drugProductManufacturer',
+                    'drugSubstanceManufacturer',
+                    'excipients',
+                    'drugSubstance',
+                    'indications',
+                    'swissMetaData'
+                ])
+                ->first();
 
             if ($md) {
                 return Inertia::render('Publishing/Nat/Ch/Initiate', [
@@ -160,7 +183,18 @@ class PublishingController extends Controller
                 ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
-            ])->first();
+            ])
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct',
+                    'drugProductManufacturer',
+                    'drugSubstanceManufacturer',
+                    'excipients',
+                    'drugSubstance',
+                    'indications'
+                ])
+                ->first();
 
             if ($md) {
                 return Inertia::render('Publishing/Nat/Gcc/Initiate', [
@@ -683,7 +717,18 @@ class PublishingController extends Controller
                 ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
-            ])->first();
+            ])->with([
+                'trackingNumbers',
+                'dosageForm',
+                'drugProduct',
+                'drugProductManufacturer',
+                'drugSubstanceManufacturer',
+                'excipients',
+                'drugSubstance',
+                'indications',
+                'swissMetaData'
+            ])
+                ->first();
 
             if ($md) {
                 return Inertia::render('Publishing/Nat/Ch/Confirm', [
@@ -699,6 +744,15 @@ class PublishingController extends Controller
                 ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $country]
+            ])->with([
+                'trackingNumbers',
+                'dosageForm',
+                'drugProduct',
+                'drugProductManufacturer',
+                'drugSubstanceManufacturer',
+                'excipients',
+                'drugSubstance',
+                'indications'
             ])->first();
 
             if ($md) {
@@ -823,6 +877,15 @@ class PublishingController extends Controller
                     ['invented_name', '=', $product],
                     ['procedure', '=', $procedure],
                     ['country', '=', $pub->mt[$i]['country']]
+                ])->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct',
+                    'drugProductManufacturer',
+                    'drugSubstanceManufacturer',
+                    'excipients',
+                    'drugSubstance',
+                    'indications'
                 ])->first();
                 if ($md) {
                     array_push($listmd, $md);
@@ -1217,8 +1280,9 @@ class PublishingController extends Controller
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
         $pub->indication = $request->indication;
-        $pub->manufacturer = $request->manufacturer;
+        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
         $pub->drug_substance = $request->drug_substance;
+        $pub->drug_product = $request->drug_product;
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
@@ -1415,20 +1479,29 @@ class PublishingController extends Controller
         $product = $pub->product_name;
         $procedure = $pub->procedure;
 
-        $findstring = explode(' ', $product);
-        $metaPro = MetaProduct::where(function ($q) use ($findstring) {
-            foreach ($findstring as $value) {
-                $rvalue = rtrim($value, ",");
-                $q->orWhere('product', 'like', "%{$rvalue}%");
-            }
-        })->first();
+        // $findstring = explode(' ', $product);
+        // $metaPro = MetaProduct::where(function ($q) use ($findstring) {
+        //     foreach ($findstring as $value) {
+        //         $rvalue = rtrim($value, ",");
+        //         $q->orWhere('product', 'like', "%{$rvalue}%");
+        //     }
+        // })->first();
 
         $listmd = [];
         for ($i = 0; $i < count($pub->mt); $i++) {
             $md = MetaData::where([
-                ['Product', '=', $product],
+                ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $pub->mt[$i]['country']]
+            ])->with([
+                'trackingNumbers',
+                'dosageForm',
+                'drugProduct',
+                'drugProductManufacturer',
+                'drugSubstanceManufacturer',
+                'excipients',
+                'drugSubstance',
+                'indications'
             ])->first();
             if ($md) {
                 array_push($listmd, $md);
@@ -1438,7 +1511,6 @@ class PublishingController extends Controller
         return Inertia::render('Publishing/Rmp/Confirm', [
             'folder' => $pub,
             'metadata' => $listmd,
-            'metapro' => $metaPro
         ]);
     }
 
@@ -2375,7 +2447,8 @@ class PublishingController extends Controller
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
         $pub->indication = $request->indication;
-        $pub->manufacturer = $request->manufacturer;
+        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
+        $pub->drug_product = $request->drug_product;
         $pub->drug_substance = $request->drug_substance;
         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
@@ -2452,8 +2525,9 @@ class PublishingController extends Controller
             $pub->remarks = $request->remarks;
             $pub->mt = $request->mt;
             $pub->indication = $request->indication;
-            $pub->manufacturer = $request->manufacturer;
+            $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
             $pub->drug_substance = $request->drug_substance;
+            $pub->drug_product = $request->drug_product;
             $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
             $pub->dosage_form = $request->dosage_form;
             $pub->excipient = $request->excipient;

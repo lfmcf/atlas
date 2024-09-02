@@ -8,6 +8,7 @@ const DeliveryMessage = (props) => {
 
     const [comment, setComment] = useState('')
     const handleDilivred = () => {
+
         if (props.form == 'Formatting') {
             router.post(route('diliver-formatting'), { id: props.id, comment: comment })
         } else {

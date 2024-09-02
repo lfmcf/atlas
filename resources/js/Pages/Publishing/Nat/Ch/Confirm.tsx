@@ -38,14 +38,14 @@ const Confirm = (props: any) => {
         submission_description: folder ? folder.submission_description : '',
         invented_name: folder ? folder.invented_name : '',
         galenic_form: metadata.galenic_form,
-        swissmedic: metadata.swissmedic,
-        galenic_name: metadata.gemran,
-        dmf: metadata.dmf_number,
-        pmf: folder ? folder.pmf : '',
+        swissmedic: metadata.swiss_meta_data[0].swissmedic,
+        galenic_name: metadata.swiss_meta_data[0].gemran,
+        dmf: metadata.swiss_meta_data[0].dmf_number,
+        pmf: folder ? folder.pmf : metadata.swiss_meta_data[0].pmf_holder,
         inn: metadata.inn,
         applicant: metadata.applicant,
-        dmf_holder: folder ? folder.dmf_holder : '',
-        pmf_holder: folder ? folder.pmf_holder : '',
+        dmf_holder: folder ? folder.dmf_holder : metadata.swiss_meta_data[0].dmf_number,
+        pmf_holder: folder ? folder.pmf_holder : metadata.swiss_meta_data[0].pmf_holder,
         agency_code: metadata.agencyCode,
         tpa: metadata.tpa,
         sequence: folder ? folder.sequence : '',
@@ -73,25 +73,25 @@ const Confirm = (props: any) => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
 
-    useEffect(() => {
-        let pdata = { ...data };
-        let tn = metadata.trackingNumber
-        tn = tn.split(/\r?\n/)
-        if (tn.length > 1) {
-            let tno = tn.map((val) => {
-                return { label: val, value: val }
-            })
-            pdata.tracking = ''
-            setTnoptions(tno)
-        } else {
-            let tno = tn.map((val) => {
-                return { label: val, value: val }
-            })
-            setTnoptions(tno)
-            pdata.tracking = { label: tn[0], value: tn[0] }
-        }
-        setData(pdata)
-    }, [])
+    // useEffect(() => {
+    //     let pdata = { ...data };
+    //     let tn = metadata.trackingNumber
+    //     tn = tn.split(/\r?\n/)
+    //     if (tn.length > 1) {
+    //         let tno = tn.map((val) => {
+    //             return { label: val, value: val }
+    //         })
+    //         pdata.tracking = ''
+    //         setTnoptions(tno)
+    //     } else {
+    //         let tno = tn.map((val) => {
+    //             return { label: val, value: val }
+    //         })
+    //         setTnoptions(tno)
+    //         pdata.tracking = { label: tn[0], value: tn[0] }
+    //     }
+    //     setData(pdata)
+    // }, [])
 
     useEffect(() => {
         let date = new Date();
@@ -567,7 +567,7 @@ const Confirm = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select options={metadata?.indication.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata?.indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -582,7 +582,9 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_substance.map((val) =>
+                                        ({ label: val.substance, value: val.substance })
+                                    )}
                                         name='drug_substance'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
@@ -597,7 +599,9 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_substance_manufacturer.map((val) =>
+                                        ({ label: val.substance_manufacturer, value: val.substance_manufacturer })
+                                    )}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -614,7 +618,9 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_product.map((val) =>
+                                        ({ label: val.drug_product, value: val.drug_product })
+                                    )}
                                         name='drug_product'
                                         onChange={(e) => handleSelectChange(e, 'drug_product')}
                                         className="react-select-container"
@@ -628,7 +634,9 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.drug_product_manufacturer.map((val) =>
+                                        ({ label: val.product_manufacturer, value: val.product_manufacturer })
+                                    )}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -642,7 +650,9 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.dosage_form.map((val) =>
+                                        ({ label: val.form, value: val.form })
+                                    )}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -659,7 +669,9 @@ const Confirm = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata.excipients.map((val) =>
+                                        ({ label: val.excipient, value: val.excipient })
+                                    )}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"

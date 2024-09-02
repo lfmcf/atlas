@@ -286,6 +286,8 @@ export const eunatcountry = [
     { label: 'Malta', value: 'Malta' },
     { label: 'Netherlands', value: 'Netherlands' },
     { label: 'Portugal', value: 'Portugal' },
+    { label: 'Croatia', value: 'Croatia' },
+    { label: 'Norway', value: 'Norway' },
     { label: 'Sweden', value: 'Sweden' },
 ]
 

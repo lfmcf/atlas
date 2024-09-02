@@ -68,7 +68,7 @@ const Audit = (props: any) => {
     })
 
     const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
+        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].tracking_numbers[0].numbers, submission_unit: '', applicant: metadata[0].applicant,
         agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
         r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
     });
@@ -879,7 +879,7 @@ const Audit = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -894,7 +894,7 @@ const Audit = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_substance.map((val) => ({ label: val.substance, value: val.substance }))}
                                         name='drug_substance'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
@@ -909,7 +909,7 @@ const Audit = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -926,7 +926,7 @@ const Audit = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product.map((val) => ({ label: val.drug_product, value: val.drug_product }))}
                                         name='drug_product'
                                         onChange={(e) => handleSelectChange(e, 'drug_product')}
                                         className="react-select-container"
@@ -940,7 +940,7 @@ const Audit = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -954,7 +954,7 @@ const Audit = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].dosage_form.map((val) => ({ label: val.form, value: val.form }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -971,7 +971,7 @@ const Audit = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].excipients.map((val) => ({ label: val.excipient, value: val.excipient }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
@@ -1132,7 +1132,7 @@ const Audit = (props: any) => {
                                 : ''}
                             <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
-                                    Reject
+                                    Submit
                                 </span>
                                 <span className="indicator-progress">
                                     Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -1190,7 +1190,7 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_type}
+                                                            value={data.mt[0].submission_type}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -1208,14 +1208,14 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_mode}
+                                                            value={data.mt[0].submission_mode}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Procedure Tracking N°</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission unit</label>
@@ -1235,7 +1235,7 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_unit}
+                                                            value={data.mt[0].submission_unit}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -1243,29 +1243,29 @@ const Audit = (props: any) => {
 
                                                     <div className='mb-10'>
                                                         <label className="form-label">Applicant</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].applicant} name="applicant" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].applicant} name="applicant" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Invented name</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].Product} name="inventedName" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].inventedName} name="inventedName" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">INN</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].inn} name="inn" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].inn} name="inn" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].sequence} name="sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].sequence} name="sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Related Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission description</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                             </form>

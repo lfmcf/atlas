@@ -528,6 +528,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                                             { label: 'Alustal', value: 'Alustal' },
                                             { label: 'Alyostal', value: 'Alyostal' },
                                             { label: 'Diluant', value: 'Diluant' },
+                                            { label: 'ORALAIR', value: 'ORALAIR' },
                                         ]}
                                             name='product_family'
                                             onChange={(e) => handleSelectChange(e, 'product_family')}
