@@ -215,7 +215,7 @@ class PublishingController extends Controller
         //     $pub = PublishingMrp::find($request->id);
         // }
 
-        dd($pub);
+
         $region = $pub->region;
         $procedure = $pub->procedure;
         $country = $pub->country['value'];
@@ -233,7 +233,7 @@ class PublishingController extends Controller
         //     })
         //     ->pluck('name');
 
-        dd($product);
+
 
         if ($region == "EU") {
 
