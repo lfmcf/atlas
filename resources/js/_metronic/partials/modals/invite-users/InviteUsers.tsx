@@ -164,6 +164,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
     }
 
     const handleNavigate = (ReqType) => {
+
         if (ReqType == "formatting") {
             router.visit('/formatting-initiate', {
                 method: 'get',
@@ -182,6 +183,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 }
             })
         }
+        handleClose()
     }
 
     const handleLifeCycle = () => {
@@ -193,6 +195,8 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         })
+
+        handleClose()
     }
 
     useEffect(() => {
@@ -389,6 +393,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, form_,
             }, 1000)
         }
     }, [data.product_family_])
+
 
     useEffect(() => {
         if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
