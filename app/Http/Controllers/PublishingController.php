@@ -214,31 +214,51 @@ class PublishingController extends Controller
         // if (!$pub) {
         //     $pub = PublishingMrp::find($request->id);
         // }
+
+        dd($pub);
         $region = $pub->region;
         $procedure = $pub->procedure;
+        $country = $pub->country['value'];
+        $product = $pub->product_name;
 
         $regionId = Region::where('region_name', $region)->firstOrFail()->id;
         $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
 
-        // $product = Product::where('region', $region)->where('procedure', $procedure)->first(['invented_name']);
-        // $product = json_decode($product['invented_name']);
-        $product = Product::whereHas('regions', function ($query) use ($regionId) {
-            $query->where('regions.id', $regionId);
-        })
-            ->whereHas('procedures', function ($query) use ($procedureId) {
-                $query->where('procedures.id', $procedureId);
-            })
-            ->pluck('name');
+
+        // $product = Product::whereHas('regions', function ($query) use ($regionId) {
+        //     $query->where('regions.id', $regionId);
+        // })
+        //     ->whereHas('procedures', function ($query) use ($procedureId) {
+        //         $query->where('procedures.id', $procedureId);
+        //     })
+        //     ->pluck('name');
+
+        dd($product);
 
         if ($region == "EU") {
 
-            $country = Continent::where('id', 1)->first(['countries']);
-            $country = json_decode($country['countries']);
 
             if ($procedure == 'Nationale' || $procedure == 'Centralized') {
 
+                $meta_data = MetaData::where([
+                    ['invented_name', '=', $product],
+                    ['procedure', '=', $procedure],
+                    ['country', '=', $country]
+                ])
+                    ->with([
+                        'trackingNumbers',
+                        'dosageForm',
+                        'drugProduct',
+                        'drugProductManufacturer',
+                        'drugSubstanceManufacturer',
+                        'excipients',
+                        'drugSubstance',
+                        'indications'
+                    ])
+                    ->first();
+
                 return Inertia::render('Publishing/Nat/InitiateDuplicate', [
-                    // 'metadata' => $md,
+                    'metadata' => $meta_data,
                     'countries' => $country,
                     'products' => $product,
                     'folder' => $pub
@@ -276,10 +296,20 @@ class PublishingController extends Controller
         $listmd = [];
         foreach ($countries as $country) {
             $md = MetaData::where([
-                ['Product', '=', $pub->product_name],
+                ['invented_name', '=', $pub->product_name],
                 ['procedure', '=', $pub->procedure],
                 ['country', '=', $country]
-            ])->first();
+            ])
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct',
+                    'drugProductManufacturer',
+                    'drugSubstanceManufacturer',
+                    'excipients',
+                    'drugSubstance',
+                    'indications'
+                ])->first();
             if ($md) {
                 array_push($listmd, $md);
             }
@@ -306,10 +336,27 @@ class PublishingController extends Controller
                     ['country', '=', $country]
                 ])->first('agencyCode');
 
+                $md = MetaData::where([
+                    ['invented_name', '=', $product],
+                    ['procedure', '=', $procedure],
+                    ['country', '=', $country]
+                ])
+                    ->with([
+                        'trackingNumbers',
+                        'dosageForm',
+                        'drugProduct',
+                        'drugProductManufacturer',
+                        'drugSubstanceManufacturer',
+                        'excipients',
+                        'drugSubstance',
+                        'indications'
+                    ])->first();
+
                 return Inertia::render('Publishing/Nat/Initiate', [
                     'countries' => $country,
                     'products' => $product,
-                    'agc' => $agc
+                    'agc' => $agc,
+                    'metadata' => $md
                 ]);
             } else {
 
@@ -646,7 +693,7 @@ class PublishingController extends Controller
             $metadata = new MetaData();
             $metadata->procedure = $request->procedure;
             $metadata->country = $request->country['value'];
-            $metadata->Product = $request->productName;
+            $metadata->invented_name = $request->productName;
             $metadata->agencyCode = $request->agency_code;
             $metadata->trackingNumber = $request->tracking;
             $metadata->applicant = $request->applicant;

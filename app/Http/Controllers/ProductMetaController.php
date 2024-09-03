@@ -79,13 +79,13 @@ class ProductMetaController extends Controller
     public function getProductname(Request $request)
     {
 
+
         $region = $request->input('region');
         $procedure = $request->input('procedure');
         $productFamily = $request->input('product_family');
 
         $regionId = Region::where('region_name', $region)->firstOrFail()->id;
         $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
-
 
         if (isset($productFamily)) {
 
@@ -114,9 +114,28 @@ class ProductMetaController extends Controller
                 ->pluck('name');
         }
 
+        return response($products, 200);
+    }
 
+    public function getProductname_(Request $request)
+    {
+        $region = $request->input('region');
 
+        $procedure = $request->input('procedure');
+        $productFamily_ = $request->input('product_family_');
+        $productFamilyId = ProductFamilies::where('familly_name', $productFamily_)->firstOrFail()->id;
 
+        $regionId = Region::where('region_name', $region)->firstOrFail()->id;
+        $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
+
+        $products = Product::where('product_family_id', $productFamilyId)
+            ->whereHas('regions', function ($query) use ($regionId) {
+                $query->where('regions.id', $regionId);
+            })
+            ->whereHas('procedures', function ($query) use ($procedureId) {
+                $query->where('procedures.id', $procedureId);
+            })
+            ->pluck('name');
 
         return response($products, 200);
     }

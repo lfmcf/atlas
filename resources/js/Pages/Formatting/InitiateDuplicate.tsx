@@ -22,7 +22,7 @@ const InitiateDuplicate = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : '',
+        form: folder ? folder.form : 'Formatting',
         region: folder ? folder.region : '',
         coredoc: folder ? folder.coreDoc : '',
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),

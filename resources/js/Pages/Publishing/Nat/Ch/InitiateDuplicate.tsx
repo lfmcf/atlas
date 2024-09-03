@@ -15,7 +15,7 @@ const InitiateDuplicate = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : '',
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : '',
         procedure: folder ? folder.procedure : '',
         product_name: folder ? folder.product_name : '',

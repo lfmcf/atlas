@@ -340,7 +340,7 @@ const Show = (props) => {
                                                                     <div className='d-flex flex-column align-items-start'>
                                                                         <div className='d-flex align-items-center mb-2'>
                                                                             <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                             </div>
                                                                             <div className='ms-3'>
                                                                                 <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
@@ -362,7 +362,7 @@ const Show = (props) => {
                                                                                 {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
                                                                             </div>
                                                                             <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                                <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                             </div>
 
                                                                         </div>
@@ -428,7 +428,7 @@ const Show = (props) => {
                                                                 <div className='d-flex flex-column align-items-start'>
                                                                     <div className='d-flex align-items-center mb-2'>
                                                                         <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                            <span className="symbol-label bg-success text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                            <span className="symbol-label bg-success text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                         </div>
                                                                         <div className='ms-3'>
                                                                             <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
@@ -463,7 +463,7 @@ const Show = (props) => {
                                     data-bs-target='#kt_modal_delivery_message'
                                 >
                                     {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
-                                    Accept
+                                    Deliver
                                 </a>
                             </div>
                             :

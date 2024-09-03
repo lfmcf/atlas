@@ -196,6 +196,7 @@ Route::post('/getProductOrCountry', [ReportController::class, 'getProductOrCount
 
 Route::post('addproductmt', [ProductMetaController::class, 'store']);
 Route::post('getProductname', [ProductMetaController::class, 'getProductname']);
+Route::post('getProductname_', [ProductMetaController::class, 'getProductname_']);
 
 Route::post('getRequestPerType', [ReportController::class, 'getRequestPerType']);
 Route::post('getRequestsPerMonth', [ReportController::class, 'getRequestsPerMonth']);

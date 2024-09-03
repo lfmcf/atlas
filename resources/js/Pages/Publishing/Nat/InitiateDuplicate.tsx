@@ -12,6 +12,8 @@ const InitiateDuplicate = (props: any) => {
 
     const { metadata, folder, countries, products, metapro } = props;
 
+    console.log(metadata)
+
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [trOptions, setTrOptions] = useState([])
@@ -19,7 +21,7 @@ const InitiateDuplicate = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : '',
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : '',
         procedure: folder ? folder.procedure : '',
         productName: folder ? folder.product_name : '',

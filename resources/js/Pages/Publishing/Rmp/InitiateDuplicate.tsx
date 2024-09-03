@@ -22,7 +22,7 @@ const InitiateDuplicate = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : '',
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : '',
         procedure: folder ? folder.procedure : '',
         product_name: folder ? folder.product_name : '',
@@ -320,15 +320,17 @@ const InitiateDuplicate = (props: any) => {
 
     // useEffect(() => {
     //     let arr = { ...data };
-    //     data.mt.map((mtd, i) => {
+    //     metadata.map((mtd, i) => {
     //         arr.mt.push({
-    //             id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.trackingNumber,
-    //             submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.Product, inn: mtd.inn, sequence: '',
+    //             id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
+    //             submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.invented_name, inn: mtd.inn, sequence: '',
     //             r_sequence: '', submission_description: '', remarks: ''
     //         })
     //     })
     //     setData(arr)
     // }, [])
+
+    console.log(data.mt)
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
@@ -757,7 +759,7 @@ const InitiateDuplicate = (props: any) => {
                                         <div className='row mb-10'>
                                             <div className='col-4'>
                                                 <label className="form-label">Procedure Tracking N°</label>
-                                                <input type="text" className="form-control form-control-solid" name="tracking" value={mt.trackingNumber} onChange={(e) => handleMetaChange(e, i)} />
+                                                <input type="text" className="form-control form-control-solid" name="tracking" value={mt.tracking_numbers[0].numbers} onChange={(e) => handleMetaChange(e, i)} />
                                             </div>
                                             <div className='col-4'>
                                                 <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit[i] ? 'red' : '' }}>Submission unit</label>
@@ -794,7 +796,7 @@ const InitiateDuplicate = (props: any) => {
                                             </div>
                                             <div className='col-4'>
                                                 <label className="form-label">Invented name</label>
-                                                <input type="text" className="form-control form-control-solid" name="inventedName" value={mt.inventedName} onChange={(e) => handleMetaChange(e, i)} />
+                                                <input type="text" className="form-control form-control-solid" name="inventedName" value={mt.invented_name} onChange={(e) => handleMetaChange(e, i)} />
                                             </div>
                                             <div className='col-4'>
                                                 <label className="form-label">INN</label>
@@ -830,7 +832,7 @@ const InitiateDuplicate = (props: any) => {
                         <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Indication</label>
-                                <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                     name='indication'
                                     onChange={(e) => handleSelectChange(e, 'indication')}
                                     className="react-select-container"
@@ -845,7 +847,7 @@ const InitiateDuplicate = (props: any) => {
 
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug substance</label>
-                                <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].drug_substance.map((val) => ({ label: val.substance, value: val.substance }))}
                                     name='drug_substance'
                                     onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                     className="react-select-container"
@@ -860,7 +862,7 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug substance manufacturer</label>
-                                <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                     name='drug_substance_manufacturer'
                                     onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                     className="react-select-container"
@@ -877,7 +879,7 @@ const InitiateDuplicate = (props: any) => {
 
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug product</label>
-                                <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].drug_product.map((val) => ({ label: val.drug_product, value: val.drug_product }))}
                                     name='drug_product'
                                     onChange={(e) => handleSelectChange(e, 'drug_product')}
                                     className="react-select-container"
@@ -891,7 +893,7 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Drug product manufacturer</label>
-                                <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                     name='drug_product_manufacturer'
                                     onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                     className="react-select-container"
@@ -905,7 +907,7 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Dosage form</label>
-                                <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].dosage_form.map((val) => ({ label: val.form, value: val.form }))}
                                     name='dosage_form'
                                     onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                     className="react-select-container"
@@ -922,7 +924,7 @@ const InitiateDuplicate = (props: any) => {
 
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Excipient</label>
-                                <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata[0].excipients.map((val) => ({ label: val.excipient, value: val.excipient }))}
                                     name='excipient'
                                     onChange={(e) => handleSelectChange(e, 'excipient')}
                                     className="react-select-container"
@@ -1082,7 +1084,7 @@ const InitiateDuplicate = (props: any) => {
                                                 </div>
                                                 <div className='mb-10'>
                                                     <label className="form-label">Procedure Tracking N°</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
+                                                    <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].tracking_numbers[0].numbers} name="trackingNumber" onChange={handleMultipleChange} />
                                                 </div>
                                                 <div className='mb-10'>
                                                     <label className="form-label">Submission unit</label>
@@ -1116,7 +1118,7 @@ const InitiateDuplicate = (props: any) => {
                                             <div className='col-6'>
                                                 <div className='mb-10'>
                                                     <label className="form-label">Invented name</label>
-                                                    <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].inventedName} name="inventedName" onChange={handleMultipleChange} />
+                                                    <input type="text" className="form-control form-control-solid" defaultValue={data.mt[0].invented_name} name="inventedName" onChange={handleMultipleChange} />
                                                 </div>
                                                 <div className='mb-10'>
                                                     <label className="form-label">INN</label>

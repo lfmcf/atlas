@@ -1065,7 +1065,7 @@ const Audit = (props: any) => {
                                                             <div className='d-flex flex-column align-items-start'>
                                                                 <div className='d-flex align-items-center mb-2'>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                     </div>
                                                                     <div className='ms-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
@@ -1086,7 +1086,7 @@ const Audit = (props: any) => {
 
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                     </div>
 
                                                                 </div>
