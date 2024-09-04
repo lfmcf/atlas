@@ -23,18 +23,18 @@ type Props = {
 }
 
 const initialState = {
-	form_: { label: 'Publishing', value: 'Publishing' },
+	product_family_: "",
 	region_: "",
 	procedure_: "",
 	product_: "",
-	country_: ''
+	country_: '',
 };
 
 const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
 
-	const [{ form_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
+	const [{ product_family_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tb, setTb] = useState();
@@ -155,7 +155,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	}
 	const handleAddProduct = () => {
-		axios.post('addproductmt', { 'product': product_name, 'region': region_, 'procedure': procedure_ }).then(res => {
+		axios.post('addproductmt', { 'product': product_name, 'region': region_, 'procedure': procedure_, 'product_family_': product_family_ }).then(res => {
 			if (res.status == 200) {
 				setUpdate({ rerender: true, pName: product_name })
 			}
@@ -416,7 +416,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 				setShowSec={setShowSec}
 				initialState={initialState}
 				setState={setState}
-				form_={form_}
+				product_family_={product_family_}
 				region_={region_}
 				procedure_={procedure_}
 				product_={product_}
