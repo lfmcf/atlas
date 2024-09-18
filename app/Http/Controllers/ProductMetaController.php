@@ -37,6 +37,8 @@ class ProductMetaController extends Controller
         if (isset($request->product_family_)) {
             $productFamily = ProductFamilies::where('familly_name', $request->product_family_)->first();
             $product->product_family_id = $productFamily->id;
+        } else {
+            $product->product_family_id = 0;
         }
 
         $product->name = $request->product;
@@ -45,37 +47,7 @@ class ProductMetaController extends Controller
         return response('done', 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product_meta $product_meta)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product_meta $product_meta)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product_meta $product_meta)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product_meta $product_meta)
-    {
-        //
-    }
 
     public function getProductname(Request $request)
     {

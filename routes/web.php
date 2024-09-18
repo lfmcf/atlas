@@ -5,6 +5,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FormatingController;
 use App\Http\Controllers\PublishingController;
 use App\Http\Controllers\ProductMetaController;
+use App\Http\Controllers\PublishingEuController;
+use App\Http\Controllers\PublishingChController;
+use App\Http\Controllers\PublishingGccController;
 use App\Models\Formating;
 use App\Models\Publishing;
 use Illuminate\Foundation\Application;
@@ -52,7 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tasks', [ReportController::class, 'task'])->name('tasks');
 
     // ** iniatiate and submit form ** //
-    Route::get('/formatting-initiate', [FormatingController::class, 'create'])->name('formatting-initiate');
+    Route::get('/formatting_initiate', [FormatingController::class, 'create'])->name('formatting-initiate');
     Route::post('initiate-formatting', [FormatingController::class, 'store'])->name('initiate-formatting');
     Route::post('initiate-formatting-duplication', [FormatingController::class, 'storeDuplication'])->name('initiate-formatting-duplication');
 
@@ -86,8 +89,56 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** delete files from the server  ** //
     Route::post('delete-file', [FormatingController::class, 'deleteFile'])->name('delete-file');
 
+    // ** publishing EU management ** //
+    Route::get('/publishing_eu_initiate', [PublishingEuController::class, 'create'])->name('publishing-initiate');
+    Route::post('/store_eu_publishing', [PublishingEuController::class, 'store'])->name('store_eu_publishing');
+    Route::get('/publishing_eu_confirm', [PublishingEuController::class, 'createEuConfirm'])->name('publishing_eu_confirm');
+    Route::post('confirm_eu_publishing', [PublishingEuController::class, 'postEuConfirm'])->name('confirm_eu_publishing');
+    Route::get('/publishing_eu_audit', [PublishingEuController::class, 'createEuAudit'])->name('publishing_eu_audit');
+    Route::post('audit_eu_publishing', [PublishingEuController::class, 'postEuAudit'])->name('audit_eu_publishing');
+    Route::post('progress_eu_publishing', [PublishingEuController::class, 'setEuProgress'])->name('progress_eu_publishing');
+    Route::get('/show_eu_publishing', [PublishingEuController::class, 'show'])->name('show_eu_publishing');
+    Route::get('/publishing_eu_verification', [PublishingEuController::class, 'verification'])->name('publishing_eu_verification');
+    Route::post('complete_eu_publishing', [PublishingEuController::class, 'completeEuPublishing'])->name('complete_eu_publishing');
+    Route::post('close_eu_publishing', [PublishingEuController::class, 'closeEuPublishing'])->name('close_eu_publishing');
+    Route::post('correct_eu_publishing', [PublishingEuController::class, 'postEuCorrection'])->name('correct_eu_publishing');
+    Route::get('/duplicate_eu_publishing', [PublishingEuController::class, 'createEuDuplication'])->name('duplicate_eu_publishingg');
+    Route::post('getMetaDataForDuplicateNatEu', [PublishingEuController::class, 'getEuMetaData'])->name('getMetaDataForDuplicateNatEu');
+    Route::get('/publishing_eu_new_request', [PublishingEuController::class, 'newRequest'])->name('publishing_eu_new_request');
+    Route::post('/publishing_eu_new_request', [PublishingEuController::class, 'postNewRequest'])->name('publishing_eu_new_request');
+
+    // ** publishing CH management ** //
+
+    Route::get('/publishing_ch_initiate', [PublishingChController::class, 'create'])->name('publishing_ch_initiate');
+    Route::post('publishing_ch_store', [PublishingController::class, 'store'])->name('publishing_ch_store');
+    Route::get('/publishing_ch_confirm', [PublishingChController::class, 'createConfirm'])->name('publishing_ch_confirm');
+    Route::post('/publishing_ch_post_confirm', [PublishingChController::class, 'postConfirm'])->name('publishing_ch_post_confirm');
+    Route::get('/publishing_ch_audit', [PublishingChController::class, 'createAudit'])->name('publishing_ch_audit');
+    Route::post('/publishing_ch_post_audit', [PublishingChController::class, 'postAudit'])->name('publishing_ch_post_audit');
+    Route::get('/publishing_ch_verify', [PublishingChController::class, 'verify'])->name('publishing_ch_verify');
+    Route::post('/publishing_ch_post_verify', [PublishingChController::class, 'postVerify'])->name('publishing_ch_post_verify');
+    Route::get('/publishing_ch_new_request', [PublishingChController::class, 'newRequest'])->name('publishing_ch_new_request');
+    Route::post('/publishing_ch_new_request', [PublishingChController::class, 'postNewRequest'])->name('publishing_ch_new_request');
+
+
+    // ** publishing GCC management ** //
+    Route::get('/publishing_gcc_initiate', [PublishingGccController::class, 'create'])->name('publishing_gcc_initiate');
+    Route::post('/publishing_gcc_store', [PublishingGccController::class, 'store'])->name('publishing_gcc_store');
+    Route::get('/publishing_gcc_confirm', [PublishingGccController::class, 'createConfirm'])->name('publishing_gcc_confirm');
+    Route::post('/publishing_gcc_post_confirm', [PublishingGccController::class, 'postConfirm'])->name('publishing_gcc_post_confirm');
+    Route::get('/publishing_gcc_audit', [PublishingGccController::class, 'createAudit'])->name('publishing_gcc_audit');
+    Route::post('/publishing_gcc_post_audit', [PublishingGccController::class, 'postAudit'])->name('publishing_gcc_post_audit');
+    Route::get('/publishing_gcc_verify', [PublishingGccController::class, 'verify'])->name('publishing_gcc_verify');
+    Route::post('/publishing_gcc_post_verify', [PublishingGccController::class, 'postVerify'])->name('publishing_gcc_post_verify');
+    Route::get('/publishing_gcc_new_request', [PublishingGccController::class, 'newRequest'])->name('publishing_gcc_new_request');
+    Route::post('/publishing_gcc_new_request', [PublishingGccController::class, 'postNewRequest'])->name('publishing_gcc_new_request');
+
+    // ** publishing RMP/DCP management ** //
+    Route::get('/publishing_initiate', [PublishingController::class, 'create'])->name('publishing_initiate');
+    Route::post('publishing_initiate', [PublishingController::class, 'storemrp'])->name('publishing_initiate');
+
     // ** store orm publishing ** //
-    Route::post('/store-publishing', [PublishingController::class, 'store'])->name('store-publishing');
+
     Route::post('/store-publishing_', [PublishingController::class, 'store_'])->name('store-publishing_');
     Route::post('store-publishing-duplication', [PublishingController::class, 'storeDuplication'])->name('store-publishing-duplication');
 
@@ -127,8 +178,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('audit-publishing-nat-gcc', [PublishingController::class, 'auditNatGcc'])->name('audit-publishing-nat-gcc');
 
     // ** iniatiate and submit form publishing rmp ** //
-    Route::get('/publishing-initiate', [PublishingController::class, 'create'])->name('publishing-initiate');
-    Route::post('initiate-rmp-publishing', [PublishingController::class, 'storemrp'])->name('initiate-rmp-publishing');
+
+
     Route::post('initiate-rmp-publishing_', [PublishingController::class, 'storemrp_'])->name('initiate-rmp-publishing_');
     Route::get('/duplicate-publishing', [PublishingController::class, 'createDuplication'])->name('duplicate-publishing');
     Route::get('/duplicate-publishing-rmp', [PublishingController::class, 'createDuplicationRmp'])->name('duplicate-publishing-rmp');

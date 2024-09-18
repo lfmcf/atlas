@@ -1,34 +1,30 @@
-import { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import Authenticated from '../../../../Layouts/AuthenticatedLayout'
-import { IStepperOptions, StepperComponent } from '../../../../_metronic/assets/ts/components'
+import { StepperComponent } from '../../../../_metronic/assets/ts/components'
+import { Instance } from 'flatpickr/dist/types/instance'
+import { KTIcon } from '../../../../_metronic/helpers'
+import { useForm } from '@inertiajs/react';
+import moment from 'moment'
+import Select from 'react-select'
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
-import Select from 'react-select';
-import moment from 'moment';
-import { router, useForm } from '@inertiajs/react';
-import { gcccountry } from '../../../Lab/MetaDataList';
-import DropZone from '../../../../Components/Dropzone';
-import axios from 'axios';
-import StatusComponent from '../../../../Components/StatusComponent';
-import ProductMetaData from '../../../../Components/ProductMetaData';
-import GeneralInformation from '../../../../Components/GeneralInformation';
+import DropZone from '../../../../Components/Dropzone'
+import axios from 'axios'
+import StatusComponent from '../../../../Components/StatusComponent'
+import GeneralInformation from '../../../../Components/GeneralInformation'
+import ProductMetaData from '../../../../Components/ProductMetaData'
 
-const StepperOptions: IStepperOptions = {
-    startIndex: 6,
-    animation: false,
-    animationSpeed: '0.3s',
-    animationNextClass: 'animate__animated animate__slideInRight animate__fast',
-    animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
-}
+const CreateN = (props: any) => {
 
-const Audit = (props: any) => {
+    const { metadata, folder } = props;
 
-    var params = new URLSearchParams(window.location.search);
+
+    var trigramme = props.auth.user.trigramme;
+    trigramme = trigramme?.toUpperCase();
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    const { metadata, folder, metapro } = props
-
-    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', sequence: '' })
+    var params = new URLSearchParams(window.location.search);
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -36,60 +32,51 @@ const Audit = (props: any) => {
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
         productName: folder ? folder.product_name : params.get('product'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme,
+        dossier_contact: folder ? folder.dossier_contact : trigramme,
         object: folder ? folder.object : '',
-        country: folder.country,
+        country: { value: metadata.country, code: metadata.code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        tracking: folder ? folder.tracking : '',
-        trackingExtra: folder ? folder.trackingExtra : '',
-        applicant: folder.applicant,
-        agency_code: folder.agency_code,
-        atc: folder ? folder.atc : '',
+        uuid: metadata.uuid,
         submission_type: folder ? folder.submission_type : '',
         submission_mode: folder ? folder.submission_mode : '',
-        invented_name: folder ? folder.invented_name : '',
-        inn: folder.inn,
+        tracking: folder ? folder.tracking : '',
+        trackingExtra: folder ? folder.trackingExtra : '',
+        submission_unit: folder ? folder.submission_unit : '',
+        applicant: metadata.applicant,
+        agency_code: metadata.agencyCode,
+        inn: metadata.inn,
         sequence: folder ? folder.sequence : '',
         r_sequence: folder ? folder.r_sequence : '',
-        uuid: folder ? folder.uuid : metadata.uuid,
         submission_description: folder ? folder.submission_description : '',
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_product: folder ? folder.drug_product : '',
+        // manufacturer: folder ? folder.manufacturer : '',
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
+        // drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        // drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
-        request_date: new Date,
-        deadline: new Date,
-        adjusted_deadline: folder.adjusted_deadline ? folder.adjusted_deadline : new Date,
-        adjustedDeadlineComments: folder.adjustedDeadlineComments ? folder.adjustedDeadlineComments : '',
-        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' },
+        request_date: new Date(),
+        deadline: new Date(),
         status: folder ? folder.status : '',
-    });
+        created_by: props.auth.user.id
+    })
+
+    if (!metadata) {
+        return <div>
+            <h1>Error</h1>
+            <p>Error while fetching metadata</p>
+        </div>
+    }
 
     useEffect(() => {
-        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
+        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
-
-    useEffect(() => {
-        let date = new Date();
-        let hour = date.getHours();
-        let delai = data.dossier_type ? data.dossier_type.delai : '';
-        let deadline;
-        if (delai) {
-            if (hour < 12) {
-                deadline = date.setDate(date.getDate() + delai)
-            } else {
-                deadline = date.setDate(date.getDate() + delai + 1)
-            }
-            setData('deadline', new Date(deadline));
-        }
-
-    }, [data.dossier_type]);
 
     const nextStep = () => {
         // setHasError(false)
@@ -100,6 +87,7 @@ const Audit = (props: any) => {
 
         if (stepper.current.getCurrentStepIndex() === 1) {
             if (!data.dossier_type || !data.dossier_count) {
+
                 if (!data.dossier_type) {
                     setMyErroes((preveState) => {
                         return {
@@ -122,7 +110,7 @@ const Audit = (props: any) => {
         }
 
         if (stepper.current.getCurrentStepIndex() === 2) {
-            if (!data.submission_type || !data.submission_mode || !data.sequence) {
+            if (!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) {
                 if (!data.submission_type) {
                     setMyErroes((preveState) => {
                         return {
@@ -136,6 +124,14 @@ const Audit = (props: any) => {
                         return {
                             ...preveState,
                             submission_mode: 'this field is required'
+                        }
+                    })
+                }
+                if (!data.submission_unit) {
+                    setMyErroes((preveState) => {
+                        return {
+                            ...preveState,
+                            submission_unit: 'this field is required'
                         }
                     })
                 }
@@ -215,6 +211,14 @@ const Audit = (props: any) => {
                 }
             })
         }
+        if (name == 'submission_unit') {
+            setMyErroes((preveState) => {
+                return {
+                    ...preveState,
+                    submission_unit: ''
+                }
+            })
+        }
         setData(name, e)
     }
 
@@ -224,15 +228,37 @@ const Audit = (props: any) => {
         setData(instData)
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post(route('publishing_gcc_post_audit'));
-    }
+    useEffect(() => {
+        let date = new Date();
+        let hour = date.getHours();
+        let delai = data.dossier_type ? data.dossier_type.delai : '';
 
-    const handleCommentChange = (e) => {
-        let arr = { ...data }
-        arr.audit.message = e.target.value
-        setData(arr)
+        let deadline = new Date();
+        let count = 1;
+
+        if (hour < 12) {
+            delai = delai
+        } else {
+            delai = delai + 1
+        }
+
+        while (count < delai) {
+            deadline = new Date(date.setDate(date.getDate() + 1));
+            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
+                //Date.getDay() gives weekday starting from 0(Sunday) to 6(Saturday)
+                count++;
+            }
+        }
+
+        setData('deadline', new Date(deadline));
+
+
+    }, [data.dossier_type]);
+
+    const handleSubmit = (e, type) => {
+        e.preventDefault();
+        // console.log(data);
+        post(route('store_eu_publishing', { type: type }));
     }
 
     const removeAll = () => {
@@ -249,7 +275,6 @@ const Audit = (props: any) => {
     }
 
     const deleletFile = (i) => {
-
         if (i.link) {
             let filesfromserver = []
             filesfromserver.push(i.name)
@@ -270,7 +295,7 @@ const Audit = (props: any) => {
 
     const goNextStep = (i) => {
 
-        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)) {
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
 
             if (!data.dossier_type) {
                 setMyErroes((preveState) => {
@@ -291,8 +316,7 @@ const Audit = (props: any) => {
             return
 
         }
-        if ((!data.submission_type || !data.submission_mode || !data.sequence) && (i == 3 || i == 4 || i == 5 || i == 6)) {
-
+        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5)) {
             if (!data.submission_type) {
                 setMyErroes((preveState) => {
                     return {
@@ -309,6 +333,14 @@ const Audit = (props: any) => {
                     }
                 })
             }
+            if (!data.submission_unit) {
+                setMyErroes((preveState) => {
+                    return {
+                        ...preveState,
+                        submission_unit: 'this field is required'
+                    }
+                })
+            }
             if (!data.sequence) {
                 setMyErroes((preveState) => {
                     return {
@@ -319,9 +351,7 @@ const Audit = (props: any) => {
             }
             return
         }
-
         stepper.current?.goto(i)
-
     }
 
     const handleSelectChangeTracking = (e, action) => {
@@ -336,12 +366,6 @@ const Audit = (props: any) => {
         setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
     }
 
-    const removeDrugSubstanceFields = (i) => {
-        let instData = { ...data }
-        instData.drug_substance.splice(i, 1)
-        setData(instData)
-    }
-
     const addDrugProductFields = () => {
         setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
     }
@@ -352,11 +376,22 @@ const Audit = (props: any) => {
         setData(instData)
     }
 
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+
+
+
+
     const [manufacturerOptions, setManufacturerOptions] = useState({});
     const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
 
     // Handle Drug Substance Change
     const handleDrugSubstanceChange = (index, selectedOption) => {
+        console.log(selectedOption)
         let newFormValues = { ...data };
         newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
         setData(newFormValues);
@@ -420,6 +455,7 @@ const Audit = (props: any) => {
         });
     };
 
+
     // Handle Manufacturer Change
     const handleDpManufacturerChange = (index, selectedOptions) => {
 
@@ -442,18 +478,21 @@ const Audit = (props: any) => {
         });
     };
 
+
     return (
         <>
-            <div className='d-flex justify-content-between align-items-center'>
-                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
-                    <i className="ki-duotone ki-black-left fs-3">
-                    </i>
-                </a>
-                <StatusComponent status={data.status} />
-            </div>
+            {folder ?
+                <div className='d-flex justify-content-between align-items-center'>
+                    <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
+                        <i className="ki-duotone ki-black-left fs-3">
+                        </i>
+                    </a>
+                    <StatusComponent status={data.status} />
+                </div>
+                : ''}
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -543,24 +582,6 @@ const Audit = (props: any) => {
                         </div>
                         <div className="stepper-line h-40px"></div>
                     </div>
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(6)} style={{ cursor: 'pointer' }}>
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">6</span>
-                            </div>
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 6
-                                </h3>
-
-                                <div className="stepper-desc">
-                                    Dossier Review
-                                </div>
-                            </div>
-                        </div>
-                        <div className="stepper-line h-40px"></div>
-                    </div>
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
@@ -574,58 +595,62 @@ const Audit = (props: any) => {
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Procedure Tracking N°</label>
-                                    <div className='d-flex align-items-center'>
-                                        <Select options={metadata?.tracking_numbers?.map((val) => {
-                                            return { label: val.numbers, value: val.numbers }
-                                        })}
-                                            name='tracking'
-                                            onChange={(e, action) => handleSelectChangeTracking(e, action)}
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            placeholder=''
-                                            isClearable
-                                            defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
-                                            menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ ...base, width: '50%' }) }}
-                                        />
-                                        <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
-                                    </div>
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Applicant</label>
-                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Agency code</label>
-                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">ATC</label>
-                                    <input type="text" className="form-control form-control-solid" name="atc" defaultValue={data.atc} onChange={handleChange} />
+                                    <label className="form-label" title='Universal Unique Identifier. A unique identifier of the Publishing dossier'>UUID</label>
+                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type ? 'red' : '' }}>Submission type (*)</label>
                                     <Select options={[
-                                        { label: 'Active submission', value: 'Active submission' },
-                                        { label: 'Extension submission', value: 'Extension submission' },
-                                        { label: 'New Marketing Authorization Application - Generics', value: 'New Marketing Authorization Application - Generics' },
-                                        { label: 'New Marketing Authorization Application - New Chemical Entity', value: 'New Marketing Authorization Application - New Chemical Entity' },
-                                        { label: 'New Marketing Authorization Application - Biological Products', value: 'New Marketing Authorization Application - Biological Products' },
-                                        { label: 'New Marketing Authorization Application - Radiopharmaceuticals', value: 'New Marketing Authorization Application - Radiopharmaceuticals' },
-                                        { label: 'None (in the case of reformatting the application)', value: 'None (in the case of reformatting the application)' },
-                                        { label: 'Plasma Master File', value: 'Plasma Master File' },
-                                        { label: 'Periodic Safety Update Report', value: 'Periodic Safety Update Report' },
-                                        { label: 'PSUR single assessment procedure', value: 'PSUR single assessment procedure' },
-                                        { label: 'Renewal (Yearly or 5-Yearly)', value: 'Renewal (Yearly or 5-Yearly)' },
-                                        { label: 'Risk Management Plan', value: 'Risk Management Plan' },
-                                        { label: 'Transfer of Marketing Authorization', value: 'Transfer of Marketing Authorization' },
-                                        { label: 'Urgent Safety Restriction', value: 'Urgent Safety Restriction' },
-                                        { label: 'Variation Type I', value: 'Variation Type I' },
-                                        { label: 'Variation Type II', value: 'Variation Type II' },
-                                        { label: 'Withdrawal during assessment or withdrawal of Marketing Authorization', value: 'Withdrawal during assessment or withdrawal of Marketing Authorization' },
+                                        { label: 'maa', value: 'maa' },
+                                        { label: 'var-type1a', value: 'var-type1a' },
+                                        { label: 'var-type1ain', value: 'var-type1ain' },
+                                        { label: 'var-type1b', value: 'var-type1b' },
+                                        { label: 'var-type2', value: 'var-type2' },
+                                        { label: 'var-nat', value: 'var-nat' },
+                                        { label: 'extension', value: 'extension' },
+                                        { label: 'rup', value: 'rup' },
+                                        { label: 'psur', value: 'psur' },
+                                        { label: 'psusa', value: 'psusa' },
+                                        { label: 'rmp', value: 'rmp' },
+                                        { label: 'renewal', value: 'renewal' },
+                                        { label: 'pam-sob', value: 'pam-sob' },
+                                        { label: 'pam-anx', value: 'pam-anx' },
+                                        { label: 'pam-mea', value: 'pam-mea' },
+                                        { label: 'pam-leg', value: 'pam-leg' },
+                                        { label: 'pam-sda', value: 'pam-sda' },
+                                        { label: 'pam-capa', value: 'pam-capa' },
+                                        { label: 'pam-p45', value: 'pam-p45' },
+                                        { label: 'pam-p46', value: 'pam-p46' },
+                                        { label: 'pam-paes', value: 'pam-paes' },
+                                        { label: 'pam-rec', value: 'pam-rec' },
+                                        { label: 'pass107n', value: 'pass107n' },
+                                        { label: 'pass107q', value: 'pass107q' },
+                                        { label: 'asmf', value: 'asmf' },
+                                        { label: 'pmf', value: 'pmf' },
+                                        { label: 'referral-20', value: 'referral-20' },
+                                        { label: 'referral-294', value: 'referral-294' },
+                                        { label: 'referral-29p', value: 'referral-29p' },
+                                        { label: 'referral-30', value: 'referral-30' },
+                                        { label: 'referral-31', value: 'referral-31' },
+                                        { label: 'referral-35', value: 'referral-35' },
+                                        { label: 'referral-5-3', value: 'referral-5-3' },
+                                        { label: 'referral-107i', value: 'referral-107i' },
+                                        { label: 'referral-16c1c', value: 'referral-16c1c' },
+                                        { label: 'referral-16c4', value: 'referral-16c4' },
+                                        { label: 'annual-reassessment', value: 'annual-reassessment' },
+                                        { label: 'clin-data-pub-rp', value: 'clin-data-pub-rp' },
+                                        { label: 'clin-data-pub-fv', value: 'clin-data-pub-fv' },
+                                        { label: 'paed-7-8-30', value: 'paed-7-8-30' },
+                                        { label: 'paed-29', value: 'paed-29' },
+                                        { label: 'paed-45', value: 'paed-45' },
+                                        { label: 'paed-46', value: 'paed-46' },
+                                        { label: 'articale-58', value: 'articale-58' },
+                                        { label: 'notification-61-3', value: 'notification-61-3' },
+                                        { label: 'transfer-ma', value: 'transfer-ma' },
+                                        { label: 'lifting-suspension', value: 'lifting-suspension' },
+                                        { label: 'withdrawal', value: 'withdrawal' },
+                                        { label: 'cep', value: 'cep' },
+                                        { label: 'none', value: 'none' },
                                     ]}
                                         name='submission_type'
                                         onChange={(e) => handleSelectChange(e, 'submission_type')}
@@ -639,14 +664,11 @@ const Audit = (props: any) => {
                                     />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_mode ? 'red' : '' }}>Submission unit (*)</label>
+                                    <label className="form-label" title='Choose the submission mode' style={{ color: myErrors.submission_mode ? 'red' : '' }}>Submission mode (*)</label>
                                     <Select options={[
-                                        { label: 'Initial submission to start any regulatory activity', value: 'Initial submission to start any regulatory activity' },
-                                        { label: 'Response to any kind of question, validation issues out-standing information requested by the agency', value: 'Response to any kind of question, validation issues out-standing information requested by the agency' },
-                                        { label: 'Othe additional information (should only be used if response is not suitable)', value: 'Othe additional information (should only be used if response is not suitable)' },
-                                        { label: 'Closing (provides the final documents in the GCC procedure following the decision of the GCC committee)', value: 'Closing (provides the final documents in the GCC procedure following the decision of the GCC committee)' },
-                                        { label: 'Correction of the published annexes in the GCC procedure (usually shortly after approval)', value: 'Correction of the published annexes in the GCC procedure (usually shortly after approval)' },
-                                        { label: 'Reformatting of an existing submission application from any format to Ectd', value: 'Reformatting of an existing submission application from any format to Ectd' },
+                                        { label: 'Single', value: 'Single' },
+                                        { label: 'Grouping', value: 'Grouping' },
+                                        { label: 'Worksharing', value: 'Worksharing' },
                                     ]}
                                         name='submission_mode'
                                         onChange={(e) => handleSelectChange(e, 'submission_mode')}
@@ -662,29 +684,78 @@ const Audit = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Invented name</label>
-                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.invented_name} onChange={handleChange} />
+                                    <label className="form-label">Procedure Tracking N°</label>
+                                    <div className='d-flex align-items-center'>
+                                        <Select options={metadata.tracking_numbers.map((val) => {
+                                            return { label: val.numbers, value: val.numbers }
+                                        })}
+                                            name='tracking'
+                                            onChange={(e, action) => handleSelectChangeTracking(e, action)}
+                                            className="react-select-container me-1"
+                                            classNamePrefix="react-select"
+                                            placeholder=''
+                                            isClearable
+                                            defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '50%' }) }}
+                                        />
+                                        <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
+                                    </div>
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">INN</label>
+                                    <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit ? 'red' : '' }}>Submission unit (*)</label>
+                                    <Select options={[
+                                        { label: 'initial', value: 'initial' },
+                                        { label: 'validation-response', value: 'validation-response' },
+                                        { label: 'response', value: 'response' },
+                                        { label: 'additional-info', value: 'additional-info' },
+                                        { label: 'closing', value: 'closing' },
+                                        { label: 'consolidating', value: 'consolidating' },
+                                        { label: 'corrigendum', value: 'corrigendum' },
+                                        { label: 'reformat', value: 'reformat' },
+                                    ]}
+                                        name='submission_unit'
+                                        onChange={(e) => handleSelectChange(e, 'submission_unit')}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.submission_unit}
+                                        menuPortalTarget={document.body}
+                                        styles={selectStyles(myErrors.submission_unit)}
+                                    />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label" title='Name of the company submitting the eCTD'>Applicant</label>
+                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
+                                </div>
+
+                            </div>
+                            <div className='row mb-10'>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label" title='Name of the agency code of the concerned country'>Agency code</label>
+                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className='col-md-4 col-sm-12' title='Product name'>Invented name</label>
+                                    <input type="text" className="form-control form-control-solid" name="productName" defaultValue={data.productName} onChange={handleChange} />
+                                </div>
+                                <div className='col-md-4 col-sm-12'>
+                                    <label className='col-md-4 col-sm-12' title='INN - Mandatory for sequence 0000'>INN</label>
                                     <input type="text" className="form-control form-control-solid" name="inn" defaultValue={data.inn} onChange={handleChange} />
                                 </div>
+                            </div>
+                            <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Enter the sequence number' style={{ color: myErrors.sequence ? 'red' : '' }}>Sequence (*)</label>
                                     <input type="text" className="form-control form-control-solid" name="sequence" defaultValue={data.sequence} style={{ borderColor: myErrors.sequence ? 'red' : '' }} onChange={handleChange} />
                                 </div>
-                            </div>
-                            <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Related Sequence</label>
+                                    <label className="form-label" title='Enter the related sequence number'>Related Sequence</label>
                                     <input type="text" className="form-control form-control-solid" name="r_sequence" defaultValue={data.r_sequence} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">UUID</label>
-                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission description</label>
+                                    <label className="form-label" title='Submission description'>Submission description</label>
                                     <input type="text" className="form-control form-control-solid" name="submission_description" defaultValue={data.submission_description} onChange={handleChange} />
                                 </div>
                             </div>
@@ -698,6 +769,8 @@ const Audit = (props: any) => {
                         <ProductMetaData
                             metadata={metadata}
                             data={data}
+                            // drugSubstanceOptions={drugSubstanceOptions}
+                            //drugProductOptions={drugProductOptions}
                             handleSelectChange={handleSelectChange}
                             handleDrugSubstanceChange={handleDrugSubstanceChange}
                             handleManufacturerChange={handleManufacturerChange}
@@ -749,92 +822,13 @@ const Audit = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            <div className="row mb-10">
-                                <div className='col-6'>
-                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
-                                    <Flatpickr
-                                        data-enable-time
-                                        value={data.adjusted_deadline}
-                                        className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
-                                        onChange={(date) => setData('adjusted_deadline', date)}
-                                    />
-                                </div>
+                            <div className="mb-10">
 
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
-                                    <label htmlFor="" className="form-label">Comments</label>
-                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" value={data.adjustedDeadlineComments} onChange={handleChange} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
-                                    </div>
-                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
-                                        <div className='scroll-y me-n5 pe-5'
-                                            data-kt-element="messages"
-                                            data-kt-scroll="true"
-                                            data-kt-scroll-activate="{default: false, lg: true}"
-                                            data-kt-scroll-max-height="auto">
-                                            {
-                                                folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user.id !== props.auth.user.id ?
-                                                        <div key={i} className='d-flex justify-content-start mb-10'>
-                                                            <div className='d-flex flex-column align-items-start'>
-                                                                <div className='d-flex align-items-center mb-2'>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
-                                                                    </div>
-                                                                    <div className='ms-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div> :
-                                                        <div key={i} className='d-flex justify-content-end mb-10'>
-                                                            <div className='d-flex flex-column align-items-end'>
-                                                                <div className='d-flex align-items-center mb-2'>
-
-                                                                    <div className='me-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-
-                                                                    </div>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                )
-                                                ) : ''
-                                            }
-                                        </div>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
-
-                                        {/* <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
-                                        </div> */}
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
+
+
                     <div className="d-flex flex-stack">
 
                         <div className="me-2">
@@ -843,44 +837,31 @@ const Audit = (props: any) => {
                             </button>
                         </div>
                         <div>
-                            {props.auth.user.current_team_id == 3 ?
-                                <>
-                                    <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
-                                        <span className="indicator-label">
-                                            Accept
-                                        </span>
-                                    </button>
-                                    <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
-                                        <span className="indicator-label">
-                                            Reject
-                                        </span>
-                                        <span className="indicator-progress">
-                                            Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                        </span>
-                                    </button>
-                                </>
-                                : <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
-                                    <span className="indicator-label">
-                                        Submit
-                                    </span>
-                                    <span className="indicator-progress">
-                                        Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                    </span>
-                                </button>
-                            }
+                            <button type="button" className="btn btn-primary m-3" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'save')}>
+                                <span className="indicator-label">
+                                    Save
+                                </span>
+                            </button>
+                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'submit')}>
+                                <span className="indicator-label">
+                                    Submit
+                                </span>
+                                <span className="indicator-progress">
+                                    Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
 
                             <button type="button" className="btn btn-primary" data-kt-stepper-action='next' onClick={nextStep}>
                                 Continue
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
+                </form >
+            </div >
         </>
     )
-
 }
 
-Audit.layout = page => <Authenticated children={page} auth={page.props.auth} />
+CreateN.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-export default Audit;
+export default CreateN;

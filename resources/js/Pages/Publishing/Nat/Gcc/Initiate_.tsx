@@ -9,6 +9,8 @@ import { useForm } from '@inertiajs/react';
 import { gcccountry } from '../../../Lab/MetaDataList';
 import DropZone from '../../../../Components/Dropzone';
 import axios from 'axios';
+import GeneralInformation from '../../../../Components/GeneralInformation';
+import InsertProductMetaData from '../../../../Components/InsertProductMetaData';
 
 const Initiate_ = (props: any) => {
 
@@ -16,31 +18,25 @@ const Initiate_ = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', sequence: '' })
-    const { folder, agc, countries, metapro } = props
-
-    let code = ''
-    if (agc && agc.agencyCode) {
-        var char = agc.agencyCode.split('-')
-        code = char[0]
-    }
+    const { folder, agencyCode, country } = props;
 
 
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
-        product_name: folder ? folder.product_name : params.get('product'),
+        productName: folder ? folder.product_name : params.get('product'),
         dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
         object: folder ? folder.object : '',
-        country: { value: countries, code: code },
+        country: { value: country, code: agencyCode?.code },
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
         tracking: folder ? folder.tracking : '',
-        applicant: 'STALLERGENES',
-        agency_code: agc ? agc.agencyCode : '',
+        applicant: '',
+        agency_code: agencyCode ? agencyCode.agencyCode : '',
         atc: folder ? folder.atc : '',
         submission_type: folder ? folder.submission_type : '',
         submission_mode: folder ? folder.submission_mode : '',
@@ -52,13 +48,10 @@ const Initiate_ = (props: any) => {
         submission_description: folder ? folder.submission_description : '',
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
-        manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : '',
-        drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': [] }],
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': [] }],
         dosage_form: folder ? folder.dosage_form : '',
-        excipient: folder ? folder.excipient : '',
+        excipient: [],
         doc: folder && folder.document !== null ? folder.document : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
@@ -230,7 +223,7 @@ const Initiate_ = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('store-publishing-nat-gcc_', { type: type }));
+        post(route('publishing_gcc_new_request', { type: type }));
     }
 
     const removeAll = () => {
@@ -318,6 +311,27 @@ const Initiate_ = (props: any) => {
             return
         }
         stepper.current?.goto(i)
+    }
+
+
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': [] }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': [] }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
     }
 
     return (
@@ -417,73 +431,13 @@ const Initiate_ = (props: any) => {
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier contact</label>
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" readOnly onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" defaultValue={data.object} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Product</label>
-                                    <input type="text" className="form-control form-control-solid" name="product_name" defaultValue={data.product_name} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
-                                    {/* <Select options={gcccountry}
-                                        name="country"
-                                        onChange={(e) => handleSelectChange(e, 'country')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={[{ label: data.country, value: data.country }]}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    /> */}
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
-                                    <Select options={[
-                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
-                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
-                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
-                                        { label: 'Renewal Dossier', value: 'Renewal Dossier', delai: 9 },
-                                        { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
-                                        { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
-                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier' },
-                                        { label: 'Current View (Draft seq)', value: 'Current View (Draft seq)', delai: 1 },
-                                    ]}
-                                        name='dossier_type'
-                                        onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dossier_type}
-                                        menuPortalTarget={document.body}
-                                        styles={selectStyles(myErrors.dossier_type)}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} defaultValue={data.dossier_count} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
-                                    <label className="form-label">Remarks</label>
-                                    <textarea className="form-control form-control-solid" rows={3} defaultValue={data.remarks} name="remarks" onChange={handleChange} />
-                                </div>
-
-                            </div>
-                        </div>
+                        <GeneralInformation
+                            data={data}
+                            myErrors={myErrors}
+                            handleChange={handleChange}
+                            handleSelectChange={handleSelectChange}
+                            selectStyles={selectStyles}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
@@ -561,7 +515,7 @@ const Initiate_ = (props: any) => {
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Invented name</label>
-                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.product_name} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.productName} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">INN</label>
@@ -593,117 +547,16 @@ const Initiate_ = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
+                        <InsertProductMetaData
+                            data={data}
+                            handleChange={handleChange}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            setData={setData}
 
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>

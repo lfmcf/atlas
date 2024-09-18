@@ -10,7 +10,7 @@ class DrugProductManufacturer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_meta_data_id',
+        'drug_product_id',
         'product_manufacturer',
     ];
 }

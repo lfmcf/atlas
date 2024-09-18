@@ -53,11 +53,21 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
     }
 
-    const handleClose = (id) => {
-        router.post(route('close-publishing'), { id: id })
+    const handleClose = (row) => {
+        if (row.region == 'EU' || row.procedure == "Nationale") {
+            router.post(route('close_eu_publishing'), { id: row._id })
+        }
+        // router.post(route('close-publishing'), { id: id })
     }
-    const handleCorrect = (id) => {
-        router.get(route('publishing-verification'), { id: id })
+    const handleCorrect = (row) => {
+        if (row.region == 'EU' && row.procedure == "Nationale") {
+            router.get(route('publishing_eu_verification'), { id: row._id })
+        } else if (row.region == 'CH') {
+            router.get(route('publishing_ch_verify'), { id: row._id })
+        } else if (row.region == 'GCC') {
+            router.get(route('publishing_gcc_verify'), { id: row._id })
+        }
+        // router.get(route('publishing-verification'), { id: id })
     }
 
     const handleShow = (id, region, procedure) => {
@@ -66,7 +76,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
         } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized")) {
             router.get(route('show-publishing-rmp'), { id: id })
         } else {
-            router.get(route('show'), { id: id })
+            router.get(route('show_eu_publishing'), { id: id })
         }
 
     }
@@ -87,8 +97,11 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
     }
 
-    const handleCompleted = (id) => {
-        router.post(route('complete-publishing'), { id: id })
+    const handleCompleted = (row) => {
+        if (row.region == 'EU' || row.procedure == "Nationale") {
+            router.post(route('complete_eu_publishing'), { id: row._id })
+        }
+        // router.post(route('complete-publishing'), { id: id })
     }
 
     const handleprevious = () => {
@@ -127,6 +140,27 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
         setCurrentPage(number)
         tb.page(number - 1).draw('page')
+    }
+
+    const handleConfirmNavigation = (row) => {
+        if (row.region == 'EU' && row.procedure == "Nationale") {
+            router.get(route('publishing_eu_confirm', { id: row._id }))
+        } else if (row.region == 'CH') {
+            router.get(route('publishing_ch_confirm', { id: row._id }))
+        } else if (row.region == 'GCC') {
+            router.get(route('publishing_gcc_confirm', { id: row._id }))
+        }
+
+    }
+
+    const handleAuditNavigation = (row) => {
+        if (row.region == 'EU' && row.procedure == "Nationale") {
+            router.get(route('publishing_eu_audit', { id: row._id }))
+        } else if (row.region == 'CH') {
+            router.get(route('publishing_ch_audit', { id: row._id }))
+        } else if (row.region == 'GCC') {
+            router.get(route('publishing_gcc_audit', { id: row._id }))
+        }
     }
 
     return (
@@ -286,7 +320,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                     row.status == 'initiated' ?
                                                         <a
                                                             href='#'
-                                                            onClick={() => router.get(route('publishing-confirm', { id: row._id }))}
+                                                            onClick={() => handleConfirmNavigation(row)}
                                                             className='btn btn-icon btn-sm me-1'
                                                             style={{ backgroundColor: '#fff8dd' }}
                                                         >
@@ -305,7 +339,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                                 </a>
                                                                 <a
                                                                     href='#'
-                                                                    onClick={() => router.get(route('publishing-audit', { id: row._id }))}
+                                                                    onClick={() => handleAuditNavigation(row)}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     style={{ backgroundColor: '#fff8dd' }}
                                                                 >
@@ -315,7 +349,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                                 <>
                                                                     <a
                                                                         href='#'
-                                                                        onClick={() => router.get(route('publishing-audit', { id: row._id }))}
+                                                                        onClick={() => handleAuditNavigation(row)}
                                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                         style={{ backgroundColor: '#fff5f8' }}
                                                                     >
@@ -347,7 +381,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                                     : row.status == 'delivered' && row.region ?
                                                                         <>
                                                                             <button
-                                                                                onClick={() => handleCompleted(row._id)}
+                                                                                onClick={() => handleCompleted(row)}
                                                                                 className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                                 style={{ backgroundColor: '#d1f7c4' }}
                                                                             >
@@ -355,7 +389,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                                                 {/* <KTIcon iconName='check-circle' className='fs-3' /> */}
                                                                             </button>
                                                                             <button
-                                                                                onClick={() => handleCorrect(row._id)}
+                                                                                onClick={() => handleCorrect(row)}
                                                                                 className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                                 style={{ backgroundColor: '#f8d7da' }}
                                                                             >
@@ -366,7 +400,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
                                                                         : row.status == 'completed' ?
                                                                             <button
-                                                                                onClick={() => handleClose(row._id)}
+                                                                                onClick={() => handleClose(row)}
                                                                                 className='btn btn-icon btn-sm me-1'
                                                                                 style={{ backgroundColor: '#d1f7c4' }}
                                                                             >

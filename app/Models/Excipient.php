@@ -11,7 +11,7 @@ class Excipient extends Model
 
     protected $fillable = [
         'product_meta_data_id',
-        'name',
+        'excipient',
     ];
 
 

@@ -37,175 +37,48 @@ class PublishingController extends Controller
     {
 
         $pub = "";
+
         if ($request->id) {
 
-            $pub = Publishing::find($request->id);
+            $pub = PublishingMrp::find($request->id);
 
-            if (!$pub) {
-                $pub = PublishingMrp::find($request->id);
-            }
-
-            $region = $pub->region;
             $procedure = $pub->procedure;
             $country = $pub->country;
             $product = $pub->product_name;
         } else {
-            $region = $request->query('region');
+
             $procedure = $request->query('procedure');
             $country = $request->query('country');
             $product = $request->query('product');
         }
 
-
-        // $findstring = explode(' ', $product);
-
-        // $metaPro = MetaProduct::where(function ($q) use ($findstring) {
-        //     foreach ($findstring as $value) {
-        //         $rvalue = rtrim($value, ",");
-        //         $q->orWhere('product', 'like', "%{$rvalue}%");
-        //     }
-        // })->first();
-
-        // $meta_data = MetaData::where('product', $product)->get();
-
-
-        if ($region == "EU") {
-            if ($procedure == 'Nationale' || $procedure == 'Centralized') {
-                $country = is_array($country) ? $country['value'] : $country;
-                // $md = MetaData::where([
-                //     ['Product', '=', $product],
-                //     ['procedure', '=', $procedure],
-                //     ['country', '=', $country]
-                // ])->first();
-
-                $meta_data = MetaData::where([
+        $listmd = [];
+        if (!$request->id) {
+            for ($i = 0; $i < count($country); $i += 2) {
+                $md = MetaData::where([
                     ['invented_name', '=', $product],
                     ['procedure', '=', $procedure],
-                    ['country', '=', $country]
+                    ['country', '=', $country[$i]['label']]
                 ])
                     ->with([
                         'trackingNumbers',
                         'dosageForm',
-                        'drugProduct',
-                        'drugProductManufacturer',
-                        'drugSubstanceManufacturer',
+                        'drugProduct.dp_manufacturers',
+                        'drugSubstance.ds_manufacturers',
                         'excipients',
-                        'drugSubstance',
                         'indications'
                     ])
                     ->first();
-
-
-                if ($meta_data) {
-                    return Inertia::render('Publishing/Nat/CreateN', [
-                        'metadata' => $meta_data,
-                        'countries' => $country,
-                        'products' => $product,
-                        'folder' => $pub,
-                        // 'metapro' => $metaPro
-                    ]);
+                if ($md) {
+                    array_push($listmd, $md);
                 }
-            } else {
-                $listmd = [];
-                if (!$request->id) {
-                    for ($i = 0; $i < count($country); $i += 2) {
-                        $md = MetaData::where([
-                            ['invented_name', '=', $product],
-                            ['procedure', '=', $procedure],
-                            ['country', '=', $country[$i]['label']]
-                        ])
-                            ->with([
-                                'trackingNumbers',
-                                'dosageForm',
-                                'drugProduct',
-                                'drugProductManufacturer',
-                                'drugSubstanceManufacturer',
-                                'excipients',
-                                'drugSubstance',
-                                'indications'
-                            ])
-                            ->first();
-                        if ($md) {
-                            array_push($listmd, $md);
-                        }
-                    }
-                } else {
-                    foreach ($pub->mt as $m) {
-                        $md = MetaData::where([
-                            ['invented_name', '=', $product],
-                            ['procedure', '=', $procedure],
-                            ['country', '=', $m['country']]
-                        ])->first();
-                        if ($md) {
-                            array_push($listmd, $md);
-                        }
-                    }
-                }
-
-                return Inertia::render('Publishing/Rmp/Create', [
-                    'metadata' => $listmd,
-                    'folder' => $pub,
-                    // 'metapro' => $metaPro
-                ]);
-            }
-        } else if ($region == "CH") {
-            $country = is_array($country) ? $country['value'] : $country;
-            $md = MetaData::where([
-                ['invented_name', '=', $product],
-                ['procedure', '=', $procedure],
-                ['country', '=', $country]
-            ])
-                ->with([
-                    'trackingNumbers',
-                    'dosageForm',
-                    'drugProduct',
-                    'drugProductManufacturer',
-                    'drugSubstanceManufacturer',
-                    'excipients',
-                    'drugSubstance',
-                    'indications',
-                    'swissMetaData'
-                ])
-                ->first();
-
-            if ($md) {
-                return Inertia::render('Publishing/Nat/Ch/Initiate', [
-                    'metadata' => $md,
-                    'countries' => $country,
-                    'products' => $product,
-                    'folder' => $pub,
-                    // 'metapro' => $metaPro
-                ]);
-            }
-        } else if ($region == "GCC") {
-            $country = is_array($country) ? $country['value'] : $country;
-            $md = MetaData::where([
-                ['invented_name', '=', $product],
-                ['procedure', '=', $procedure],
-                ['country', '=', $country]
-            ])
-                ->with([
-                    'trackingNumbers',
-                    'dosageForm',
-                    'drugProduct',
-                    'drugProductManufacturer',
-                    'drugSubstanceManufacturer',
-                    'excipients',
-                    'drugSubstance',
-                    'indications'
-                ])
-                ->first();
-
-            if ($md) {
-                return Inertia::render('Publishing/Nat/Gcc/Initiate', [
-                    'metadata' => $md,
-                    'countries' => $country,
-                    'products' => $product,
-                    'folder' => $pub,
-                    // 'metapro' => $metaPro
-                ]);
             }
         }
+
+        return Inertia::render('Publishing/Rmp/Create', [
+            'metadata' => $listmd,
+            'folder' => $pub,
+        ]);
     }
 
     public function createDuplication(Request $request)
@@ -363,8 +236,19 @@ class PublishingController extends Controller
                 $listmd = [];
                 for ($i = 0; $i < count($country); $i += 2) {
                     $md = MetaData::where([
-                        ['country', '=', $country[$i]['label']]
-                    ])->first(['agencyCode', 'country']);
+                        ['country', '=', $country[$i]['label']],
+                        ['procedure', '=', $procedure],
+                        ['country', '=', $country]
+                    ])->with([
+                        'trackingNumbers',
+                        'dosageForm',
+                        'drugProduct',
+                        'drugProductManufacturer',
+                        'drugSubstanceManufacturer',
+                        'excipients',
+                        'drugSubstance',
+                        'indications'
+                    ])->first();
 
                     if ($md) {
                         array_push($listmd, $md);
@@ -377,13 +261,24 @@ class PublishingController extends Controller
             }
         } else if ($region == "GCC") {
             $country = is_array($country) ? $country['value'] : $country;
-            $agc = MetaData::where([
+            $md = MetaData::where([
+                ['country', '=', $country],
+                ['procedure', '=', $procedure],
                 ['country', '=', $country]
-            ])->first('agencyCode');
+            ])->with([
+                'trackingNumbers',
+                'dosageForm',
+                'drugProduct',
+                'drugProductManufacturer',
+                'drugSubstanceManufacturer',
+                'excipients',
+                'drugSubstance',
+                'indications'
+            ])->first();
             return Inertia::render('Publishing/Nat/Gcc/Initiate_', [
                 'countries' => $country,
                 'products' => $product,
-                'agc' => $agc
+                'metadata' => $md
             ]);
         } else if ($region == "CH") {
             $country = is_array($country) ? $country['value'] : $country;
@@ -690,18 +585,18 @@ class PublishingController extends Controller
             $pub->save();
             return redirect('/dashboard')->with('message', 'Form has been successfully saved');
         } else {
-            $metadata = new MetaData();
-            $metadata->procedure = $request->procedure;
-            $metadata->country = $request->country['value'];
-            $metadata->invented_name = $request->productName;
-            $metadata->agencyCode = $request->agency_code;
-            $metadata->trackingNumber = $request->tracking;
-            $metadata->applicant = $request->applicant;
-            $metadata->inn = $request->inn;
-            $codearr = explode('-', $request->agency_code);
-            $code = $codearr[0];
-            $metadata->code = $code;
-            $metadata->save();
+            // $metadata = new MetaData();
+            // $metadata->procedure = $request->procedure;
+            // $metadata->country = $request->country['value'];
+            // $metadata->invented_name = $request->productName;
+            // $metadata->agencyCode = $request->agency_code;
+            // $metadata->trackingNumber = $request->tracking;
+            // $metadata->applicant = $request->applicant;
+            // $metadata->inn = $request->inn;
+            // $codearr = explode('-', $request->agency_code);
+            // $code = $codearr[0];
+            // $metadata->code = $code;
+            // $metadata->save();
             $pub->status = 'initiated';
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
@@ -724,93 +619,93 @@ class PublishingController extends Controller
         $procedure = $pub->procedure;
         $country = is_array($country) ? $country['value'] : $country;
 
-        $findstring = explode(' ', $product);
-        $metaPro = MetaData::where(function ($q) use ($findstring) {
-            foreach ($findstring as $value) {
-                $rvalue = rtrim($value, ",");
-                $q->orWhere('invented_name', 'like', "%{$rvalue}%");
-            }
-        })->first();
+        // $findstring = explode(' ', $product);
+        // $metaPro = MetaData::where(function ($q) use ($findstring) {
+        //     foreach ($findstring as $value) {
+        //         $rvalue = rtrim($value, ",");
+        //         $q->orWhere('invented_name', 'like', "%{$rvalue}%");
+        //     }
+        // })->first();
 
-        if ($region == "EU") {
+        // if ($region == "EU") {
 
-            $md = MetaData::where([
-                ['invented_name', '=', $product],
-                ['procedure', '=', $procedure],
-                ['country', '=', $country]
-            ])
-                ->with([
-                    'trackingNumbers',
-                    'dosageForm',
-                    'drugProduct',
-                    'drugProductManufacturer',
-                    'drugSubstanceManufacturer',
-                    'excipients',
-                    'drugSubstance',
-                    'indications'
-                ])->first();
+        //     $md = MetaData::where([
+        //         ['invented_name', '=', $product],
+        //         ['procedure', '=', $procedure],
+        //         ['country', '=', $country]
+        //     ])
+        //         ->with([
+        //             'trackingNumbers',
+        //             'dosageForm',
+        //             'drugProduct',
+        //             'drugProductManufacturer',
+        //             'drugSubstanceManufacturer',
+        //             'excipients',
+        //             'drugSubstance',
+        //             'indications'
+        //         ])->first();
 
-            if ($md) {
-                return Inertia::render('Publishing/Nat/Confirm', [
-                    'metadata' => $md,
-                    'countries' => $country,
-                    'products' => $product,
-                    'folder' => $pub,
-                    'metapro' => $metaPro
-                ]);
-            }
-        } else if ($region == "CH") {
-            $md = MetaData::where([
-                ['invented_name', '=', $product],
-                ['procedure', '=', $procedure],
-                ['country', '=', $country]
-            ])->with([
-                'trackingNumbers',
-                'dosageForm',
-                'drugProduct',
-                'drugProductManufacturer',
-                'drugSubstanceManufacturer',
-                'excipients',
-                'drugSubstance',
-                'indications',
-                'swissMetaData'
-            ])
-                ->first();
+        //     if ($md) {
+        //         return Inertia::render('Publishing/Nat/Confirm', [
+        //             'metadata' => $md,
+        //             'countries' => $country,
+        //             'products' => $product,
+        //             'folder' => $pub,
+        //         ]);
+        //     }
+        // if ($region == "CH") {
+        //     $md = MetaData::where([
+        //         ['invented_name', '=', $product],
+        //         ['procedure', '=', $procedure],
+        //         ['country', '=', $country]
+        //     ])->with([
+        //         'trackingNumbers',
+        //         'dosageForm',
+        //         'drugProduct',
+        //         'drugProductManufacturer',
+        //         'drugSubstanceManufacturer',
+        //         'excipients',
+        //         'drugSubstance',
+        //         'indications',
+        //         'swissMetaData'
+        //     ])
+        //         ->first();
 
-            if ($md) {
-                return Inertia::render('Publishing/Nat/Ch/Confirm', [
-                    'metadata' => $md,
-                    'countries' => $country,
-                    'products' => $product,
-                    'folder' => $pub,
-                    'metapro' => $metaPro
-                ]);
-            }
-        } else if ($region == "GCC") {
-            $md = MetaData::where([
-                ['invented_name', '=', $product],
-                ['procedure', '=', $procedure],
-                ['country', '=', $country]
-            ])->with([
-                'trackingNumbers',
-                'dosageForm',
-                'drugProduct',
-                'drugProductManufacturer',
-                'drugSubstanceManufacturer',
-                'excipients',
-                'drugSubstance',
-                'indications'
-            ])->first();
+        //     if ($md) {
+        //         return Inertia::render('Publishing/Nat/Ch/Confirm', [
+        //             'metadata' => $md,
+        //             'countries' => $country,
+        //             'products' => $product,
+        //             'folder' => $pub,
+        //             'metapro' => $metaPro
+        //         ]);
+        //     }
+        // } 
+        if ($region == "GCC") {
+            // $md = MetaData::where([
+            //     ['invented_name', '=', $product],
+            //     ['procedure', '=', $procedure],
+            //     ['country', '=', $country]
+            // ])->with([
+            //     'trackingNumbers',
+            //     'dosageForm',
+            //     'drugProduct',
+            //     'drugProductManufacturer',
+            //     'drugSubstanceManufacturer',
+            //     'excipients',
+            //     'drugSubstance',
+            //     'indications'
+            // ])->first();
 
-            if ($md) {
-                return Inertia::render('Publishing/Nat/Gcc/Confirm', [
-                    'metadata' => $md,
-                    'countries' => $country,
-                    'products' => $product,
-                    'folder' => $pub,
-                    'metapro' => $metaPro
-                ]);
-            }
+            // if ($md) {
+            //     return Inertia::render('Publishing/Nat/Gcc/Confirm', [
+            //         'metadata' => $md,
+            //         'countries' => $country,
+            //         'products' => $product,
+            //         'folder' => $pub,
+            //         'metapro' => $metaPro
+            //     ]);
+            // }
         }
     }
 
@@ -1242,7 +1137,7 @@ class PublishingController extends Controller
     {
         $pub = Publishing::findOrfail($request->id);
 
-        return Inertia::render('Publishing/Nat/Show', [
+        return Inertia::render('Publishing/Nat/Eu/Show', [
             'folder' => $pub
         ]);
     }
@@ -1259,30 +1154,6 @@ class PublishingController extends Controller
         $user = User::whereIn('current_team_id', [2, 3])->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         return redirect('/list')->with('message', 'Publishing Request has been successfully closed');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Publishing $publishing)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Publishing $publishing)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Publishing $publishing)
-    {
-        //
     }
 
     public function storemrp(Request $request)
@@ -1318,7 +1189,7 @@ class PublishingController extends Controller
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;
-        $pub->product_name = $request->product_name;
+        $pub->product_name = $request->productName;
         $pub->dossier_contact = $request->dossier_contact;
         $pub->object = $request->object;
         $pub->country = $request->country;
@@ -1326,13 +1197,7 @@ class PublishingController extends Controller
         $pub->dossier_count = $request->dossier_count;
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
-        $pub->indication = $request->indication;
-        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
-        $pub->drug_substance = $request->drug_substance;
-        $pub->drug_product = $request->drug_product;
-        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-        $pub->dosage_form = $request->dosage_form;
-        $pub->excipient = $request->excipient;
+        $pub->pt = $request->pt;
         if (!empty($pub->doc)) {
             $pub->doc = [...$pub->doc, ...$docs];
         } else {
@@ -1420,23 +1285,23 @@ class PublishingController extends Controller
             $pub->save();
             return redirect('/dashboard')->with('message', 'Form has been successfully saved');
         } else {
-            $mtArr = [];
-            foreach ($request->mt as $md) {
-                $codearr = explode('-', $md['agencyCode']);
-                $code = $codearr[0];
-                $dt = [
-                    'procedure' => $request->procedure,
-                    'country' => $md['country'],
-                    'Product' => $request->product_name,
-                    'agencyCode' => $md['agencyCode'],
-                    'trackingNumber' => $md['trackingNumber'],
-                    'applicant' => $md['applicant'],
-                    'inn' => $md['inn'],
-                    'code' => $code
-                ];
-                array_push($mtArr, $dt);
-            }
-            MetaData::insert($mtArr);
+            // $mtArr = [];
+            // foreach ($request->mt as $md) {
+            //     $codearr = explode('-', $md['agencyCode']);
+            //     $code = $codearr[0];
+            //     $dt = [
+            //         'procedure' => $request->procedure,
+            //         'country' => $md['country'],
+            //         'Product' => $request->product_name,
+            //         'agencyCode' => $md['agencyCode'],
+            //         'trackingNumber' => $md['trackingNumber'],
+            //         'applicant' => $md['applicant'],
+            //         'inn' => $md['inn'],
+            //         'code' => $code
+            //     ];
+            //     array_push($mtArr, $dt);
+            // }
+            // MetaData::insert($mtArr);
             $pub->status = 'initiated';
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
@@ -1847,289 +1712,289 @@ class PublishingController extends Controller
         }
     }
 
-    public function confirmNatGcc(Request $request)
-    {
-        $docs = $request->doc;
+    // public function confirmNatGcc(Request $request)
+    // {
+    //     $docs = $request->doc;
 
-        $docs = array_filter($docs, static function ($element) {
-            return gettype($element) !== 'array';
-        });
+    //     $docs = array_filter($docs, static function ($element) {
+    //         return gettype($element) !== 'array';
+    //     });
 
-        if (!empty($docs)) {
-            $arr = array_map(function ($doc) {
+    //     if (!empty($docs)) {
+    //         $arr = array_map(function ($doc) {
 
-                $myarr = [];
+    //             $myarr = [];
 
-                if ($doc && gettype($doc) != 'string') {
-                    $uploadedFile = $doc;
-                    $filename = $uploadedFile->getClientOriginalName();
-                    $path = Storage::putFileAs(
-                        'public',
-                        $uploadedFile,
-                        $filename
-                    );
-                    $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/documents/' . $filename);;
-                }
-                return $myarr;
-            }, $docs);
-            $docs = $arr;
-        }
+    //             if ($doc && gettype($doc) != 'string') {
+    //                 $uploadedFile = $doc;
+    //                 $filename = $uploadedFile->getClientOriginalName();
+    //                 $path = Storage::putFileAs(
+    //                     'public',
+    //                     $uploadedFile,
+    //                     $filename
+    //                 );
+    //                 $myarr['name'] = $filename;
+    //                 $myarr['link'] = asset('storage/documents/' . $filename);;
+    //             }
+    //             return $myarr;
+    //         }, $docs);
+    //         $docs = $arr;
+    //     }
 
-        $pub = Publishing::find($request->id);
-        $pub->form = $request->form;
-        $pub->region = $request->region;
-        $pub->procedure = $request->procedure;
-        $pub->product_name = $request->product_name;
-        $pub->dossier_contact = $request->dossier_contact;
-        $pub->object = $request->object;
-        $pub->country = $request->country;
-        $pub->dossier_type = $request->dossier_type;
-        $pub->dossier_count = $request->dossier_count;
-        $pub->remarks = $request->remarks;
-        $pub->uuid = $request->uuid;
-        $pub->submission_type = $request->submission_type;
-        $pub->submission_mode = $request->submission_mode;
-        $pub->tracking = $request->tracking;
-        // if ($request->tracking && is_array($request->tracking)) {
-        //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-        // } else {
-        //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-        // }
-        $pub->submission_unit = $request->submission_unit;
-        $pub->applicant = $request->applicant;
-        $pub->agency_code = $request->agency_code;
-        $pub->atc = $request->atc;
-        $pub->inn = $request->inn;
-        $pub->sequence = $request->sequence;
-        $pub->r_sequence = $request->r_sequence;
-        $pub->submission_description = $request->submission_description;
-        $pub->mtremarks = $request->mtremarks;
-        $pub->indication = $request->indication;
-        $pub->manufacturer = $request->manufacturer;
-        $pub->drug_substance = $request->drug_substance;
-        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
-        $pub->drug_product = $request->drug_product;
-        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-        $pub->dosage_form = $request->dosage_form;
-        $pub->excipient = $request->excipient;
-        if (!empty($pub->doc)) {
-            $pub->doc = [...$pub->doc, ...$docs];
-        } else {
-            $pub->doc = $docs;
-        }
-        $pub->docremarks = $request->docremarks;
-        $pub->invented_name = $request->invented_name;
-        $pub->request_date = $request->request_date;
-        $pub->deadline = $request->deadline;
-        $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
-        $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
-        $pub->status = 'submitted';
-        $pub->save();
-        $user = User::where('current_team_id', 3)->get();
-        Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
-        return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
-    }
+    //     $pub = Publishing::find($request->id);
+    //     $pub->form = $request->form;
+    //     $pub->region = $request->region;
+    //     $pub->procedure = $request->procedure;
+    //     $pub->product_name = $request->product_name;
+    //     $pub->dossier_contact = $request->dossier_contact;
+    //     $pub->object = $request->object;
+    //     $pub->country = $request->country;
+    //     $pub->dossier_type = $request->dossier_type;
+    //     $pub->dossier_count = $request->dossier_count;
+    //     $pub->remarks = $request->remarks;
+    //     $pub->uuid = $request->uuid;
+    //     $pub->submission_type = $request->submission_type;
+    //     $pub->submission_mode = $request->submission_mode;
+    //     $pub->tracking = $request->tracking;
+    //     // if ($request->tracking && is_array($request->tracking)) {
+    //     //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+    //     // } else {
+    //     //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+    //     // }
+    //     $pub->submission_unit = $request->submission_unit;
+    //     $pub->applicant = $request->applicant;
+    //     $pub->agency_code = $request->agency_code;
+    //     $pub->atc = $request->atc;
+    //     $pub->inn = $request->inn;
+    //     $pub->sequence = $request->sequence;
+    //     $pub->r_sequence = $request->r_sequence;
+    //     $pub->submission_description = $request->submission_description;
+    //     $pub->mtremarks = $request->mtremarks;
+    //     $pub->indication = $request->indication;
+    //     $pub->manufacturer = $request->manufacturer;
+    //     $pub->drug_substance = $request->drug_substance;
+    //     $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
+    //     $pub->drug_product = $request->drug_product;
+    //     $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+    //     $pub->dosage_form = $request->dosage_form;
+    //     $pub->excipient = $request->excipient;
+    //     if (!empty($pub->doc)) {
+    //         $pub->doc = [...$pub->doc, ...$docs];
+    //     } else {
+    //         $pub->doc = $docs;
+    //     }
+    //     $pub->docremarks = $request->docremarks;
+    //     $pub->invented_name = $request->invented_name;
+    //     $pub->request_date = $request->request_date;
+    //     $pub->deadline = $request->deadline;
+    //     $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
+    //     $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+    //     $pub->status = 'submitted';
+    //     $pub->save();
+    //     $user = User::where('current_team_id', 3)->get();
+    //     Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+    //     // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+    //     return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
+    // }
 
-    public function auditNatGcc(Request $request)
-    {
-        $currentUser = auth()->user();
-        $ublishing = Publishing::findOrfail($request->id);
-        if ($currentUser->current_team_id == 3) {
-            $ublishing->status = 'to verify';
-            if ($ublishing->audit) {
-                $ublishing->audit = [...$ublishing->audit, $request->audit];
-            } else {
-                $ublishing->audit = [$request->audit];
-            }
-            $ublishing->save();
-            $user = User::where('current_team_id', 2)->get();
-            Notification::sendNow($user, new InvoiceInitaitedForm($ublishing));
-        } else {
-            $docs = $request->doc;
-            $docs = array_filter($docs, static function ($element) {
-                return gettype($element) !== 'array';
-            });
-            if (!empty($docs)) {
-                $arr = array_map(function ($doc) {
+    // public function auditNatGcc(Request $request)
+    // {
+    //     $currentUser = auth()->user();
+    //     $ublishing = Publishing::findOrfail($request->id);
+    //     if ($currentUser->current_team_id == 3) {
+    //         $ublishing->status = 'to verify';
+    //         if ($ublishing->audit) {
+    //             $ublishing->audit = [...$ublishing->audit, $request->audit];
+    //         } else {
+    //             $ublishing->audit = [$request->audit];
+    //         }
+    //         $ublishing->save();
+    //         $user = User::where('current_team_id', 2)->get();
+    //         Notification::sendNow($user, new InvoiceInitaitedForm($ublishing));
+    //     } else {
+    //         $docs = $request->doc;
+    //         $docs = array_filter($docs, static function ($element) {
+    //             return gettype($element) !== 'array';
+    //         });
+    //         if (!empty($docs)) {
+    //             $arr = array_map(function ($doc) {
 
-                    $myarr = [];
+    //                 $myarr = [];
 
-                    if ($doc && gettype($doc) != 'string') {
-                        $uploadedFile = $doc;
-                        $filename = $uploadedFile->getClientOriginalName();
-                        $path = Storage::putFileAs(
-                            'public',
-                            $uploadedFile,
-                            $filename
-                        );
-                        $myarr['name'] = $filename;
-                        $myarr['link'] = asset('storage/documents/' . $filename);;
-                    }
-                    return $myarr;
-                }, $docs);
-                $docs = $arr;
-            }
+    //                 if ($doc && gettype($doc) != 'string') {
+    //                     $uploadedFile = $doc;
+    //                     $filename = $uploadedFile->getClientOriginalName();
+    //                     $path = Storage::putFileAs(
+    //                         'public',
+    //                         $uploadedFile,
+    //                         $filename
+    //                     );
+    //                     $myarr['name'] = $filename;
+    //                     $myarr['link'] = asset('storage/documents/' . $filename);;
+    //                 }
+    //                 return $myarr;
+    //             }, $docs);
+    //             $docs = $arr;
+    //         }
 
-            $pub = Publishing::findOrfail($request->id);
-            $pub->form = $request->form;
-            $pub->region = $request->region;
-            $pub->procedure = $request->procedure;
-            $pub->product_name = $request->product_name;
-            $pub->dossier_contact = $request->dossier_contact;
-            $pub->object = $request->object;
-            $pub->country = $request->country;
-            $pub->dossier_type = $request->dossier_type;
-            $pub->dossier_count = $request->dossier_count;
-            $pub->remarks = $request->remarks;
-            $pub->uuid = $request->uuid;
-            $pub->submission_type = $request->submission_type;
-            $pub->submission_mode = $request->submission_mode;
-            $pub->tracking = $request->tracking;
-            // if ($request->tracking && is_array($request->tracking)) {
-            //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-            // } else {
-            //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-            // }
-            $pub->submission_unit = $request->submission_unit;
-            $pub->applicant = $request->applicant;
-            $pub->agency_code = $request->agency_code;
-            $pub->atc = $request->atc;
-            $pub->inn = $request->inn;
-            $pub->sequence = $request->sequence;
-            $pub->r_sequence = $request->r_sequence;
-            $pub->submission_description = $request->submission_description;
-            $pub->mtremarks = $request->mtremarks;
-            $pub->indication = $request->indication;
-            $pub->manufacturer = $request->manufacturer;
-            $pub->drug_substance = $request->drug_substance;
-            $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
-            $pub->drug_product = $request->drug_product;
-            $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-            $pub->dosage_form = $request->dosage_form;
-            $pub->excipient = $request->excipient;
-            if (!empty($pub->doc)) {
-                $pub->doc = [...$pub->doc, ...$docs];
-            } else {
-                $pub->doc = $docs;
-            }
-            $pub->docremarks = $request->docremarks;
-            $pub->invented_name = $request->invented_name;
-            $pub->request_date = $request->request_date;
-            $pub->deadline = $request->deadline;
-            $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
-            $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
-            $pub->status = 'submitted';
+    //         $pub = Publishing::findOrfail($request->id);
+    //         $pub->form = $request->form;
+    //         $pub->region = $request->region;
+    //         $pub->procedure = $request->procedure;
+    //         $pub->product_name = $request->product_name;
+    //         $pub->dossier_contact = $request->dossier_contact;
+    //         $pub->object = $request->object;
+    //         $pub->country = $request->country;
+    //         $pub->dossier_type = $request->dossier_type;
+    //         $pub->dossier_count = $request->dossier_count;
+    //         $pub->remarks = $request->remarks;
+    //         $pub->uuid = $request->uuid;
+    //         $pub->submission_type = $request->submission_type;
+    //         $pub->submission_mode = $request->submission_mode;
+    //         $pub->tracking = $request->tracking;
+    //         // if ($request->tracking && is_array($request->tracking)) {
+    //         //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
+    //         // } else {
+    //         //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
+    //         // }
+    //         $pub->submission_unit = $request->submission_unit;
+    //         $pub->applicant = $request->applicant;
+    //         $pub->agency_code = $request->agency_code;
+    //         $pub->atc = $request->atc;
+    //         $pub->inn = $request->inn;
+    //         $pub->sequence = $request->sequence;
+    //         $pub->r_sequence = $request->r_sequence;
+    //         $pub->submission_description = $request->submission_description;
+    //         $pub->mtremarks = $request->mtremarks;
+    //         $pub->indication = $request->indication;
+    //         $pub->manufacturer = $request->manufacturer;
+    //         $pub->drug_substance = $request->drug_substance;
+    //         $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
+    //         $pub->drug_product = $request->drug_product;
+    //         $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+    //         $pub->dosage_form = $request->dosage_form;
+    //         $pub->excipient = $request->excipient;
+    //         if (!empty($pub->doc)) {
+    //             $pub->doc = [...$pub->doc, ...$docs];
+    //         } else {
+    //             $pub->doc = $docs;
+    //         }
+    //         $pub->docremarks = $request->docremarks;
+    //         $pub->invented_name = $request->invented_name;
+    //         $pub->request_date = $request->request_date;
+    //         $pub->deadline = $request->deadline;
+    //         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
+    //         $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+    //         $pub->status = 'submitted';
 
-            if ($pub->audit) {
-                $pub->audit = [...$pub->audit, $request->audit];
-            } else {
-                $pub->audit = [$request->audit];
-            }
-            $pub->save();
-            $user = User::where('current_team_id', 3)->get();
-            Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        }
+    //         if ($pub->audit) {
+    //             $pub->audit = [...$pub->audit, $request->audit];
+    //         } else {
+    //             $pub->audit = [$request->audit];
+    //         }
+    //         $pub->save();
+    //         $user = User::where('current_team_id', 3)->get();
+    //         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+    //     }
 
-        return redirect()->route('show-publishing', ['id' => $request->id])->with('message', 'Your form has been successfully submitted');
-    }
+    //     return redirect()->route('show-publishing', ['id' => $request->id])->with('message', 'Your form has been successfully submitted');
+    // }
 
     // function ch form
 
-    public function storeNatCh(Request $request)
-    {
-        $docs = $request->doc;
-        $docs = array_filter($docs, static function ($element) {
-            return gettype($element) !== 'array';
-        });
-        if (!empty($docs)) {
-            $arr = array_map(function ($doc) {
+    // public function storeNatCh(Request $request)
+    // {
+    //     $docs = $request->doc;
+    //     $docs = array_filter($docs, static function ($element) {
+    //         return gettype($element) !== 'array';
+    //     });
+    //     if (!empty($docs)) {
+    //         $arr = array_map(function ($doc) {
 
-                $myarr = [];
+    //             $myarr = [];
 
-                if ($doc && gettype($doc) != 'string') {
-                    $uploadedFile = $doc;
-                    $filename = $uploadedFile->getClientOriginalName();
-                    $path = Storage::putFileAs(
-                        'public',
-                        $uploadedFile,
-                        $filename
-                    );
-                    $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/documents/' . $filename);;
-                }
-                return $myarr;
-            }, $docs);
-            $docs = $arr;
-        }
+    //             if ($doc && gettype($doc) != 'string') {
+    //                 $uploadedFile = $doc;
+    //                 $filename = $uploadedFile->getClientOriginalName();
+    //                 $path = Storage::putFileAs(
+    //                     'public',
+    //                     $uploadedFile,
+    //                     $filename
+    //                 );
+    //                 $myarr['name'] = $filename;
+    //                 $myarr['link'] = asset('storage/documents/' . $filename);;
+    //             }
+    //             return $myarr;
+    //         }, $docs);
+    //         $docs = $arr;
+    //     }
 
-        $NewOrOldPub = Publishing::find($request->id);
-        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
+    //     $NewOrOldPub = Publishing::find($request->id);
+    //     $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
-        $pub->form = $request->form;
-        $pub->region = $request->region;
-        $pub->procedure = $request->procedure;
-        $pub->product_name = $request->product_name;
-        $pub->dossier_contact = $request->dossier_contact;
-        $pub->object = $request->object;
-        $pub->country = $request->country;
-        $pub->dossier_type = $request->dossier_type;
-        $pub->dossier_count = $request->dossier_count;
-        $pub->remarks = $request->remarks;
-        $pub->tracking = $request->tracking;
-        $pub->applicant = $request->applicant;
-        $pub->agency_code = $request->agency_code;
-        $pub->atc = $request->atc;
-        $pub->submission_type = $request->submission_type;
-        $pub->submission_mode = $request->submission_mode;
-        $pub->invented_name = $request->invented_name;
-        $pub->inn = $request->inn;
-        $pub->sequence = $request->sequence;
-        $pub->r_sequence = $request->r_sequence;
-        $pub->uuid = $request->uuid;
-        $pub->submission_description = $request->submission_description;
-        $pub->mtremarks = $request->mtremarks;
-        $pub->indication = $request->indication;
-        $pub->manufacturer = $request->manufacturer;
-        $pub->drug_substance = $request->drug_substance;
-        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
-        $pub->drug_product = $request->drug_product;
-        $pub->dosage_form = $request->dosage_form;
-        $pub->excipient = $request->excipient;
-        if (!empty($pub->doc)) {
-            $pub->doc = [...$pub->doc, ...$docs];
-        } else {
-            $pub->doc = $docs;
-        }
-        $pub->docremarks = $request->docremarks;
-        $pub->request_date = $request->request_date;
-        $pub->deadline = $request->deadline;
-        $pub->galenic_form = $request->galenic_form;
-        $pub->swissmedic = $request->swissmedic;
-        $pub->galenic_name = $request->galenic_name;
-        $pub->dmf = $request->dmf;
-        $pub->pmf = $request->pmf;
-        $pub->dmf_holder = $request->dmf_holder;
-        $pub->pmf_holder = $request->pmf_holder;
-        $pub->tpa = $request->tpa;
-        $pub->application_type = $request->application_type;
-        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
-        $pub->type = $request->query('type');
-        $pub->created_by = $request->created_by;
-        if ($request->query('type') == 'save') {
-            $pub->status = 'draft';
-            $pub->save();
-            return redirect('/dashboard')->with('message', 'Form has been successfully saved');
-        } else {
+    //     $pub->form = $request->form;
+    //     $pub->region = $request->region;
+    //     $pub->procedure = $request->procedure;
+    //     $pub->product_name = $request->product_name;
+    //     $pub->dossier_contact = $request->dossier_contact;
+    //     $pub->object = $request->object;
+    //     $pub->country = $request->country;
+    //     $pub->dossier_type = $request->dossier_type;
+    //     $pub->dossier_count = $request->dossier_count;
+    //     $pub->remarks = $request->remarks;
+    //     $pub->tracking = $request->tracking;
+    //     $pub->applicant = $request->applicant;
+    //     $pub->agency_code = $request->agency_code;
+    //     $pub->atc = $request->atc;
+    //     $pub->submission_type = $request->submission_type;
+    //     $pub->submission_mode = $request->submission_mode;
+    //     $pub->invented_name = $request->invented_name;
+    //     $pub->inn = $request->inn;
+    //     $pub->sequence = $request->sequence;
+    //     $pub->r_sequence = $request->r_sequence;
+    //     $pub->uuid = $request->uuid;
+    //     $pub->submission_description = $request->submission_description;
+    //     $pub->mtremarks = $request->mtremarks;
+    //     $pub->indication = $request->indication;
+    //     $pub->manufacturer = $request->manufacturer;
+    //     $pub->drug_substance = $request->drug_substance;
+    //     $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
+    //     $pub->drug_product = $request->drug_product;
+    //     $pub->dosage_form = $request->dosage_form;
+    //     $pub->excipient = $request->excipient;
+    //     if (!empty($pub->doc)) {
+    //         $pub->doc = [...$pub->doc, ...$docs];
+    //     } else {
+    //         $pub->doc = $docs;
+    //     }
+    //     $pub->docremarks = $request->docremarks;
+    //     $pub->request_date = $request->request_date;
+    //     $pub->deadline = $request->deadline;
+    //     $pub->galenic_form = $request->galenic_form;
+    //     $pub->swissmedic = $request->swissmedic;
+    //     $pub->galenic_name = $request->galenic_name;
+    //     $pub->dmf = $request->dmf;
+    //     $pub->pmf = $request->pmf;
+    //     $pub->dmf_holder = $request->dmf_holder;
+    //     $pub->pmf_holder = $request->pmf_holder;
+    //     $pub->tpa = $request->tpa;
+    //     $pub->application_type = $request->application_type;
+    //     $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+    //     $pub->type = $request->query('type');
+    //     $pub->created_by = $request->created_by;
+    //     if ($request->query('type') == 'save') {
+    //         $pub->status = 'draft';
+    //         $pub->save();
+    //         return redirect('/dashboard')->with('message', 'Form has been successfully saved');
+    //     } else {
 
-            $pub->status = 'initiated';
-            $pub->save();
-            $user = User::where('current_team_id', 2)->get();
-            Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-            return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
-        }
-    }
+    //         $pub->status = 'initiated';
+    //         $pub->save();
+    //         $user = User::where('current_team_id', 2)->get();
+    //         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+    //         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
+    //     }
+    // }
 
     public function storeNatCh_(Request $request)
     {

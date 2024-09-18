@@ -13,4 +13,9 @@ class DrugSubstance extends Model
         'product_meta_data_id',
         'substance',
     ];
+
+    public function ds_manufacturers()
+    {
+        return $this->hasMany(DrugSubstanceManufacturer::class);
+    }
 }

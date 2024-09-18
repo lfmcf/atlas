@@ -1,30 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import Authenticated from "../../../Layouts/AuthenticatedLayout";
-import { IStepperOptions, StepperComponent } from "../../../_metronic/assets/ts/components";
+import Authenticated from "../../../../Layouts/AuthenticatedLayout";
+import { StepperComponent } from "../../../../_metronic/assets/ts/components";
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
-import { router, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import Select from 'react-select'
-import moment from 'moment'
-import DropZone from "../../../Components/Dropzone";
-import StatusComponent from "../../../Components/StatusComponent";
 import axios from "axios";
-
-const StepperOptions: IStepperOptions = {
-    startIndex: 6,
-    animation: false,
-    animationSpeed: '0.3s',
-    animationNextClass: 'animate__animated animate__slideInRight animate__fast',
-    animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
-}
+import DropZone from "../../../../Components/Dropzone";
+import StatusComponent from "../../../../Components/StatusComponent";
+import GeneralInformation from "../../../../Components/GeneralInformation";
+import ProductMetaData from "../../../../Components/ProductMetaData";
 
 const Confirm = (props: any) => {
 
+    const { metadata, folder } = props
 
-    const { metadata, folder, metapro } = props
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
+
+    const [files, setFiles] = useState(folder.document)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -41,7 +36,7 @@ const Confirm = (props: any) => {
         uuid: folder.uuid,
         submission_type: folder.submission_type,
         submission_mode: folder.submission_mode,
-        tracking: folder.tracking,
+        tracking: folder ? folder.tracking : '',
         trackingExtra: folder ? folder.trackingExtra : '',
         submission_unit: folder.submission_unit,
         applicant: folder.applicant,
@@ -52,36 +47,25 @@ const Confirm = (props: any) => {
         submission_description: folder.submission_description,
         mtremarks: folder.mtremarks,
         indication: folder.indication,
-        manufacturer: folder.manufacturer,
+        // manufacturer: folder.manufacturer,
         drug_substance: folder.drug_substance,
-        drug_substance_manufacturer: folder.drug_substance_manufacturer,
+        // drug_substance_manufacturer: folder.drug_substance_manufacturer,
         drug_product: folder.drug_product,
-        drug_product_manufacturer: folder.drug_product_manufacturer,
+        // drug_product_manufacturer: folder.drug_product_manufacturer,
         dosage_form: folder.dosage_form,
         excipient: folder.excipient,
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder.docremarks,
         request_date: folder.request_date,
         deadline: folder.deadline,
-        adjusted_deadline: folder.adjusted_deadline ? folder.adjusted_deadline : new Date,
+        adjusted_deadline: new Date,
         adjustedDeadlineComments: '',
-        audit: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '' },
         status: folder ? folder.status : '',
     })
 
     useEffect(() => {
-        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
+        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
     }, [])
-
-    // let tn = metadata.trackingNumber
-    // tn = tn.split(/\r?\n/)
-
-    // let tno = []
-    // if (tn.length > 1) {
-    //     tno = tn.map((val) => {
-    //         return { label: val, value: val }
-    //     })
-    // }
 
     const nextStep = () => {
         // setHasError(false)
@@ -227,21 +211,17 @@ const Confirm = (props: any) => {
         setData(name, e)
     }
 
+
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc.push(...e)
         setData(instData)
     }
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('audit-publishing'));
-    }
-
-    const handleCommentChange = (e) => {
-        let arr = { ...data }
-        arr.audit.message = e.target.value
-        setData(arr)
+        post(route('confirm_eu_publishing'));
     }
 
     const deleletFile = (i) => {
@@ -278,7 +258,7 @@ const Confirm = (props: any) => {
 
     const goNextStep = (i) => {
 
-        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)) {
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
 
             if (!data.dossier_type) {
                 setMyErroes((preveState) => {
@@ -299,7 +279,7 @@ const Confirm = (props: any) => {
             return
 
         }
-        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5 || i == 6)) {
+        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5)) {
             if (!data.submission_type) {
                 setMyErroes((preveState) => {
                     return {
@@ -345,6 +325,124 @@ const Confirm = (props: any) => {
         }
     }
 
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const [drugSubstanceOptions, setDrugSubstanceOptions] = useState(
+        metadata.drug_substance.map(val => ({ label: val.substance, value: val.substance }))
+    );
+
+    const [drugProductOptions, setDrugProductOptions] = useState(
+        metadata.drug_product.map(val => ({ label: val.drug_product, value: val.drug_product }))
+    );
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    // Handle Drug Substance Change
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = metadata.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = metadata.drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
+
     return (
         <>
             <div className='d-flex justify-content-between align-items-center'>
@@ -356,7 +454,7 @@ const Confirm = (props: any) => {
             </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -446,83 +544,16 @@ const Confirm = (props: any) => {
                         </div>
                         <div className="stepper-line h-40px"></div>
                     </div>
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(6)} style={{ cursor: 'pointer' }}>
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">6</span>
-                            </div>
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 6
-                                </h3>
-
-                                <div className="stepper-desc">
-                                    Dossier Review
-                                </div>
-                            </div>
-                        </div>
-                        <div className="stepper-line h-40px"></div>
-                    </div>
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier contact</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_contact" value={data.dossier_contact} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" value={data.object} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Product</label>
-                                    <input type="text" className="form-control form-control-solid" name="productName" value={data.productName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" value={data.country.value} disabled />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
-                                    <Select options={[
-                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
-                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
-                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
-                                        { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
-                                        { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
-                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },
-                                        { label: 'Current View (Draft seq)', value: 'Current View (Draft seq)', delai: 1 },
-                                    ]}
-                                        name='dossier_type'
-                                        onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dossier_type}
-                                        menuPortalTarget={document.body}
-                                        styles={selectStyles(myErrors.dossier_type)}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
-
-                                    <label className="form-label">Remarks</label>
-                                    <textarea className="form-control form-control-solid" rows={3} value={data.remarks} name="remarks" onChange={handleChange} />
-                                </div>
-
-                            </div>
-                        </div>
+                        <GeneralInformation
+                            data={data}
+                            myErrors={myErrors}
+                            handleChange={handleChange}
+                            handleSelectChange={handleSelectChange}
+                            selectStyles={selectStyles}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
@@ -697,117 +728,23 @@ const Confirm = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <ProductMetaData
+                            metadata={metadata}
+                            data={data}
+                            // drugSubstanceOptions={drugSubstanceOptions}
+                            //drugProductOptions={drugProductOptions}
+                            handleSelectChange={handleSelectChange}
+                            handleDrugSubstanceChange={handleDrugSubstanceChange}
+                            handleManufacturerChange={handleManufacturerChange}
+                            handleDrugProductChange={handleDrugProductChange}
+                            handleDpManufacturerChange={handleDpManufacturerChange}
+                            manufacturerOptions={manufacturerOptions}
+                            dpmanufacturerOptions={dpmanufacturerOptions}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
@@ -828,35 +765,6 @@ const Confirm = (props: any) => {
                                 <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
                         </div>
-                        {/* <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='col-12 mb-10'>
-                                <label className="form-label">uploaded documents</label>
-                                <ul>
-                                    {folder.doc ? folder.doc.map((doc, i) => (
-                                        <li key={i}>
-                                            <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
-                                        </li>
-                                    )) : ''}
-                                </ul>
-                            </div>
-                            <div className='row mb-10'>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <label className="form-label">Attached documents</label>
-                                    <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} />
-                                </div>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" value={data.docremarks} placeholder="" onChange={handleChange} />
-                            </div>
-                        </div> */}
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-6'>
@@ -882,7 +790,7 @@ const Confirm = (props: any) => {
                             </div>
                             <div className="row mb-10">
                                 <div className='col-6'>
-                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
                                     <Flatpickr
                                         data-enable-time
                                         value={data.adjusted_deadline}
@@ -900,72 +808,6 @@ const Confirm = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
-                                    </div>
-                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
-                                        <div className='scroll-y me-n5 pe-5'
-                                            data-kt-element="messages"
-                                            data-kt-scroll="true"
-                                            data-kt-scroll-activate="{default: false, lg: true}"
-                                            data-kt-scroll-max-height="auto">
-                                            {
-                                                folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user.id !== props.auth.user.id ?
-                                                        <div key={i} className='d-flex justify-content-start mb-10'>
-                                                            <div className='d-flex flex-column align-items-start'>
-                                                                <div className='d-flex align-items-center mb-2'>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
-                                                                    </div>
-                                                                    <div className='ms-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div> :
-                                                        <div key={i} className='d-flex justify-content-end mb-10'>
-                                                            <div className='d-flex flex-column align-items-end'>
-                                                                <div className='d-flex align-items-center mb-2'>
-
-                                                                    <div className='me-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-
-                                                                    </div>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                )
-                                                ) : ''
-                                            }
-                                        </div>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
-
-                                        {/* <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
-                                        </div> */}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
 
@@ -977,33 +819,14 @@ const Confirm = (props: any) => {
                             </button>
                         </div>
                         <div>
-                            {props.auth.user.current_team_id == 3 ?
-                                <>
-                                    <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
-                                        <span className="indicator-label">
-                                            Accept
-                                        </span>
-                                    </button>
-                                    <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
-                                        <span className="indicator-label">
-                                            Reject
-                                        </span>
-                                        <span className="indicator-progress">
-                                            Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                        </span>
-                                    </button>
-                                </>
-                                : <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
-                                    <span className="indicator-label">
-                                        Submit
-                                    </span>
-                                    <span className="indicator-progress">
-                                        Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                    </span>
-                                </button>
-                            }
-
-
+                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
+                                <span className="indicator-label">
+                                    Submit
+                                </span>
+                                <span className="indicator-progress">
+                                    Please wait... <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
 
                             <button type="button" className="btn btn-primary" data-kt-stepper-action='next' onClick={nextStep}>
                                 Continue
@@ -1015,6 +838,7 @@ const Confirm = (props: any) => {
         </>
     )
 }
+
 
 Confirm.layout = page => <Authenticated children={page} auth={page.props.auth} />
 

@@ -33,7 +33,7 @@ class PublishingSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New formatting form submitted',
+            subject: 'New publishing form submitted',
         );
     }
 

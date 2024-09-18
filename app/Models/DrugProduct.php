@@ -13,4 +13,9 @@ class DrugProduct extends Model
         'product_meta_data_id',
         'drug_product'
     ];
+
+    public function dp_manufacturers()
+    {
+        return $this->hasMany(DrugProductManufacturer::class);
+    }
 }

@@ -1,86 +1,82 @@
-import { useEffect, useRef, useState } from 'react'
-import Authenticated from '../../../Layouts/AuthenticatedLayout'
-import { StepperComponent } from '../../../_metronic/assets/ts/components'
-import { useForm } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from "react";
+import Authenticated from "../../../../Layouts/AuthenticatedLayout";
+import { IStepperOptions, StepperComponent } from "../../../../_metronic/assets/ts/components";
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
-import Select from 'react-select';
-import DropZone from '../../../Components/Dropzone';
-import axios from 'axios';
+import { useForm } from '@inertiajs/react';
+import Select from 'react-select'
+import moment from 'moment'
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import DropZone from "../../../../Components/Dropzone";
+import axios from "axios";
+import GeneralInformation from "../../../../Components/GeneralInformation";
+import ProductMetaData from "../../../../Components/ProductMetaData";
 
-const Initiate = (props: any) => {
-    const { folder, agc, countries, metapro, metadata } = props;
+const StepperOptions: IStepperOptions = {
+    startIndex: 6,
+    animation: false,
+    animationSpeed: '0.3s',
+    animationNextClass: 'animate__animated animate__slideInRight animate__fast',
+    animationPreviousClass: 'animate__animated animate__slideInLeft animate__fast',
+}
 
-    console.log(metadata)
+const Correct = (props: any) => {
 
-    const stepperRef = useRef<HTMLDivElement | null>(null)
-    const stepper = useRef<StepperComponent | null>(null)
-    var params = new URLSearchParams(window.location.search);
-    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
-
-    let code = ''
-    if (agc && agc.agencyCode) {
-        var char = agc.agencyCode.split('-')
-        code = char[0]
+    function createMarkup(msg: any) {
+        return { __html: msg.message };
     }
 
+    const { folder, metapro } = props
+    const stepperRef = useRef<HTMLDivElement | null>(null)
+    const stepper = useRef<StepperComponent | null>(null)
+    const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
+
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
-        id: folder ? folder._id : '',
-        form: folder ? folder.form : 'Publishing',
-        region: folder ? folder.region : params.get('region'),
-        procedure: folder ? folder.procedure : params.get('procedure'),
-        productName: folder ? folder.product_name : params.get('product'),
-        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
-        object: folder ? folder.object : '',
-        country: { value: countries, code: code },
-        dossier_type: folder ? folder.dossier_type : '',
-        dossier_count: folder ? folder.dossier_count : '',
-        remarks: folder ? folder.remarks : '',
-        uuid: metadata.uuid,
-        submission_type: folder ? folder.submission_type : '',
-        submission_mode: folder ? folder.submission_mode : '',
-        tracking: folder ? folder.tracking : '',
-        submission_unit: folder ? folder.submission_unit : '',
-        applicant: metadata.applicant,
-        agency_code: agc ? agc.agencyCode : '',
-        invented_name: '',
-        inn: metadata.inn,
-        sequence: folder ? folder.sequence : '',
-        r_sequence: folder ? folder.r_sequence : '',
-        submission_description: folder ? folder.submission_description : '',
-        mtremarks: folder ? folder.mtremarks : '',
-        indication: folder ? folder.indication : '',
-        manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : '',
-        drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
-        dosage_form: folder ? folder.dosage_form : '',
-        excipient: folder ? folder.excipient : '',
+        id: folder._id,
+        form: folder.form,
+        region: folder.region,
+        procedure: folder.procedure,
+        productName: folder.product_name,
+        dossier_contact: folder.dossier_contact,
+        object: folder.object,
+        country: folder.country,
+        dossier_type: folder.dossier_type,
+        dossier_count: folder.dossier_count,
+        remarks: folder.remarks,
+        uuid: folder.uuid,
+        submission_type: folder.submission_type,
+        submission_mode: folder.submission_mode,
+        tracking: folder.tracking,
+        submission_unit: folder.submission_unit,
+        applicant: folder.applicant,
+        agency_code: folder.agency_code,
+        inn: folder.inn,
+        sequence: folder.sequence,
+        r_sequence: folder.r_sequence,
+        submission_description: folder.submission_description,
+        mtremarks: folder.mtremarks,
+        indication: folder.indication,
+        // manufacturer: folder.manufacturer,
+        drug_substance: folder.drug_substance,
+        // drug_substance_manufacturer: folder.drug_substance_manufacturer,
+        drug_product: folder.drug_product,
+        // drug_product_manufacturer: folder.drug_product_manufacturer,
+        dosage_form: folder.dosage_form,
+        excipient: folder.excipient,
         doc: folder && folder.doc !== null ? folder.doc : [],
-        docremarks: folder ? folder.docremarks : '',
-        request_date: new Date(),
-        deadline: new Date(),
-        created_by: props.auth.user.id
+        docremarks: folder.docremarks,
+        request_date: folder.request_date,
+        deadline: folder.deadline,
+        adjusted_deadline: folder.adjusted_deadline ? folder.adjusted_deadline : new Date,
+        adjustedDeadlineComments: '',
+        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
     })
 
-    // let tn = metadata.trackingNumber
-    // tn = tn.split(/\r?\n/)
-    // let tno = [];
-    // if (tn.length > 1) {
-    //     tno = tn.map((val) => {
-    //         return { label: val, value: val }
-    //     })
-
-    // } else {
-    //     tno = tn.map((val) => {
-    //         return { label: val, value: val }
-    //     })
-    // }
-
     useEffect(() => {
-        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
+        stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
     }, [])
+
 
     const nextStep = () => {
         // setHasError(false)
@@ -108,7 +104,6 @@ const Initiate = (props: any) => {
                         }
                     })
                 }
-
                 return
             }
         }
@@ -226,41 +221,46 @@ const Initiate = (props: any) => {
         setData(name, e)
     }
 
+    const handleSourceChange = (e) => {
+        let arr = { ...data }
+        if (e.target.checked) {
+            arr.correction.source.push(e.target.value)
+        } else {
+            const index = arr.correction.source.indexOf(e.target.value);
+            arr.correction.source.splice(index, 1)
+        }
+        setData(arr)
+
+    }
+
+    const handleMessageChange = (e) => {
+        const editorData = e.getData();
+        let arr = { ...data }
+        arr.correction.message = editorData
+        setData(arr)
+    }
+
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc.push(...e)
         setData(instData)
     }
 
-    useEffect(() => {
-        let date = new Date();
-        let hour = date.getHours();
-        let delai = data.dossier_type ? data.dossier_type.delai : '';
-
-        let deadline = new Date();
-        let count = 1;
-
-        if (hour < 12) {
-            delai = delai
-        } else {
-            delai = delai + 1
-        }
-
-        while (count < delai) {
-            deadline = new Date(date.setDate(date.getDate() + 1));
-            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
-                count++;
-            }
-
-        }
-
-        setData('deadline', new Date(deadline));
-
-    }, [data.dossier_type]);
-
-    const handleSubmit = (e, type) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('store-publishing_', { type: type }));
+        post(route('correct_eu_publishing'));
+    }
+
+    const deleletFile = (i) => {
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
+        setData(arr)
     }
 
     const removeAll = () => {
@@ -276,19 +276,6 @@ const Initiate = (props: any) => {
         setData(instData)
     }
 
-    const deleletFile = (i) => {
-
-        if (i.link) {
-            let filesfromserver = []
-            filesfromserver.push(i.name)
-            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
-        }
-        var arr = { ...data }
-        let index = arr.doc.map((el) => el.name).indexOf(i.name);
-        arr.doc.splice(index, 1)
-        setData(arr)
-    }
-
     const selectStyles = (hasErrors) => ({
         control: (styles) => ({
             ...styles,
@@ -298,7 +285,7 @@ const Initiate = (props: any) => {
 
     const goNextStep = (i) => {
 
-        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5)) {
+        if ((!data.dossier_type || !data.dossier_count) && (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)) {
 
             if (!data.dossier_type) {
                 setMyErroes((preveState) => {
@@ -319,7 +306,7 @@ const Initiate = (props: any) => {
             return
 
         }
-        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5)) {
+        if ((!data.submission_type || !data.submission_mode || !data.submission_unit || !data.sequence) && (i == 3 || i == 4 || i == 5 || i == 6)) {
             if (!data.submission_type) {
                 setMyErroes((preveState) => {
                     return {
@@ -365,11 +352,119 @@ const Initiate = (props: any) => {
         }
     }
 
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+    const [drugSubstanceOptions, setDrugSubstanceOptions] = useState(
+        data.drug_substance.map(val => ({ label: val.drug_substance, value: val.drug_substance }))
+    );
+
+    const [drugProductOptions, setDrugProductOptions] = useState(
+        data.drug_product.map(val => ({ label: val.drug_product, value: val.drug_product }))
+    );
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    // Handle Drug Substance Change
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = data.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = data.drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
+
     return (
         <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
+                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => stepper.current?.goto(1)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -459,70 +554,39 @@ const Initiate = (props: any) => {
                         </div>
                         <div className="stepper-line h-40px"></div>
                     </div>
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(6)} style={{ cursor: 'pointer' }}>
+                            <div className="stepper-icon w-40px h-40px">
+                                <i className="stepper-check fas fa-check"></i>
+                                <span className="stepper-number">6</span>
+                            </div>
+                            <div className="stepper-label">
+                                <h3 className="stepper-title">
+                                    Step 6
+                                </h3>
+
+                                <div className="stepper-desc">
+                                    Dossier Review
+                                </div>
+                            </div>
+                        </div>
+                        <div className="stepper-line h-40px"></div>
+                    </div>
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier contact</label>
-                                    <input type="text" className="form-control form-control-solid" defaultValue={data.dossier_contact} name="dossier_contact" readOnly onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter a Dossier Title. Ex : ORALAIR_EU_Seq 0137'>Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" defaultValue={data.object} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Product</label>
-                                    <input type="text" className="form-control form-control-solid" name="productName" defaultValue={data.productName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
-                                    <Select options={[
-                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
-                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
-                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
-                                        { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
-                                        { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
-                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },
-                                        { label: 'Current View (Draft seq)', value: 'Current View (Draft seq)', delai: 1 },
-                                    ]}
-                                        name='dossier_type'
-                                        onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dossier_type}
-                                        menuPortalTarget={document.body}
-                                        styles={selectStyles(myErrors.dossier_type)}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} defaultValue={data.dossier_count} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
-
-                                    <label className="form-label">Remarks</label>
-                                    <textarea className="form-control form-control-solid" rows={3} defaultValue={data.remarks} name="remarks" onChange={handleChange} />
-                                </div>
-
-                            </div>
-                        </div>
+                        <GeneralInformation
+                            data={data}
+                            myErrors={myErrors}
+                            handleChange={handleChange}
+                            handleSelectChange={handleSelectChange}
+                            selectStyles={selectStyles}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">UUID</label>
-                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="uuid" value={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type ? 'red' : '' }}>Submission type (*)</label>
@@ -612,37 +676,20 @@ const Initiate = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
                                     <div className='d-flex align-items-center'>
-                                        <Select options={metadata.tracking_numbers.map((val) => {
-                                            return { label: val.numbers, value: val.numbers }
-                                        })}
+                                        <Select options={[]}
                                             name='tracking'
                                             onChange={(e, action) => handleSelectChangeTracking(e, action)}
-                                            className="react-select-container me-1"
+                                            className="react-select-container"
                                             classNamePrefix="react-select"
                                             placeholder=''
                                             isClearable
-                                            defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
+                                            value={data.tracking}
                                             menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '50%' }) }}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ ...base, width: '50%' }) }}
                                         />
                                         <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
                                     </div>
                                 </div>
-                                {/* <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Procedure Tracking N°</label>
-                                    <input type='text' name='tracking' className="form-control form-control-solid" onChange={handleChange} />
-                                    <Select options={tno}
-                                        name='tracking'
-                                        onChange={(e) => handleSelectChange(e, 'tracking')}
-                                        className="basic"
-                                        classNamePrefix="basic"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.tracking}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div> */}
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit ? 'red' : '' }}>Submission unit (*)</label>
                                     <Select options={[
@@ -668,22 +715,22 @@ const Initiate = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Applicant</label>
-                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="applicant" value={data.applicant} onChange={handleChange} />
                                 </div>
 
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Agency code</label>
-                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="agency_code" value={data.agency_code} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className='col-md-4 col-sm-12'>Invented name</label>
-                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.productName} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="productName" value={data.productName} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className='col-md-4 col-sm-12'>INN</label>
-                                    <input type="text" className="form-control form-control-solid" name="inn" defaultValue={data.inn} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="inn" value={data.inn} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='row mb-10'>
@@ -693,11 +740,11 @@ const Initiate = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Related Sequence</label>
-                                    <input type="text" className="form-control form-control-solid" name="r_sequence" defaultValue={data.r_sequence} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="r_sequence" value={data.r_sequence} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission description</label>
-                                    <input type="text" className="form-control form-control-solid" name="submission_description" defaultValue={data.submission_description} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="submission_description" value={data.submission_description} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='row mb-10'>
@@ -707,138 +754,34 @@ const Initiate = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metadata.indications.map((val) => ({ label: val.indication, value: val.indication }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metadata.drug_substance.map((val) =>
-                                        ({ label: val.substance, value: val.substance })
-                                    )}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metadata.drug_substance_manufacturer.map((val) =>
-                                        ({ label: val.substance_manufacturer, value: val.substance_manufacturer })
-                                    )}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metadata.drug_product.map((val) =>
-                                        ({ label: val.drug_product, value: val.drug_product })
-                                    )}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metadata.drug_product_manufacturer.map((val) =>
-                                        ({ label: val.product_manufacturer, value: val.product_manufacturer })
-                                    )}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metadata.dosage_form.map((val) =>
-                                        ({ label: val.form, value: val.form })
-                                    )}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metadata.excipients.map((val) =>
-                                        ({ label: val.excipient, value: val.excipient })
-                                    )}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <ProductMetaData
+                            metadata={[]}
+                            data={data}
+                            handleSelectChange={handleSelectChange}
+                            handleDrugSubstanceChange={handleDrugSubstanceChange}
+                            handleManufacturerChange={handleManufacturerChange}
+                            handleDrugProductChange={handleDrugProductChange}
+                            handleDpManufacturerChange={handleDpManufacturerChange}
+                            manufacturerOptions={manufacturerOptions}
+                            dpmanufacturerOptions={dpmanufacturerOptions}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            addDrugProductFields={() => { }}
+                            removeDrugProductFields={() => { }}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-
+                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-
+                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
+                                        {data.doc ? data.doc.map((ele) => (
+                                            <span className='me-2 fs-5'>{ele.name}</span>
+                                        )) : ''}
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -869,10 +812,189 @@ const Initiate = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            <div className="mb-10">
+                            <div className="row mb-10">
+                                <div className='col-6'>
+                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <Flatpickr
+                                        data-enable-time
+                                        value={data.adjusted_deadline}
+                                        className="form-control"
+                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        onChange={(date) => setData('adjusted_deadline', date)}
+                                    />
+                                </div>
 
                             </div>
+                            <div className="row mb-10">
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Comments</label>
+                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" onChange={handleChange} />
+                                </div>
+                            </div>
                         </div>
+                        <div className="flex-column current" data-kt-stepper-element="content">
+                            <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
+                                <div className="mb-5">
+                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
+                                        <span className="accordion-icon">
+                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                        </span>
+                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
+                                    </div>
+                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
+                                        <div className='scroll-y me-n5 pe-5'
+                                            data-kt-element="messages"
+                                            data-kt-scroll="true"
+                                            data-kt-scroll-activate="{default: false, lg: true}"
+                                            data-kt-scroll-max-height="auto">
+                                            {
+                                                folder.audit ? folder.audit.map((msg, i) => (
+                                                    msg.message && msg.user !== props.auth.user.id ?
+                                                        <div key={i} className='d-flex justify-content-start mb-10'>
+                                                            <div className='d-flex flex-column align-items-start'>
+                                                                <div className='d-flex align-items-center mb-2'>
+                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                    </div>
+                                                                    <div className='ms-3'>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                    {msg.message}
+                                                                </div>
+                                                            </div>
+                                                        </div> :
+                                                        <div key={i} className='d-flex justify-content-end mb-10'>
+                                                            <div className='d-flex flex-column align-items-end'>
+                                                                <div className='d-flex align-items-center mb-2'>
+
+                                                                    <div className='me-3'>
+                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                        {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                                    </div>
+                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                    {msg.message}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                )
+                                                ) : ''
+                                            }
+                                        </div>
+                                        {/* <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Type a message"></textarea>
+
+                                        <div className="d-flex flex-stack">
+                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
+                                        </div> */}
+                                    </div>
+                                </div>
+                                <div className="mb-5">
+                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
+                                        <span className="accordion-icon">
+                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                        </span>
+                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Delivery comment</h3>
+                                    </div>
+                                    <div id="kt_accordion_3_item_2" className="fs-6 collapse p-10 show" data-bs-parent="#kt_accordion_2">
+                                        {folder.deliveryComment ? folder.deliveryComment.map((msg, i) => (
+                                            <div key={i} className='d-flex justify-content-start mb-10'>
+                                                <div className='d-flex flex-column align-items-start'>
+                                                    <div className='d-flex align-items-center mb-2'>
+                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                            <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">EK</span>
+                                                        </div>
+                                                        <div className='ms-3'>
+                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                            {/* <span className='fs-5 fw-bold text-gray-900 text-hover-primary ms-1'>You</span> */}
+                                                        </div>
+
+                                                    </div>
+                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                        {msg.message}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )) : ''}
+                                    </div>
+                                </div>
+                                <div className="mb-5">
+                                    <div className="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_4_item_3">
+                                        <span className="accordion-icon">
+                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                        </span>
+                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Correction requests</h3>
+                                    </div>
+                                    <div id="kt_accordion_4_item_3" className="fs-6 collapse p-10" data-bs-parent="#kt_accordion_2">
+                                        <div className='mb-10'>
+                                            {
+                                                folder.correction ? folder.correction.map((msg, i) => (
+                                                    <div key={i} dangerouslySetInnerHTML={createMarkup(msg)} />
+                                                ))
+                                                    : ''
+                                            }
+                                        </div>
+                                        {/* <label className='form-label'>Source</label> */}
+                                        <div className='row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9 mb-10'>
+                                            <div className='col'>
+                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
+                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
+                                                        <input className='form-check-input' type='checkbox' name='source' value='stg' onChange={handleSourceChange} />
+                                                    </span>
+                                                    <span className='ms-5'>
+                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div className='col'>
+                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
+                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
+                                                        <input className='form-check-input' type='checkbox' name='source' value='ekemia' onChange={handleSourceChange} />
+                                                    </span>
+                                                    <span className='ms-5'>
+                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            {/* <div className='col'>
+                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
+                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
+                                                        <input className='form-check-input' type='radio' name='source' value='all' onChange={(e) => setSource(e.target.value)} />
+                                                    </span>
+                                                    <span className='ms-5'>
+                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>All</span>
+                                                    </span>
+                                                </label>
+                                            </div> */}
+                                        </div>
+                                        {/* <label className='form-label'>Comment</label> */}
+                                        <div>
+
+                                            <CKEditor
+                                                editor={ClassicEditor}
+                                                data=""
+                                                onReady={editor => {
+                                                    // You can store the "editor" and use when it is needed.
+                                                    console.log('Editor is ready to use!', editor);
+                                                }}
+                                                onChange={(event, editor) => handleMessageChange(editor)}
+                                            />
+                                            {/* <div className="d-flex flex-stack mt-5">
+                                                <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend}>Send</button>
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
 
@@ -884,12 +1006,7 @@ const Initiate = (props: any) => {
                             </button>
                         </div>
                         <div>
-                            <button type="button" className="btn btn-primary m-3" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'save')}>
-                                <span className="indicator-label">
-                                    Save
-                                </span>
-                            </button>
-                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'submit')}>
+                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
                                 <span className="indicator-label">
                                     Submit
                                 </span>
@@ -909,6 +1026,6 @@ const Initiate = (props: any) => {
     )
 }
 
-Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
+Correct.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-export default Initiate;
+export default Correct;

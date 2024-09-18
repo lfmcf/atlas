@@ -1,75 +1,60 @@
-import React, { useEffect, useRef, useState } from "react";
-import Authenticated from "../../../Layouts/AuthenticatedLayout";
-import { StepperComponent } from "../../../_metronic/assets/ts/components";
+import { useEffect, useRef, useState } from 'react'
+import Authenticated from '../../../../Layouts/AuthenticatedLayout'
+import { StepperComponent } from '../../../../_metronic/assets/ts/components'
+import { useForm } from '@inertiajs/react';
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
-import { useForm } from '@inertiajs/react';
-import Select from 'react-select'
-import axios from "axios";
-import DropZone from "../../../Components/Dropzone";
-import StatusComponent from "../../../Components/StatusComponent";
+import Select from 'react-select';
+import DropZone from '../../../../Components/Dropzone';
+import axios from 'axios';
+import GeneralInformation from '../../../../Components/GeneralInformation';
+import InsertProductMetaData from '../../../../Components/InsertProductMetaData';
 
-const Confirm = (props: any) => {
+const Initiate = (props: any) => {
 
-    const { metadata, folder } = props
+    const { folder, agencyCode, country } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
+    var params = new URLSearchParams(window.location.search);
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
 
-    const [files, setFiles] = useState(folder.document)
-
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
-        id: folder._id,
-        form: folder.form,
-        region: folder.region,
-        procedure: folder.procedure,
-        productName: folder.product_name,
-        dossier_contact: folder.dossier_contact,
-        object: folder.object,
-        country: folder.country,
-        dossier_type: folder.dossier_type,
-        dossier_count: folder.dossier_count,
-        remarks: folder.remarks,
-        uuid: folder.uuid,
-        submission_type: folder.submission_type,
-        submission_mode: folder.submission_mode,
+        id: folder ? folder._id : '',
+        form: folder ? folder.form : 'Publishing',
+        region: folder ? folder.region : params.get('region'),
+        procedure: folder ? folder.procedure : params.get('procedure'),
+        productName: folder ? folder.product_name : params.get('product'),
+        dossier_contact: folder ? folder.dossier_contact : props.auth.user.trigramme.toUpperCase(),
+        object: folder ? folder.object : '',
+        country: { value: country, code: agencyCode?.code },
+        dossier_type: folder ? folder.dossier_type : '',
+        dossier_count: folder ? folder.dossier_count : '',
+        remarks: folder ? folder.remarks : '',
+        uuid: '',
+        submission_type: folder ? folder.submission_type : '',
+        submission_mode: folder ? folder.submission_mode : '',
         tracking: folder ? folder.tracking : '',
-        trackingExtra: folder ? folder.trackingExtra : '',
-        submission_unit: folder.submission_unit,
-        applicant: folder.applicant,
-        agency_code: folder.agency_code,
-        inn: folder.inn,
-        sequence: folder.sequence,
-        r_sequence: folder.r_sequence,
-        submission_description: folder.submission_description,
-        mtremarks: folder.mtremarks,
-        indication: folder.indication,
-        manufacturer: folder.manufacturer,
-        drug_substance: folder.drug_substance,
-        drug_substance_manufacturer: folder.drug_substance_manufacturer,
-        drug_product: folder.drug_product,
-        drug_product_manufacturer: folder.drug_product_manufacturer,
-        dosage_form: folder.dosage_form,
-        excipient: folder.excipient,
+        submission_unit: folder ? folder.submission_unit : '',
+        applicant: '',
+        agency_code: agencyCode ? agencyCode.agencyCode : '',
+        invented_name: '',
+        inn: '',
+        sequence: folder ? folder.sequence : '',
+        r_sequence: folder ? folder.r_sequence : '',
+        submission_description: folder ? folder.submission_description : '',
+        mtremarks: folder ? folder.mtremarks : '',
+        indication: folder ? folder.indication : '',
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': [] }],
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': [] }],
+        dosage_form: folder ? folder.dosage_form : '',
+        excipient: [],
         doc: folder && folder.doc !== null ? folder.doc : [],
-        docremarks: folder.docremarks,
-        request_date: folder.request_date,
-        deadline: folder.deadline,
-        adjusted_deadline: new Date,
-        adjustedDeadlineComments: '',
-        status: folder ? folder.status : '',
+        docremarks: folder ? folder.docremarks : '',
+        request_date: new Date(),
+        deadline: new Date(),
+        created_by: props.auth.user.id
     })
-
-    let tn = metadata.trackingNumber
-    tn = tn?.split(/\r?\n/)
-
-    let tno = []
-    if (tn?.length > 1) {
-        tno = tn.map((val) => {
-            return { label: val, value: val }
-        })
-    }
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement)
@@ -219,34 +204,41 @@ const Confirm = (props: any) => {
         setData(name, e)
     }
 
-    // const handleUploadFileChange = (e) => {
-    //     let instData = { ...data }
-    //     instData.doc = []
-    //     Promise.all([...e.target.files].map((fileToDataURL) => instData.doc.push(fileToDataURL)))
-    //     setData(instData)
-    // }
     const handleUploadFileChange = (e) => {
         let instData = { ...data }
         instData.doc.push(...e)
         setData(instData)
     }
 
+    useEffect(() => {
+        let date = new Date();
+        let hour = date.getHours();
+        let delai = data.dossier_type ? data.dossier_type.delai : '';
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post(route('confirm-publishing'));
-    }
+        let deadline = new Date();
+        let count = 1;
 
-    const deleletFile = (i) => {
-        if (i.link) {
-            let filesfromserver = []
-            filesfromserver.push(i.name)
-            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        if (hour < 12) {
+            delai = delai
+        } else {
+            delai = delai + 1
         }
-        var arr = { ...data }
-        let index = arr.doc.map((el) => el.name).indexOf(i.name);
-        arr.doc.splice(index, 1)
-        setData(arr)
+
+        while (count < delai) {
+            deadline = new Date(date.setDate(date.getDate() + 1));
+            if (deadline.getDay() != 0 && deadline.getDay() != 6) {
+                count++;
+            }
+
+        }
+
+        setData('deadline', new Date(deadline));
+
+    }, [data.dossier_type]);
+
+    const handleSubmit = (e, type) => {
+        e.preventDefault();
+        post(route('publishing_eu_new_request', { type: type }));
     }
 
     const removeAll = () => {
@@ -260,6 +252,19 @@ const Confirm = (props: any) => {
         }
         instData.doc = []
         setData(instData)
+    }
+
+    const deleletFile = (i) => {
+
+        if (i.link) {
+            let filesfromserver = []
+            filesfromserver.push(i.name)
+            axios.post('delete-file-pub', { docs: filesfromserver, id: data.id })
+        }
+        var arr = { ...data }
+        let index = arr.doc.map((el) => el.name).indexOf(i.name);
+        arr.doc.splice(index, 1)
+        setData(arr)
     }
 
     const selectStyles = (hasErrors) => ({
@@ -330,23 +335,31 @@ const Confirm = (props: any) => {
         stepper.current?.goto(i)
     }
 
-    const handleSelectChangeTracking = (e, action) => {
-        if (action.action == 'clear') {
-            setData('tracking', '')
-        } else {
-            setData('tracking', e.value)
-        }
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': [] }])
     }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': [] }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+
+
 
     return (
         <>
-            <div className='d-flex justify-content-between align-items-center'>
-                <a href="#" onClick={() => window.history.back()} className="btn btn-sm fw-bold btn-secondary mb-2">
-                    <i className="ki-duotone ki-black-left fs-3">
-                    </i>
-                </a>
-                <StatusComponent status={data.status} />
-            </div>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
                 <div className="stepper-nav flex-center flex-wrap mb-10">
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
@@ -442,67 +455,19 @@ const Confirm = (props: any) => {
                 </div>
                 <form className="form" id="kt_stepper_example_basic_form" onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <div className="flex-column current" data-kt-stepper-element="content">
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dossier contact</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_contact" value={data.dossier_contact} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Object</label>
-                                    <input type="text" className="form-control form-control-solid" name="object" value={data.object} onChange={handleChange} />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Product</label>
-                                    <input type="text" className="form-control form-control-solid" name="productName" value={data.productName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Submission country</label>
-                                    <input type="text" className="form-control form-control-solid" name="country" value={data.country.value} disabled />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>
-                                    <Select options={[
-                                        { label: 'Baseline Dossier (M1-M2-M3)', value: 'Baseline Dossier (M1-M2-M3)', delai: 5 },
-                                        { label: 'Baseline Dossier (M1-M5)', value: 'Baseline Dossier (M1-M5)', delai: 9 },
-                                        { label: 'Marketing Authorisation Dossier / BLA (m1-m5)', value: 'Marketing Authorisation Dossier / BLA (m1-m5)', delai: 9 },
-                                        { label: 'Variation Dossier', value: 'Variation Dossier', delai: 3 },
-                                        { label: 'Responses to questions Dossier', value: 'Responses to questions Dossier', delai: 3 },
-                                        { label: 'PSUR/ PSUSA Dossier', value: 'PSUR/ PSUSA Dossier', delai: 3 },
-                                        { label: 'Current View (Draft seq)', value: 'Current View (Draft seq)', delai: 1 },
-                                    ]}
-                                        name='dossier_type'
-                                        onChange={(e) => handleSelectChange(e, 'dossier_type')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dossier_type}
-                                        menuPortalTarget={document.body}
-                                        styles={selectStyles(myErrors.dossier_type)}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label" title='Enter the number of documents in Publishing dossier' style={{ color: myErrors.dossier_count ? 'red' : '' }}>Dossier count (*)</label>
-                                    <input type="text" className="form-control form-control-solid" name="dossier_count" defaultValue={data.dossier_count} style={{ borderColor: myErrors.dossier_count ? 'red' : '' }} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
+                        <GeneralInformation
+                            data={data}
+                            myErrors={myErrors}
+                            handleChange={handleChange}
+                            handleSelectChange={handleSelectChange}
+                            selectStyles={selectStyles}
+                        />
 
-                                    <label className="form-label">Remarks</label>
-                                    <textarea className="form-control form-control-solid" rows={3} value={data.remarks} name="remarks" onChange={handleChange} />
-                                </div>
-
-                            </div>
-                        </div>
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className="row mb-10">
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">UUID</label>
-                                    <input type="text" className="form-control form-control-solid" name="uuid" value={data.uuid} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={data.uuid} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type ? 'red' : '' }}>Submission type (*)</label>
@@ -592,20 +557,37 @@ const Confirm = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Procedure Tracking N°</label>
                                     <div className='d-flex align-items-center'>
-                                        <Select options={tno}
+                                        {/* <Select options={metadata.tracking_numbers.map((val) => {
+                                            return { label: val.numbers, value: val.numbers }
+                                        })}
                                             name='tracking'
                                             onChange={(e, action) => handleSelectChangeTracking(e, action)}
-                                            className="react-select-container"
+                                            className="react-select-container me-1"
                                             classNamePrefix="react-select"
                                             placeholder=''
                                             isClearable
                                             defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                             menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ ...base, width: '50%' }) }}
-                                        />
-                                        <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" style={{ width: '50%' }} onChange={handleChange} />
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999, }), container: base => ({ ...base, width: '50%' }) }}
+                                        /> */}
+                                        <input type='text' className='form-control form-control-solid' value={data.tracking} name="tracking" onChange={handleChange} />
                                     </div>
                                 </div>
+                                {/* <div className='col-md-4 col-sm-12'>
+                                    <label className="form-label">Procedure Tracking N°</label>
+                                    <input type='text' name='tracking' className="form-control form-control-solid" onChange={handleChange} />
+                                    <Select options={tno}
+                                        name='tracking'
+                                        onChange={(e) => handleSelectChange(e, 'tracking')}
+                                        className="basic"
+                                        classNamePrefix="basic"
+                                        placeholder=''
+                                        isClearable
+                                        value={data.tracking}
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    />
+                                </div> */}
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit ? 'red' : '' }}>Submission unit (*)</label>
                                     <Select options={[
@@ -631,22 +613,22 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Applicant</label>
-                                    <input type="text" className="form-control form-control-solid" name="applicant" value={data.applicant} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="applicant" defaultValue={data.applicant} onChange={handleChange} />
                                 </div>
 
                             </div>
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Agency code</label>
-                                    <input type="text" className="form-control form-control-solid" name="agency_code" value={data.agency_code} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="agency_code" defaultValue={data.agency_code} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className='col-md-4 col-sm-12'>Invented name</label>
-                                    <input type="text" className="form-control form-control-solid" name="productName" value={data.productName} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="invented_name" defaultValue={data.productName} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className='col-md-4 col-sm-12'>INN</label>
-                                    <input type="text" className="form-control form-control-solid" name="inn" value={data.inn} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="inn" defaultValue={data.inn} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='row mb-10'>
@@ -656,11 +638,11 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Related Sequence</label>
-                                    <input type="text" className="form-control form-control-solid" name="r_sequence" value={data.r_sequence} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="r_sequence" defaultValue={data.r_sequence} onChange={handleChange} />
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission description</label>
-                                    <input type="text" className="form-control form-control-solid" name="submission_description" value={data.submission_description} onChange={handleChange} />
+                                    <input type="text" className="form-control form-control-solid" name="submission_description" defaultValue={data.submission_description} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='row mb-10'>
@@ -670,130 +652,25 @@ const Confirm = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metadata?.indications.map((val) => ({ label: val, value: val }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
+                        <InsertProductMetaData
+                            data={data}
+                            handleChange={handleChange}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            setData={setData}
 
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metadata?.drug_substance.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metadata?.drug_substance_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metadata?.drug_product.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metadata?.drug_product_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metadata?.dosage_form.map((val) => ({ label: val, value: val }))}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metadata?.excipients.map((val) => ({ label: val, value: val }))}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
-                                    {/* <input type="file" multiple className="form-control form-control-solid" name="doc" onChange={handleUploadFileChange} /> */}
+
                                 </div>
                                 <div className='col-md-6 col-lg-6 col-sm-12'>
                                     <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-                                    {/* <div className='d-flex align-items-center text-gray-400 h-100'>
-                                        {data.doc ? data.doc.map((ele) => (
-                                            <span className='me-2 fs-5'>{ele.name}</span>
-                                        )) : ''}
-                                    </div> */}
+
                                 </div>
                             </div>
                             <div className="row mb-10">
@@ -824,24 +701,8 @@ const Confirm = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            <div className="row mb-10">
-                                <div className='col-6'>
-                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
-                                    <Flatpickr
-                                        data-enable-time
-                                        value={data.adjusted_deadline}
-                                        className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
-                                        onChange={(date) => setData('adjusted_deadline', date)}
-                                    />
-                                </div>
+                            <div className="mb-10">
 
-                            </div>
-                            <div className="row mb-10">
-                                <div className='col-12'>
-                                    <label htmlFor="" className="form-label">Comments</label>
-                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" onChange={handleChange} />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -855,7 +716,12 @@ const Confirm = (props: any) => {
                             </button>
                         </div>
                         <div>
-                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit">
+                            <button type="button" className="btn btn-primary m-3" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'save')}>
+                                <span className="indicator-label">
+                                    Save
+                                </span>
+                            </button>
+                            <button type="submit" className="btn btn-primary" data-kt-stepper-action="submit" onClick={(e) => handleSubmit(e, 'submit')}>
                                 <span className="indicator-label">
                                     Submit
                                 </span>
@@ -875,7 +741,6 @@ const Confirm = (props: any) => {
     )
 }
 
+Initiate.layout = page => <Authenticated children={page} auth={page.props.auth} />
 
-Confirm.layout = page => <Authenticated children={page} auth={page.props.auth} />
-
-export default Confirm;
+export default Initiate;

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('excipients', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('meta_data_id');
-            $table->string('excipient');
+            $table->string('excipient')->nullable();
             $table->foreign('meta_data_id')->references('id')->on('meta_data')->onDelete('cascade');
             $table->timestamps();
         });

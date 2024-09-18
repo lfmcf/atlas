@@ -13,4 +13,9 @@ class TrackingNumber extends Model
         'submission_meta_data_id',
         'number',
     ];
+
+    public function submissionMetaData()
+    {
+        return $this->belongsTo(SubmissionMetaData::class);
+    }
 }

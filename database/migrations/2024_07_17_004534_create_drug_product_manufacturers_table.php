@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('drug_product_manufacturers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('meta_data_id');
+            $table->unsignedBigInteger('drug_product_id');
             $table->string('product_manufacturer');
-            $table->foreign('meta_data_id')->references('id')->on('meta_data')->onDelete('cascade');
+            $table->foreign('drug_product_id')->references('id')->on('drug_products')->onDelete('cascade');
             $table->timestamps();
         });
     }

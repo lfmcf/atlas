@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { StepperComponent } from "../../../_metronic/assets/ts/components";
+import { StepperComponent } from "../../../../_metronic/assets/ts/components";
 import { useForm } from "@inertiajs/react";
 import axios from "axios";
-import Authenticated from "../../../Layouts/AuthenticatedLayout";
+import Authenticated from "../../../../Layouts/AuthenticatedLayout";
 import Select from "react-select";
-import DropZone from "../../../Components/Dropzone";
+import DropZone from "../../../../Components/Dropzone";
 import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
+import { EunatCountry } from "../../../Lab/MetaDataList";
 
 const InitiateDuplicate = (props: any) => {
 
-    const { metadata, folder, countries, products, metapro } = props;
-
-    console.log(metadata)
+    const { metadata, folder, products, metapro } = props;
 
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
@@ -45,11 +44,11 @@ const InitiateDuplicate = (props: any) => {
         submission_description: folder ? folder.submission_description : '',
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
-        manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : '',
-        drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
+        // manufacturer: folder ? folder.manufacturer : '',
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
+        // drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        // drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
         doc: folder && folder.doc !== null ? folder.doc : [],
@@ -282,24 +281,25 @@ const InitiateDuplicate = (props: any) => {
     }
 
     useEffect(() => {
-        axios.post('getMetaDataForDuplicate', { product: data.productName, procedure: data.procedure, country: data.country }).then(res => {
-            let tn = res.data.trackingNumber
-            tn = tn.split(/\r?\n/)
-            let tno = []
-            // if (tn.length > 1) {
-            tno = tn.map((val) => {
-                return { label: val, value: val }
-            })
-            // }
-            setTrOptions(tno)
+
+        axios.post('getMetaDataForDuplicateNatEu', { product: data.productName, procedure: data.procedure, country: data.country }).then(res => {
             setData(data => ({
                 ...data,
                 agency_code: res.data.agencyCode,
                 applicant: res.data.applicant,
                 uuid: res.data.uuid,
-                inn: res.data.inn
+                inn: res.data.inn,
+                dosage_form: res.data.dosage_form,
+                indication: res.data.indications,
+                drug_product: res.data.drug_product,
+                drug_substance: res.data.drug_substance,
+                excipients: res.data.excipients,
+                // tracking: res.data.tracking_numbers,
             }))
+
+            setTrOptions(res.data.tracking_numbers)
         })
+
     }, [data.productName, data.country])
 
     const selectStyles = (hasErrors) => ({
@@ -377,6 +377,128 @@ const InitiateDuplicate = (props: any) => {
             setData('tracking', e.value)
         }
     }
+
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+    const [drugSubstanceOptions, setDrugSubstanceOptions] = useState(
+        metadata.drug_substance.map(val => ({ label: val.substance, value: val.substance }))
+    );
+
+    const [drugProductOptions, setDrugProductOptions] = useState(
+        metadata.drug_product.map(val => ({ label: val.drug_product, value: val.drug_product }))
+    );
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    // Handle Drug Substance Change
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = metadata.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = metadata.drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
+
+    console.log(data.drug_substance)
 
     return (
         <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
@@ -508,8 +630,8 @@ const InitiateDuplicate = (props: any) => {
                                 <label className="form-label">Submission country</label>
                                 {/* <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled /> */}
                                 <Select
-                                    options={countries.map((c) => {
-                                        return { label: c.name, value: c.name, code: c.code }
+                                    options={EunatCountry.map((c) => {
+                                        return { label: c.label, value: c.value, code: c.code }
                                     })}
                                     name="country"
                                     className="react-select-container"
@@ -652,7 +774,9 @@ const InitiateDuplicate = (props: any) => {
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Procedure Tracking N°</label>
                                 <div className='d-flex align-items-center'>
-                                    <Select options={trOptions}
+                                    <Select options={trOptions?.map((val) => {
+                                        return { label: val.numbers, value: val.numbers }
+                                    })}
                                         name='tracking'
                                         onChange={(e, action) => handleSelectChangeTracking(e, action)}
                                         className="react-select-container me-1"
@@ -735,7 +859,7 @@ const InitiateDuplicate = (props: any) => {
                         <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Indication</label>
-                                <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata?.indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                     name='indication'
                                     onChange={(e) => handleSelectChange(e, 'indication')}
                                     className="react-select-container"
@@ -747,70 +871,11 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
-
-                            <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Drug substance</label>
-                                <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
-                                    name='drug_substance'
-                                    onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                    className="react-select-container"
-                                    classNamePrefix="react-select"
-                                    placeholder=''
-                                    isClearable
-                                    isMulti
-                                    value={data.drug_substance}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
-                            </div>
-                            <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Drug substance manufacturer</label>
-                                <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
-                                    name='drug_substance_manufacturer'
-                                    onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                    className="react-select-container"
-                                    classNamePrefix="react-select"
-                                    placeholder=''
-                                    isClearable
-                                    value={data.drug_substance_manufacturer}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
-                            </div>
-                        </div>
-                        <div className='row mb-10'>
-
-                            <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Drug product</label>
-                                <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
-                                    name='drug_product'
-                                    onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                    className="react-select-container"
-                                    classNamePrefix="react-select"
-                                    placeholder=''
-                                    isClearable
-                                    value={data.drug_product}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
-                            </div>
-                            <div className='col-md-4 col-sm-12'>
-                                <label className="form-label">Drug product manufacturer</label>
-                                <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
-                                    name='drug_product_manufacturer'
-                                    onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                    className="react-select-container"
-                                    classNamePrefix="react-select"
-                                    placeholder=''
-                                    isClearable
-                                    value={data.drug_product_manufacturer}
-                                    menuPortalTarget={document.body}
-                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
-                            </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Dosage form</label>
-                                <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata.dosage_form.map((val) =>
+                                    ({ label: val.form, value: val.form })
+                                )}
                                     name='dosage_form'
                                     onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                     className="react-select-container"
@@ -822,12 +887,11 @@ const InitiateDuplicate = (props: any) => {
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
-                        </div>
-                        <div className='row mb-10'>
-
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Excipient</label>
-                                <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                <Select options={metadata.excipients.map((val) =>
+                                    ({ label: val.excipient, value: val.excipient })
+                                )}
                                     name='excipient'
                                     onChange={(e) => handleSelectChange(e, 'excipient')}
                                     className="react-select-container"
@@ -841,6 +905,113 @@ const InitiateDuplicate = (props: any) => {
                                 />
                             </div>
                         </div>
+
+                        <fieldset >
+                            <legend >Drug substances</legend>
+                            {data.drug_substance?.map((element, index) => (
+                                <div>
+                                    {index == 0 ?
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button type="button" onClick={() => addDrugSubstanceFields()}>
+                                                Add
+                                            </button>
+                                        </div>
+                                        : <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button type="button" onClick={() => removeDrugSubstanceFields(index)}>
+                                                Remove
+                                            </button>
+                                        </div>}
+                                    <div className='row mb-10'>
+                                        <div className='col-md-6 col-sm-12'>
+                                            <label className="form-label">Drug substance</label>
+                                            <Select
+                                                options={drugSubstanceOptions}
+                                                name="drug_substance"
+                                                onChange={(e) => handleDrugSubstanceChange(index, e)}
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                                placeholder=''
+                                                isClearable
+                                                value={drugSubstanceOptions.find(option => option.value === data.drug_substance[index]?.drug_substance) || null}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                            />
+
+                                        </div>
+                                        <div className='col-md-6 col-sm-12'>
+                                            <label className="form-label">Drug substance manufacturer</label>
+                                            <Select
+
+                                                options={manufacturerOptions[data.drug_substance[index]?.drug_substance] || []}
+                                                name="manufacturer"
+                                                onChange={(e) => handleManufacturerChange(index, e)}
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                                placeholder=''
+                                                isClearable
+                                                isMulti
+                                                value={data.drug_substance[index]?.manufacturer || []}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </fieldset>
+                        <fieldset >
+                            <legend >Drug Products</legend>
+                            {data.drug_product?.map((element, index) => (
+                                <div>
+                                    {index == 0 ?
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button type="button" onClick={() => addDrugProductFields()}>
+                                                Add
+                                            </button>
+                                        </div>
+                                        : <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button type="button" onClick={() => removeDrugProductFields(index)}>
+                                                Remove
+                                            </button>
+                                        </div>}
+                                    <div className='row mb-10'>
+                                        <div className='col-md-6 col-sm-12'>
+                                            <label className="form-label">Drug product</label>
+                                            <Select options={drugProductOptions}
+                                                name='drug_product'
+                                                onChange={(e) => handleDrugProductChange(index, e)}
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                                placeholder=''
+                                                isClearable
+                                                value={drugProductOptions.find(option => option.value === data.drug_product[index]?.drug_product) || null}
+                                                // value={data.drug_product[index]}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                            />
+                                        </div>
+                                        <div className='col-md-6 col-sm-12'>
+                                            <label className="form-label">Drug product manufacturer</label>
+                                            <Select options={dpmanufacturerOptions[data.drug_product[index].drug_product] || []}
+                                                name='manufacturer'
+                                                onChange={(e) => handleDpManufacturerChange(index, e)}
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                                placeholder=''
+                                                isClearable
+                                                isMulti
+                                                value={data.drug_product[index]?.manufacturer || []}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </fieldset>
+
+
                     </div>
                     <div className="flex-column" data-kt-stepper-element="content">
                         <div className='row mb-10'>

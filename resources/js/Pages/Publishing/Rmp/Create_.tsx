@@ -23,7 +23,7 @@ const Create_ = (props: any) => {
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
-        form: folder ? folder.form : params.get('form'),
+        form: folder ? folder.form : 'Publishing',
         region: folder ? folder.region : params.get('region'),
         procedure: folder ? folder.procedure : params.get('procedure'),
         product_name: folder ? folder.product_name : params.get('product'),
@@ -48,8 +48,8 @@ const Create_ = (props: any) => {
     })
 
     const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].trackingNumber, submission_unit: '', applicant: metadata[0].applicant,
-        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].inventedName, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
+        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].tracking_numbers[0].numbers, submission_unit: '', applicant: metadata[0].applicant,
+        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].invented_name, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
         r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
     });
 
@@ -294,8 +294,8 @@ const Create_ = (props: any) => {
         let arr = { ...data };
         metadata.map((mtd, i) => {
             arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: '', submission_type: '', submission_mode: '', trackingNumber: '',
-                submission_unit: '', applicant: 'STALLERGENES', agencyCode: mtd.agencyCode, inventedName: data.product_name, inn: '', sequence: '',
+                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
+                submission_unit: '', applicant: 'STALLERGENES', agencyCode: mtd.agencyCode, inventedName: data.invented_name, inn: mtd.inn, sequence: '',
                 r_sequence: '', submission_description: '', remarks: ''
             })
         })
@@ -829,7 +829,7 @@ const Create_ = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].indications.map((val) => ({ label: val.indication, value: val.indication }))}
                                         name='indication'
                                         onChange={(e) => handleSelectChange(e, 'indication')}
                                         className="react-select-container"
@@ -844,7 +844,7 @@ const Create_ = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_substance.map((val) => ({ label: val.substance, value: val.substance }))}
                                         name='drug_substance'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance')}
                                         className="react-select-container"
@@ -859,7 +859,7 @@ const Create_ = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                         name='drug_substance_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
                                         className="react-select-container"
@@ -876,7 +876,7 @@ const Create_ = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product.map((val) => ({ label: val.drug_product, value: val.drug_product }))}
                                         name='drug_product'
                                         onChange={(e) => handleSelectChange(e, 'drug_product')}
                                         className="react-select-container"
@@ -890,7 +890,7 @@ const Create_ = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
                                         name='drug_product_manufacturer'
                                         onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
                                         className="react-select-container"
@@ -904,7 +904,7 @@ const Create_ = (props: any) => {
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].dosage_form.map((val) => ({ label: val.form, value: val.form }))}
                                         name='dosage_form'
                                         onChange={(e) => handleSelectChange(e, 'dosage_form')}
                                         className="react-select-container"
@@ -921,7 +921,7 @@ const Create_ = (props: any) => {
 
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
+                                    <Select options={metadata[0].excipients.map((val) => ({ label: val.excipient, value: val.excipient }))}
                                         name='excipient'
                                         onChange={(e) => handleSelectChange(e, 'excipient')}
                                         className="react-select-container"
@@ -1081,7 +1081,7 @@ const Create_ = (props: any) => {
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Procedure Tracking N°</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].trackingNumber} name="trackingNumber" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].tracking_numbers[0].numbers} name="trackingNumber" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission unit</label>
@@ -1115,7 +1115,7 @@ const Create_ = (props: any) => {
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Invented name</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].Product} name="inventedName" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].invented_name} name="inventedName" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">INN</label>

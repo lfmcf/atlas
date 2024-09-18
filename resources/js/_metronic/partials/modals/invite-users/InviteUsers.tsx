@@ -163,8 +163,9 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
     const handleNavigate = (ReqType) => {
 
+
         if (ReqType == "formatting") {
-            router.visit('/formatting-initiate', {
+            router.visit('/formatting_initiate', {
                 method: 'get',
                 data: { form: data.form.value, region: data.region.value, coreDoc: data.coreDoc },
                 headers: {
@@ -173,26 +174,88 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
             })
         } else if (ReqType == "publishing") {
 
-            router.visit('/publishing-initiate', {
-                method: 'get',
-                data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
+            if (data.region && data.region.value == 'CH') {
+
+                router.visit('/publishing_ch_initiate', {
+                    method: 'get',
+                    data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+            }
+            else if (data.region && data.region.value == 'GCC') {
+
+                router.visit('/publishing_gcc_initiate', {
+                    method: 'get',
+                    data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+
+            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition') {
+
+                router.visit('/publishing_initiate', {
+                    method: 'get',
+                    data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+
+            } else {
+                router.visit('/publishing_eu_initiate', {
+                    method: 'get',
+                    data: { form: data.form.value, region: data.region.value, procedure: data.procedure.value, product: data.product.value, country: data.country },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+            }
+
+
         }
         handleClose()
     }
 
     const handleLifeCycle = () => {
 
-        router.visit('/publishing-initiate_', {
-            method: 'get',
-            data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        })
+        if (region_ && region_.value == 'EU') {
+
+            router.visit('/publishing_eu_new_request', {
+                method: 'get',
+                data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+        } else if (region_ && region_.value == 'GCC') {
+
+            router.visit('/publishing_gcc_new_request', {
+                method: 'get',
+                data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+        } else if (region_ && region_.value == 'CH') {
+
+            router.visit('/publishing_ch_new_request', {
+                method: 'get',
+                data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+        }
+        // router.visit('/publishing-initiate_', {
+        //     method: 'get',
+        //     data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //     }
+        // })
 
         handleClose()
     }
