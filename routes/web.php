@@ -108,7 +108,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/publishing_eu_new_request', [PublishingEuController::class, 'postNewRequest'])->name('publishing_eu_new_request');
 
     // ** publishing CH management ** //
-
     Route::get('/publishing_ch_initiate', [PublishingChController::class, 'create'])->name('publishing_ch_initiate');
     Route::post('publishing_ch_store', [PublishingController::class, 'store'])->name('publishing_ch_store');
     Route::get('/publishing_ch_confirm', [PublishingChController::class, 'createConfirm'])->name('publishing_ch_confirm');
@@ -119,6 +118,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/publishing_ch_post_verify', [PublishingChController::class, 'postVerify'])->name('publishing_ch_post_verify');
     Route::get('/publishing_ch_new_request', [PublishingChController::class, 'newRequest'])->name('publishing_ch_new_request');
     Route::post('/publishing_ch_new_request', [PublishingChController::class, 'postNewRequest'])->name('publishing_ch_new_request');
+    Route::post('complete_ch_publishing', [PublishingChController::class, 'completeChPublishing'])->name('complete_ch_publishing');
+    Route::post('close_ch_publishing', [PublishingChController::class, 'closeChPublishing'])->name('close_ch_publishing');
 
 
     // ** publishing GCC management ** //
@@ -132,10 +133,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/publishing_gcc_post_verify', [PublishingGccController::class, 'postVerify'])->name('publishing_gcc_post_verify');
     Route::get('/publishing_gcc_new_request', [PublishingGccController::class, 'newRequest'])->name('publishing_gcc_new_request');
     Route::post('/publishing_gcc_new_request', [PublishingGccController::class, 'postNewRequest'])->name('publishing_gcc_new_request');
+    Route::post('complete_gcc_publishing', [PublishingGccController::class, 'completeGccPublishing'])->name('complete_gcc_publishing');
+    Route::post('close_gcc_publishing', [PublishingGccController::class, 'closeGccPublishing'])->name('close_gcc_publishing');
 
     // ** publishing RMP/DCP management ** //
     Route::get('/publishing_initiate', [PublishingController::class, 'create'])->name('publishing_initiate');
     Route::post('publishing_initiate', [PublishingController::class, 'storemrp'])->name('publishing_initiate');
+    Route::get('/publishing_confirm', [PublishingController::class, 'createConfirm'])->name('publishing_confirm');
+    Route::post('publishing_confirm', [PublishingController::class, 'confirmmrp'])->name('publishing_confirm');
+    Route::get('/publishing_audit', [PublishingController::class, 'createAudit'])->name('publishing_audit');
+    Route::post('publishing_audit', [PublishingController::class, 'auditmrp'])->name('publishing_audit');
+    Route::get('/publishing_rmp_verify', [PublishingController::class, 'verification'])->name('publishing_rmp_verify');
+    Route::post('complete_rmp_publishing', [PublishingController::class, 'complete'])->name('complete_rmp_publishing');
+    Route::post('close_rmp_publishing', [PublishingController::class, 'close'])->name('close_rmp_publishing');
 
     // ** store orm publishing ** //
 
@@ -147,7 +157,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('confirm-publishing', [PublishingController::class, 'postConfirm'])->name('confirm-publishing');
 
     // ** audit and check form ** //
-    Route::get('/publishing-audit', [PublishingController::class, 'createAudit'])->name('publishing-audit');
+
     Route::post('progress-publishing', [PublishingController::class, 'setProgress'])->name('progress-publishing');
     Route::post('audit-publishing', [PublishingController::class, 'postAudit'])->name('audit-publishing');
     Route::post('confirm-publishing-out', [PublishingController::class, 'QuickpostConfirm'])->name('confirm-publishing-out');
@@ -188,9 +198,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing-initiate_', [PublishingController::class, 'create_'])->name('publishing-initiate_');
 
 
-    Route::post('confirm-rmp-publishing', [PublishingController::class, 'confirmmrp'])->name('confirm-rmp-publishing');
-
-    Route::post('audit-rmp-publishing', [PublishingController::class, 'auditmrp'])->name('audit-rmp-publishing');
 
     Route::post('correct-rmp-publishing', [PublishingController::class, 'correctmrp'])->name('correct-rmp-publishing');
 

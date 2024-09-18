@@ -364,11 +364,6 @@ class PublishingEuController extends Controller
             $publishing->submission_type = $request->submission_type;
             $publishing->submission_mode = $request->submission_mode;
             $publishing->tracking = $request->tracking;
-            // if ($request->tracking && is_array($request->tracking)) {
-            //     $pub->tracking = "{$request->tracking['value']}{$request->trackingExtra}";
-            // } else {
-            //     $pub->tracking = "{$request->tracking}{$request->trackingExtra}";
-            // }
             $publishing->submission_unit = $request->submission_unit;
             $publishing->applicant = $request->applicant;
             $publishing->agency_code = $request->agency_code;
@@ -378,11 +373,8 @@ class PublishingEuController extends Controller
             $publishing->submission_description = $request->submission_description;
             $publishing->mtremarks = $request->mtremarks;
             $publishing->indication = $request->indication;
-            // $publishing->manufacturer = $request->manufacturer;
             $publishing->drug_substance = $request->drug_substance;
-            // $publishing->drug_substance_manufacturer = $request->drug_substance_manufacturer;
             $publishing->drug_product = $request->drug_product;
-            // $publishing->drug_product_manufacturer = $request->drug_product_manufacturer;
             $publishing->dosage_form = $request->dosage_form;
             $publishing->excipient = $request->excipient;
             if (!empty($pub->doc)) {

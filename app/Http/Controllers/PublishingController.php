@@ -805,77 +805,38 @@ class PublishingController extends Controller
 
     public function createAudit(Request $request)
     {
-        $pub = "";
-        $pub = Publishing::find($request->id);
-        if (!$pub) {
-            $pub = PublishingMrp::find($request->id);
-            $product = $pub->product_name;
-            $procedure = $pub->procedure;
 
-            $listmd = [];
-            for ($i = 0; $i < count($pub->mt); $i += 1) {
+        $pub = PublishingMrp::find($request->id);
 
-                $md = MetaData::where([
-                    ['invented_name', '=', $product],
-                    ['procedure', '=', $procedure],
-                    ['country', '=', $pub->mt[$i]['country']]
-                ])->with([
-                    'trackingNumbers',
-                    'dosageForm',
-                    'drugProduct',
-                    'drugProductManufacturer',
-                    'drugSubstanceManufacturer',
-                    'excipients',
-                    'drugSubstance',
-                    'indications'
-                ])->first();
-                if ($md) {
-                    array_push($listmd, $md);
-                }
-            }
-            return Inertia::render('Publishing/Rmp/Audit', [
-                'folder' => $pub,
-                'metadata' => $listmd
-            ]);
-        }
 
         $product = $pub->product_name;
         $procedure = $pub->procedure;
-        $country = $pub->country;
 
-        $md = MetaData::where([
-            ['invented_name', '=', $product],
-            ['procedure', '=', $procedure],
-            ['country', '=', $country]
-        ])
-            ->with([
-                'trackingNumbers',
-                'dosageForm',
-                'drugProduct',
-                'drugProductManufacturer',
-                'drugSubstanceManufacturer',
-                'excipients',
-                'drugSubstance',
-                'indications'
+        $listmd = [];
+        for ($i = 0; $i < count($pub->mt); $i += 1) {
+
+            $md = MetaData::where([
+                ['invented_name', '=', $product],
+                ['procedure', '=', $procedure],
+                ['country', '=', $pub->mt[$i]['country']]
             ])
-            ->first();
-
-        if ($pub->region == "EU") {
-
-            return Inertia::render('Publishing/Nat/Audit', [
-                'folder' => $pub,
-                'metadata' => $md
-            ]);
-        } else if ($pub->region == "GCC") {
-            return Inertia::render('Publishing/Nat/Gcc/Audit', [
-                'folder' => $pub,
-                'metadata' => $md
-            ]);
-        } else if ($pub->region == "CH") {
-            return Inertia::render('Publishing/Nat/Ch/Audit', [
-                'folder' => $pub
-            ]);
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct.dp_manufacturers',
+                    'drugSubstance.ds_manufacturers',
+                    'excipients',
+                    'indications'
+                ])
+                ->first();
+            if ($md) {
+                array_push($listmd, $md);
+            }
         }
+        return Inertia::render('Publishing/Rmp/Audit', [
+            'folder' => $pub,
+            'metadata' => $listmd
+        ]);
     }
 
     public function postAudit(Request $request)
@@ -1042,27 +1003,29 @@ class PublishingController extends Controller
 
     public function verification(Request $request)
     {
-        $publishing = Publishing::find($request->id);
-        if (!$publishing) {
-            $publishing = PublishingMrp::find($request->id);
-            return Inertia::render('Publishing/Rmp/Correct', [
-                'folder' => $publishing,
-            ]);
-        }
+        $publishing = PublishingMrp::find($request->id);
+        return Inertia::render('Publishing/Rmp/Correct', [
+            'folder' => $publishing,
+        ]);
 
-        if ($publishing->region == "EU") {
-            return Inertia::render('Publishing/Nat/Correct', [
-                'folder' => $publishing,
-            ]);
-        } else if ($publishing->region == "GCC") {
-            return Inertia::render('Publishing/Nat/Gcc/Correct', [
-                'folder' => $publishing,
-            ]);
-        } else if ($publishing->region == "CH") {
-            return Inertia::render('Publishing/Nat/Ch/Correct', [
-                'folder' => $publishing,
-            ]);
-        }
+        // $publishing = Publishing::find($request->id);
+        // if (!$publishing) {
+
+        //}
+
+        // if ($publishing->region == "EU") {
+        //     return Inertia::render('Publishing/Nat/Correct', [
+        //         'folder' => $publishing,
+        //     ]);
+        // } else if ($publishing->region == "GCC") {
+        //     return Inertia::render('Publishing/Nat/Gcc/Correct', [
+        //         'folder' => $publishing,
+        //     ]);
+        // } else if ($publishing->region == "CH") {
+        //     return Inertia::render('Publishing/Nat/Ch/Correct', [
+        //         'folder' => $publishing,
+        //     ]);
+        // }
     }
 
     public function postCorrection(Request $request)
@@ -1089,10 +1052,8 @@ class PublishingController extends Controller
 
     public function complete(Request $request)
     {
-        $pub = Publishing::find($request->id);
-        if (!$pub) {
-            $pub = PublishingMrp::find($request->id);
-        }
+
+        $pub = PublishingMrp::find($request->id);
         $pub->status = 'completed';
         $pub->save();
         $user = User::where('current_team_id', 1)->get();
@@ -1145,10 +1106,7 @@ class PublishingController extends Controller
     public function close(Request $request)
     {
 
-        $pub = Publishing::find($request->id);
-        if (!$pub) {
-            $pub = PublishingMrp::find($request->id);
-        }
+        $pub = PublishingMrp::find($request->id);
         $pub->status = 'closed';
         $pub->save();
         $user = User::whereIn('current_team_id', [2, 3])->get();
@@ -1197,7 +1155,11 @@ class PublishingController extends Controller
         $pub->dossier_count = $request->dossier_count;
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
-        $pub->pt = $request->pt;
+        $pub->indication = $request->indication;
+        $pub->drug_substance = $request->drug_substance;
+        $pub->drug_product = $request->drug_product;
+        $pub->dosage_form = $request->dosage_form;
+        $pub->excipient = $request->excipient;
         if (!empty($pub->doc)) {
             $pub->doc = [...$pub->doc, ...$docs];
         } else {
@@ -1391,13 +1353,6 @@ class PublishingController extends Controller
         $product = $pub->product_name;
         $procedure = $pub->procedure;
 
-        // $findstring = explode(' ', $product);
-        // $metaPro = MetaProduct::where(function ($q) use ($findstring) {
-        //     foreach ($findstring as $value) {
-        //         $rvalue = rtrim($value, ",");
-        //         $q->orWhere('product', 'like', "%{$rvalue}%");
-        //     }
-        // })->first();
 
         $listmd = [];
         for ($i = 0; $i < count($pub->mt); $i++) {
@@ -1405,16 +1360,16 @@ class PublishingController extends Controller
                 ['invented_name', '=', $product],
                 ['procedure', '=', $procedure],
                 ['country', '=', $pub->mt[$i]['country']]
-            ])->with([
-                'trackingNumbers',
-                'dosageForm',
-                'drugProduct',
-                'drugProductManufacturer',
-                'drugSubstanceManufacturer',
-                'excipients',
-                'drugSubstance',
-                'indications'
-            ])->first();
+            ])
+                ->with([
+                    'trackingNumbers',
+                    'dosageForm',
+                    'drugProduct.dp_manufacturers',
+                    'drugSubstance.ds_manufacturers',
+                    'excipients',
+                    'indications'
+                ])
+                ->first();
             if ($md) {
                 array_push($listmd, $md);
             }
@@ -2359,10 +2314,8 @@ class PublishingController extends Controller
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
         $pub->indication = $request->indication;
-        $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
         $pub->drug_product = $request->drug_product;
         $pub->drug_substance = $request->drug_substance;
-        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
         $pub->docremarks = $request->docremarks;
@@ -2437,10 +2390,8 @@ class PublishingController extends Controller
             $pub->remarks = $request->remarks;
             $pub->mt = $request->mt;
             $pub->indication = $request->indication;
-            $pub->drug_substance_manufacturer = $request->drug_substance_manufacturer;
             $pub->drug_substance = $request->drug_substance;
             $pub->drug_product = $request->drug_product;
-            $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
             $pub->dosage_form = $request->dosage_form;
             $pub->excipient = $request->excipient;
             $pub->docremarks = $request->docremarks;

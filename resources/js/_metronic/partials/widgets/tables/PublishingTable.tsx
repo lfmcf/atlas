@@ -54,10 +54,17 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
     }
 
     const handleClose = (row) => {
-        if (row.region == 'EU' || row.procedure == "Nationale") {
+        if (row.region == 'EU' && row.procedure == "Nationale") {
             router.post(route('close_eu_publishing'), { id: row._id })
+        } else if (row.region == 'CH') {
+            router.post(route('close_ch_publishing'), { id: row._id })
+        } else if (row.region == 'GCC') {
+            router.post(route('close_gcc_publishing'), { id: row._id })
         }
-        // router.post(route('close-publishing'), { id: id })
+        else {
+            router.post(route('close_rmp_publishing'), { id: row._id })
+        }
+
     }
     const handleCorrect = (row) => {
         if (row.region == 'EU' && row.procedure == "Nationale") {
@@ -66,6 +73,8 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_verify'), { id: row._id })
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_verify'), { id: row._id })
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+            router.get(route('publishing_rmp_verify'), { id: row._id })
         }
         // router.get(route('publishing-verification'), { id: id })
     }
@@ -98,10 +107,18 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
     }
 
     const handleCompleted = (row) => {
-        if (row.region == 'EU' || row.procedure == "Nationale") {
+
+        if (row.region == 'EU' && row.procedure == "Nationale") {
             router.post(route('complete_eu_publishing'), { id: row._id })
+        } else if (row.region == 'CH') {
+            router.post(route('complete_ch_publishing'), { id: row._id })
+        } else if (row.region == 'GCC') {
+            router.post(route('complete_gcc_publishing'), { id: row._id })
         }
-        // router.post(route('complete-publishing'), { id: id })
+        else {
+            router.post(route('complete_rmp_publishing'), { id: row._id })
+        }
+
     }
 
     const handleprevious = () => {
@@ -149,6 +166,8 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_confirm', { id: row._id }))
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_confirm', { id: row._id }))
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+            router.get(route('publishing_confirm', { id: row._id }))
         }
 
     }
@@ -160,6 +179,8 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_audit', { id: row._id }))
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_audit', { id: row._id }))
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+            router.get(route('publishing_audit', { id: row._id }))
         }
     }
 

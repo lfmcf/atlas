@@ -15,10 +15,13 @@ import axios from 'axios'
 import StatusComponent from '../../../Components/StatusComponent'
 import GeneralInformation from '../../../Components/GeneralInformation'
 import MrpProductMetaData from '../../../Components/MrpProductMetaData'
+import ProductMetaData from '../../../Components/ProductMetaData'
 
 const Create = (props: any) => {
 
     const { metadata, folder } = props;
+
+    console.log(metadata)
 
     var params = new URLSearchParams(window.location.search);
 
@@ -37,13 +40,17 @@ const Create = (props: any) => {
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
         mt: folder ? folder.mt : [],
-        pt: metadata.map(() => ({
-            indication: '',
-            excipient: [],
-            dosage_form: '',
-            drug_substance: [{ 'drug_substance': '', 'manufacturer': '' }],
-            drug_product: [{ 'drug_product': '', 'manufacturer': '' }],
-        })),
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        dosage_form: folder ? folder.dosage_form : '',
+        excipient: folder ? folder.excipient : '',
+        // pt: metadata.map(() => ({
+        //     indication: '',
+        //     excipient: [],
+        //     dosage_form: '',
+        //     drug_substance: [{ 'drug_substance': '', 'manufacturer': '' }],
+        //     drug_product: [{ 'drug_product': '', 'manufacturer': '' }],
+        // })),
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
@@ -60,9 +67,9 @@ const Create = (props: any) => {
     }
 
     const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].tracking_numbers[0].numbers, submission_unit: '', applicant: metadata[0].applicant,
-        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].invented_name, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+        uuid: metadata[0]?.uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0]?.tracking_numbers[0].numbers, submission_unit: '', applicant: metadata[0]?.applicant,
+        agencyCode: metadata[0]?.agencyCode, inventedName: metadata[0]?.invented_name, mtd: metadata[0]?.mtd, inn: metadata[0]?.inn, sequence: metadata[0]?.sequence,
+        r_sequence: metadata[0]?.r_sequence, submission_description: '', remarks: ''
     });
 
 
@@ -324,7 +331,7 @@ const Create = (props: any) => {
         let arr = { ...data };
         metadata.map((mtd, i) => {
             arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
+                id: mtd.id, country: mtd.country, uuid: mtd?.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
                 submission_unit: '', applicant: mtd.applicant, agencyCode: mtd.agencyCode, inventedName: mtd.invented_name, inn: mtd.inn, sequence: '',
                 r_sequence: '', submission_description: '', remarks: ''
             })
@@ -487,6 +494,121 @@ const Create = (props: any) => {
 
         stepper.current?.goto(i)
     }
+
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+
+
+
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+        console.log(selectedOption)
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = metadata[0]?.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = metadata[0].drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
 
     return (
         <>
@@ -792,13 +914,31 @@ const Create = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
+                        {/* <div className="flex-column" data-kt-stepper-element="content">
                             <MrpProductMetaData
                                 metadata={metadata}
                                 data={data}
                                 setData={setData}
                             />
-                        </div>
+                        </div> */}
+
+                        <ProductMetaData
+                            metadata={metadata[0]}
+                            data={data}
+                            // drugSubstanceOptions={drugSubstanceOptions}
+                            //drugProductOptions={drugProductOptions}
+                            handleSelectChange={handleSelectChange}
+                            handleDrugSubstanceChange={handleDrugSubstanceChange}
+                            handleManufacturerChange={handleManufacturerChange}
+                            handleDrugProductChange={handleDrugProductChange}
+                            handleDpManufacturerChange={handleDpManufacturerChange}
+                            manufacturerOptions={manufacturerOptions}
+                            dpmanufacturerOptions={dpmanufacturerOptions}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                        />
 
 
                         <div className="flex-column" data-kt-stepper-element="content">
@@ -910,7 +1050,7 @@ const Create = (props: any) => {
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">UUID</label>
-                                                        <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0].uuid} onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0]?.uuid} onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission type</label>
@@ -921,7 +1061,7 @@ const Create = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_type}
+                                                            value={metadata[0]?.submission_type}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -939,14 +1079,14 @@ const Create = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_mode}
+                                                            value={metadata[0]?.submission_mode}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Procedure Tracking N°</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].tracking_numbers[0].numbers} name="trackingNumber" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.tracking_numbers[0].numbers} name="trackingNumber" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission unit</label>
@@ -966,7 +1106,7 @@ const Create = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_unit}
+                                                            value={metadata[0]?.submission_unit}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -974,29 +1114,29 @@ const Create = (props: any) => {
 
                                                     <div className='mb-10'>
                                                         <label className="form-label">Applicant</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].applicant} name="applicant" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.applicant} name="applicant" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Invented name</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].invented_name} name="inventedName" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.invented_name} name="inventedName" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">INN</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].inn} name="inn" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.inn} name="inn" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].sequence} name="sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.sequence} name="sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Related Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission description</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0]?.submission_description} name="submission_description" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                             </form>

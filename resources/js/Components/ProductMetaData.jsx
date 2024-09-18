@@ -86,7 +86,7 @@ const ProductMetaData = ({
             </div>
             <fieldset>
                 <legend>Drug substances</legend>
-                {data.drug_substance.map((element, index) => (
+                {data.drug_substance?.map((element, index) => (
                     <div key={index}>
                         {index === 0 ? (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -148,7 +148,7 @@ const ProductMetaData = ({
 
             <fieldset>
                 <legend>Drug Products</legend>
-                {data.drug_product.map((element, index) => (
+                {data.drug_product?.map((element, index) => (
                     <div key={index}>
                         {index === 0 ? (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

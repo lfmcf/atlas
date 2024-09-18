@@ -15,6 +15,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
+import ProductMetaData from '../../../Components/ProductMetaData'
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -51,9 +52,7 @@ const Correct = (props: any) => {
         remarks: folder.remarks,
         mt: folder.mt,
         indication: folder.indication,
-        drug_substance_manufacturer: folder.drug_substance_manufacturer,
         drug_substance: folder.drug_substance,
-        drug_product_manufacturer: folder.drug_product_manufacturer,
         drug_product: folder.drug_product,
         dosage_form: folder.dosage_form,
         excipient: folder.excipient,
@@ -66,24 +65,8 @@ const Correct = (props: any) => {
         correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
     })
 
-    // const countires = metadata.map((mp) => {
-
-    //     return { label: mp.country, value: mp.country, code: mp.code }
-    // })
-
-    console.log(metadata)
-
-    // const [multiData, setMultiData] = useState({
-    //     uuid: metadata[0]?.uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0]?.trackingNumber, submission_unit: '', applicant: metadata[0]?.applicant,
-    //     agencyCode: metadata[0]?.agencyCode, inventedName: metadata[0]?.inventedName, mtd: metadata[0]?.mtd, inn: metadata[0]?.inn, sequence: metadata[0]?.sequence,
-    //     r_sequence: metadata[0]?.r_sequence, submission_description: '', remarks: ''
-    // });
-
-    // const [multicountry, setMulticountry] = useState(metadata.map((cnt) => cnt.country))
-
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    // const datePicker = useRef() as MutableRefObject<Instance>;
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
@@ -504,6 +487,118 @@ const Correct = (props: any) => {
         stepper.current?.goto(i)
     }
 
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+        console.log(selectedOption)
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = metadata[0]?.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = metadata[0].drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
+
+
     return (
         <>
             <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
@@ -888,117 +983,23 @@ const Correct = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metapro?.indication.map((val) => ({ label: val, value: val }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metapro?.substance.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metapro?.ds_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metapro?.drug_product.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metapro?.dp_manufacturer.map((val) => ({ label: val, value: val }))}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metapro?.dosage.map((val) => ({ label: val, value: val }))}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metapro?.excipient.map((val) => ({ label: val, value: val }))}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <ProductMetaData
+                            metadata={data[0]}
+                            data={data}
+                            // drugSubstanceOptions={drugSubstanceOptions}
+                            //drugProductOptions={drugProductOptions}
+                            handleSelectChange={handleSelectChange}
+                            handleDrugSubstanceChange={handleDrugSubstanceChange}
+                            handleManufacturerChange={handleManufacturerChange}
+                            handleDrugProductChange={handleDrugProductChange}
+                            handleDpManufacturerChange={handleDpManufacturerChange}
+                            manufacturerOptions={manufacturerOptions}
+                            dpmanufacturerOptions={dpmanufacturerOptions}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
@@ -1078,7 +1079,7 @@ const Correct = (props: any) => {
                                                             <div className='d-flex flex-column align-items-start'>
                                                                 <div className='d-flex align-items-center mb-2'>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                     </div>
                                                                     <div className='ms-3'>
                                                                         <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
@@ -1099,7 +1100,7 @@ const Correct = (props: any) => {
 
                                                                     </div>
                                                                     <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user.name}</span>
+                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
                                                                     </div>
 
                                                                 </div>

@@ -1,109 +1,109 @@
 {
-  "_Auth-7dfeba34.js": {
-    "file": "assets/Auth-7dfeba34.js",
+  "_Auth-8665c553.js": {
+    "file": "assets/Auth-8665c553.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true
   },
-  "_AuthenticatedLayout-d29d0d35.js": {
-    "file": "assets/AuthenticatedLayout-d29d0d35.js",
+  "_AuthenticatedLayout-9b475de4.js": {
+    "file": "assets/AuthenticatedLayout-9b475de4.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ]
   },
-  "_DeliveryMessage-3db5b2f4.js": {
-    "file": "assets/DeliveryMessage-3db5b2f4.js",
+  "_DeliveryMessage-bb027c31.js": {
+    "file": "assets/DeliveryMessage-bb027c31.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_MenuComponent-eb0305ae.js",
-      "_AuthenticatedLayout-d29d0d35.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_MenuComponent-66e1b912.js",
+      "_AuthenticatedLayout-9b475de4.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ]
   },
-  "_Dropzone-7d0e86b2.js": {
-    "file": "assets/Dropzone-7d0e86b2.js",
+  "_Dropzone-f409fc97.js": {
+    "file": "assets/Dropzone-f409fc97.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js"
+      "_AuthenticatedLayout-9b475de4.js"
     ]
   },
-  "_GeneralInformation-3a4de73a.js": {
-    "file": "assets/GeneralInformation-3a4de73a.js",
+  "_GeneralInformation-1c727233.js": {
+    "file": "assets/GeneralInformation-1c727233.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js"
+      "_AuthenticatedLayout-9b475de4.js"
     ]
   },
-  "_InsertProductMetaData-9dcf61a6.js": {
-    "file": "assets/InsertProductMetaData-9dcf61a6.js",
+  "_InsertProductMetaData-3be2f88c.js": {
+    "file": "assets/InsertProductMetaData-3be2f88c.js",
     "imports": [
       "resources/js/app.tsx"
     ]
   },
-  "_MenuComponent-eb0305ae.js": {
-    "file": "assets/MenuComponent-eb0305ae.js",
+  "_MenuComponent-66e1b912.js": {
+    "file": "assets/MenuComponent-66e1b912.js",
     "imports": [
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_MetronicSplashScreen-8c2b6694.js"
     ]
   },
-  "_MetronicSplashScreen-fcb8b28c.js": {
-    "file": "assets/MetronicSplashScreen-fcb8b28c.js",
+  "_MetronicSplashScreen-8c2b6694.js": {
+    "file": "assets/MetronicSplashScreen-8c2b6694.js",
     "imports": [
       "resources/js/app.tsx"
     ]
   },
-  "_ProductMetaData-3e6c4043.js": {
-    "file": "assets/ProductMetaData-3e6c4043.js",
+  "_ProductMetaData-dd6b9697.js": {
+    "file": "assets/ProductMetaData-dd6b9697.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js"
+      "_AuthenticatedLayout-9b475de4.js"
     ]
   },
-  "_StatusComponent-78a0d730.js": {
-    "file": "assets/StatusComponent-78a0d730.js",
+  "_StatusComponent-4987bbaf.js": {
+    "file": "assets/StatusComponent-4987bbaf.js",
     "imports": [
       "resources/js/app.tsx"
     ]
   },
-  "_ckeditor-691032f1.js": {
-    "file": "assets/ckeditor-691032f1.js",
+  "_ckeditor-ab1170b9.js": {
+    "file": "assets/ckeditor-ab1170b9.js",
     "imports": [
       "resources/js/app.tsx"
     ]
   },
-  "_en-8efc4317.js": {
+  "_en-3867fcb2.js": {
     "css": [
       "assets/en-4a538559.css"
     ],
-    "file": "assets/en-8efc4317.js",
+    "file": "assets/en-3867fcb2.js",
     "imports": [
-      "_jquery.dataTables-fcbaf950.js",
+      "_jquery.dataTables-5b248abd.js",
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js"
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js"
     ]
   },
   "_hoist-non-react-statics.cjs-1d8f9095.js": {
     "file": "assets/hoist-non-react-statics.cjs-1d8f9095.js"
   },
-  "_index-36d46753.js": {
-    "file": "assets/index-36d46753.js",
+  "_index-bd224483.js": {
+    "file": "assets/index-bd224483.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js"
+      "_AuthenticatedLayout-9b475de4.js"
     ]
   },
-  "_jquery.dataTables-fcbaf950.js": {
-    "file": "assets/jquery.dataTables-fcbaf950.js",
+  "_jquery.dataTables-5b248abd.js": {
+    "file": "assets/jquery.dataTables-5b248abd.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js"
+      "_AuthenticatedLayout-9b475de4.js"
     ]
   },
   "en.css": {
@@ -231,19 +231,19 @@
     "src": "node_modules/socicon/font/socicon.woff"
   },
   "resources/js/Pages/Auth/Login.tsx": {
-    "file": "assets/Login-e41f29ef.js",
+    "file": "assets/Login-97e030c1.js",
     "imports": [
       "resources/js/app.tsx",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_Auth-7dfeba34.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_Auth-8665c553.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Auth/Login.tsx"
   },
   "resources/js/Pages/Auth/_Login.tsx": {
-    "file": "assets/_Login-928cda95.js",
+    "file": "assets/_Login-f9e04e9f.js",
     "imports": [
       "resources/js/app.tsx"
     ],
@@ -258,39 +258,39 @@
     "css": [
       "assets/Dashboard-3b18714b.css"
     ],
-    "file": "assets/Dashboard-f950a85d.js",
+    "file": "assets/Dashboard-09c084a2.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_jquery.dataTables-fcbaf950.js",
-      "_en-8efc4317.js",
-      "_MenuComponent-eb0305ae.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_jquery.dataTables-5b248abd.js",
+      "_en-3867fcb2.js",
+      "_MenuComponent-66e1b912.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Dashboard.tsx"
   },
   "resources/js/Pages/Dashboard_.tsx": {
-    "file": "assets/Dashboard_-305e3929.js",
+    "file": "assets/Dashboard_-99158996.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_jquery.dataTables-fcbaf950.js",
-      "_en-8efc4317.js",
-      "_MenuComponent-eb0305ae.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_jquery.dataTables-5b248abd.js",
+      "_en-3867fcb2.js",
+      "_MenuComponent-66e1b912.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Dashboard_.tsx"
   },
   "resources/js/Pages/Errors/404.tsx": {
-    "file": "assets/404-ae59f4d2.js",
+    "file": "assets/404-95acc54e.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Errors/404.tsx"
@@ -304,15 +304,15 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Audit-6501fc21.js",
+    "file": "assets/Audit-90c12b86.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_StatusComponent-78a0d730.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_StatusComponent-4987bbaf.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -322,15 +322,15 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Confirm-c1ade09f.js",
+    "file": "assets/Confirm-8e7c3340.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_StatusComponent-78a0d730.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_StatusComponent-4987bbaf.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -340,16 +340,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Correct-b4d33590.js",
+    "file": "assets/Correct-20a95f62.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_StatusComponent-78a0d730.js",
-      "_ckeditor-691032f1.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ckeditor-ab1170b9.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -359,13 +359,13 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/EditTwo-e724c3cb.js",
+    "file": "assets/EditTwo-76a9841a.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_StatusComponent-78a0d730.js",
-      "_MenuComponent-eb0305ae.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_StatusComponent-4987bbaf.js",
+      "_MenuComponent-66e1b912.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -375,15 +375,15 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate-9734b8a9.js",
+    "file": "assets/Initiate-895fcaa7.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -393,14 +393,14 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/InitiateDuplicate-9636cf1e.js",
+    "file": "assets/InitiateDuplicate-2703181e.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -410,56 +410,56 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Show-b34fdf0c.js",
+    "file": "assets/Show-2b249fb9.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_StatusComponent-78a0d730.js",
-      "_DeliveryMessage-3db5b2f4.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_StatusComponent-4987bbaf.js",
+      "_DeliveryMessage-bb027c31.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_MenuComponent-eb0305ae.js"
+      "_MenuComponent-66e1b912.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Formatting/Show.tsx"
   },
   "resources/js/Pages/Lab/AllNotif.tsx": {
-    "file": "assets/AllNotif-cc0c3498.js",
+    "file": "assets/AllNotif-2053e78e.js",
     "imports": [
       "resources/js/app.tsx",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Lab/AllNotif.tsx"
   },
   "resources/js/Pages/Lab/List.tsx": {
-    "file": "assets/List-3f131a69.js",
+    "file": "assets/List-51ef8d79.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_MenuComponent-eb0305ae.js",
-      "_jquery.dataTables-fcbaf950.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_MenuComponent-66e1b912.js",
+      "_jquery.dataTables-5b248abd.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_StatusComponent-78a0d730.js"
+      "_StatusComponent-4987bbaf.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Lab/List.tsx"
   },
   "resources/js/Pages/Lab/Task.tsx": {
-    "file": "assets/Task-93632880.js",
+    "file": "assets/Task-67c660db.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_MenuComponent-eb0305ae.js",
-      "_jquery.dataTables-fcbaf950.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_MenuComponent-66e1b912.js",
+      "_jquery.dataTables-5b248abd.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_StatusComponent-78a0d730.js",
-      "_DeliveryMessage-3db5b2f4.js"
+      "_StatusComponent-4987bbaf.js",
+      "_DeliveryMessage-bb027c31.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Lab/Task.tsx"
@@ -468,17 +468,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Audit-98b069b2.js",
+    "file": "assets/Audit-f07b9c90.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -488,17 +488,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Confirm-29659ce1.js",
+    "file": "assets/Confirm-c009fab9.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_GeneralInformation-1c727233.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -508,17 +508,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Correct-13de9de7.js",
+    "file": "assets/Correct-3947ba25.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_ckeditor-691032f1.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_ckeditor-ab1170b9.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -528,17 +528,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate-61706ed8.js",
+    "file": "assets/Initiate-d59170a1.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -548,14 +548,14 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/InitiateDuplicate-7f0c2ff4.js",
+    "file": "assets/InitiateDuplicate-678c3f3c.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -565,30 +565,30 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate_-cfe7eeb4.js",
+    "file": "assets/Initiate_-60ed51bf.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_InsertProductMetaData-9dcf61a6.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_InsertProductMetaData-3be2f88c.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Nat/Ch/Initiate_.tsx"
   },
   "resources/js/Pages/Publishing/Nat/Ch/Show.tsx": {
-    "file": "assets/Show-f965ae66.js",
+    "file": "assets/Show-0661c65a.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_StatusComponent-78a0d730.js",
-      "_DeliveryMessage-3db5b2f4.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_StatusComponent-4987bbaf.js",
+      "_DeliveryMessage-bb027c31.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -598,17 +598,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Audit-24a240be.js",
+    "file": "assets/Audit-aef5527c.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -618,17 +618,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Confirm-d9f9e9f7.js",
+    "file": "assets/Confirm-22dcad3b.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -638,17 +638,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Correct-018d3895.js",
+    "file": "assets/Correct-c60f6480.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_ckeditor-691032f1.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_ckeditor-ab1170b9.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -658,17 +658,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/CreateN-20e85350.js",
+    "file": "assets/CreateN-bbbb7735.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -678,16 +678,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate-3a6d526e.js",
+    "file": "assets/Initiate-a39263bf.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_InsertProductMetaData-9dcf61a6.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_InsertProductMetaData-3be2f88c.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -697,29 +697,29 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/InitiateDuplicate-95ee1ad2.js",
+    "file": "assets/InitiateDuplicate-7348c9a0.js",
     "imports": [
       "resources/js/app.tsx",
-      "_MenuComponent-eb0305ae.js",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_Dropzone-7d0e86b2.js",
-      "_index-36d46753.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_MenuComponent-66e1b912.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_Dropzone-f409fc97.js",
+      "_index-bd224483.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Nat/Eu/InitiateDuplicate.tsx"
   },
   "resources/js/Pages/Publishing/Nat/Eu/Show.tsx": {
-    "file": "assets/Show-b41d5d5e.js",
+    "file": "assets/Show-c702f43a.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_StatusComponent-78a0d730.js",
-      "_DeliveryMessage-3db5b2f4.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_StatusComponent-4987bbaf.js",
+      "_DeliveryMessage-bb027c31.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Nat/Eu/Show.tsx"
@@ -728,17 +728,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Audit-5f60306e.js",
+    "file": "assets/Audit-ae3f54a3.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_GeneralInformation-1c727233.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -748,17 +748,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Confirm-3851df2b.js",
+    "file": "assets/Confirm-e8f6207d.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_GeneralInformation-1c727233.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -768,17 +768,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Correct-55d295f6.js",
+    "file": "assets/Correct-d119992b.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_ckeditor-691032f1.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_ckeditor-ab1170b9.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -788,17 +788,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate-51126cc5.js",
+    "file": "assets/Initiate-a0c35ea8.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_ProductMetaData-3e6c4043.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -808,14 +808,14 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/InitiateDuplicate-1ba992fb.js",
+    "file": "assets/InitiateDuplicate-1950175b.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -825,16 +825,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Initiate_-c9baafb3.js",
+    "file": "assets/Initiate_-1832468f.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_GeneralInformation-3a4de73a.js",
-      "_InsertProductMetaData-9dcf61a6.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_GeneralInformation-1c727233.js",
+      "_InsertProductMetaData-3be2f88c.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -844,15 +844,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Audit-c2933fd1.js",
+    "file": "assets/Audit-7a884486.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ProductMetaData-dd6b9697.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -862,15 +863,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Confirm-373b56d1.js",
+    "file": "assets/Confirm-c5782f5e.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_ProductMetaData-dd6b9697.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -880,15 +882,16 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Correct-291318c9.js",
+    "file": "assets/Correct-0a70e7f6.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_ckeditor-691032f1.js",
-      "_Dropzone-7d0e86b2.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_ckeditor-ab1170b9.js",
+      "_Dropzone-f409fc97.js",
+      "_ProductMetaData-dd6b9697.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -898,16 +901,17 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Create-ff0f2a22.js",
+    "file": "assets/Create-310016bf.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
-      "_StatusComponent-78a0d730.js",
-      "_GeneralInformation-3a4de73a.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
+      "_StatusComponent-4987bbaf.js",
+      "_GeneralInformation-1c727233.js",
+      "_ProductMetaData-dd6b9697.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -917,14 +921,14 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Create_-f15c7dc0.js",
+    "file": "assets/Create_-c3886861.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
@@ -934,29 +938,29 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/InitiateDuplicate-e77184dc.js",
+    "file": "assets/InitiateDuplicate-42256e4c.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
-      "_index-36d46753.js",
-      "_Dropzone-7d0e86b2.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js",
+      "_index-bd224483.js",
+      "_Dropzone-f409fc97.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Rmp/InitiateDuplicate.tsx"
   },
   "resources/js/Pages/Publishing/Rmp/Show.tsx": {
-    "file": "assets/Show-a0cbea5f.js",
+    "file": "assets/Show-245c01cc.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_StatusComponent-78a0d730.js",
-      "_DeliveryMessage-3db5b2f4.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_StatusComponent-4987bbaf.js",
+      "_DeliveryMessage-bb027c31.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js",
-      "_MenuComponent-eb0305ae.js",
-      "_MetronicSplashScreen-fcb8b28c.js"
+      "_MenuComponent-66e1b912.js",
+      "_MetronicSplashScreen-8c2b6694.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Rmp/Show.tsx"
@@ -965,20 +969,20 @@
     "css": [
       "assets/flatpickr-c04ede37.css"
     ],
-    "file": "assets/Validate-6a25986d.js",
+    "file": "assets/Validate-f210766f.js",
     "imports": [
       "resources/js/app.tsx",
-      "_AuthenticatedLayout-d29d0d35.js",
-      "_MenuComponent-eb0305ae.js",
-      "_index-36d46753.js",
-      "_MetronicSplashScreen-fcb8b28c.js",
+      "_AuthenticatedLayout-9b475de4.js",
+      "_MenuComponent-66e1b912.js",
+      "_index-bd224483.js",
+      "_MetronicSplashScreen-8c2b6694.js",
       "_hoist-non-react-statics.cjs-1d8f9095.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Publishing/Validate.tsx"
   },
   "resources/js/Pages/Welcome.tsx": {
-    "file": "assets/Welcome-2a9e06a2.js",
+    "file": "assets/Welcome-7a97e85c.js",
     "imports": [
       "resources/js/app.tsx"
     ],
@@ -1112,7 +1116,7 @@
     "dynamicImports": [
       "resources/js/Pages/Auth/Login.tsx",
       "resources/js/Pages/Auth/_Login.tsx",
-      "_Auth-7dfeba34.js",
+      "_Auth-8665c553.js",
       "resources/js/Pages/Dashboard.tsx",
       "resources/js/Pages/Dashboard_.tsx",
       "resources/js/Pages/Errors/404.tsx",
@@ -1157,7 +1161,7 @@
       "resources/js/Pages/Publishing/Validate.tsx",
       "resources/js/Pages/Welcome.tsx"
     ],
-    "file": "assets/app-6194dc10.js",
+    "file": "assets/app-53ce9807.js",
     "isEntry": true,
     "src": "resources/js/app.tsx"
   }

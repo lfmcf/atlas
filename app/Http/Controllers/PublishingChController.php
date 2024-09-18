@@ -436,6 +436,27 @@ class PublishingChController extends Controller
         return redirect()->route('show-publishing-nat-ch', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
 
+    public function completeChPublishing(Request $request)
+    {
+        $pub = Publishing::findOrfail($request->id);
+        $pub->status = 'completed';
+        $pub->save();
+        $user = User::where('current_team_id', 1)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        return redirect('/list')->with('message', 'Publishing Request has been successfully completed');
+    }
+
+    public function closeChPublishing(Request $request)
+    {
+
+        $pub = Publishing::findOrfail($request->id);
+        $pub->status = 'closed';
+        $pub->save();
+        $user = User::whereIn('current_team_id', [2, 3])->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        return redirect('/list')->with('message', 'Publishing Request has been successfully closed');
+    }
+
     public function newRequest(Request $request)
     {
         return Inertia::render('Publishing/Nat/Ch/Initiate_');

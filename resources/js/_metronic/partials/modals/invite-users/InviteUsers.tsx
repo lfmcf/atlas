@@ -194,7 +194,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                     }
                 })
 
-            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition') {
+            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized') {
 
                 router.visit('/publishing_initiate', {
                     method: 'get',

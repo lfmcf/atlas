@@ -84,11 +84,23 @@ const InsertProductMetaData = ({
                     <div key={index}>
                         {index === 0 ? (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <button type="button" onClick={() => addDrugSubstanceFields()}>Add</button>
+                                <button
+                                    type="button"
+                                    onClick={() => addDrugSubstanceFields()}
+                                    className='nav-link btn btn-flex flex-center btn-active-success btn-color-green-600 btn-active-color-white rounded-2 w-20px h-30px active'
+                                >
+                                    +
+                                </button>
                             </div>
                         ) : (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <button type="button" onClick={() => removeDrugSubstanceFields(index)}>Remove</button>
+                                <button
+                                    type="button"
+                                    onClick={() => removeDrugSubstanceFields(index)}
+                                    className='nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-20px h-30px active'
+                                >
+                                    X
+                                </button>
                             </div>
                         )}
                         <div className='row mb-10'>
@@ -124,11 +136,23 @@ const InsertProductMetaData = ({
                     <div key={index}>
                         {index === 0 ? (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <button type="button" onClick={() => addDrugProductFields()}>Add</button>
+                                <button
+                                    type="button"
+                                    onClick={() => addDrugProductFields()}
+                                    className='nav-link btn btn-flex flex-center btn-active-success btn-color-green-600 btn-active-color-white rounded-2 w-20px h-30px active'
+                                >
+                                    +
+                                </button>
                             </div>
                         ) : (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <button type="button" onClick={() => removeDrugProductFields(index)}>Remove</button>
+                                <button
+                                    type="button"
+                                    onClick={() => removeDrugProductFields(index)}
+                                    className='nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-20px h-30px active'
+                                >
+                                    X
+                                </button>
                             </div>
                         )}
                         <div className='row mb-10'>
