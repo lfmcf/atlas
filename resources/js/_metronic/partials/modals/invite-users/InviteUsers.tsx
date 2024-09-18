@@ -221,9 +221,19 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
     const handleLifeCycle = () => {
 
-        if (region_ && region_.value == 'EU') {
+        if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale') {
 
             router.visit('/publishing_eu_new_request', {
+                method: 'get',
+                data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+        }
+        else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Mutual Recognition' || region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
+
+            router.visit('/publishing_rmp_new_request', {
                 method: 'get',
                 data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
                 headers: {

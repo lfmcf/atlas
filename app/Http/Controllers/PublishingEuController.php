@@ -605,6 +605,10 @@ class PublishingEuController extends Controller
         $pub->submission_description = $request->submission_description;
         $pub->indication = $request->indication;
         $pub->dosage_form = $request->dosage_form;
+        // $pub->excipient = $request->excipient;
+        // $pub->drug_substance = $request->drug_substance;
+        // $pub->drug_product = $request->drug_product;
+        $pub->doc = $docs;
         if (!empty($pub->doc)) {
             $pub->doc = [...$pub->doc, ...$docs];
         } else {
@@ -614,6 +618,7 @@ class PublishingEuController extends Controller
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
+
         $excipientArray = $request->excipient;
 
 
@@ -658,21 +663,13 @@ class PublishingEuController extends Controller
             'inn' => $request->inn,
             'code' => $request->country['code'] ?? '',
         ]);
-        // $metaData->procedure = $request->procedure;
-        // $metaData->invented_name = $request->productName;
-        // $metaData->country = $request->country['value'];
-        // $metaData->agencyCode = $request->agency_code;
-        // $metaData->applicant = $request->applicant;
-        // $metaData->inn = $request->inn;
-        // $metaData->code = $request->country['code'] ?? '';
+
         $metaData->trackingNumbers()->create(['numbers' => $request->tracking]);
         $metaData->indications()->create(['indication' => $request->indication]);
         $metaData->dosageForm()->create(['form' => $request->dosage_form]);
-        //$metaData->excipients()->createMany($transformedArray);
-
 
         foreach ($transformedArray as &$item) {
-            //$excipient = $metaData->excipients()->create(['excipient' => $item['label']]);
+
             $metaData->excipients()->create(['excipient' => $item['value']]);
         }
 

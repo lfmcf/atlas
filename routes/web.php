@@ -146,6 +146,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing_rmp_verify', [PublishingController::class, 'verification'])->name('publishing_rmp_verify');
     Route::post('complete_rmp_publishing', [PublishingController::class, 'complete'])->name('complete_rmp_publishing');
     Route::post('close_rmp_publishing', [PublishingController::class, 'close'])->name('close_rmp_publishing');
+    Route::get('/publishing_rmp_new_request', [PublishingController::class, 'newRequest'])->name('publishing_rmp_new_request');
+    Route::post('/publishing_rmp_new_request', [PublishingController::class, 'postNewRequest'])->name('publishing_rmp_new_request');
 
     // ** store orm publishing ** //
 
@@ -190,7 +192,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ** iniatiate and submit form publishing rmp ** //
 
 
-    Route::post('initiate-rmp-publishing_', [PublishingController::class, 'storemrp_'])->name('initiate-rmp-publishing_');
+
     Route::get('/duplicate-publishing', [PublishingController::class, 'createDuplication'])->name('duplicate-publishing');
     Route::get('/duplicate-publishing-rmp', [PublishingController::class, 'createDuplicationRmp'])->name('duplicate-publishing-rmp');
     Route::post('initiate-rmp-publishing-duplication', [PublishingController::class, 'storemrpduplication'])->name('initiate-rmp-publishing-duplication');

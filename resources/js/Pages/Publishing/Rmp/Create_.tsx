@@ -12,10 +12,11 @@ import 'flatpickr/dist/flatpickr.css';
 import { publishingMrpSubmissionType } from '../../Lab/MetaDataList'
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
+import InsertProductMetaData from '../../../Components/InsertProductMetaData'
 
 const Create_ = (props: any) => {
 
-    const { metadata, folder, metapro } = props;
+    const { metadata, folder, countries } = props;
 
     var params = new URLSearchParams(window.location.search);
 
@@ -33,14 +34,12 @@ const Create_ = (props: any) => {
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        mt: folder ? folder.mt : [],
+        mt: countries?.map((cnt) => ({ id: cnt?.id, countries: cnt.name, submission_type: '', submission_mode: '', trackingNumber: '', submission_unit: '', applicant: '' })),
         indication: folder ? folder.indication : '',
-        drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : '',
-        drug_substance: folder ? folder.drug_substance : '',
-        drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
+        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': [] }],
+        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': [] }],
         dosage_form: folder ? folder.dosage_form : '',
-        excipient: folder ? folder.excipient : '',
+        excipient: [],
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
@@ -48,9 +47,9 @@ const Create_ = (props: any) => {
     })
 
     const [multiData, setMultiData] = useState({
-        uuid: metadata[0].uuid, submission_type: '', submission_mode: '', trackingNumber: metadata[0].tracking_numbers[0].numbers, submission_unit: '', applicant: metadata[0].applicant,
-        agencyCode: metadata[0].agencyCode, inventedName: metadata[0].invented_name, mtd: metadata[0].mtd, inn: metadata[0].inn, sequence: metadata[0].sequence,
-        r_sequence: metadata[0].r_sequence, submission_description: '', remarks: ''
+        uuid: '', submission_type: '', submission_mode: '', trackingNumber: '', submission_unit: '', applicant: '',
+        agencyCode: metadata[0]?.agencyCode, inventedName: '', mtd: '', inn: '', sequence: '',
+        r_sequence: '', submission_description: '', remarks: ''
     });
 
 
@@ -200,9 +199,26 @@ const Create_ = (props: any) => {
     }
 
     const handleMetaChange = (e, id) => {
+
         if (e.target.name == 'sequence') {
             let arr = { ...myErrors }
             arr.sequence[id] = ''
+            setMyErroes(arr)
+        }
+        if (e.target.name == 'submission_type') {
+            let arr = { ...myErrors }
+
+            arr.submission_type[id] = ''
+            setMyErroes(arr)
+        }
+        if (e.target.name == 'submission_unit') {
+            let arr = { ...myErrors }
+            arr.submission_unit[id] = ''
+            setMyErroes(arr)
+        }
+        if (e.target.name == 'submission_mode') {
+            let arr = { ...myErrors }
+            arr.submission_mode[id] = ''
             setMyErroes(arr)
         }
         let prevData = { ...data }
@@ -246,7 +262,7 @@ const Create_ = (props: any) => {
     const [isCheck, setIsCheck] = useState([]);
     const [isCheckAll, setIsCheckAll] = useState(false);
 
-    const [list, setList] = useState(metadata);
+    const [list, setList] = useState(countries);
 
 
     const handleMultiCountryChange = (e) => {
@@ -270,6 +286,7 @@ const Create_ = (props: any) => {
         let perdata = { ...data }
 
         perdata.mt.map((cnt, i) => {
+
             if (isCheck.includes(cnt.id)) {
                 perdata.mt[i].uuid = multiData.uuid
                 perdata.mt[i].submission_type = multiData.submission_type
@@ -290,17 +307,17 @@ const Create_ = (props: any) => {
         setData(perdata)
     }
 
-    useEffect(() => {
-        let arr = { ...data };
-        metadata.map((mtd, i) => {
-            arr.mt.push({
-                id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
-                submission_unit: '', applicant: 'STALLERGENES', agencyCode: mtd.agencyCode, inventedName: data.invented_name, inn: mtd.inn, sequence: '',
-                r_sequence: '', submission_description: '', remarks: ''
-            })
-        })
-        setData(arr)
-    }, [])
+    // useEffect(() => {
+    //     let arr = { ...data };
+    //     metadata.map((mtd, i) => {
+    //         arr.mt.push({
+    //             id: mtd.id, country: mtd.country, uuid: mtd.uuid, submission_type: '', submission_mode: '', trackingNumber: mtd.tracking_numbers[0].numbers,
+    //             submission_unit: '', applicant: 'STALLERGENES', agencyCode: mtd.agencyCode, inventedName: data.invented_name, inn: mtd.inn, sequence: '',
+    //             r_sequence: '', submission_description: '', remarks: ''
+    //         })
+    //     })
+    //     setData(arr)
+    // }, [])
 
     useEffect(() => {
         let date = new Date();
@@ -331,7 +348,7 @@ const Create_ = (props: any) => {
 
         e.preventDefault();
 
-        post(route('initiate-rmp-publishing_', { type: type }));
+        post(route('publishing_rmp_new_request', { type: type }));
     }
 
     const removeAll = () => {
@@ -458,6 +475,26 @@ const Create_ = (props: any) => {
         }
 
         stepper.current?.goto(i)
+    }
+
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': [] }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': [] }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
     }
 
     return (
@@ -696,7 +733,7 @@ const Create_ = (props: any) => {
                                         <div className='d-flex flex-column'>
 
 
-                                            {metadata.map((mt: any, i: number) => (
+                                            {countries.map((mt: any, i: number) => (
                                                 <li className="nav-item w-md-150px me-0 pe-5" key={i}>
                                                     <a
                                                         className={"nav-link mx-0 my-2" + (i === 0 ? ' active' : '')}
@@ -704,7 +741,7 @@ const Create_ = (props: any) => {
                                                         href={"#kt_vtab_pane_" + i}
                                                         style={{ color: myErrors.submission_type[i] || myErrors.submission_unit[i] || myErrors.submission_mode[i] || myErrors.sequence[i] ? 'red' : '' }}
                                                     >
-                                                        {mt.country}
+                                                        {mt.name}
                                                     </a>
                                                 </li>
                                             ))}
@@ -722,7 +759,8 @@ const Create_ = (props: any) => {
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label" title='Choose the submission type' style={{ color: myErrors.submission_type[i] ? 'red' : '' }}>Submission type (*)</label>
-                                                    <Select options={publishingMrpSubmissionType}
+                                                    <input type="text" className="form-control form-control-solid" name="submission_type" style={{ borderColor: myErrors.submission_type[i] ? 'red' : '' }} value={mt.submission_type} onChange={(e) => handleMetaChange(e, i)} />
+                                                    {/* <Select options={publishingMrpSubmissionType}
                                                         name='submission_type'
                                                         onChange={(e) => handleMetaSelectChange(e, 'submission_type', i)}
                                                         className="react-select-container"
@@ -732,11 +770,12 @@ const Create_ = (props: any) => {
                                                         value={mt.submission_type}
                                                         menuPortalTarget={document.body}
                                                         styles={selectStyles(myErrors.submission_type[i])}
-                                                    />
+                                                    /> */}
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label" title='Choose the submission mode' style={{ color: myErrors.submission_mode[i] ? 'red' : '' }}>Submission mode (*)</label>
-                                                    <Select options={[
+                                                    <input type="text" className="form-control form-control-solid" name="submission_mode" style={{ borderColor: myErrors.submission_mode[i] ? 'red' : '' }} defaultValue={mt.submission_mode} onChange={(e) => handleMetaChange(e, i)} />
+                                                    {/* <Select options={[
                                                         { label: 'Single', value: 'Single' },
                                                         { label: 'Grouping', value: 'Grouping' },
                                                         { label: 'Worksharing', value: 'Worksharing' },
@@ -750,7 +789,7 @@ const Create_ = (props: any) => {
                                                         value={mt.submission_mode}
                                                         menuPortalTarget={document.body}
                                                         styles={selectStyles(myErrors.submission_mode[i])}
-                                                    />
+                                                    /> */}
                                                 </div>
                                             </div>
                                             <div className='row mb-10'>
@@ -760,7 +799,8 @@ const Create_ = (props: any) => {
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label" title='Choose the applicable submission unit' style={{ color: myErrors.submission_unit[i] ? 'red' : '' }}>Submission unit (*)</label>
-                                                    <Select options={[
+                                                    <input type="text" className="form-control form-control-solid" name="submission_unit" style={{ borderColor: myErrors.submission_unit[i] ? 'red' : '' }} defaultValue={mt.submission_unit} onChange={(e) => handleMetaChange(e, i)} />
+                                                    {/* <Select options={[
                                                         { label: 'initial', value: 'initial' },
                                                         { label: 'validation-response', value: 'validation-response' },
                                                         { label: 'response', value: 'response' },
@@ -779,7 +819,7 @@ const Create_ = (props: any) => {
                                                         value={mt.submission_unit}
                                                         menuPortalTarget={document.body}
                                                         styles={selectStyles(myErrors.submission_unit[i])}
-                                                    />
+                                                    /> */}
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label">Applicant</label>
@@ -789,7 +829,7 @@ const Create_ = (props: any) => {
                                             <div className='row mb-10'>
                                                 <div className='col-4'>
                                                     <label className="form-label">Agency code</label>
-                                                    <input type="text" className="form-control form-control-solid" name="agency_code" value={mt.agencyCode} onChange={(e) => handleMetaChange(e, i)} />
+                                                    <input type="text" className="form-control form-control-solid" name="agency_code" value={metadata[i]?.agencyCode} onChange={(e) => handleMetaChange(e, i)} />
                                                 </div>
                                                 <div className='col-4'>
                                                     <label className="form-label">Invented name</label>
@@ -825,117 +865,16 @@ const Create_ = (props: any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Indication</label>
-                                    <Select options={metadata[0].indications.map((val) => ({ label: val.indication, value: val.indication }))}
-                                        name='indication'
-                                        onChange={(e) => handleSelectChange(e, 'indication')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.indication}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
+                        <InsertProductMetaData
+                            data={data}
+                            handleChange={handleChange}
+                            addDrugSubstanceFields={addDrugSubstanceFields}
+                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            addDrugProductFields={addDrugProductFields}
+                            removeDrugProductFields={removeDrugProductFields}
+                            setData={setData}
 
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance</label>
-                                    <Select options={metadata[0].drug_substance.map((val) => ({ label: val.substance, value: val.substance }))}
-                                        name='drug_substance'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.drug_substance}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug substance manufacturer</label>
-                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
-                                        name='drug_substance_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_substance_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_substance_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product</label>
-                                    <Select options={metadata[0].drug_product.map((val) => ({ label: val.drug_product, value: val.drug_product }))}
-                                        name='drug_product'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Drug product manufacturer</label>
-                                    <Select options={metadata[0].drug_product_manufacturer.map((val) => ({ label: val.product_manufacturer, value: val.product_manufacturer }))}
-                                        name='drug_product_manufacturer'
-                                        onChange={(e) => handleSelectChange(e, 'drug_product_manufacturer')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.drug_product_manufacturer}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Dosage form</label>
-                                    <Select options={metadata[0].dosage_form.map((val) => ({ label: val.form, value: val.form }))}
-                                        name='dosage_form'
-                                        onChange={(e) => handleSelectChange(e, 'dosage_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.dosage_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                            <div className='row mb-10'>
-
-                                <div className='col-md-4 col-sm-12'>
-                                    <label className="form-label">Excipient</label>
-                                    <Select options={metadata[0].excipients.map((val) => ({ label: val.excipient, value: val.excipient }))}
-                                        name='excipient'
-                                        onChange={(e) => handleSelectChange(e, 'excipient')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        isMulti
-                                        value={data.excipient}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
@@ -1045,25 +984,27 @@ const Create_ = (props: any) => {
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">UUID</label>
-                                                        <input type="text" className="form-control form-control-solid" name="uuid" defaultValue={metadata[0].uuid} onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="uuid" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission type</label>
-                                                        <Select options={publishingMrpSubmissionType}
+                                                        <input type="text" className="form-control form-control-solid" name="submission_type" onChange={handleMultipleChange} />
+                                                        {/* <Select options={publishingMrpSubmissionType}
                                                             name='submission_type'
                                                             onChange={(e) => handleMultipleSelectChange(e, 'submission_type')}
                                                             className="basic"
                                                             classNamePrefix="basic"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_type}
+                                                            //value={metadata[0].submission_type}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                        />
+                                                        /> */}
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission mode</label>
-                                                        <Select options={[
+                                                        <input type="text" className="form-control form-control-solid" name="submission_mode" onChange={handleMultipleChange} />
+                                                        {/* <Select options={[
                                                             { label: 'Single', value: 'Single' },
                                                             { label: 'Grouping', value: 'Grouping' },
                                                             { label: 'Worksharing', value: 'Worksharing' },
@@ -1074,18 +1015,19 @@ const Create_ = (props: any) => {
                                                             classNamePrefix="basic"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_mode}
+                                                            //value={metadata[0].submission_mode}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                        />
+                                                        /> */}
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Procedure Tracking N°</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].tracking_numbers[0].numbers} name="trackingNumber" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="trackingNumber" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission unit</label>
-                                                        <Select options={[
+                                                        <input type="text" className="form-control form-control-solid" name="submission_unit" onChange={handleMultipleChange} />
+                                                        {/* <Select options={[
                                                             { label: 'initial', value: 'initial' },
                                                             { label: 'validation-response', value: 'validation-response' },
                                                             { label: 'response', value: 'response' },
@@ -1101,37 +1043,37 @@ const Create_ = (props: any) => {
                                                             classNamePrefix="basic"
                                                             placeholder=''
                                                             isClearable
-                                                            value={metadata[0].submission_unit}
+                                                            //value={metadata[0].submission_unit}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                                        />
+                                                        /> */}
                                                     </div>
 
                                                     <div className='mb-10'>
                                                         <label className="form-label">Applicant</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].applicant} name="applicant" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="applicant" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                                 <div className='col-6'>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Invented name</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].invented_name} name="inventedName" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="inventedName" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">INN</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].inn} name="inn" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="inn" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].sequence} name="sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Related Sequence</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].r_seqeunce} name="r_sequence" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="r_sequence" onChange={handleMultipleChange} />
                                                     </div>
                                                     <div className='mb-10'>
                                                         <label className="form-label">Submission description</label>
-                                                        <input type="text" className="form-control form-control-solid" defaultValue={metadata[0].submission_description} name="submission_description" onChange={handleMultipleChange} />
+                                                        <input type="text" className="form-control form-control-solid" name="submission_description" onChange={handleMultipleChange} />
                                                     </div>
                                                 </div>
                                             </form>
@@ -1159,7 +1101,7 @@ const Create_ = (props: any) => {
                                                         <input type='checkbox' name="multicountry" value='all' onChange={handleSelectAll} checked={isCheckAll} />
                                                     </div>
                                                 </div>
-                                                {metadata?.map((mt: any, i: string) => {
+                                                {countries?.map((mt: any, i) => {
 
                                                     return (
                                                         <div key={i} className="col-4 d-flex align-items-center mb-5" >
@@ -1168,22 +1110,22 @@ const Create_ = (props: any) => {
                                                                     <ReactCountryFlag
                                                                         className="emojiFlag"
                                                                         countryCode={mt.code}
-                                                                        aria-label={mt.country}
+                                                                        aria-label={mt.name}
                                                                         svg
                                                                         style={{ width: '25px', height: '25px', borderRadius: '4px' }}
                                                                     />
                                                                 </div>
                                                             </div>
                                                             <div className="fw-semibold" style={{ width: '40%' }}>
-                                                                <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">{mt.country}</a>
+                                                                <a href="#" className="fs-5 fw-bold text-gray-900 text-hover-primary">{mt.name}</a>
                                                                 <div className="text-gray-400">{mt.code}</div>
                                                             </div>
 
                                                             <div className="badge badge-light ">
                                                                 <input type='checkbox'
                                                                     id={mt.id}
-                                                                    name={mt.country}
-                                                                    value={mt.country}
+                                                                    name={mt.name}
+                                                                    value={mt.name}
                                                                     onChange={handleMultiCountryChange}
                                                                     checked={isCheck.includes(mt.id) ? true : false}
                                                                 />

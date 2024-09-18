@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Region;
 use App\Models\Procedure;
 use App\Models\ProductFamilies;
+use Illuminate\Support\Facades\DB;
 
 class ProductMetaController extends Controller
 {
@@ -32,6 +33,11 @@ class ProductMetaController extends Controller
      */
     public function store(Request $request)
     {
+        $region = $request->input('region');
+        $procedure = $request->input('procedure');
+
+        $regionId = Region::where('region_name', $region['value'])->firstOrFail()->id;
+        $procedureId = Procedure::where('procedure_name', $procedure['value'])->firstOrFail()->id;
 
         $product = new Product();
         if (isset($request->product_family_)) {
@@ -43,6 +49,14 @@ class ProductMetaController extends Controller
 
         $product->name = $request->product;
         $product->save();
+
+        DB::table('region_procedure_product')->insert([
+            'region_id' => $regionId,
+            'procedure_id' => $procedureId,
+            'product_id' => $product->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response('done', 200);
     }
