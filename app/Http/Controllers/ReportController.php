@@ -310,20 +310,29 @@ class ReportController extends Controller
         }
 
         if ($user->current_team_id == 1) {
-            $formattings = Formating::where('status', 'initiated')
-                ->orWhere('status', 'in progress')
-                ->orWhere('status', 'submitted')
-                ->orWhere('status', 'closed')
+            $formattings = Formating::where(function ($query) {
+                $query->where('status', 'initiated')
+                    ->orWhere('status', 'in progress')
+                    ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'closed');
+            })
+                ->where('created_by', $user->id)
                 ->get();
-            $publishing = Publishing::where('status', 'initiated')
-                ->orWhere('status', 'submitted')
-                ->orWhere('status', 'in progress')
-                ->orWhere('status', 'closed')
+            $publishing = Publishing::where(function ($query) {
+                $query->where('status', 'initiated')
+                    ->orWhere('status', 'in progress')
+                    ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'closed');
+            })
+                ->where('created_by', $user->id)
                 ->get();
-            $publishingmrp = PublishingMrp::where('status', 'initiated')
-                ->orWhere('status', 'submitted')
-                ->orWhere('status', 'in progress')
-                ->orWhere('status', 'closed')
+            $publishingmrp = PublishingMrp::where(function ($query) {
+                $query->where('status', 'initiated')
+                    ->orWhere('status', 'in progress')
+                    ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'closed');
+            })
+                ->where('created_by', $user->id)
                 ->get();
         } else if ($user->current_team_id == 2) {
             $formattings = Formating::where('status', 'in progress')
@@ -381,36 +390,27 @@ class ReportController extends Controller
         }
 
         if ($user->current_team_id == 1) {
-            $formattings = Formating::where(function ($query) use ($user) {
-                $query->where('status', 'draft')->where('created_by', $user->id);
+
+            $formattings = Formating::where(function ($query) {
+                $query->where('status', 'draft')
+                    ->orWhere('status', 'completed');
             })
-                ->orWhere('status', 'completed')
-                ->orderBy('created_at', 'desc')
+                ->where('created_by', $user->id)
                 ->get();
-            // $formattings = Formating::where('status', 'draft')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'completed')
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
 
             $publishing = Publishing::where(function ($query) use ($user) {
-                $query->where('status', 'draft')->where('created_by', $user->id);
+                $query->where('status', 'draft')
+                    ->orWhere('status', 'completed');
             })
-                ->orWhere('status', 'completed')
+                ->where('created_by', $user->id)
                 ->get();
-            // $publishing = Publishing::where('status', 'draft')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'completed')
-            //     ->get();
+
             $publishingmrp = PublishingMrp::where(function ($query) use ($user) {
-                $query->where('status', 'draft')->where('created_by', $user->id);
+                $query->where('status', 'draft')
+                    ->orWhere('status', 'completed');
             })
-                ->orWhere('status', 'completed')
+                ->where('created_by', $user->id)
                 ->get();
-            // $publishingmrp = PublishingMrp::where('status', 'draft')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'completed')
-            //     ->get();
         } else if ($user->current_team_id == 2) {
             $formattings = Formating::where(function ($query) use ($user) {
                 $query->where('status', 'draft')->where('created_by', $user->id);

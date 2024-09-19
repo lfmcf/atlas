@@ -43,7 +43,8 @@ const Create_ = (props: any) => {
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
-        request_date: new Date()
+        request_date: new Date(),
+        created_by: props.auth.user.id
     })
 
     const [multiData, setMultiData] = useState({

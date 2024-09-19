@@ -50,8 +50,12 @@ class PublishingEuController extends Controller
                 'trackingNumbers',
                 'dosageForm',
                 'excipients',
-                'drugProduct.dp_manufacturers',
-                'drugSubstance.ds_manufacturers',
+                'drugProduct.dp_manufacturers' => function ($query) {
+                    $query->distinct('product_manufacturer');
+                },
+                'drugSubstance.ds_manufacturers' => function ($query) {
+                    $query->distinct('substance_manufacturer');
+                },
                 'indications'
             ])
             ->first();

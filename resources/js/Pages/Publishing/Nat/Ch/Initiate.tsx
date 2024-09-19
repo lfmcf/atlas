@@ -21,8 +21,6 @@ const Initiate = (props: any) => {
 
     const { folder, metadata } = props
 
-    console.log(metadata)
-
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
         form: folder ? folder.form : 'Publishing',
@@ -35,7 +33,7 @@ const Initiate = (props: any) => {
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        tracking: metadata.tracking_numbers[0].numbers,
+        tracking: metadata.tracking_numbers[0]?.numbers,
         submission_description: folder ? folder.submission_description : '',
         invented_name: folder ? folder.invented_name : metadata.invented_name,
         galenic_form: metadata.swiss_meta_data[0]?.galenic_form,

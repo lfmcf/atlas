@@ -56,6 +56,7 @@ const InitiateDuplicate = (props: any) => {
         request_date: new Date(),
         deadline: new Date(),
         status: '',
+        //created_by: props.auth.user.id
     })
 
     // let tn = metadata.trackingNumber

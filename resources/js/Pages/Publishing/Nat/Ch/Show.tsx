@@ -6,6 +6,7 @@ import { KTIcon } from "../../../../_metronic/helpers";
 import { router } from "@inertiajs/react";
 import { useState } from "react";
 import { DeliveryMessage } from "../../../../_metronic/partials/modals/Delivey-Message/DeliveryMessage";
+import ShowPM from "../../../../Components/ShowPM";
 
 const Show = (props) => {
 
@@ -221,7 +222,8 @@ const Show = (props) => {
                                 </div>
                             </div>
                             <div className='tab-content'>
-                                <div className='tab-pane fade' id='kt_aside_tab_3' role='tabpanel'>
+                                <ShowPM folder={folder} />
+                                {/* <div className='tab-pane fade' id='kt_aside_tab_3' role='tabpanel'>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Indication</label>
                                         <div className="col-lg-8">
@@ -271,7 +273,7 @@ const Show = (props) => {
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className='tab-content'>
                                 <div className='tab-pane fade' id='kt_aside_tab_4' role='tabpanel'>
