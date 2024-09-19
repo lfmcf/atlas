@@ -34,6 +34,8 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
 
+	console.log(data)
+
 	const [{ product_family_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -107,7 +109,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		const dataToExport = data.map(row => ({
 			product: row.product_name && typeof row.product_name === 'object' ? row.product_name.value : row.product_name,
 			country: row.country && typeof row.country === 'object' ? row.country.value : row.country,
-			sequence: row.sequence ? row.sequence : 'NA',
+			sequence: row.sequence ? row.sequence : row.mt ? row.mt[0].sequence : 'NA',
 			status: row.status,
 			dossier_type: row.dossier_type ? row.dossier_type.value : '',
 			request_date: row.request_date ? moment(row.request_date).format("DD-MMM-YYYY") : '',
@@ -333,7 +335,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										</td>
 										<td>
 											<span className='fs-7'>
-												{row.sequence ? row.sequence : 'NA'}
+												{row.sequence ? row.sequence : row.mt ? row.mt[0].sequence : 'NA'}
 											</span>
 										</td>
 

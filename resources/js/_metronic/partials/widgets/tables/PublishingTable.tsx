@@ -302,7 +302,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                         </td>
                                         <td>
                                             <span className='fs-7'>
-                                                {row.sequence}
+                                                {row.sequence ? row.sequence : row.mt ? row.mt[0].sequence : ''}
                                             </span>
                                         </td>
 
