@@ -188,7 +188,7 @@ class ReportController extends Controller
         foreach ($f as $key => $value) {
             $myfarr[$key]['count'] = $value->count;
             $myfarr[$key]['product'] = $value->_id['product'];
-            $myfarr[$key]['country'] = $value->_id['country'];
+            $myfarr[$key]['country'] = $value->_id['country'] ?? '';
         }
 
         $myparr = [];
