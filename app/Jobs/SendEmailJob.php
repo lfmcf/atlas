@@ -12,6 +12,7 @@ use App\Mail\PublishingSubmitted;
 use App\Mail\FormSubmitted;
 use App\Mail\PublishingRmpSubmitted;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SendEmailJob implements ShouldQueue
 {
@@ -32,12 +33,19 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $to = env('MAIL_TO');
+
+        if (empty($to)) {
+            // Log an error or handle the missing email recipient case
+            Log::error('MAIL_TO environment variable is not set.');
+            return; // Prevent sending an email with no recipient
+        }
         if ($this->pub->form == 'Formatting') {
-            Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($this->pub));
+            Mail::to($to)->send(new FormSubmitted($this->pub));
         } else if ($this->pub->form == 'Publishing' && $this->pub->procedure === 'Nationale' || $this->pub->procedure === 'Centralized') {
-            Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($this->pub));
+            Mail::to($to)->send(new PublishingSubmitted($this->pub));
         } else {
-            Mail::to(getenv('MAIL_TO'))->send(new PublishingRmpSubmitted($this->pub));
+            Mail::to($to)->send(new PublishingRmpSubmitted($this->pub));
         }
     }
 }
