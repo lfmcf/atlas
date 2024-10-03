@@ -34,12 +34,13 @@ class SendEmailJob implements ShouldQueue
     public function handle(): void
     {
 
-        $to = env('MAIL_TO');
+        $to = env('MAIL_TO', 'laftim.moncef@gmail.com');
 
         Log::info('MAIL_TO: ' . $to); // Debugging line to check the MAIL_TO value
 
         if (empty($to)) {
             // Log an error or handle the missing email recipient case
+
             Log::error('MAIL_TO environment variable is not set.');
             return; // Prevent sending an email with no recipient
         }
