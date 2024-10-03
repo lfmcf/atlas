@@ -34,7 +34,7 @@ class SendEmailJob implements ShouldQueue
     public function handle(): void
     {
 
-        $to = env('MAIL_TO', 'det.eps@ekemia.com');
+        $to = env('MAIL_TO', 'laftim.moncef@gmail.com');
 
         Log::info('MAIL_TO: ' . $to); // Debugging line to check the MAIL_TO value
 
