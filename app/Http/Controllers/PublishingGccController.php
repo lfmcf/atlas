@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
 use Illuminate\Http\Request;
 use App\Models\Region;
 use App\Models\Procedure;
@@ -75,7 +76,7 @@ class PublishingGccController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -195,7 +196,7 @@ class PublishingGccController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -251,6 +252,7 @@ class PublishingGccController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub);
         // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
@@ -312,7 +314,7 @@ class PublishingGccController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );
@@ -457,7 +459,7 @@ class PublishingGccController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );

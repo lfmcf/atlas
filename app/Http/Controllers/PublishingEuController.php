@@ -89,7 +89,7 @@ class PublishingEuController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -210,7 +210,7 @@ class PublishingEuController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -277,7 +277,7 @@ class PublishingEuController extends Controller
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
-        //SendEmailJob::dispatch($pub);
+        SendEmailJob::dispatch($pub);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -342,7 +342,7 @@ class PublishingEuController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );
@@ -572,7 +572,7 @@ class PublishingEuController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );

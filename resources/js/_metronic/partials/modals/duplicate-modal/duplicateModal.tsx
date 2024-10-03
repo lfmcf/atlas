@@ -30,7 +30,7 @@ const duplicateModal = ({ show, setShow, data }) => {
 
     const submitForm = () => {
         // axios.get('/duplicate-publishing-rmp', { 'id': show.id })
-        router.get(route('duplicate-publishing-rmp', { id: show.id, countries: isCheck }))
+        router.get(route('duplicate_publishing_rmp', { id: show.id, countries: isCheck }))
     }
 
     const handleSelectAll = e => {

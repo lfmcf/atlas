@@ -58,7 +58,7 @@ class FormSubmitted extends Mailable
     {
         $files = [];
         foreach ($this->formatting->document as $file) {
-            $files[] = Attachment::fromPath(storage_path('/app/public/' . $file['name']));
+            $files[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
         }
         return $files;
 

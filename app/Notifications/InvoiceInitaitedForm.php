@@ -35,13 +35,13 @@ class InvoiceInitaitedForm extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
+    // public function toMail(object $notifiable): MailMessage
+    // {
+    //     return (new MailMessage)
+    //         ->line('The introduction to the notification.')
+    //         ->action('Notification Action', url('/'))
+    //         ->line('Thank you for using our application!');
+    // }
 
     /**
      * Get the array representation of the notification.
@@ -60,12 +60,12 @@ class InvoiceInitaitedForm extends Notification
         ];
     }
 
-    public function toBroadcast($notifiable): BroadcastMessage
-    {
-        return new BroadcastMessage([
-            'data' => ['title' => $this->request->form, 'product' => $this->request->product_name],
-            'created_at' => now(),
-            'read_at' => null
-        ]);
-    }
+    // public function toBroadcast($notifiable): BroadcastMessage
+    // {
+    //     return new BroadcastMessage([
+    //         'data' => ['title' => $this->request->form, 'product' => $this->request->product_name],
+    //         'created_at' => now(),
+    //         'read_at' => null
+    //     ]);
+    // }
 }

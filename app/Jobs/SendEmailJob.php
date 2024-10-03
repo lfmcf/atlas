@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Mail\PublishingSubmitted;
+use App\Mail\FormSubmitted;
+use App\Mail\PublishingRmpSubmitted;
 use Illuminate\Support\Facades\Mail;
 
 class SendEmailJob implements ShouldQueue
@@ -30,6 +32,12 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($this->pub));
+        if ($this->pub->form == 'Formatting') {
+            Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($this->pub));
+        } else if ($this->pub->form == 'Publishing' && $this->pub->procedure === 'Nationale' || $this->pub->procedure === 'Centralized') {
+            Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($this->pub));
+        } else {
+            Mail::to(getenv('MAIL_TO'))->send(new PublishingRmpSubmitted($this->pub));
+        }
     }
 }

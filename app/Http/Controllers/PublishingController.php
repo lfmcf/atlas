@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
 use App\Models\Continent;
 use App\Models\Publishing;
 use Illuminate\Http\Request;
@@ -176,13 +177,12 @@ class PublishingController extends Controller
                 ->with([
                     'trackingNumbers',
                     'dosageForm',
-                    'drugProduct',
-                    'drugProductManufacturer',
-                    'drugSubstanceManufacturer',
+                    'drugProduct.dp_manufacturers',
+                    'drugSubstance.ds_manufacturers',
                     'excipients',
-                    'drugSubstance',
                     'indications'
-                ])->first();
+                ])
+                ->first();
             if ($md) {
                 array_push($listmd, $md);
             }
@@ -336,7 +336,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -435,7 +435,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -529,7 +529,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -738,7 +738,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -804,6 +804,7 @@ class PublishingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        //SendEmailJob::dispatch($pub);
         // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
@@ -872,7 +873,7 @@ class PublishingController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );
@@ -1134,7 +1135,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1205,7 +1206,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1358,7 +1359,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1383,10 +1384,9 @@ class PublishingController extends Controller
         $pub->dossier_count = $request->dossier_count;
         $pub->remarks = $request->remarks;
         $pub->mt = $request->mt;
-        $pub->indication = $request->indication;
-        $pub->manufacturer = $request->manufacturer;
+
         $pub->drug_substance = $request->drug_substance;
-        $pub->drug_product_manufacturer = $request->drug_product_manufacturer;
+        $pub->drug_product = $request->drug_product;
         $pub->dosage_form = $request->dosage_form;
         $pub->excipient = $request->excipient;
         if (!empty($OldFolder->doc)) {
@@ -1399,6 +1399,7 @@ class PublishingController extends Controller
         $pub->deadline = $request->deadline;
         $pub->request_date = $request->request_date;
         $pub->type = $request->query('type');
+        $pub->created_by = $request->created_by;
 
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
@@ -1467,7 +1468,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1560,7 +1561,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1650,7 +1651,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1751,7 +1752,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1863,7 +1864,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -1964,7 +1965,7 @@ class PublishingController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );
@@ -2071,7 +2072,7 @@ class PublishingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
@@ -2116,7 +2117,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        SendEmailJob::dispatch($pub);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -2149,7 +2150,7 @@ class PublishingController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );

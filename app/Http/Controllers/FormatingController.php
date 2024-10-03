@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
 use App\Mail\FormSubmitted;
 use App\Models\Formating;
 use Illuminate\Http\Request;
@@ -106,12 +107,12 @@ class FormatingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
                     $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/' . $filename);;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
                 }
                 return $myarr;
             }, $docs);
@@ -176,12 +177,12 @@ class FormatingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
                     $myarr['name'] = $filename;
-                    $myarr['link'] = asset('storage/' . $filename);;
+                    $myarr['link'] = asset('storage/documents/' . $filename);;
                 }
                 return $myarr;
             }, $docs);
@@ -293,12 +294,12 @@ class FormatingController extends Controller
                     $uploadedFile = $doc;
                     $filename = $uploadedFile->getClientOriginalName();
                     $path = Storage::putFileAs(
-                        'public',
+                        'public/documents',
                         $uploadedFile,
                         $filename
                     );
                     $myarr['name'] = $filename;
-                    $myarr['link'] = asset('/storage' . $filename);;
+                    $myarr['link'] = asset('/storage/documents/' . $filename);;
                 }
                 return $myarr;
             }, $docs);
@@ -333,6 +334,7 @@ class FormatingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting);
         //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
@@ -424,12 +426,12 @@ class FormatingController extends Controller
                         $uploadedFile = $doc;
                         $filename = $uploadedFile->getClientOriginalName();
                         $path = Storage::putFileAs(
-                            'public',
+                            'public/documents',
                             $uploadedFile,
                             $filename
                         );
                         $myarr['name'] = $filename;
-                        $myarr['link'] = asset('/storage' . $filename);;
+                        $myarr['link'] = asset('/storage/documents/' . $filename);;
                     }
                     return $myarr;
                 }, $docs);
