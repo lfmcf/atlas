@@ -15,17 +15,18 @@ import axios from 'axios'
 import StatusComponent from '../../../Components/StatusComponent'
 import GeneralInformation from '../../../Components/GeneralInformation'
 import MrpProductMetaData from '../../../Components/MrpProductMetaData'
-import ProductMetaData from '../../../Components/ProductMetaData'
+import ProductMetaData from '../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Create = (props: any) => {
 
     const { metadata, folder } = props;
 
-    console.log(metadata)
-
     var params = new URLSearchParams(window.location.search);
 
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: new Array(), submission_mode: new Array(), submission_unit: new Array(), sequence: new Array() })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -365,6 +366,17 @@ const Create = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
+        setModalOpen(true);
+        setActionType(type);
+        //post(route('publishing_initiate', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_initiate', { type: type }));
     }
 
@@ -1217,6 +1229,7 @@ const Create = (props: any) => {
                     </div>
                 </div >
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

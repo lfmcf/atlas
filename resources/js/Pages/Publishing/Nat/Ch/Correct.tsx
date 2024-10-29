@@ -12,6 +12,7 @@ import DropZone from '../../../../Components/Dropzone';
 import axios from 'axios';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import ProductMetaData from '../../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -32,7 +33,8 @@ const Correct = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     const [tnoptions, setTnoptions] = useState();
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', sequence: '' })
-
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { metadata, folder, metapro } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -78,8 +80,6 @@ const Correct = (props: any) => {
         adjustedDeadlineComments: '',
         correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
     });
-
-    console.log(data.indication)
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
@@ -196,8 +196,18 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        //post(route('publishing_ch_post_verify'));
+
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_ch_post_verify'));
-        // post(route('correct-publishing'));
     }
 
     const handleMessageChange = (e) => {
@@ -921,6 +931,7 @@ const Correct = (props: any) => {
                     </div>
                 </form>
             </div >
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

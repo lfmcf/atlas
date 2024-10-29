@@ -12,6 +12,7 @@ import DropZone from '../../../../Components/Dropzone';
 import StatusComponent from '../../../../Components/StatusComponent';
 import ProductMetaData from '../../../../Components/ProductMetaData';
 import GeneralInformation from '../../../../Components/GeneralInformation';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Confirm = (props: any) => {
 
@@ -19,6 +20,8 @@ const Confirm = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', sequence: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { folder, metadata, metapro } = props
 
     const [files, setFiles] = useState(folder.document)
@@ -221,6 +224,16 @@ const Confirm = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        // post(route('publishing_gcc_post_confirm'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_gcc_post_confirm'));
     }
 
@@ -774,6 +787,7 @@ const Confirm = (props: any) => {
                     </div>
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

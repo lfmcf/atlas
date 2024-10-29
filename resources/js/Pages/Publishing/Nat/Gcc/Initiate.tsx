@@ -12,6 +12,7 @@ import axios from 'axios';
 import StatusComponent from '../../../../Components/StatusComponent';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import ProductMetaData from '../../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Initiate = (props: any) => {
 
@@ -19,13 +20,13 @@ const Initiate = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', sequence: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { folder, metapro } = props
 
     const [tnoptions, setTnoptions] = useState();
 
     const { metadata } = props;
-
-    console.log(metadata)
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -232,6 +233,17 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
+        setModalOpen(true);
+        setActionType(type);
+        //post(route('publishing_gcc_store', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_gcc_store', { type: type }));
     }
 
@@ -776,6 +788,7 @@ const Initiate = (props: any) => {
                     </div>
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

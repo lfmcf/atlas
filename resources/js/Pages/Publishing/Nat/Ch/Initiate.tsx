@@ -11,6 +11,7 @@ import axios from 'axios';
 import StatusComponent from '../../../../Components/StatusComponent';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import ProductMetaData from '../../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Initiate = (props: any) => {
 
@@ -18,7 +19,8 @@ const Initiate = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', sequence: '' })
-
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { folder, metadata } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -194,6 +196,17 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
+        setModalOpen(true);
+        setActionType(type);
+        //post(route('publishing_ch_store', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_ch_store', { type: type }));
     }
 
@@ -718,6 +731,7 @@ const Initiate = (props: any) => {
                     </div>
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

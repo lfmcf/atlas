@@ -45,7 +45,7 @@ const HeaderUserMenu = ({ user }) => {
             <div className='separator my-2'></div>
 
             <div className='menu-item px-5'>
-                <Link href={'/crafted/pages/profile'} className='menu-link px-5'>
+                <Link href={'/profile'} className='menu-link px-5'>
                     My Profile
                 </Link>
             </div>

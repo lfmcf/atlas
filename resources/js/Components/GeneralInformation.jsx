@@ -22,7 +22,7 @@ const GeneralInformation = ({ data, myErrors, handleChange, handleSelectChange, 
             <div className="row mb-10">
                 <div className='col-md-4 col-sm-12'>
                     <label className="form-label" title='The country selected in the previous form'>Submission country</label>
-                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country.value} disabled />
+                    <input type="text" className="form-control form-control-solid" name="country" defaultValue={data.country ? data.country.value : ''} disabled />
                 </div>
                 <div className='col-md-4 col-sm-12'>
                     <label className="form-label" title='Choose the Dossier type' style={{ color: myErrors.dossier_type ? 'red' : '' }}>Dossier type (*)</label>

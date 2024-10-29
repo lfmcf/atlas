@@ -10,6 +10,7 @@ import { useForm } from '@inertiajs/react';
 import DropZone from '../../Components/Dropzone';
 import axios from 'axios';
 import StatusComponent from '../../Components/StatusComponent';
+import { ConfirmationMessage } from '../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Initiate = (props: any) => {
 
@@ -17,6 +18,8 @@ const Initiate = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { folder } = props
     var trigramme = props.auth.user.trigramme
     trigramme = trigramme?.toUpperCase()
@@ -225,6 +228,17 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
+        setModalOpen(true);
+        setActionType(type);
+        //post(route('initiate-formatting', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('initiate-formatting', { type: type }));
     }
 
@@ -564,6 +578,8 @@ const Initiate = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form >
             </div >
+
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

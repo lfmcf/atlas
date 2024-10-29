@@ -14,6 +14,7 @@ import axios from 'axios'
 import DropZone from '../../../Components/Dropzone'
 import StatusComponent from '../../../Components/StatusComponent'
 import ProductMetaData from '../../../Components/ProductMetaData'
+import { ConfirmationMessage } from '../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Create = (props: any) => {
 
@@ -26,7 +27,8 @@ const Create = (props: any) => {
     const [isCheckAll, setIsCheckAll] = useState(false);
     const [list, setList] = useState(metadata);
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: new Array(), submission_mode: new Array(), submission_unit: new Array(), sequence: new Array() })
-
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -327,6 +329,16 @@ const Create = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        // post(route('publishing_confirm'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_confirm'));
     }
 
@@ -1246,6 +1258,7 @@ const Create = (props: any) => {
                     </div>
                 </div >
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

@@ -10,6 +10,7 @@ import 'flatpickr/dist/flatpickr.css';
 import StatusComponent from '../../Components/StatusComponent';
 import axios from 'axios';
 import DropZone from '../../Components/Dropzone';
+import { ConfirmationMessage } from '../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Confirm = (props: any) => {
 
@@ -17,6 +18,8 @@ const Confirm = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
     const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const { folder } = props
 
     const [files, setFiles] = useState(folder.document)
@@ -62,6 +65,15 @@ const Confirm = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        // post(route('confirm-formatting'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
         post(route('confirm-formatting'));
     }
 
@@ -548,6 +560,7 @@ const Confirm = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

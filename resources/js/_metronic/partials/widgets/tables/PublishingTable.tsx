@@ -327,15 +327,26 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
                                                 {row.status == 'draft' ?
-                                                    <a
-                                                        onClick={() => router.get(route('publishing-initiate', { id: row._id }))}
-                                                        className='btn btn-icon btn-sm me-1'
-                                                        title='Update and Submit the form'
-                                                        style={{ backgroundColor: '#f8f5ff' }}
-                                                    >
-                                                        <i className="bi bi-pencil-fill text-info fs-5"></i>
-                                                        {/* <KTIcon iconName='pencil' className='fs-3' /> */}
-                                                    </a>
+                                                    row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' ?
+                                                        <a
+                                                            onClick={() => router.get(route('publishing_initiate', { id: row._id }))}
+                                                            className='btn btn-icon btn-sm me-1'
+                                                            title='Update and Submit the form'
+                                                            style={{ backgroundColor: '#f8f5ff' }}
+                                                        >
+                                                            <i className="bi bi-pencil-fill text-info fs-5"></i>
+
+                                                        </a>
+                                                        :
+                                                        <a
+                                                            onClick={() => router.get(route('publishing-initiate', { id: row._id }))}
+                                                            className='btn btn-icon btn-sm me-1'
+                                                            title='Update and Submit the form'
+                                                            style={{ backgroundColor: '#f8f5ff' }}
+                                                        >
+                                                            <i className="bi bi-pencil-fill text-info fs-5"></i>
+
+                                                        </a>
 
                                                     :
                                                     row.status == 'initiated' ?

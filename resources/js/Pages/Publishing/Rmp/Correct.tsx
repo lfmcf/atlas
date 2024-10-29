@@ -15,7 +15,8 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
-import ProductMetaData from '../../../Components/ProductMetaData'
+import ProductMetaData from '../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -37,6 +38,8 @@ const Correct = (props: any) => {
     const [isCheckAll, setIsCheckAll] = useState(false);
     const [list, setList] = useState(folder.mt);
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: new Array(), submission_mode: new Array(), submission_unit: new Array(), sequence: new Array() })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -330,6 +333,16 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        // post(route('correct-rmp-publishing'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('correct-rmp-publishing'));
     }
 
@@ -1449,6 +1462,7 @@ const Correct = (props: any) => {
                     </div>
                 </div >
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

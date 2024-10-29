@@ -13,6 +13,7 @@ import DropZone from '../../../../Components/Dropzone';
 import axios from 'axios';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import ProductMetaData from '../../../../Components/ProductMetaData';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -33,7 +34,8 @@ const Correct = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     const { folder, metapro, metadata } = props
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', sequence: '' })
-
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
     const [tnoptions, setTnoptions] = useState();
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
@@ -231,6 +233,16 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        // post(route('publishing_gcc_post_verify'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_gcc_post_verify'));
     }
 
@@ -974,6 +986,7 @@ const Correct = (props: any) => {
                     </div>
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 

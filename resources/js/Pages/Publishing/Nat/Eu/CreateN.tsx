@@ -13,6 +13,7 @@ import axios from 'axios'
 import StatusComponent from '../../../../Components/StatusComponent'
 import GeneralInformation from '../../../../Components/GeneralInformation'
 import ProductMetaData from '../../../../Components/ProductMetaData'
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const CreateN = (props: any) => {
 
@@ -25,6 +26,8 @@ const CreateN = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -257,7 +260,17 @@ const CreateN = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        // console.log(data);
+        setModalOpen(true);
+        setActionType(type);
+        //post(route('store_eu_publishing', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('store_eu_publishing', { type: type }));
     }
 
@@ -858,6 +871,7 @@ const CreateN = (props: any) => {
                     </div>
                 </form >
             </div >
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

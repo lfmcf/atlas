@@ -12,6 +12,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 import DropZone from '../../Components/Dropzone';
+import { ConfirmationMessage } from '../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const StepperOptions: IStepperOptions = {
     startIndex: 4,
@@ -31,8 +32,8 @@ const Correct = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     const { folder } = props
     const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
-    // const [comment, setComment] = useState('');
-    // const [source, setSource] = useState('');
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder._id,
@@ -77,6 +78,15 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setModalOpen(true);
+        //post(route('correct-formatting'));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
         post(route('correct-formatting'));
     }
 
@@ -756,6 +766,7 @@ const Correct = (props: any) => {
                     {/* <!--end::Actions--> */}
                 </form>
             </div >
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

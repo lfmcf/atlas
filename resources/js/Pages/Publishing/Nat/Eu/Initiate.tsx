@@ -9,6 +9,7 @@ import DropZone from '../../../../Components/Dropzone';
 import axios from 'axios';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import InsertProductMetaData from '../../../../Components/InsertProductMetaData';
+import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
 
 const Initiate = (props: any) => {
 
@@ -18,6 +19,8 @@ const Initiate = (props: any) => {
     const stepper = useRef<StepperComponent | null>(null)
     var params = new URLSearchParams(window.location.search);
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', submission_type: '', submission_mode: '', submission_unit: '', sequence: '' })
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -238,6 +241,17 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
+        setModalOpen(true);
+        setActionType(type);
+        // post(route('publishing_eu_new_request', { type: type }));
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
+
+    const handleConfirm = (type) => {
+        //setModalOpen(false);
         post(route('publishing_eu_new_request', { type: type }));
     }
 
@@ -737,6 +751,7 @@ const Initiate = (props: any) => {
                     </div>
                 </form>
             </div>
+            <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )
 }

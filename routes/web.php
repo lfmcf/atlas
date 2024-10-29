@@ -250,6 +250,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('duplicate', [FormatingController::class, 'createDupliaction']);
 
     Route::post('getMetaDataForDuplicate', [PublishingController::class, 'getMetaData'])->name('getMetadata');
+
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 });
 
 // ** route for getting country while select product punlishing ** //
@@ -264,11 +266,11 @@ Route::post('getRequestPerType', [ReportController::class, 'getRequestPerType'])
 Route::post('getRequestsPerMonth', [ReportController::class, 'getRequestsPerMonth']);
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__ . '/auth.php';
 
