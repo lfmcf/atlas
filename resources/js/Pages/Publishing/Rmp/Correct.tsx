@@ -17,6 +17,10 @@ import DropZone from '../../../Components/Dropzone'
 import axios from 'axios'
 import ProductMetaData from '../../../Components/ProductMetaData';
 import { ConfirmationMessage } from '../../../_metronic/partials/modals/confimation/ConfirmationMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -333,8 +337,19 @@ const Correct = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setModalOpen(true);
-        // post(route('correct-rmp-publishing'));
+        MySwal.fire({
+            title: 'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(route('correct-rmp-publishing'));
+            }
+        })
+        // setModalOpen(true);
+        // 
     }
 
     const handleCancel = () => {

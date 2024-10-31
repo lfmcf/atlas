@@ -13,6 +13,10 @@ import StatusComponent from '../../../../Components/StatusComponent';
 import GeneralInformation from '../../../../Components/GeneralInformation';
 import ProductMetaData from '../../../../Components/ProductMetaData';
 import { ConfirmationMessage } from '../../../../_metronic/partials/modals/confimation/ConfirmationMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal)
 
 const Initiate = (props: any) => {
 
@@ -233,9 +237,21 @@ const Initiate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        setModalOpen(true);
-        setActionType(type);
-        //post(route('publishing_gcc_store', { type: type }));
+        MySwal.fire({
+            title: type == 'save' ? 'Click on "Yes" to save your request or click on "No, return" to return to the form.' :
+                'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(route('publishing_gcc_store', { type: type }));
+            }
+        })
+        // setModalOpen(true);
+        // setActionType(type);
+        //
     }
 
     const handleCancel = () => {

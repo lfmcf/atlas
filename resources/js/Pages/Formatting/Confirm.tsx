@@ -11,6 +11,10 @@ import StatusComponent from '../../Components/StatusComponent';
 import axios from 'axios';
 import DropZone from '../../Components/Dropzone';
 import { ConfirmationMessage } from '../../_metronic/partials/modals/confimation/ConfirmationMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal)
 
 const Confirm = (props: any) => {
 
@@ -65,8 +69,19 @@ const Confirm = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setModalOpen(true);
-        // post(route('confirm-formatting'));
+        MySwal.fire({
+            title: 'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(route('confirm-formatting'));
+            }
+        })
+        // setModalOpen(true);
+
     }
 
     const handleCancel = () => {
