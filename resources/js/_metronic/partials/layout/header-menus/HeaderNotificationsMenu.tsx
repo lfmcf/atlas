@@ -67,7 +67,7 @@ const HeaderNotificationsMenu = ({ auth }) => (
 
                 <div className='py-3 text-center border-top'>
                     <Link
-                        href='/profile'
+                        href='/allnotifications'
                         className='btn btn-color-gray-600 btn-active-color-primary'
                     >
                         View All <KTIcon iconName='arrow-right' className='fs-5' />

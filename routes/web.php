@@ -252,6 +252,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('getMetaDataForDuplicate', [PublishingController::class, 'getMetaData'])->name('getMetadata');
 
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+
+    Route::post('password_update', [ProfileController::class, 'updatepassword'])->name('password_update');
+
+    Route::post('update_avatar', [ProfileController::class, 'updateavatar'])->name('update_avatar');
 });
 
 // ** route for getting country while select product punlishing ** //
@@ -264,6 +268,8 @@ Route::post('getProductname_', [ProductMetaController::class, 'getProductname_']
 
 Route::post('getRequestPerType', [ReportController::class, 'getRequestPerType']);
 Route::post('getRequestsPerMonth', [ReportController::class, 'getRequestsPerMonth']);
+
+
 
 
 // Route::middleware('auth')->group(function () {

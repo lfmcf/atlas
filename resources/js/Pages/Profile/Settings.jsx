@@ -1,7 +1,18 @@
 import { useState } from "react"
+import { useForm } from '@inertiajs/react';
 const Settings = ({ ...props }) => {
     const [emailVisble, setEmailVisble] = useState(false)
     const [passwordVisble, setPasswordVisble] = useState(false)
+
+    // const [fullName, setFullName] = useState(props.auth.user.name)
+    // const [email, setEmail] = useState(props.auth.user.email)
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        avatar: props.auth.user.avatar,
+        fullName: props.auth.user.name,
+        email: props.auth.user.email
+    });
+
 
     const toggleEmail = () => {
         setEmailVisble(!emailVisble)
@@ -9,6 +20,12 @@ const Settings = ({ ...props }) => {
 
     const togglePassword = () => {
         setPasswordVisble(!passwordVisble)
+    }
+
+    const submitDetailChanges = (e) => {
+        e.preventDefault()
+        post(route('update_profil_details'))
+
     }
 
     return (
@@ -27,14 +44,14 @@ const Settings = ({ ...props }) => {
                                 <label className="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
                                 <div className="col-lg-8">
                                     <div className="image-input image-input-outline" data-kt-image-input="true" style={{ backgroundImage: "url('assets/media/svg/avatars/blank.svg')" }}>
-                                        <div className="image-input-wrapper w-125px h-125px" style={{ backgroundImage: "url(assets/media/avatars/300-1.jpg)" }}></div>
+                                        <div className="image-input-wrapper w-125px h-125px" style={{ backgroundImage: data.avatar ? `url(${data.avatar})` : '' }}></div>
                                         <label className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
                                             <i className="ki-duotone ki-pencil fs-7">
                                                 <span className="path1"></span>
                                                 <span className="path2"></span>
                                             </i>
 
-                                            <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                                            <input type="file" name="avatar" accept=".png, .jpg, .jpeg" onChange={(e) => setData('avatar', e.target.files[0])} />
                                             <input type="hidden" name="avatar_remove" />
 
                                         </label>
@@ -59,9 +76,8 @@ const Settings = ({ ...props }) => {
                                 <div className="col-lg-8">
                                     <div className="row">
                                         <div className="col-lg-12 fv-row">
-                                            <input type="text" name="fname" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="First name" value={props.auth.user.name} />
+                                            <input type="text" name="fname" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="Full name" defaultValue={data.fullName} onChange={(e) => setData('fullName', e.target.value)} value={data.fullName} />
                                         </div>
-
 
                                     </div>
                                 </div>
@@ -71,10 +87,8 @@ const Settings = ({ ...props }) => {
                                 <div className="col-lg-8">
                                     <div className="row">
                                         <div className="col-lg-12 fv-row">
-                                            <input type="text" name="fname" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="First name" value={props.auth.user.email} />
+                                            <input type="text" name="fname" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="Email" defaultValue={data.email} onChange={(e) => setData('email', e.target.value)} />
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +116,7 @@ const Settings = ({ ...props }) => {
                         </div>
                         <div className="card-footer d-flex justify-content-end py-6 px-9">
                             <button type="reset" className="btn btn-light btn-active-light-primary me-2">Discard</button>
-                            <button type="submit" className="btn btn-primary" id="kt_account_profile_details_submit">Save Changes</button>
+                            <button type="submit" className="btn btn-primary" id="kt_account_profile_details_submit" onClick={submitDetailChanges}>Save Changes</button>
                         </div>
                     </form>
                 </div>

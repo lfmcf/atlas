@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -63,5 +66,51 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function updatepassword(Request $request)
+    {
+
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The current password is incorrect.'],
+            ]);
+        }
+
+        // Update the password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->back();
+    }
+
+    public function updateavatar(Request $request)
+    {
+
+        $user = Auth::user();
+
+        // Check if the user already has an avatar and delete it
+        if ($user->avatar) {
+            Storage::delete($user->avatar);
+        }
+
+        // Store the new avatar in a specific directory, e.g., 'avatars'
+        $path = $request->file('avatar')->store('/media/avatars', 'public');
+
+        // Update the user's avatar path in the database
+        $user->avatar = $path;
+        $user->save();
+
+        return back()->with([
+            'message' => 'Avatar updated successfully',
+            'avatar' => $path,
+        ]);
     }
 }
