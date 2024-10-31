@@ -340,7 +340,9 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										</td>
 
 										<td>
-											<StatusComponent status={row.status} />
+											{props.user.current_team_id == 1 && (row.status == "to correct" || row.status == "delivered") ?
+												<StatusComponent status="in progress" /> : <StatusComponent status={row.status} />}
+
 										</td>
 										<td>
 											<span className='fs-7'>

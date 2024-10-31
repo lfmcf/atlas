@@ -28,9 +28,9 @@ class ReportController extends Controller
             $requetNumberPup = Publishing::where('status', 'draft')->where('created_by', $user->id)->count();
             $requetNumberPubMrp = PublishingMrp::where('status', 'draft')->where('created_by', $user->id)->count();
 
-            $compFor =  Formating::where('status', 'completed')->count();
-            $compPub =  Publishing::where('status', 'completed')->count();
-            $compPubMrp = PublishingMrp::where('status', 'completed')->count();
+            $compFor =  Formating::where('status', 'completed')->where('created_by', $user->id)->count();
+            $compPub =  Publishing::where('status', 'completed')->where('created_by', $user->id)->count();
+            $compPubMrp = PublishingMrp::where('status', 'completed')->where('created_by', $user->id)->count();
 
             $total = $requetNumberPup + $requetNumberFor + $requetNumberPubMrp;
             $totalComp = $compFor + $compPub + $compPubMrp;
@@ -314,6 +314,9 @@ class ReportController extends Controller
                 $query->where('status', 'initiated')
                     ->orWhere('status', 'in progress')
                     ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'delivered')
+                    ->orWhere('status', 'to verify')
+                    ->orWhere('status', 'to correct')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
@@ -322,6 +325,9 @@ class ReportController extends Controller
                 $query->where('status', 'initiated')
                     ->orWhere('status', 'in progress')
                     ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'delivered')
+                    ->orWhere('status', 'to verify')
+                    ->orWhere('status', 'to correct')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
@@ -330,6 +336,9 @@ class ReportController extends Controller
                 $query->where('status', 'initiated')
                     ->orWhere('status', 'in progress')
                     ->orWhere('status', 'submitted')
+                    ->orWhere('status', 'delivered')
+                    ->orWhere('status', 'to verify')
+                    ->orWhere('status', 'to correct')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
