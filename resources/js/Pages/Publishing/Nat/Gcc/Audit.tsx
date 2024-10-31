@@ -12,6 +12,10 @@ import axios from 'axios';
 import StatusComponent from '../../../../Components/StatusComponent';
 import ProductMetaData from '../../../../Components/ProductMetaData';
 import GeneralInformation from '../../../../Components/GeneralInformation';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const StepperOptions: IStepperOptions = {
     startIndex: 6,
@@ -226,7 +230,31 @@ const Audit = (props: any) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('publishing_gcc_post_audit'));
+        MySwal.fire({
+            title: 'Click on "Yes" to submit the ACK with your comments for OPR verification, or click "No, Return" to go back to the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(route('publishing_gcc_post_audit'));
+            }
+        })
+    }
+
+    const handleAccept = (id) => {
+        MySwal.fire({
+            title: 'Click on "Yes" to ACK the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route('progress-publishing', { id: id }))
+            }
+        })
     }
 
     const handleCommentChange = (e) => {
@@ -845,7 +873,7 @@ const Audit = (props: any) => {
                         <div>
                             {props.auth.user.current_team_id == 3 ?
                                 <>
-                                    <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => router.post(route('progress-publishing', { id: data.id }))}>
+                                    <button type="button" className="btn btn-primary me-2" data-kt-stepper-action="submit" onClick={() => handleAccept(data.id)}>
                                         <span className="indicator-label">
                                             Accept
                                         </span>

@@ -8,7 +8,10 @@ import { DeliveryMessage } from '../../modals/Delivey-Message/DeliveryMessage';
 import clsx from 'clsx';
 import $ from 'jquery';
 import "datatables.net-dt/js/dataTables.dataTables";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
+const MySwal = withReactContent(Swal)
 
 type Props = {
     data: any[] | any;
@@ -64,6 +67,21 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
     const handleShow = (id) => {
         router.get(route('show-formatting'), { id: id })
+    }
+
+    const handleSubmitted = (id) => {
+        MySwal.fire({
+            title: 'Click on "Yes" to ACK the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route('progress-formatting', { id: id }))
+            }
+        })
+
     }
 
     const handleCompleted = (id) => {
@@ -251,7 +269,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
 
                                                                 <a
                                                                     href='#'
-                                                                    onClick={() => router.post(route('progress-formatting', { id: row._id }))}
+                                                                    onClick={() => handleSubmitted(row._id)}
                                                                     className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                                                     style={{ backgroundColor: '#e8fff3' }}
                                                                 >
