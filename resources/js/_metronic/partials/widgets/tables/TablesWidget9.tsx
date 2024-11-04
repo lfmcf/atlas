@@ -341,7 +341,10 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 										<td>
 											{props.user.current_team_id == 1 && (row.status == "to correct" || row.status == "delivered") ?
-												<StatusComponent status="in progress" /> : <StatusComponent status={row.status} />}
+												<StatusComponent status="in progress" /> :
+												props.user.current_team_id == 1 && row.status == 'to verify' ?
+													<StatusComponent status="submitted" /> :
+													<StatusComponent status={row.status} />}
 
 										</td>
 										<td>
