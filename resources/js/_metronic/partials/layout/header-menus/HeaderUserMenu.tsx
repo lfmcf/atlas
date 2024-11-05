@@ -129,11 +129,11 @@ const HeaderUserMenu = ({ user }) => {
 
             {/* <Languages /> */}
 
-            <div className='menu-item px-5 my-1'>
+            {/* <div className='menu-item px-5 my-1'>
                 <Link href='/crafted/account/settings' className='menu-link px-5'>
                     Account Settings
                 </Link>
-            </div>
+            </div> */}
 
             <div className='menu-item px-5'>
                 <a href='#' className='menu-link px-5' onClick={logout}>

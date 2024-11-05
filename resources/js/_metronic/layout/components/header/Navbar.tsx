@@ -15,6 +15,8 @@ const Navbar = ({ auth }) => {
 
     const unreadNot = auth.user.unread_notifications.length
 
+    const avatar = auth.user.avatar
+
 
     return (
         <div className='app-navbar flex-shrink-0'>
@@ -42,10 +44,12 @@ const Navbar = ({ auth }) => {
                     data-kt-menu-attach='parent'
                     data-kt-menu-placement='bottom-end'
                 >
-                    <div className="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" data-bs-original-title="Susan Redwood" data-kt-initialized="1">
-                        <span className="symbol-label bg-primary text-inverse-primary fw-bold text-uppercase">{auth.user.name ? auth.user.name.slice(0, 2) : ""}</span>
-                    </div>
-                    {/* <img src={toAbsoluteUrl('/media/avatars/300-3.jpg')} alt='' /> */}
+                    {avatar ? <img src={toAbsoluteUrl(avatar)} alt='' /> :
+                        <div className="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" data-bs-original-title="Susan Redwood" data-kt-initialized="1">
+                            <span className="symbol-label bg-primary text-inverse-primary fw-bold text-uppercase">{auth.user.name ? auth.user.name.slice(0, 2) : ""}</span>
+                        </div>
+                    }
+
                 </div>
                 <HeaderUserMenu user={auth.user} />
             </div>
