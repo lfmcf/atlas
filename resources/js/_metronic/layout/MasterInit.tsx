@@ -39,6 +39,11 @@ export function MasterInit() {
             isFirstRun.current = false
             pluginsInitialization()
         }
+        return () => {
+            if (!isFirstRun.current) {
+                pluginsInitialization()
+            }
+        }
     }, [config])
 
     return <></>

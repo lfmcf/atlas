@@ -11,7 +11,7 @@ const HeaderUserMenu = ({ user }) => {
     // const {currentUser, logout} = useAuth()
     const logout = () => {
 
-        localStorage.setItem('reloaded', 'true');
+        // localStorage.setItem('reloaded', 'true');
         router.post(route('logout'));
 
     }

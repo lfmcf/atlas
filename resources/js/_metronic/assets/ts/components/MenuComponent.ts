@@ -985,7 +985,6 @@ class MenuComponent {
             '.menu-item[data-kt-menu-trigger] > .menu-link, [data-kt-menu-trigger]:not(.menu-item):not([data-kt-menu-trigger="auto"])',
             'click',
             function (this: HTMLElement, e: Event) {
-                console.log('called')
                 const menu = MenuComponent.getInstance(this) as MenuComponent
 
                 if (menu) {

@@ -11,7 +11,7 @@ const btnIconClass = 'fs-2'
 
 const Navbar = ({ auth }) => {
 
-    // const { config } = useLayout()
+    const { config } = useLayout()
 
     const unreadNot = auth.user.unread_notifications.length
 
