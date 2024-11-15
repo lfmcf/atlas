@@ -45,12 +45,12 @@ const HeaderNotificationsMenu = ({ auth }) => (
 
         <div className='tab-content'>
             <div className='tab-pane fade show active' id='kt_topbar_notifications_1' role='tabpanel'>
-                <div className='scroll-y mh-325px my-5 px-8'>
+                <div className='scroll-y mh-325px my-5 px-5'>
                     {auth.user.notifications.map((alert, index) => (
                         <div key={`alert${index}`} className={clsx('d-flex flex-stack py-4 mb-1', alert.read_at ? '' : 'rounded bg-light-primary')}>
                             <div className='d-flex align-items-center'>
-                                <div className='mb-0 ms-2 me-2'>
-                                    <a href='#' className='fs-6 text-gray-800 text-hover-primary fw-bolder' onClick={() => handleNavigation(alert.data, alert.id)}>
+                                <div className='mb-0 menu-item ps-2' style={{ paddingRight: '5px !important' }}>
+                                    <a href='#' className='fs-6 text-gray-800 text-hover-primary fw-bolder p-0 menu-link' onClick={() => handleNavigation(alert.data, alert.id)}>
                                         {alert.data ? alert.data.title : ''}
                                         <span className='fs-8 ps-2 fw-light'>{alert.data.status}</span>
                                     </a>

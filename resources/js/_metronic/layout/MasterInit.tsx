@@ -18,7 +18,6 @@ export function MasterInit() {
     const isFirstRun = useRef(true)
     const pluginsInitialization = () => {
         isFirstRun.current = false
-        console.log(isFirstRun.current)
         ThemeModeComponent.init()
         setTimeout(() => {
             ToggleComponent.bootstrap()

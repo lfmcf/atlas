@@ -1,7 +1,7 @@
 /.phpunit.cache
 /node_modules
 /public/hot
-/public/storage
+/public/storage/*
 /storage/*.key
 /vendor
 .env
@@ -15,4 +15,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-config/database.php
+/config/database.php

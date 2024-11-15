@@ -60,7 +60,7 @@ const Confirm = (props: any) => {
     });
 
     let contries = props.countries.map(function (country) {
-        return { value: country.name, label: country.name };
+        return { value: country.name, label: country.name, code: country.code };
     })
 
     useEffect(() => {
