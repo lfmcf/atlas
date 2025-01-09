@@ -16,7 +16,7 @@ import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal)
 
 const StepperOptions: IStepperOptions = {
-    startIndex: 4,
+    startIndex: 3,
     animation: false,
     animationSpeed: '0.3s',
     animationNextClass: 'animate__animated animate__slideInRight animate__fast',
@@ -71,6 +71,8 @@ const Audit = (props: any) => {
 
     useEffect(() => {
         stepper.current = StepperComponent.createInsance(stepperRef.current as HTMLDivElement, StepperOptions)
+
+        console.log(stepper.current)
     }, [])
 
     const handleSubmit = (e) => {
@@ -201,7 +203,7 @@ const Audit = (props: any) => {
             }
         }
 
-        if (stepper.current.getCurrentStepIndex() === 4) {
+        if (stepper.current.getCurrentStepIndex() === 3) {
             // if (!checkAppDataBase()) {
             //     setHasError(true)
             //     return
@@ -340,7 +342,7 @@ const Audit = (props: any) => {
                     </div>
                     {/* <!--end::Step 1--> */}
 
-                    {/* <!--begin::Step 2--> */}
+                    {/* <!--begin::Step 3--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
@@ -358,37 +360,6 @@ const Audit = (props: any) => {
                                 </h3>
 
                                 <div className="stepper-desc">
-                                    Documents
-                                </div>
-                            </div>
-                            {/* <!--end::Label--> */}
-                        </div>
-                        {/* <!--end::Wrapper--> */}
-
-                        {/* <!--begin::Line--> */}
-                        <div className="stepper-line h-40px"></div>
-                        {/* <!--end::Line--> */}
-                    </div>
-                    {/* <!--end::Step 2--> */}
-
-                    {/* <!--begin::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
-                            {/* <!--begin::Icon--> */}
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">3</span>
-                            </div>
-                            {/* <!--begin::Icon--> */}
-
-                            {/* <!--begin::Label--> */}
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 3
-                                </h3>
-
-                                <div className="stepper-desc">
                                     Delivery Details
                                 </div>
                             </div>
@@ -402,14 +373,14 @@ const Audit = (props: any) => {
                     </div>
                     {/* <!--end::Step 3--> */}
                     <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
+                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">4</span>
+                                <span className="stepper-number">3</span>
                             </div>
                             <div className="stepper-label">
                                 <h3 className="stepper-title">
-                                    Step 4
+                                    Step 3
                                 </h3>
 
                                 <div className="stepper-desc">
@@ -525,22 +496,7 @@ const Audit = (props: any) => {
                             </div>
                         </div>
 
-                        <div className="flex-column" data-kt-stepper-element="content">
-                            <div className='row mb-10'>
-                                <div className='col-md-2 col-lg-2 col-sm-12'>
-                                    <label className="form-label">Attached documents</label>
 
-                                </div>
-                                <div className='col-md-6 col-lg-6 col-sm-12'>
-                                    <DropZone files={data.doc} upload={handleUploadFileChange} deleletFile={deleletFile} removeAll={removeAll} />
-
-                                </div>
-                            </div>
-                            <div className="row mb-10">
-                                <label className="form-label">Remarks</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
-                            </div>
-                        </div>
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>

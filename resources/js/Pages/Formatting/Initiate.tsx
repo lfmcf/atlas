@@ -344,6 +344,10 @@ const Initiate = (props: any) => {
                     {/* <!--end::Step 1--> */}
 
                     {/* <!--begin::Step 2--> */}
+
+                    {/* <!--end::Step 2--> */}
+
+                    {/* <!--begin::Step 3--> */}
                     <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
                         {/* <!--begin::Wrapper--> */}
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
@@ -358,37 +362,6 @@ const Initiate = (props: any) => {
                             <div className="stepper-label">
                                 <h3 className="stepper-title">
                                     Step 2
-                                </h3>
-
-                                <div className="stepper-desc">
-                                    Documents
-                                </div>
-                            </div>
-                            {/* <!--end::Label--> */}
-                        </div>
-                        {/* <!--end::Wrapper--> */}
-
-                        {/* <!--begin::Line--> */}
-                        <div className="stepper-line h-40px"></div>
-                        {/* <!--end::Line--> */}
-                    </div>
-                    {/* <!--end::Step 2--> */}
-
-                    {/* <!--begin::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
-                            {/* <!--begin::Icon--> */}
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">3</span>
-                            </div>
-                            {/* <!--begin::Icon--> */}
-
-                            {/* <!--begin::Label--> */}
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 3
                                 </h3>
 
                                 <div className="stepper-desc">
@@ -511,7 +484,7 @@ const Initiate = (props: any) => {
                             </div>
                         </div>
 
-                        <div className="flex-column" data-kt-stepper-element="content">
+                        {/* <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label" title='Attach one or more files, e.g., Metadata file.'>Attached documents</label>
@@ -526,7 +499,7 @@ const Initiate = (props: any) => {
                                 <label className="form-label">Remarks</label>
                                 <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>

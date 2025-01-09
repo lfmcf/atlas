@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MetaData;
 use App\Models\Product_meta;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -69,37 +70,38 @@ class ProductMetaController extends Controller
 
         $region = $request->input('region');
         $procedure = $request->input('procedure');
-        $productFamily = $request->input('product_family');
+        $country = $request->input('country');
 
-        $regionId = Region::where('region_name', $region)->firstOrFail()->id;
-        $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
+        $products = MetaData::where('procedure', $procedure)
+            ->where('country', $country)
+            ->pluck('invented_name');
 
-        if (isset($productFamily)) {
+        // $regionId = Region::where('region_name', $region)->firstOrFail()->id;
+        // $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
+
+        // if (isset($productFamily)) {
 
 
-            $productFamilyId = ProductFamilies::where('familly_name', $productFamily)->firstOrFail()->id;
+        //     $productFamilyId = ProductFamilies::where('familly_name', $productFamily)->firstOrFail()->id;
 
-            $products = Product::where('product_family_id', $productFamilyId)
-                ->whereHas('regions', function ($query) use ($regionId) {
-                    $query->where('regions.id', $regionId);
-                })
-                ->whereHas('procedures', function ($query) use ($procedureId) {
-                    $query->where('procedures.id', $procedureId);
-                })
-                ->pluck('name');
-        } else {
-            //$products = Product_meta::where('region', $request->region)->where('procedure', $request->procedure)->first();
-            // $products = $names->product;
-            // $products = json_decode($products);
+        //     $products = Product::where('product_family_id', $productFamilyId)
+        //         ->whereHas('regions', function ($query) use ($regionId) {
+        //             $query->where('regions.id', $regionId);
+        //         })
+        //         ->whereHas('procedures', function ($query) use ($procedureId) {
+        //             $query->where('procedures.id', $procedureId);
+        //         })
+        //         ->pluck('name');
+        // } else {
 
-            $products = Product::whereHas('regions', function ($query) use ($regionId) {
-                $query->where('regions.id', $regionId);
-            })
-                ->whereHas('procedures', function ($query) use ($procedureId) {
-                    $query->where('procedures.id', $procedureId);
-                })
-                ->pluck('name');
-        }
+        //     $products = Product::whereHas('regions', function ($query) use ($regionId) {
+        //         $query->where('regions.id', $regionId);
+        //     })
+        //         ->whereHas('procedures', function ($query) use ($procedureId) {
+        //             $query->where('procedures.id', $procedureId);
+        //         })
+        //         ->pluck('name');
+        // }
 
         return response($products, 200);
     }

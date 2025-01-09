@@ -19,7 +19,7 @@ import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal)
 
 const StepperOptions: IStepperOptions = {
-    startIndex: 4,
+    startIndex: 3,
     animation: false,
     animationSpeed: '0.3s',
     animationNextClass: 'animate__animated animate__slideInRight animate__fast',
@@ -343,9 +343,38 @@ const Correct = (props: any) => {
                     {/* <!--end::Step 1--> */}
 
                     {/* <!--begin::Step 2--> */}
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        {/* <!--begin::Wrapper--> */}
+                    {/* <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
+                    
                         <div className="stepper-wrapper d-flex align-items-center" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
+                            
+                            <div className="stepper-icon w-40px h-40px">
+                                <i className="stepper-check fas fa-check"></i>
+                                <span className="stepper-number">2</span>
+                            </div>
+                           
+                            <div className="stepper-label">
+                                <h3 className="stepper-title">
+                                    Step 2
+                                </h3>
+
+                                <div className="stepper-desc">
+                                    Documents
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
+
+                        
+                        <div className="stepper-line h-40px"></div>
+                       
+                    </div> */}
+                    {/* <!--end::Step 2--> */}
+
+                    {/* <!--begin::Step 3--> */}
+                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav" onClick={() => goNextStep(2)} style={{ cursor: 'pointer' }}>
+                        {/* <!--begin::Wrapper--> */}
+                        <div className="stepper-wrapper d-flex align-items-center">
                             {/* <!--begin::Icon--> */}
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
@@ -357,37 +386,6 @@ const Correct = (props: any) => {
                             <div className="stepper-label">
                                 <h3 className="stepper-title">
                                     Step 2
-                                </h3>
-
-                                <div className="stepper-desc">
-                                    Documents
-                                </div>
-                            </div>
-                            {/* <!--end::Label--> */}
-                        </div>
-                        {/* <!--end::Wrapper--> */}
-
-                        {/* <!--begin::Line--> */}
-                        <div className="stepper-line h-40px"></div>
-                        {/* <!--end::Line--> */}
-                    </div>
-                    {/* <!--end::Step 2--> */}
-
-                    {/* <!--begin::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4" data-kt-stepper-element="nav" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
-                        {/* <!--begin::Wrapper--> */}
-                        <div className="stepper-wrapper d-flex align-items-center">
-                            {/* <!--begin::Icon--> */}
-                            <div className="stepper-icon w-40px h-40px">
-                                <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">3</span>
-                            </div>
-                            {/* <!--begin::Icon--> */}
-
-                            {/* <!--begin::Label--> */}
-                            <div className="stepper-label">
-                                <h3 className="stepper-title">
-                                    Step 3
                                 </h3>
 
                                 <div className="stepper-desc">
@@ -403,15 +401,15 @@ const Correct = (props: any) => {
                         {/* <!--end::Line--> */}
                     </div>
                     {/* <!--end::Step 3--> */}
-                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav" onClick={() => goNextStep(4)} style={{ cursor: 'pointer' }}>
+                    <div className="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav" onClick={() => goNextStep(3)} style={{ cursor: 'pointer' }}>
                         <div className="stepper-wrapper d-flex align-items-center">
                             <div className="stepper-icon w-40px h-40px">
                                 <i className="stepper-check fas fa-check"></i>
-                                <span className="stepper-number">4</span>
+                                <span className="stepper-number">3</span>
                             </div>
                             <div className="stepper-label">
                                 <h3 className="stepper-title">
-                                    Step 4
+                                    Step 3
                                 </h3>
 
                                 <div className="stepper-desc">
@@ -527,7 +525,7 @@ const Correct = (props: any) => {
                             </div>
                         </div>
 
-                        <div className="flex-column" data-kt-stepper-element="content">
+                        {/* <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
                                 <div className='col-md-2 col-lg-2 col-sm-12'>
                                     <label className="form-label">Attached documents</label>
@@ -542,7 +540,7 @@ const Correct = (props: any) => {
                                 <label className="form-label">Remarks</label>
                                 <textarea className="form-control form-control-solid" rows={3} name="docremarks" defaultValue={data.docremarks} placeholder="" onChange={handleChange} />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>

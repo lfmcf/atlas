@@ -83,12 +83,12 @@ const EditTwo = (props: any) => {
 
                                         </a>
                                     </li>
-                                    <li className='nav-item' role='presentation'>
+                                    {/* <li className='nav-item' role='presentation'>
                                         <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_2" aria-selected="false" tabIndex={-1} role="tab">
                                             <span className="nav-text text-gray-600 fw-bold fs-6">Documents</span>
                                             <span className="bullet-custom position-absolute z-index-2 bottom-0 w-100 h-1px bg-primary rounded"></span>
                                         </a>
-                                    </li>
+                                    </li> */}
                                     <li className='nav-item' role='presentation'>
                                         <a className="nav-link btn btn-color-gray-600 btn-active-color-primary d-flex justify-content-center px-0 w-100 border-0 h-100" data-bs-toggle="pill" href="#kt_aside_tab_3" aria-selected="false" tabIndex={-1} role="tab">
                                             <span className="nav-text text-gray-600 fw-bold fs-6">Delivery details</span>
@@ -172,7 +172,7 @@ const EditTwo = (props: any) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='tab-content'>
+                            {/* <div className='tab-content'>
                                 <div className='tab-pane fade' id='kt_aside_tab_2' role='tabpanel'>
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Documents</label>
@@ -193,7 +193,7 @@ const EditTwo = (props: any) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className='tab-content'>
                                 <div className='tab-pane fade' id='kt_aside_tab_3' role='tabpanel'>
                                     <div className="row mb-7">

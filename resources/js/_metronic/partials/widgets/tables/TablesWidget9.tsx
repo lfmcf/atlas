@@ -34,8 +34,6 @@ const TablesWidget9: React.FC<Props> = (props) => {
 
 	const { data } = props
 
-	console.log(data)
-
 	const [{ product_family_, region_, procedure_, product_, country_ }, setState] = useState(initialState)
 
 	const [currentPage, setCurrentPage] = useState(1);
