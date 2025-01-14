@@ -148,15 +148,15 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
     const handleSelectProductChange_ = (e) => {
         setState(prevState => ({ ...prevState, ['product_']: e }));
 
-        if (procedure_ && procedure_.value == 'Nationale') {
-            if (region_ && region_.value == "EU") {
-                setCountryList(eunatcountry)
-            } else if (region_ && region_.value == "GCC") {
-                setCountryList(gcccountry)
-            } else {
-                setCountryList([{ label: "Switzerland", value: "Switzerland" }])
-            }
-        }
+        // if (procedure_ && procedure_.value == 'Nationale') {
+        //     if (region_ && region_.value == "EU") {
+        //         setCountryList(eunatcountry)
+        //     } else if (region_ && region_.value == "GCC") {
+        //         setCountryList(gcccountry)
+        //     } else {
+        //         setCountryList([{ label: "Switzerland", value: "Switzerland" }])
+        //     }
+        // }
     }
 
     const handleNavigate = (ReqType) => {
@@ -315,30 +315,30 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
 
-            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+            // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
 
-                if (res.status == 200) {
-                    var myarr = []
-                    res.data.map(val => {
-                        myarr.push({ label: val, value: val })
-                    })
-                    setProductList(myarr);
-                }
-            })
+            //     if (res.status == 200) {
+            //         var myarr = []
+            //         res.data.map(val => {
+            //             myarr.push({ label: val, value: val })
+            //         })
+            //         setProductList(myarr);
+            //     }
+            // })
             setCountryList(gcccountry);
             setCompselect(false)
         } else if (region_ && region_.value == 'CH') {
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
 
-            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
-                if (res.status == 200) {
-                    var myarr = []
-                    res.data.map(val => {
-                        myarr.push({ label: val, value: val })
-                    })
-                    setProductList(myarr);
-                }
-            })
+            // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+            //     if (res.status == 200) {
+            //         var myarr = []
+            //         res.data.map(val => {
+            //             myarr.push({ label: val, value: val })
+            //         })
+            //         setProductList(myarr);
+            //     }
+            // })
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
             setCompselect(false)
         }
@@ -404,9 +404,29 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                 }
             })
         }
-
-
     }, [data.country])
+
+    useEffect(() => {
+
+        if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
+            setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
+        } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Mutual Recognition') {
+            setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
+        } else if (region_ && procedure_) {
+            axios.post('getProductname_', { 'region': region_.value, 'procedure': procedure_.value, 'country': country_.value }).then(res => {
+                if (res.status == 200) {
+                    console.log(res.data)
+                    var myarr = []
+                    res.data.map(val => {
+                        myarr.push({ label: val, value: val })
+                    })
+                    setProductList(myarr);
+                }
+            })
+        }
+
+
+    }, [country_])
 
 
 
@@ -414,41 +434,41 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
         if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Decentralized') {
 
-            axios.post('getProductname_', { 'region': region_.value, 'procedure': 'Decentralized' }).then(res => {
-                if (res.status == 200) {
-                    var myarr = []
-                    res.data.map(val => {
-                        myarr.push({ label: val, value: val })
-                    })
-                    setProductList(myarr);
-                }
-            })
+            // axios.post('getProductname_', { 'region': region_.value, 'procedure': 'Decentralized' }).then(res => {
+            //     if (res.status == 200) {
+            //         var myarr = []
+            //         res.data.map(val => {
+            //             myarr.push({ label: val, value: val })
+            //         })
+            //         setProductList(myarr);
+            //     }
+            // })
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Mutual Recognition') {
 
-            axios.post('getProductname_', { 'region': region_.value, 'procedure': 'Mutual Recognition' }).then(res => {
-                if (res.status == 200) {
-                    var myarr = []
-                    res.data.map(val => {
-                        myarr.push({ label: val, value: val })
-                    })
-                    setProductList(myarr);
-                }
-            })
+            // axios.post('getProductname_', { 'region': region_.value, 'procedure': 'Mutual Recognition' }).then(res => {
+            //     if (res.status == 200) {
+            //         var myarr = []
+            //         res.data.map(val => {
+            //             myarr.push({ label: val, value: val })
+            //         })
+            //         setProductList(myarr);
+            //     }
+            // })
             setCountryList(eunatcountry)
             setCompselect(true)
         } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale' || procedure_ && procedure_.value == 'Centralized') {
 
-            axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
-                if (res.status == 200) {
-                    var myarr = []
-                    res.data.map(val => {
-                        myarr.push({ label: val, value: val })
-                    })
-                    setProductList(myarr);
-                }
-            })
+            // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
+            //     if (res.status == 200) {
+            //         var myarr = []
+            //         res.data.map(val => {
+            //             myarr.push({ label: val, value: val })
+            //         })
+            //         setProductList(myarr);
+            //     }
+            // })
             setCountryList(eunatcountry)
             setCompselect(false)
         }
@@ -665,38 +685,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                         />
                                     </div>
-                                    <div className='my-4' style={{ display: procedure_ && procedure_.value == 'Nationale' && region_ && region_.value == 'EU' ? 'block' : 'none' }}>
-                                        <label className='form-label' data-toggle='tooltip' title='Select the product family for the Initial Request Publishing'>Product family</label>
-                                        <Select options={[
-                                            { label: 'Staloral', value: 'Staloral' },
-                                            { label: 'Venins', value: 'Venins' },
-                                            { label: 'Alustal', value: 'Alustal' },
-                                            { label: 'Alyostal', value: 'Alyostal' },
-                                            { label: 'Diluant', value: 'Diluant' },
-                                            { label: 'ORALAIR', value: 'ORALAIR' },
-                                        ]}
-                                            name='product_family_'
-                                            onChange={(e) => onChange(e, 'product_family_')}
-                                            placeholder='Product family'
-                                            value={product_family_}
-                                            isClearable
-                                            menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                        />
-                                    </div>
-                                    <div className='my-4'>
-                                        <label className='form-label' data-toggle="tooltip" title="Choose the product for the Initial Publishing. If not listed, click 'New Product' at the list's end">Product</label>
-                                        <Select options={productList}
-                                            name="product_"
-                                            onChange={(e) => handleSelectProductChange_(e)}
-                                            placeholder='Product'
-                                            value={product_}
-                                            isClearable
-                                            menuPortalTarget={document.body}
-                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
-                                            components={{ MenuList: SelectMenuButton }}
-                                        />
-                                    </div>
+
                                     <div className='my-4'>
                                         <label className='form-label' data-toggle="tooltip" title='Select a country for the Initial Publishing. For NP/CP, choose one country; for DCP/MRP, select one or more countries'>Country</label>
                                         {compselect ?
@@ -720,6 +709,20 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                                                 styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                             />}
                                     </div>
+                                    <div className='my-4'>
+                                        <label className='form-label' data-toggle="tooltip" title="Choose the product for the Initial Publishing. If not listed, click 'New Product' at the list's end">Product</label>
+                                        <Select options={productList}
+                                            name="product_"
+                                            onChange={(e) => handleSelectProductChange_(e)}
+                                            placeholder='Product'
+                                            value={product_}
+                                            isClearable
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
+                                            components={{ MenuList: SelectMenuButton }}
+                                        />
+                                    </div>
+
                                     <div className='d-flex mt-5 justify-content-end'>
                                         <a href="#" className="btn btn-sm btn-light-primary me-3" onClick={handleClose}>Cancel</a>
                                         <button className="btn btn-sm btn-primary" data-bs-dismiss='modal' onClick={handleLifeCycle}>Validate</button>
