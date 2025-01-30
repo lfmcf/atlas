@@ -412,6 +412,7 @@ class PublishingController extends Controller
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+            SendEmailJob::dispatch($pub, $user);
             return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
         }
     }
@@ -618,11 +619,11 @@ class PublishingController extends Controller
             return $this->createConfirmrmp($request);
         }
 
-        $region = $pub->region;
-        $country = $pub->country;
-        $product = $pub->product_name;
-        $procedure = $pub->procedure;
-        $country = is_array($country) ? $country['value'] : $country;
+        // $region = $pub->region;
+        // $country = $pub->country;
+        // $product = $pub->product_name;
+        // $procedure = $pub->procedure;
+        // $country = is_array($country) ? $country['value'] : $country;
 
         // $findstring = explode(' ', $product);
         // $metaPro = MetaData::where(function ($q) use ($findstring) {
@@ -686,32 +687,32 @@ class PublishingController extends Controller
         //         ]);
         //     }
         // } 
-        if ($region == "GCC") {
-            // $md = MetaData::where([
-            //     ['invented_name', '=', $product],
-            //     ['procedure', '=', $procedure],
-            //     ['country', '=', $country]
-            // ])->with([
-            //     'trackingNumbers',
-            //     'dosageForm',
-            //     'drugProduct',
-            //     'drugProductManufacturer',
-            //     'drugSubstanceManufacturer',
-            //     'excipients',
-            //     'drugSubstance',
-            //     'indications'
-            // ])->first();
+        //if ($region == "GCC") {
+        // $md = MetaData::where([
+        //     ['invented_name', '=', $product],
+        //     ['procedure', '=', $procedure],
+        //     ['country', '=', $country]
+        // ])->with([
+        //     'trackingNumbers',
+        //     'dosageForm',
+        //     'drugProduct',
+        //     'drugProductManufacturer',
+        //     'drugSubstanceManufacturer',
+        //     'excipients',
+        //     'drugSubstance',
+        //     'indications'
+        // ])->first();
 
-            // if ($md) {
-            //     return Inertia::render('Publishing/Nat/Gcc/Confirm', [
-            //         'metadata' => $md,
-            //         'countries' => $country,
-            //         'products' => $product,
-            //         'folder' => $pub,
-            //         'metapro' => $metaPro
-            //     ]);
-            // }
-        }
+        // if ($md) {
+        //     return Inertia::render('Publishing/Nat/Gcc/Confirm', [
+        //         'metadata' => $md,
+        //         'countries' => $country,
+        //         'products' => $product,
+        //         'folder' => $pub,
+        //         'metapro' => $metaPro
+        //     ]);
+        // }
+        //}
     }
 
     public function validation(Request $request)
@@ -804,8 +805,8 @@ class PublishingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        //SendEmailJob::dispatch($pub);
-        // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
+        SendEmailJob::dispatch($pub, $user);
+
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -941,6 +942,7 @@ class PublishingController extends Controller
             }
             $pub->save();
             $user = User::where('current_team_id', 3)->get();
+            SendEmailJob::dispatch($pub, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         }
 
@@ -955,6 +957,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub, $user);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -969,6 +972,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub, $user);
         return redirect('/tasks')->with('message', 'Request ACK has been susccessfully sent');
     }
 
@@ -1004,6 +1008,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub, $user);
         return redirect('/list')->with('message', 'Dossier Delivery has been completed');
     }
 
@@ -1049,6 +1054,7 @@ class PublishingController extends Controller
         $pub->save();
         $Notuser = User::where('current_team_id', 3)->get();
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub, $Notuser);
         if ($pub->region !== "CH") {
             return redirect()->route('show-publishing', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
         } else {
@@ -1094,6 +1100,7 @@ class PublishingController extends Controller
         $pub->save();
         $Notuser = User::where('current_team_id', 3)->get();
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
+        SendEmailJob::dispatch($pub, $Notuser);
         return back()->with('folder', $pub);
     }
 
@@ -2117,7 +2124,7 @@ class PublishingController extends Controller
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
-        SendEmailJob::dispatch($pub);
+        SendEmailJob::dispatch($pub, $user);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 

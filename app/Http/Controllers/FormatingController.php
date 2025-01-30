@@ -156,6 +156,7 @@ class FormatingController extends Controller
             $formatting->save();
             $user = User::where('current_team_id', 2)->get();
             Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+            SendEmailJob::dispatch($formatting, $user);
             return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
         }
     }
@@ -334,7 +335,7 @@ class FormatingController extends Controller
 
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        SendEmailJob::dispatch($formatting);
+        SendEmailJob::dispatch($formatting, $user);
         //Mail::to(getenv('MAIL_TO'))->send(new FormSubmitted($formatting));
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
@@ -346,6 +347,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting, $user);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -411,6 +413,7 @@ class FormatingController extends Controller
             }
             $formatting->save();
             $user = User::where('current_team_id', 2)->get();
+            SendEmailJob::dispatch($formatting, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         } else {
             $docs = $request->doc;
@@ -464,6 +467,7 @@ class FormatingController extends Controller
             }
             $formatting->save();
             $user = User::where('current_team_id', 3)->get();
+            SendEmailJob::dispatch($formatting, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         }
 
@@ -483,6 +487,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting, $user);
         return redirect('/list')->with('message', 'Dossier Delivery has been completed');
     }
 
@@ -526,6 +531,7 @@ class FormatingController extends Controller
         $formatting->save();
         $Notuser = User::where('current_team_id', 3)->get();
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting, $user);
         return redirect()->route('show-formatting', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
 
@@ -536,6 +542,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 1)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting, $user);
         return redirect('/list')->with('message', 'Formatting Request has been successfully completed');
     }
 
@@ -558,6 +565,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        SendEmailJob::dispatch($formatting, $user);
         return redirect('tasks')->with('message', 'Request ACK has been susccessfully sent');
     }
 

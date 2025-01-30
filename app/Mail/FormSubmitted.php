@@ -16,6 +16,9 @@ class FormSubmitted extends Mailable
     use Queueable, SerializesModels;
 
     public Formating $formatting;
+    public string $dynamicSubject;
+    public string $viewTemplate;
+    public $attachments = [];
 
 
     /**
@@ -24,6 +27,14 @@ class FormSubmitted extends Mailable
     public function __construct(Formating $formatting)
     {
         $this->formatting = $formatting;
+        // Set dynamic subject based on formatting data
+        $this->dynamicSubject = $this->getDynamicSubject();
+
+        // Choose view and data dynamically
+        $this->viewTemplate = $this->getViewTemplate();
+
+        // Optionally add attachments
+        $this->setAttachments();
     }
 
     /**
@@ -32,7 +43,7 @@ class FormSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New formatting form submitted',
+            subject: $this->dynamicSubject,
         );
     }
 
@@ -42,11 +53,17 @@ class FormSubmitted extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.NewForm',
+            view: $this->viewTemplate,
             with: [
                 'prductName' => $this->formatting->product_name['value'],
             ],
         );
+        // return new Content(
+        //     view: 'emails.NewForm',
+        //     with: [
+        //         'prductName' => $this->formatting->product_name['value'],
+        //     ],
+        // );
     }
 
     /**
@@ -56,15 +73,68 @@ class FormSubmitted extends Mailable
      */
     public function attachments(): array
     {
-        $files = [];
-        foreach ($this->formatting->document as $file) {
-            $files[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+        return $this->attachments;
+        // $files = [];
+        // foreach ($this->formatting->document as $file) {
+        //     $files[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+        // }
+        // return $files;
+    }
+
+    protected function getDynamicSubject(): string
+    {
+        if ($this->formatting->status === 'initiated') {
+            return 'New Formatting Form Initiated';
+        } elseif ($this->formatting->status === 'submitted') {
+            return 'Formatting ' . $this->formatting->product_name['value'] . ' - ' . $this->formatting->country['value'] . ' - ' . $this->formatting->dossier_type['value'];
+        } elseif ($this->formatting->status === 'to verify') {
+            return 'Formatting Form Awaiting Verification';
         }
-        return $files;
 
-        // return [
-        //     Attachment::fromPath('/Users/ziop/workspace/atlas/storage/app/public/whatsapp.png'),
+        return 'Formatting Form Update';
+    }
 
-        // ];/Users/ziop/workspace/atlas/public/whatsapp.png
+    protected function getViewTemplate(): string
+    {
+        $emailveiw = "";
+        if ($this->formatting->status === 'initiated') {
+            $emailveiw = 'emails.InitiatedForm';
+        } elseif ($this->formatting->status === 'submitted') {
+            $emailveiw = 'emails.NewForm';
+        } elseif ($this->formatting->status === 'to verify') {
+            $emailveiw = 'emails.VerifyForm';
+        } elseif ($this->formatting->status === 'in progress') {
+            $emailveiw = 'emails.AcceptedForm';
+        } elseif ($this->formatting->status === 'delivered') {
+            $emailveiw = 'emails.DeliveredForm';
+        } elseif ($this->formatting->status === 'to correct') {
+            $emailveiw = 'emails.CorrectForm';
+        } elseif ($this->formatting->status === 'completed') {
+            $emailveiw = 'emails.CompletedForm';
+        }
+        return $emailveiw;
+        // return $this->formatting->status === 'initiated'
+        //     ? 'emails.InitiatedForm'
+        //     : $this->formatting->status === 'submitted' ? 'emails.NewForm' : 'emails.VerificationForm';
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'productName' => $this->formatting->product_name['value'] ?? 'N/A',
+            'status' => $this->formatting->status,
+            // Add more data as needed
+        ];
+    }
+
+    protected function setAttachments()
+    {
+        if ($this->formatting->status === 'submitted') {
+            // $files = [];
+            foreach ($this->formatting->document as $file) {
+                $this->attachments[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+            }
+            return $this->attachments;
+        }
     }
 }

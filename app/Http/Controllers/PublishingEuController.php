@@ -157,6 +157,7 @@ class PublishingEuController extends Controller
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
+            SendEmailJob::dispatch($pub, $user);
             return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
         }
     }
@@ -277,7 +278,7 @@ class PublishingEuController extends Controller
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         // Mail::to(getenv('MAIL_TO'))->send(new PublishingSubmitted($pub));
-        SendEmailJob::dispatch($pub);
+        SendEmailJob::dispatch($pub, $user);
         return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
     }
 
@@ -401,6 +402,7 @@ class PublishingEuController extends Controller
             }
             $publishing->save();
             $user = User::where('current_team_id', 3)->get();
+            SendEmailJob::dispatch($publishing, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
         }
 
@@ -432,12 +434,13 @@ class PublishingEuController extends Controller
 
         $user = User::where('current_team_id', 1)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
+        SendEmailJob::dispatch($publishing, $user);
         return redirect('/list')->with('message', 'Publishing Request has been successfully completed');
     }
 
     public function postEuCorrection(Request $request)
     {
-        $user = auth()->user();
+        // $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
 
         $pub->status = 'to correct';
@@ -450,7 +453,7 @@ class PublishingEuController extends Controller
         $pub->save();
         $Notuser = User::where('current_team_id', 3)->get();
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
-
+        SendEmailJob::dispatch($pub, $Notuser);
         return redirect()->route('show_eu_publishing', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }
 
@@ -557,7 +560,6 @@ class PublishingEuController extends Controller
 
     public function postNewRequest(Request $request)
     {
-
 
         $docs = $request->doc;
         $docs = array_filter($docs, static function ($element) {

@@ -16,6 +16,9 @@ class PublishingRmpSubmitted extends Mailable
     use Queueable, SerializesModels;
 
     public PublishingMrp $publishingMrp;
+    public string $dynamicSubject;
+    public string $viewTemplate;
+    public $attachments = [];
 
     /**
      * Create a new message instance.
@@ -25,6 +28,9 @@ class PublishingRmpSubmitted extends Mailable
     public function __construct(PublishingMrp $publishingMrp)
     {
         $this->publishingMrp = $publishingMrp;
+        $this->dynamicSubject = $this->getDynamicSubject();
+        $this->viewTemplate = $this->getViewTemplate();
+        $this->setAttachments();
     }
 
     /**
@@ -35,7 +41,7 @@ class PublishingRmpSubmitted extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'New publishing form submitted',
+            subject: $this->dynamicSubject,
         );
     }
 
@@ -47,7 +53,7 @@ class PublishingRmpSubmitted extends Mailable
     public function content()
     {
         return new Content(
-            view: 'emails.NewForm',
+            view: $this->viewTemplate,
             with: [
                 'prductName' => $this->publishingMrp->product_name,
             ],
@@ -56,15 +62,56 @@ class PublishingRmpSubmitted extends Mailable
 
     public function attachments(): array
     {
-        $files = [];
-        foreach ($this->publishingMrp->doc as $file) {
-            $files[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+        return $this->attachments;
+        // $files = [];
+        // foreach ($this->publishingMrp->doc as $file) {
+        //     $files[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+        // }
+        // return $files;
+
+    }
+
+    protected function getDynamicSubject(): string
+    {
+        if ($this->publishingMrp->status === 'initiated') {
+            return 'New Publishing Form Initiated';
+        } elseif ($this->publishingMrp->status === 'submitted') {
+            return 'Publishing Form Submitted';
+        } elseif ($this->publishingMrp->status === 'to verify') {
+            return 'Publishing Form Awaiting Verification';
         }
-        return $files;
 
-        // return [
-        //     Attachment::fromPath('/Users/ziop/workspace/atlas/storage/app/public/whatsapp.png'),
+        return 'Publishing Form Update';
+    }
 
-        // ];/Users/ziop/workspace/atlas/public/whatsapp.png
+    protected function getViewTemplate(): string
+    {
+        $emailveiw = "";
+        if ($this->publishingMrp->status === 'initiated') {
+            $emailveiw = 'emails.InitiatedForm';
+        } elseif ($this->publishingMrp->status === 'submitted') {
+            $emailveiw = 'emails.NewForm';
+        } elseif ($this->publishingMrp->status === 'to verify') {
+            $emailveiw = 'emails.VerifyForm';
+        } elseif ($this->publishingMrp->status === 'in progress') {
+            $emailveiw = 'emails.AcceptedForm';
+        } elseif ($this->publishingMrp->status === 'delivered') {
+            $emailveiw = 'emails.DeliveredForm';
+        } elseif ($this->publishingMrp->status === 'to correct') {
+            $emailveiw = 'emails.CorrectForm';
+        } elseif ($this->publishingMrp->status === 'completed') {
+            $emailveiw = 'emails.CompletedForm';
+        }
+        return $emailveiw;
+    }
+
+    protected function setAttachments()
+    {
+        if ($this->publishingMrp->status === 'submitted') {
+            foreach ($this->publishingMrp->document as $file) {
+                $this->attachments[] = Attachment::fromPath(storage_path('/app/public/documents/' . $file['name']));
+            }
+            return $this->attachments;
+        }
     }
 }

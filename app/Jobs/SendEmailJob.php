@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Mail\PublishingSubmitted;
 use App\Mail\FormSubmitted;
+use App\Mail\FormInitiated;
+use App\Mail\FormVerify;
 use App\Mail\PublishingRmpSubmitted;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -18,14 +20,16 @@ class SendEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $pub;
+    public $folder;
+    public $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($pub)
+    public function __construct($folder, $user)
     {
-        $this->pub = $pub;
+        $this->folder = $folder;
+        $this->user = $user;
     }
 
     /**
@@ -34,28 +38,25 @@ class SendEmailJob implements ShouldQueue
     public function handle(): void
     {
 
-        $to = env('MAIL_TO', 'eps@ekemia.com');
+        // $to = env('MAIL_TO', 'eps@ekemia.com');
 
-        Log::info('MAIL_TO: ' . $to); // Debugging line to check the MAIL_TO value
+        if ($this->folder->form == 'Formatting') {
 
-        if (empty($to)) {
-            // Log an error or handle the missing email recipient case
-
-            Log::error('MAIL_TO environment variable is not set.');
-            return; // Prevent sending an email with no recipient
-        }
-
-        if (empty($to)) {
-            // Log an error or handle the missing email recipient case
-            Log::error('MAIL_TO environment variable is not set.');
-            return; // Prevent sending an email with no recipient
-        }
-        if ($this->pub->form == 'Formatting') {
-            Mail::to($to)->send(new FormSubmitted($this->pub));
-        } else if ($this->pub->form == 'Publishing' && $this->pub->procedure === 'Nationale' || $this->pub->procedure === 'Centralized') {
-            Mail::to($to)->send(new PublishingSubmitted($this->pub));
-        } else {
-            Mail::to($to)->send(new PublishingRmpSubmitted($this->pub));
+            if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
+                Mail::to('support@ekemia.com')->send(new FormSubmitted($this->folder));
+                // } else {
+                //     foreach ($this->user as $user) {
+                //         Mail::to($user->email)->send(new FormSubmitted($this->folder));
+                //     }
+            }
+        } else if ($this->folder->form == 'Publishing') {
+            if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
+                Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
+                // } else {
+                //     foreach ($this->user as $user) {
+                //         Mail::to($user->email)->send(new PublishingSubmitted($this->folder));
+                //     }
+            }
         }
     }
 }
