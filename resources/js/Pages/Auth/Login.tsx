@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import clsx from 'clsx';
-import { Link, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import { useFormik } from 'formik'
 import { getUserByToken, login } from './core/_requests'
 import { toAbsoluteUrl } from '../../_metronic/helpers';
@@ -107,6 +107,7 @@ export default function Login() {
 
 
         <div className='d-flex flex-column flex-column-fluid flex-lg-row'>
+            <Head title="Login" />
             <div className="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10">
                 {/* <!--begin::Aside--> */}
                 <div className="d-flex flex-center flex-lg-start flex-column">

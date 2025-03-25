@@ -14,7 +14,9 @@ const StatusComponent = ({ status }) => {
                                     : status == 'to correct' ? <span className='badge badge-danger fs-7 fw-bold text-capitalize'>{status}</span>
                                         : status == 'draft' ? <span className="badge badge-light-info fs-7 fw-bold text-capitalize">{status}</span>
                                             : status == 'completed' ? <span className="badge badge-light-success fs-7 fw-bold text-capitalize">{status}</span> :
-                                                ''}
+                                                status == 'accepted' ? <span className="badge badge-light-primary fs-7 fw-bold text-capitalize">{status}</span> :
+                                                    status == 'Correction Required' ? <span className="badge badge-light-danger fs-7 fw-bold text-capitalize">{status}</span> :
+                                                        ''}
         </>
     )
 }

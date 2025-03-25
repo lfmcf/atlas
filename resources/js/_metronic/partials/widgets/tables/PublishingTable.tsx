@@ -70,6 +70,20 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
         }
 
     }
+
+    const handleAccept = (row) => {
+        if (row.region == 'EU' && row.procedure == "Nationale") {
+            router.post(route('accept_eu_verification'), { id: row._id })
+        } else if (row.region == 'CH') {
+            router.post(route('accept_ch_verification'), { id: row._id })
+        } else if (row.region == 'GCC') {
+            router.post(route('accept_gcc_verification'), { id: row._id })
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+            router.post(route('accept-publishing'), { id: row._id })
+        }
+    }
+
+
     const handleCorrect = (row) => {
         if (row.region == 'EU' && row.procedure == "Nationale") {
             router.get(route('publishing_eu_verification'), { id: row._id })
@@ -450,14 +464,36 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                                                         </>
 
                                                                         : row.status == 'completed' ?
-                                                                            <button
-                                                                                onClick={() => handleClose(row)}
-                                                                                className='btn btn-icon btn-sm me-1'
-                                                                                style={{ backgroundColor: '#d1f7c4' }}
-                                                                            >
-                                                                                <i className="bi bi-check text-success fs-5"></i>
-                                                                            </button>
-                                                                            : ''
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => handleAccept(row)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#d1f7c4' }}
+                                                                                >
+                                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleCorrect(row)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#f8d7da' }}
+                                                                                >
+                                                                                    <i className="bi bi-x text-danger fs-5"></i>
+                                                                                </button>
+                                                                            </>
+                                                                            : row.status == 'accepted' ?
+                                                                                <button
+                                                                                    onClick={() => handleClose(row)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#d1f7c4' }}
+                                                                                >
+                                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                                </button> :
+                                                                                row.status == 'Correction Required' ?
+                                                                                    <button onClick={() => handleCorrect(row)} className='btn btn-icon btn-sm me-1' style={{ backgroundColor: '#f8d7da' }}>
+                                                                                        <i className="bi bi-x text-danger fs-5"></i>
+                                                                                    </button> :
+                                                                                    ''
+
                                                 }
 
                                             </div>

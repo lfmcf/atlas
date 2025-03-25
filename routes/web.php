@@ -84,6 +84,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** complete and close demande  ** //
     Route::post('complete-formatting', [FormatingController::class, 'complete'])->name('complete-formatting');
+    Route::post('accept-formatting', [FormatingController::class, 'accept'])->name('accept-formatting');
     Route::post('close-formatting', [FormatingController::class, 'close'])->name('close-formatting');
 
     // ** delete files from the server  ** //
@@ -99,6 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('progress_eu_publishing', [PublishingEuController::class, 'setEuProgress'])->name('progress_eu_publishing');
     Route::get('/show_eu_publishing', [PublishingEuController::class, 'show'])->name('show_eu_publishing');
     Route::get('/publishing_eu_verification', [PublishingEuController::class, 'verification'])->name('publishing_eu_verification');
+    Route::post('accept_eu_verification', [PublishingEuController::class, 'acceptEuVerification'])->name('accept_eu_verification');
     Route::post('complete_eu_publishing', [PublishingEuController::class, 'completeEuPublishing'])->name('complete_eu_publishing');
     Route::post('close_eu_publishing', [PublishingEuController::class, 'closeEuPublishing'])->name('close_eu_publishing');
     Route::post('correct_eu_publishing', [PublishingEuController::class, 'postEuCorrection'])->name('correct_eu_publishing');
@@ -115,6 +117,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing_ch_audit', [PublishingChController::class, 'createAudit'])->name('publishing_ch_audit');
     Route::post('/publishing_ch_post_audit', [PublishingChController::class, 'postAudit'])->name('publishing_ch_post_audit');
     Route::get('/publishing_ch_verify', [PublishingChController::class, 'verify'])->name('publishing_ch_verify');
+    Route::post('accept_ch_verification', [PublishingChController::class, 'acceptChVerification'])->name('accept_ch_verification');
     Route::post('/publishing_ch_post_verify', [PublishingChController::class, 'postVerify'])->name('publishing_ch_post_verify');
     Route::get('/publishing_ch_new_request', [PublishingChController::class, 'newRequest'])->name('publishing_ch_new_request');
     Route::post('/publishing_ch_new_request', [PublishingChController::class, 'postNewRequest'])->name('publishing_ch_new_request');
@@ -130,6 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/publishing_gcc_audit', [PublishingGccController::class, 'createAudit'])->name('publishing_gcc_audit');
     Route::post('/publishing_gcc_post_audit', [PublishingGccController::class, 'postAudit'])->name('publishing_gcc_post_audit');
     Route::get('/publishing_gcc_verify', [PublishingGccController::class, 'verify'])->name('publishing_gcc_verify');
+    Route::post('accept_gcc_verification', [PublishingEuController::class, 'acceptGccVerification'])->name('accept_gcc_verification');
     Route::post('/publishing_gcc_post_verify', [PublishingGccController::class, 'postVerify'])->name('publishing_gcc_post_verify');
     Route::get('/publishing_gcc_new_request', [PublishingGccController::class, 'newRequest'])->name('publishing_gcc_new_request');
     Route::post('/publishing_gcc_new_request', [PublishingGccController::class, 'postNewRequest'])->name('publishing_gcc_new_request');
@@ -203,6 +207,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
+    Route::post('accept-publishing', [PublishingController::class, 'acceptmrp'])->name('accept-publishing');
     Route::post('correct-rmp-publishing', [PublishingController::class, 'correctmrp'])->name('correct-rmp-publishing');
 
     Route::get('/show-publishing-rmp', [PublishingController::class, 'showmrp'])->name('show-publishing-rmp');

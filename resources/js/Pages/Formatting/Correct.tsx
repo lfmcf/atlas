@@ -32,9 +32,11 @@ const Correct = (props: any) => {
         return { __html: msg.message };
     }
 
+
+
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
-    const { folder } = props
+    const { folder, auth } = props
     const [myErrors, setMyErroes] = useState({ product_name: '', substance_name: '', dossier_type: '', document_count: '' })
     const [isModalOpen, setModalOpen] = useState(false);
     const [actionType, setActionType] = useState('');
@@ -69,7 +71,12 @@ const Correct = (props: any) => {
         document: '',
         status: folder.status,
         deadlineComments: '',
-        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
+        correction: {
+            user: { id: props.auth.user.id, name: props.auth.user.name },
+            date: new Date,
+            message: '',
+            source: folder.correction && auth.user.current_team_id == 2 ? folder.correction[folder.correction.length - 1].source : []
+        }
     });
 
     let contries = props.countries.map(function (country) {
@@ -102,7 +109,8 @@ const Correct = (props: any) => {
     }
 
     const handleConfirm = (type) => {
-        post(route('correct-formatting'));
+        // post(route('correct-formatting'));
+        console.log(data.correction)
     }
 
     const handleSelectChange = (e, name) => {
@@ -699,7 +707,7 @@ const Correct = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='stg' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' checked={data.correction.source.includes('stg') ? true : false} value='stg' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
@@ -709,25 +717,16 @@ const Correct = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='ekemia' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' checked={data.correction.source.includes('ekemia') ? true : false} value='ekemia' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>
                                                     </span>
                                                 </label>
                                             </div>
-                                            {/* <div className='col'>
-                                                <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
-                                                    <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='radio' name='source' value='all' onChange={(e) => setSource(e.target.value)} />
-                                                    </span>
-                                                    <span className='ms-5'>
-                                                        <span className='fs-4 fw-bold text-gray-800 d-block'>All</span>
-                                                    </span>
-                                                </label>
-                                            </div> */}
+
                                         </div>
-                                        {/* <label className='form-label'>Comment</label> */}
+
                                         <div>
 
                                             <CKEditor
@@ -739,9 +738,7 @@ const Correct = (props: any) => {
                                                 }}
                                                 onChange={(event, editor) => handleMessageChange(editor)}
                                             />
-                                            {/* <div className="d-flex flex-stack mt-5">
-                                                <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend}>Send</button>
-                                            </div> */}
+
                                         </div>
                                     </div>
                                 </div>

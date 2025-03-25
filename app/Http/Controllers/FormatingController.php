@@ -242,7 +242,7 @@ class FormatingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form to confirm by the opr.
      */
 
     public function createConfirm(Request $request)
@@ -278,6 +278,10 @@ class FormatingController extends Controller
             ]);
         }
     }
+
+    /**
+     * Confirm the form by the opr.
+     */
 
     public function postConfirm(Request $request)
     {
@@ -520,8 +524,15 @@ class FormatingController extends Controller
     public function postCorrection(Request $request)
     {
         $user = auth()->user();
+
         $formatting = Formating::findOrfail($request->id);
-        $formatting->status = 'to correct';
+
+        if ($user->current_team_id == 1) {
+            $formatting->status = 'Correction Required';
+        } else {
+            $formatting->status = 'to correct';
+        }
+
         if (is_array($formatting->correction)) {
             $formatting->correction = [...$formatting->correction, $request->correction];
         } else {
@@ -529,10 +540,30 @@ class FormatingController extends Controller
         }
 
         $formatting->save();
-        $Notuser = User::where('current_team_id', 3)->get();
+
+        if ($user->current_team_id == 1) {
+            $Notuser = User::where('current_team_id', 2)->get();
+        } else {
+            $Notuser = User::where('current_team_id', 3)->get();
+        }
+
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($formatting));
         SendEmailJob::dispatch($formatting, $user);
         return redirect()->route('show-formatting', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function accept(Request $request)
+    {
+        $formatting = Formating::findOrfail($request->id);
+        $formatting->status = 'accepted';
+        $formatting->save();
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
+        //SendEmailJob::dispatch($formatting, $user);
+        return redirect('/list')->with('message', 'Formatting Request has been successfully accepted');
     }
 
     public function complete(Request $request)
@@ -552,7 +583,7 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
         $formatting->status = 'closed';
         $formatting->save();
-        $user = User::whereIn('current_team_id', [2, 3])->get();
+        $user = User::whereIn('current_team_id', [1, 3])->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         return redirect('/list')->with('message', 'Formatting Request has been successfully closed');
     }
@@ -584,50 +615,5 @@ class FormatingController extends Controller
 
         Storage::disk('public')->delete($filename);
         return response('done', 200);
-    }
-
-    // public function setVerify(Request $request)
-    // {
-
-    //     $user = auth()->user();
-    //     $formatting = Formating::findOrfail($request->id);
-    //     $formatting->status = 'to verify';
-
-    //     if ($formatting->audit) {
-    //         $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message], ...$formatting->audit];
-    //     } else {
-    //         $formatting->audit = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->message]];
-    //     }
-
-    //     $formatting->save();
-    //     return back()->with('folder', $formatting);
-    // }
-
-
-
-
-
-
-
-
-    public function edit(Formating $formating)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Formating $formating)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Formating $formating)
-    {
-        //
     }
 }

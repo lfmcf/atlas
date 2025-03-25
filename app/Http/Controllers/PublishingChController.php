@@ -421,11 +421,28 @@ class PublishingChController extends Controller
         ]);
     }
 
+    public function acceptChVerification(Request $request)
+    {
+        $publishing = Publishing::findOrfail($request->id);
+        $publishing->status = 'accepted';
+        $publishing->save();
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
+        //SendEmailJob::dispatch($publishing, $user);
+        return redirect('/list')->with('message', 'Publishing Request has been successfully accepted');
+    }
+
     public function postVerify(Request $request)
     {
+        $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
 
-        $pub->status = 'to correct';
+        if ($user->current_team_id == 1) {
+            $pub->status = 'Correction Required';
+        } else {
+            $pub->status = 'to correct';
+        }
+
         if (is_array($pub->correction)) {
             $pub->correction = [...$pub->correction, $request->correction];
         } else {
@@ -433,7 +450,13 @@ class PublishingChController extends Controller
         }
 
         $pub->save();
-        $Notuser = User::where('current_team_id', 3)->get();
+
+        if ($user->current_team_id == 1) {
+            $Notuser = User::where('current_team_id', 2)->get();
+        } else {
+            $Notuser = User::where('current_team_id', 3)->get();
+        }
+
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
         SendEmailJob::dispatch($pub, $Notuser);
         return redirect()->route('show-publishing-nat-ch', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
@@ -455,7 +478,7 @@ class PublishingChController extends Controller
         $pub = Publishing::findOrfail($request->id);
         $pub->status = 'closed';
         $pub->save();
-        $user = User::whereIn('current_team_id', [2, 3])->get();
+        $user = User::whereIn('current_team_id', [1, 3])->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         return redirect('/list')->with('message', 'Publishing Request has been successfully closed');
     }

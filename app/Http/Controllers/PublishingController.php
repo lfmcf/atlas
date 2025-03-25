@@ -1018,25 +1018,6 @@ class PublishingController extends Controller
         return Inertia::render('Publishing/Rmp/Correct', [
             'folder' => $publishing,
         ]);
-
-        // $publishing = Publishing::find($request->id);
-        // if (!$publishing) {
-
-        //}
-
-        // if ($publishing->region == "EU") {
-        //     return Inertia::render('Publishing/Nat/Correct', [
-        //         'folder' => $publishing,
-        //     ]);
-        // } else if ($publishing->region == "GCC") {
-        //     return Inertia::render('Publishing/Nat/Gcc/Correct', [
-        //         'folder' => $publishing,
-        //     ]);
-        // } else if ($publishing->region == "CH") {
-        //     return Inertia::render('Publishing/Nat/Ch/Correct', [
-        //         'folder' => $publishing,
-        //     ]);
-        // }
     }
 
     public function postCorrection(Request $request)
@@ -2218,10 +2199,29 @@ class PublishingController extends Controller
         ]);
     }
 
+    public function acceptmrp(Request $request)
+    {
+        $publishing = PublishingMrp::findOrfail($request->id);
+        $publishing->status = 'accepted';
+        $publishing->save();
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
+        //SendEmailJob::dispatch($publishing, $user);
+        return redirect('/list')->with('message', 'Publishing Request has been successfully accepted');
+    }
+
     public function correctmrp(Request $request)
     {
+        $user = auth()->user();
         $pub = PublishingMrp::find($request->id);
-        $pub->status = 'to correct';
+
+        if ($user->current_team_id == 1) {
+            $pub->status = 'Correction Required';
+        } else {
+            $pub->status = 'to correct';
+        }
+
+
         if (is_array($pub->correction)) {
             $pub->correction = [...$pub->correction, $request->correction];
         } else {
@@ -2229,7 +2229,13 @@ class PublishingController extends Controller
         }
 
         $pub->save();
-        $Notuser = User::where('current_team_id', 3)->get();
+
+        if ($user->current_team_id == 1) {
+            $Notuser = User::where('current_team_id', 2)->get();
+        } else {
+            $Notuser = User::where('current_team_id', 3)->get();
+        }
+
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
         return redirect()->route('show-publishing-rmp', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
     }

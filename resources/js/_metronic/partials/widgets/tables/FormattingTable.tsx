@@ -61,6 +61,10 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         router.post(route('close-formatting'), { id: id })
     }
 
+    const handleAccept = (id) => {
+        router.post(route('accept-formatting'), { id: id })
+    }
+
     const handleCorrect = (id) => {
         router.get(route('formatting-verification'), { id: id })
     }
@@ -337,14 +341,35 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                                                             </button>
                                                                         </>
                                                                         : row.status == 'completed' ?
-                                                                            <button
-                                                                                onClick={() => handleClose(row._id)}
-                                                                                className='btn btn-icon btn-sm me-1'
-                                                                                style={{ backgroundColor: '#d1f7c4' }}
-                                                                            >
-                                                                                <i className="bi bi-check text-success fs-5"></i>
-                                                                            </button>
-                                                                            : ''
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => handleAccept(row._id)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#d1f7c4' }}
+                                                                                >
+                                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleCorrect(row._id)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#f8d7da' }}
+                                                                                >
+                                                                                    <i className="bi bi-x text-danger fs-5"></i>
+                                                                                </button>
+                                                                            </>
+                                                                            : row.status == 'accepted' ?
+                                                                                <button
+                                                                                    onClick={() => handleClose(row._id)}
+                                                                                    className='btn btn-icon btn-sm me-1'
+                                                                                    style={{ backgroundColor: '#d1f7c4' }}
+                                                                                >
+                                                                                    <i className="bi bi-check text-success fs-5"></i>
+                                                                                </button> :
+                                                                                row.status == 'Correction Required' ?
+                                                                                    <button onClick={() => handleCorrect(row._id)} className='btn btn-icon btn-sm me-1' style={{ backgroundColor: '#f8d7da' }}>
+                                                                                        <i className="bi bi-x text-danger fs-5"></i>
+                                                                                    </button> :
+                                                                                    ''
                                                 }
                                             </div>
                                         </td>

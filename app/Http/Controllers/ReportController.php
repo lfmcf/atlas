@@ -253,54 +253,6 @@ class ReportController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Report $report)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Report $report)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Report $report)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Report $report)
-    {
-        //
-    }
-
     public function list(Request $request)
     {
         $user = auth()->user();
@@ -317,6 +269,8 @@ class ReportController extends Controller
                     ->orWhere('status', 'delivered')
                     ->orWhere('status', 'to verify')
                     ->orWhere('status', 'to correct')
+                    ->orWhere('status', 'accepted')
+                    ->orWhere('status', 'Correction Required')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
@@ -328,6 +282,8 @@ class ReportController extends Controller
                     ->orWhere('status', 'delivered')
                     ->orWhere('status', 'to verify')
                     ->orWhere('status', 'to correct')
+                    ->orWhere('status', 'accepted')
+                    ->orWhere('status', 'Correction Required')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
@@ -339,6 +295,8 @@ class ReportController extends Controller
                     ->orWhere('status', 'delivered')
                     ->orWhere('status', 'to verify')
                     ->orWhere('status', 'to correct')
+                    ->orWhere('status', 'accepted')
+                    ->orWhere('status', 'Correction Required')
                     ->orWhere('status', 'closed');
             })
                 ->where('created_by', $user->id)
@@ -427,6 +385,8 @@ class ReportController extends Controller
                 ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'accepted')
+                ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
             // $formattings = Formating::where('status', 'initiated')
@@ -442,6 +402,8 @@ class ReportController extends Controller
                 ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'accepted')
+                ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
             // $publishing = Publishing::where('status', 'initiated')
@@ -457,6 +419,8 @@ class ReportController extends Controller
                 ->orWhere('status', 'initiated')
                 ->orWhere('status', 'to verify')
                 ->orWhere('status', 'delivered')
+                ->orWhere('status', 'accepted')
+                ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
             // $publishingmrp = PublishingMrp::where('status', 'initiated')

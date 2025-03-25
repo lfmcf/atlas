@@ -123,40 +123,11 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
     const handleSelectProductChange = (e, name) => {
         setData(name, e)
-        // if (data.procedure && data.procedure.value == 'Nationale' && data.region && data.region.value == 'CH') {
-        //     setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
-        // } else if (data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized') {
-        //     setCountryList(eunatcountry)
-        // } else {
-        //     setIsLoading(true)
-        //     axios.post('getProductOrCountry', { 'procedure': data.procedure.value, 'product': e.value, }).then(res => {
-        //         var dt = res.data.map(ct => {
-        //             return { label: ct.country, value: ct.country, code: ct.code }
-        //         })
 
-        //         setCountryList(dt)
-        //         setData({ ...data, 'product': e, country: '' })
-
-        //         setTimeout(() => {
-        //             setIsLoading(false)
-        //         }, 1000)
-
-        //     })
-        // }
     }
 
     const handleSelectProductChange_ = (e) => {
         setState(prevState => ({ ...prevState, ['product_']: e }));
-
-        // if (procedure_ && procedure_.value == 'Nationale') {
-        //     if (region_ && region_.value == "EU") {
-        //         setCountryList(eunatcountry)
-        //     } else if (region_ && region_.value == "GCC") {
-        //         setCountryList(gcccountry)
-        //     } else {
-        //         setCountryList([{ label: "Switzerland", value: "Switzerland" }])
-        //     }
-        // }
     }
 
     const handleNavigate = (ReqType) => {
@@ -257,13 +228,6 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                 }
             })
         }
-        // router.visit('/publishing-initiate_', {
-        //     method: 'get',
-        //     data: { region: region_.value, procedure: procedure_.value, product: product_.value, country: country_ },
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded',
-        //     }
-        // })
 
         handleClose()
     }
@@ -274,37 +238,12 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
         if (data.region && data.region.value == 'GCC') {
             setData('procedure', { label: 'Nationale', value: 'Nationale' });
             setCompselect(false)
-            // axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
-            // setTimeout(() => {
-            //     setIsLoadingPr(false)
-            // }, 1000)
+
             setCountryList(gcccountry);
         } else if (data.region && data.region.value == 'CH') {
             setData('procedure', { label: 'Nationale', value: 'Nationale' });
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
             setCompselect(false)
-            // setIsLoadingPr(true)
-            // axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale' }).then(res => {
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
-
-            // setTimeout(() => {
-            //     setIsLoadingPr(false)
-            // }, 1000)
 
         }
 
@@ -315,30 +254,12 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
 
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
 
-            // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
-
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
             setCountryList(gcccountry);
             setCompselect(false)
         } else if (region_ && region_.value == 'CH') {
             setState(prevState => ({ ...prevState, ['procedure_']: { label: 'Nationale', value: 'Nationale' } }));
 
-            // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
+
             setCountryList([{ label: 'Switzerland', value: 'Switzerland' }])
             setCompselect(false)
         }
@@ -349,41 +270,11 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
         if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized' || data.procedure && data.procedure.value == 'Mutual Recognition') {
             setCountryList(eunatcountry)
             setCompselect(true)
-            //setIsLoadingPr(true)
-            // axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value, 'product_family': data.product_family.value }).then(res => {
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
-            // setCountryList(eunatcountry)
-
-            // setTimeout(() => {
-            //     setIsLoadingPr(false)
-            // }, 1000)
 
         } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
             setCountryList(eunatcountry)
             setCompselect(false)
-            //setIsLoadingPr(true)
-            // axios.post('getProductname', { 'region': data.region.value, 'procedure': 'Nationale', 'product_family': data.product_family.value }).then(res => {
 
-            //     if (res.status == 200) {
-            //         var myarr = []
-            //         res.data.map(val => {
-            //             myarr.push({ label: val, value: val })
-            //         })
-            //         setProductList(myarr);
-            //     }
-            // })
-
-
-            // setTimeout(() => {
-            //     setIsLoadingPr(false)
-            // }, 1000)
         }
     }, [data.procedure])
 

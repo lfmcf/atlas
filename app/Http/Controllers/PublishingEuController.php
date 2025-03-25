@@ -426,6 +426,17 @@ class PublishingEuController extends Controller
         ]);
     }
 
+    public function acceptEuVerification(Request $request)
+    {
+        $publishing = Publishing::findOrfail($request->id);
+        $publishing->status = 'accepted';
+        $publishing->save();
+        $user = User::where('current_team_id', 2)->get();
+        Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
+        //SendEmailJob::dispatch($publishing, $user);
+        return redirect('/list')->with('message', 'Publishing Request has been successfully accepted');
+    }
+
     public function completeEuPublishing(Request $request)
     {
         $publishing = Publishing::findOrfail($request->id);
@@ -440,10 +451,15 @@ class PublishingEuController extends Controller
 
     public function postEuCorrection(Request $request)
     {
-        // $user = auth()->user();
+        $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
 
-        $pub->status = 'to correct';
+        if ($user->current_team_id == 1) {
+            $pub->status = 'Correction Required';
+        } else {
+            $pub->status = 'to correct';
+        }
+
         if (is_array($pub->correction)) {
             $pub->correction = [...$pub->correction, $request->correction];
         } else {
@@ -451,7 +467,13 @@ class PublishingEuController extends Controller
         }
 
         $pub->save();
-        $Notuser = User::where('current_team_id', 3)->get();
+
+        if ($user->current_team_id == 1) {
+            $Notuser = User::where('current_team_id', 2)->get();
+        } else {
+            $Notuser = User::where('current_team_id', 3)->get();
+        }
+
         Notification::sendNow($Notuser, new InvoiceInitaitedForm($pub));
         SendEmailJob::dispatch($pub, $Notuser);
         return redirect()->route('show_eu_publishing', ['id' => $request->id])->with('message', 'Your request has been successfully submitted');
@@ -462,7 +484,7 @@ class PublishingEuController extends Controller
         $publishing = Publishing::findOrfail($request->id);
         $publishing->status = 'closed';
         $publishing->save();
-        $user = User::whereIn('current_team_id', [2, 3])->get();
+        $user = User::whereIn('current_team_id', [1, 3])->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
         return redirect('/list')->with('message', 'Publishing Request has been successfully closed');
     }

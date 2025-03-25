@@ -39,7 +39,7 @@ const Correct = (props: any) => {
     const [myErrors, setMyErroes] = useState({ dossier_type: '', dossier_count: '', sequence: '' })
     const [isModalOpen, setModalOpen] = useState(false);
     const [actionType, setActionType] = useState('');
-    const { metadata, folder, metapro } = props
+    const { metadata, folder, metapro, auth } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -82,7 +82,12 @@ const Correct = (props: any) => {
         deadline: new Date,
         adjusted_deadline: new Date,
         adjustedDeadlineComments: '',
-        correction: { user: { id: props.auth.user.id, name: props.auth.user.name }, date: new Date, message: '', source: [] }
+        correction: {
+            user: { id: props.auth.user.id, name: props.auth.user.name },
+            date: new Date,
+            message: '',
+            source: folder.correction && auth.user.current_team_id == 2 ? folder.correction[folder.correction.length - 1].source : [],
+        }
     });
 
     useEffect(() => {
@@ -872,7 +877,7 @@ const Correct = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='stg' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' checked={data.correction.source.includes('stg') ? true : false} value='stg' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Update</span>
@@ -882,7 +887,7 @@ const Correct = (props: any) => {
                                             <div className='col'>
                                                 <label className='btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6'>
                                                     <span className='form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1'>
-                                                        <input className='form-check-input' type='checkbox' name='source' value='ekemia' onChange={handleSourceChange} />
+                                                        <input className='form-check-input' type='checkbox' name='source' checked={data.correction.source.includes('ekemia') ? true : false} value='ekemia' onChange={handleSourceChange} />
                                                     </span>
                                                     <span className='ms-5'>
                                                         <span className='fs-4 fw-bold text-gray-800 d-block'>Correction</span>

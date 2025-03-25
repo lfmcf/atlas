@@ -27,6 +27,7 @@ import axios from 'axios';
 import Timeline from 'react-vis-timeline-3';
 import PropagateLoader from "react-spinners/PropagateLoader";
 import ContentLoader from 'react-content-loader'
+import { Head } from '@inertiajs/react';
 
 countries.registerLocale(enLocale)
 
@@ -799,6 +800,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
     return (
         <>
+            <Head title="Dashboard" />
             <div className="row g-5 g-xl-10 mb-5 mb-xl-1">
                 <div className="col-4">
                     <div className="card card-flush h-xl-100 h-100">

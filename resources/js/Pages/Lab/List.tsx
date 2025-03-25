@@ -3,6 +3,7 @@ import Authenticated from '../../Layouts/AuthenticatedLayout'
 import { TablesWidget9 } from '../../_metronic/partials/widgets'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { Head } from '@inertiajs/react'
 
 const MySwal = withReactContent(Swal)
 
@@ -23,6 +24,7 @@ const List = (props: any) => {
 
     return (
         <>
+            <Head title="List" />
             <TablesWidget9 data={allDemands} user={props.auth.user} />
         </>
     )

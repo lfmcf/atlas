@@ -289,6 +289,8 @@ export const eunatcountry = [
     { label: 'Croatia', value: 'Croatia' },
     { label: 'Norway', value: 'Norway' },
     { label: 'Sweden', value: 'Sweden' },
+    { label: 'Switzerland', value: 'Switzerland' },
+    { label: 'UK', value: 'UK' },
 ]
 
 export const gcccountry = [
