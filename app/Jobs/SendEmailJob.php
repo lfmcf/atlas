@@ -42,21 +42,23 @@ class SendEmailJob implements ShouldQueue
 
         if ($this->folder->form == 'Formatting') {
 
-            if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
-                Mail::to('laftim.moncef@gmail.com')->send(new FormSubmitted($this->folder));
-                // } else {
-                //     foreach ($this->user as $user) {
-                //         Mail::to($user->email)->send(new FormSubmitted($this->folder));
-                //     }
-            }
+            Mail::to('laftim.moncef@gmail.com')->send(new FormSubmitted($this->folder));
+            // if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
+            //     Mail::to('laftim.moncef@gmail.com')->send(new FormSubmitted($this->folder));
+            //     } else {
+            //         foreach ($this->user as $user) {
+            //             Mail::to($user->email)->send(new FormSubmitted($this->folder));
+            //         }
+            // }
         } else if ($this->folder->form == 'Publishing') {
-            if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
-                Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
-                // } else {
-                //     foreach ($this->user as $user) {
-                //         Mail::to($user->email)->send(new PublishingSubmitted($this->folder));
-                //     }
-            }
+            // if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
+            //     Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
+            //     } else {
+            //         foreach ($this->user as $user) {
+            //             Mail::to($user->email)->send(new PublishingSubmitted($this->folder));
+            //         }
+            // }
+            Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
         }
     }
 }

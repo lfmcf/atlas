@@ -562,7 +562,7 @@ class FormatingController extends Controller
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
-        //SendEmailJob::dispatch($formatting, $user);
+        SendEmailJob::dispatch($formatting, $user);
         return redirect('/list')->with('message', 'Formatting Request has been successfully accepted');
     }
 
