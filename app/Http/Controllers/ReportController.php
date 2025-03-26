@@ -90,9 +90,25 @@ class ReportController extends Controller
             ];
         }
 
-        $totalFormattings = Formating::where('status', '!=', 'draft')->count();
-        $totalPublishingNat = Publishing::where('status', '!=', 'draft')->count();
-        $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')->count();
+
+        if ($user->current_team_id == 1) {
+            $totalFormattings = Formating::where('status', '!=', 'draft')
+                ->where('created_by', $user->id)
+                ->count();
+            $totalPublishingNat = Publishing::where('status', '!=', 'draft')
+                ->where('created_by', $user->id)
+                ->count();
+            $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')
+                ->where('created_by', $user->id)
+                ->count();
+        } else {
+            $totalFormattings = Formating::where('status', '!=', 'draft')->count();
+            $totalPublishingNat = Publishing::where('status', '!=', 'draft')->count();
+            $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')->count();
+        }
+
+
+
 
         $totalPublishings = $totalPublishingNat + $totalPublishingMrp;
 

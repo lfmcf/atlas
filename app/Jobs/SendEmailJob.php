@@ -42,7 +42,7 @@ class SendEmailJob implements ShouldQueue
 
         if ($this->folder->form == 'Formatting') {
 
-            Mail::to('laftim.moncef@gmail.com')->send(new FormSubmitted($this->folder));
+            Mail::to('support@ekemia.com')->send(new FormSubmitted($this->folder));
             // if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
             //     Mail::to('laftim.moncef@gmail.com')->send(new FormSubmitted($this->folder));
             //     } else {
