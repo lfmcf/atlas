@@ -84,14 +84,14 @@ class FormSubmitted extends Mailable
     protected function getDynamicSubject(): string
     {
         if ($this->formatting->status === 'initiated') {
-            return 'New Formatting Form Initiated';
+            return 'New Formatting Form Initiated' . ' - ' . $this->formatting->status;
         } elseif ($this->formatting->status === 'submitted') {
-            return 'Formatting ' . $this->formatting->product_name['value'] . ' - ' . $this->formatting->country['value'] . ' - ' . $this->formatting->dossier_type['value'];
+            return 'Formatting ' . $this->formatting->product_name['value'] . ' - ' . $this->formatting->country['value'] . ' - ' . $this->formatting->dossier_type['value'] . ' - ' . $this->formatting->status;
         } elseif ($this->formatting->status === 'to verify') {
-            return 'Formatting Form Awaiting Verification';
+            return 'Formatting Form Awaiting Verification' . ' - ' . $this->formatting->status;
         }
 
-        return 'Formatting Form Update';
+        return 'Formatting Form Update' . ' - ' . $this->formatting->status;
     }
 
     protected function getViewTemplate(): string

@@ -1300,7 +1300,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                         Session Attendance
                                         <br />for Current Academic Year
                                     </div> */}
-                                    <Chart options={doptions} series={[acceptance, update, correction]} type='donut' />
+                                    <Chart options={doptions as ApexCharts.ApexOptions} series={[acceptance, update, correction]} type='donut' />
                                     <div className="mx-auto">
 
                                         <div className="d-flex align-items-center mb-2">
@@ -1382,7 +1382,7 @@ const Dashboard = (props: any) => {
     const update = props.update
     const perMonthFor = props.perMonthFor
     const perMonthPub = props.perMonthPub
-    const totalRequet = Object.values(RequetNumber).reduce((a, b) => a + b['total'], 0)
+    const totalRequet = Object.values(RequetNumber).reduce((a, b) => (a as number) + (b as { total: number })['total'], 0)
     const totalclosed = props.totalclosed
     const productCountry = props.productCountry
     const inprogress = props.inprogress

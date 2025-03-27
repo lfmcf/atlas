@@ -163,7 +163,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                     }
                 })
 
-            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized') {
+            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized' || data.procedure.value == 'Centralized') {
 
                 router.visit('/publishing_initiate', {
                     method: 'get',
@@ -271,20 +271,31 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
             setCountryList(eunatcountry)
             setCompselect(true)
 
-        } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale' || data.procedure && data.procedure.value == 'Centralized') {
+        } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Nationale') {
             setCountryList(eunatcountry)
             setCompselect(false)
 
+        } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Centralized') {
+            setCountryList(eunatcountry)
+            setCompselect(true)
         }
     }, [data.procedure])
 
     useEffect(() => {
 
+        console.log(data.region, data.procedure, data.country)
+
         if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Decentralized') {
             setProductList([{ label: 'ACTAIR', value: 'ACTAIR' }])
         } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition') {
             setProductList([{ label: 'ORALAIR', value: 'ORALAIR' }])
-        } else if (data.region && data.procedure) {
+        }
+        else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Centralized') {
+
+            setProductList([{ label: 'PALFORZIA', value: 'PALFORZIA' }])
+
+        }
+        else if (data.region && data.procedure) {
             axios.post('getProductname', { 'region': data.region.value, 'procedure': data.procedure.value, 'country': data.country.value }).then(res => {
                 if (res.status == 200) {
                     var myarr = []
@@ -349,7 +360,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
             // })
             setCountryList(eunatcountry)
             setCompselect(true)
-        } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale' || procedure_ && procedure_.value == 'Centralized') {
+        } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Nationale') {
 
             // axios.post('getProductname', { 'region': region_.value, 'procedure': 'Nationale' }).then(res => {
             //     if (res.status == 200) {
@@ -362,6 +373,9 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
             // })
             setCountryList(eunatcountry)
             setCompselect(false)
+        } else if (region_ && region_.value == 'EU' && procedure_ && procedure_.value == 'Centralized') {
+            setCountryList(eunatcountry)
+            setCompselect(true)
         }
     }, [procedure_])
 

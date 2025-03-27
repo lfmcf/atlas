@@ -78,14 +78,14 @@ class PublishingSubmitted extends Mailable
     protected function getDynamicSubject(): string
     {
         if ($this->publishing->status === 'initiated') {
-            return 'New Publishing Form Initiated';
+            return 'New Publishing Form Initiated' . ' - ' . $this->publishing->status;
         } elseif ($this->publishing->status === 'submitted') {
-            return 'Publishing ' . $this->publishing->product_name . ' - ' . $this->publishing->sequence . ' - ' . $this->publishing->dossier_type['value'];
+            return 'Publishing ' . $this->publishing->product_name . ' - ' . $this->publishing->sequence . ' - ' . $this->publishing->dossier_type['value'] . ' - ' . $this->publishing->status;
         } elseif ($this->publishing->status === 'to verify') {
-            return 'Publishing Form Awaiting Verification';
+            return 'Publishing Form Awaiting Verification' . ' - ' . $this->publishing->status;
         }
 
-        return 'Publishing Form Update';
+        return 'Publishing Form Update' . ' - ' . $this->publishing->status;
     }
 
     protected function getViewTemplate(): string
