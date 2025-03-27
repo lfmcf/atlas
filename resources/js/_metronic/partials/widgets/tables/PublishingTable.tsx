@@ -78,7 +78,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.post(route('accept_ch_verification'), { id: row._id })
         } else if (row.region == 'GCC') {
             router.post(route('accept_gcc_verification'), { id: row._id })
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
             router.post(route('accept-publishing'), { id: row._id })
         }
     }
@@ -91,7 +91,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_verify'), { id: row._id })
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_verify'), { id: row._id })
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
             router.get(route('publishing_rmp_verify'), { id: row._id })
         }
         // router.get(route('publishing-verification'), { id: id })
@@ -115,7 +115,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
     const handleShow = (id, region, procedure) => {
         if (region === 'CH') {
             router.get(route('show-publishing-nat-ch'), { id: id })
-        } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized")) {
+        } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized" || region == "EU" && procedure == "Centralized")) {
             router.get(route('show-publishing-rmp'), { id: id })
         } else {
             router.get(route('show_eu_publishing'), { id: id })
@@ -199,7 +199,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_confirm', { id: row._id }))
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_confirm', { id: row._id }))
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
             router.get(route('publishing_confirm', { id: row._id }))
         }
 
@@ -212,7 +212,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
             router.get(route('publishing_ch_audit', { id: row._id }))
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_audit', { id: row._id }))
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
             router.get(route('publishing_audit', { id: row._id }))
         }
     }
@@ -296,7 +296,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
                                             </span>
                                         </td>
                                         <td>
-                                            {row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' ?
+                                            {row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' || row.procedure == 'Centralized' ?
                                                 <>
                                                     <ReactCountryFlag
                                                         countryCode="EU"

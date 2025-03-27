@@ -295,7 +295,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 										</td>
 										<td>
 
-											{row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' ?
+											{row.procedure == 'Mutual Recognition' || row.procedure == 'Decentralized' || row.procedure == 'Centralized' ?
 												<>
 													<ReactCountryFlag
 														countryCode="EU"
