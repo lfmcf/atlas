@@ -51,13 +51,7 @@ class SendEmailJob implements ShouldQueue
             //         }
             // }
         } else if ($this->folder->form == 'Publishing') {
-            // if ($this->folder->status === 'submitted' || $this->folder->status === 'to correct') {
-            //     Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
-            //     } else {
-            //         foreach ($this->user as $user) {
-            //             Mail::to($user->email)->send(new PublishingSubmitted($this->folder));
-            //         }
-            // }
+
             Mail::to('support@ekemia.com')->send(new PublishingSubmitted($this->folder));
         }
     }
