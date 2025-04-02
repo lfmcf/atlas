@@ -163,7 +163,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                     }
                 })
 
-            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized' || data.procedure.value == 'Centralized') {
+            } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Mutual Recognition' || data.procedure.value == 'Decentralized') {
 
                 router.visit('/publishing_initiate', {
                     method: 'get',
@@ -276,8 +276,12 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
             setCompselect(false)
 
         } else if (data.region && data.region.value == 'EU' && data.procedure && data.procedure.value == 'Centralized') {
-            setCountryList(eunatcountry)
-            setCompselect(true)
+            setCountryList([
+                { label: 'EU', value: 'EU' },
+                { label: 'UK', value: 'UK' },
+                { label: 'Switzerland', value: 'Switzerland' },
+            ])
+            // setCompselect(true)
         }
     }, [data.procedure])
 
