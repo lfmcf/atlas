@@ -58,11 +58,33 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
     }
 
     const handleClose = (id) => {
-        router.post(route('close-formatting'), { id: id })
+        MySwal.fire({
+            title: 'Click on "Yes" to close the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route('close-formatting'), { id: id })
+            }
+        })
+
     }
 
     const handleAccept = (id) => {
-        router.post(route('accept-formatting'), { id: id })
+        MySwal.fire({
+            title: 'Click on "Yes" to accept the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route('accept-formatting'), { id: id })
+            }
+        })
+
     }
 
     const handleCorrect = (id) => {
@@ -89,7 +111,17 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
     }
 
     const handleCompleted = (id) => {
-        router.post(route('complete-formatting'), { id: id })
+        MySwal.fire({
+            title: 'Click on "Yes" to complete the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route('complete-formatting'), { id: id })
+            }
+        })
     }
 
     const handleprevious = () => {

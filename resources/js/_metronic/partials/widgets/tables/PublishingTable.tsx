@@ -58,29 +58,49 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
     }
 
     const handleClose = (row) => {
-        if (row.region == 'EU' && row.procedure == "Nationale") {
-            router.post(route('close_eu_publishing'), { id: row._id })
-        } else if (row.region == 'CH') {
-            router.post(route('close_ch_publishing'), { id: row._id })
-        } else if (row.region == 'GCC') {
-            router.post(route('close_gcc_publishing'), { id: row._id })
-        }
-        else {
-            router.post(route('close_rmp_publishing'), { id: row._id })
-        }
-
+        MySwal.fire({
+            title: 'Click on "Yes" to close the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (row.region == 'EU' && row.procedure == "Nationale") {
+                    router.post(route('close_eu_publishing'), { id: row._id })
+                } else if (row.region == 'CH') {
+                    router.post(route('close_ch_publishing'), { id: row._id })
+                } else if (row.region == 'GCC') {
+                    router.post(route('close_gcc_publishing'), { id: row._id })
+                }
+                else {
+                    router.post(route('close_rmp_publishing'), { id: row._id })
+                }
+            }
+        })
     }
 
     const handleAccept = (row) => {
-        if (row.region == 'EU' && row.procedure == "Nationale") {
-            router.post(route('accept_eu_verification'), { id: row._id })
-        } else if (row.region == 'CH') {
-            router.post(route('accept_ch_verification'), { id: row._id })
-        } else if (row.region == 'GCC') {
-            router.post(route('accept_gcc_verification'), { id: row._id })
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
-            router.post(route('accept-publishing'), { id: row._id })
-        }
+        MySwal.fire({
+            title: 'Click on "Yes" to accept the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (row.region == 'EU' && row.procedure == "Nationale") {
+                    router.post(route('accept_eu_verification'), { id: row._id })
+                } else if (row.region == 'CH') {
+                    router.post(route('accept_ch_verification'), { id: row._id })
+                } else if (row.region == 'GCC') {
+                    router.post(route('accept_gcc_verification'), { id: row._id })
+                } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
+                    router.post(route('accept-publishing'), { id: row._id })
+                }
+            }
+        })
+
     }
 
 
@@ -141,16 +161,28 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser }) => {
 
     const handleCompleted = (row) => {
 
-        if (row.region == 'EU' && row.procedure == "Nationale") {
-            router.post(route('complete_eu_publishing'), { id: row._id })
-        } else if (row.region == 'CH') {
-            router.post(route('complete_ch_publishing'), { id: row._id })
-        } else if (row.region == 'GCC') {
-            router.post(route('complete_gcc_publishing'), { id: row._id })
-        }
-        else {
-            router.post(route('complete_rmp_publishing'), { id: row._id })
-        }
+        MySwal.fire({
+            title: 'Click on "Yes" to complete the request or click on "No, return"  to return to the list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (row.region == 'EU' && row.procedure == "Nationale") {
+                    router.post(route('complete_eu_publishing'), { id: row._id })
+                } else if (row.region == 'CH') {
+                    router.post(route('complete_ch_publishing'), { id: row._id })
+                } else if (row.region == 'GCC') {
+                    router.post(route('complete_gcc_publishing'), { id: row._id })
+                }
+                else {
+                    router.post(route('complete_rmp_publishing'), { id: row._id })
+                }
+            }
+        })
+
+
 
     }
 

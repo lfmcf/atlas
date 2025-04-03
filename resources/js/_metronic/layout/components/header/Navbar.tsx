@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import { HeaderNotificationsMenu, HeaderUserMenu, Search, ThemeModeSwitcher } from '../../../partials'
 import { useLayout } from '../../core'
+import axios from 'axios'
 
 const itemClass = 'ms-1 ms-md-4'
 const btnClass =
@@ -17,6 +18,12 @@ const Navbar = ({ auth }) => {
 
     const avatar = auth.user.avatar
 
+    const markallasread = () => {
+        if (unreadNot > 0) {
+            axios.post('mark-all-as-read')
+        }
+    }
+
 
     return (
         <div className='app-navbar flex-shrink-0'>
@@ -27,6 +34,7 @@ const Navbar = ({ auth }) => {
                     data-kt-menu-attach='parent'
                     data-kt-menu-placement='bottom-end'
                     className={clsx('position-relative', btnClass)}
+                    onClick={(e) => markallasread()}
                 >
                     <KTIcon iconName='notification' className={btnIconClass} />
                     {/* <i className="bi bi-bell fa-5x"></i> */}

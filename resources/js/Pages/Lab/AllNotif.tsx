@@ -64,7 +64,7 @@ const AllNotifs = (props) => {
                         </li>
 
                     </ul>
-                    {/* <button className="btn btn-sm btn-primary align-self-center ms-5" onClick={markAllAsRead}>Mark all as read</button> */}
+                    <button className="btn btn-sm btn-primary align-self-center ms-5" onClick={markAllAsRead}>Mark all as read</button>
                 </div>
             </div>
             <div className="card-body">

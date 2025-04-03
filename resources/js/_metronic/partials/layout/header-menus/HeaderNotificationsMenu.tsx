@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import clsx from 'clsx'
-import { FC } from 'react'
-import { Link } from '@inertiajs/react'
 import { defaultAlerts, defaultLogs, KTIcon, toAbsoluteUrl, useIllustrationsPath } from '../../../helpers'
 import moment from 'moment'
 import { router } from '@inertiajs/react'
@@ -19,6 +17,18 @@ const handleNavigation = (data, notId) => {
         router.get(route('tasks'), { id: data.id, notId: notId })
     }
 }
+
+// useEffect(() => {
+//     console.log('mark all as read')
+//     axios.post('mark-all-as-read').then(res => {
+//         console.log(res)
+//     })
+// }, [])
+
+// const getAllNotifications = (e) => {
+//     e.preventDefault()
+//     router.get('allnotifications');
+// }
 
 const HeaderNotificationsMenu = ({ auth }) => (
     <div className='menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px' data-kt-menu='true'>
@@ -65,14 +75,15 @@ const HeaderNotificationsMenu = ({ auth }) => (
                     ))}
                 </div>
 
-                <div className='py-3 text-center border-top'>
+                {/* <div className='py-3 text-center border-top menu-item'>
                     <Link
-                        href='/allnotifications'
-                        className='btn btn-color-gray-600 btn-active-color-primary'
+                        href=''
+                        className='btn btn-color-gray-600 btn-active-color-primary menu-link'
+                        onClick={(e) => getAllNotifications(e)}
                     >
                         View All <KTIcon iconName='arrow-right' className='fs-5' />
                     </Link>
-                </div>
+                </div> */}
             </div>
 
             <div className='tab-pane fade' id='kt_topbar_notifications_2' role='tabpanel'>
