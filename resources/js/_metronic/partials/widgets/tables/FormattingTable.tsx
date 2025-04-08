@@ -10,6 +10,7 @@ import $ from 'jquery';
 import "datatables.net-dt/js/dataTables.dataTables";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { DateConsultation } from '../../modals/date-consultation/DateConsultation';
 
 const MySwal = withReactContent(Swal)
 
@@ -25,6 +26,7 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
     const [pageNumbers, setpageNumbers] = useState([]);
     const [nombrePages, setnombrePages] = useState(0);
     const [pageLength, setpageLenght] = useState(10);
+    const [showDate, setShowDate] = useState({ 'status': false, requestDate: '', deliveryDeadline: '', adjustedDeadline: '' });
 
     const tableRef = useRef()
 
@@ -162,6 +164,11 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
         tb.page(number - 1).draw('page')
     }
 
+    const handleconsultdate = (row) => {
+        setShowDate({ 'status': !showDate.status, requestDate: row.request_date, deliveryDeadline: row.delivery_deadline, adjustedDeadline: row.adjusted_deadline })
+    }
+
+
     return (
         <>
             <div className={`card mb-5`}>
@@ -279,6 +286,27 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                                         </td>
                                         <td>
                                             <div className='d-flex justify-content-end flex-shrink-0'>
+                                                <a
+                                                    href='#'
+
+                                                    onClick={() => handleconsultdate(row)}
+                                                    data-bs-toggle='modal'
+                                                    data-bs-target='#kt_modal_date_consultation'
+                                                    className='btn btn-icon btn-sm me-1'
+                                                    title='Consulte request dates'
+                                                >
+                                                    <i className="bi bi-calendar-check text-info fs-5"></i>
+
+                                                </a>
+                                                <a
+                                                    href='#'
+                                                    className='btn btn-icon btn-sm me-1 bg-light'
+                                                    onClick={() => router.get('show-formatting', { id: row._id })}
+                                                    title='View the request'
+                                                >
+                                                    <i className="bi bi-eye-fill text-info fs-5"></i>
+
+                                                </a>
                                                 {row.status == 'draft' ?
                                                     <a
                                                         href='#'
@@ -457,6 +485,12 @@ const FormattingTable: React.FC<Props> = ({ data }) => {
                 </div>
             </div >
             <DeliveryMessage show={show.status} id={show.id} form={show.form} />
+            <DateConsultation
+                show={showDate.status}
+                request_date={showDate.requestDate}
+                delivery_deadline={showDate.deliveryDeadline}
+                adjusted_deadline={showDate.adjustedDeadline}
+            />
         </>
     )
 }
