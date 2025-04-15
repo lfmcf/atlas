@@ -28,7 +28,7 @@ export * from './modals/select-location/SelectLocationModal'
 export * from './modals/invite-users/InviteUsers'
 export * from './modals/upgrade-plan/UpgradePlan'
 export * from './modals/multi-data-update/MultiDataUpdate'
-export * from './modals/Delivey-Message/DeliveryMessage'
+// export * from './modals/Delivey-Message/DeliveryMessage'
 export * from './modals/date-consultation/DateConsultation'
 // export * from './modals/Delivey-Message/DeliveryMessagePub'
 

@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Mail\Mailables\Address;
 
 class PublishingSubmitted extends Mailable
 {
@@ -18,6 +19,7 @@ class PublishingSubmitted extends Mailable
     public Publishing $publishing;
     public string $dynamicSubject;
     public string $viewTemplate;
+    public Address $dynamicFrom;
     public $attachments = [];
 
 
@@ -29,6 +31,7 @@ class PublishingSubmitted extends Mailable
         $this->publishing = $publishing;
         $this->dynamicSubject = $this->getDynamicSubject();
         $this->viewTemplate = $this->getViewTemplate();
+        $this->dynamicFrom = $this->getDynamicFrom();
         $this->setAttachments();
     }
 
@@ -75,14 +78,28 @@ class PublishingSubmitted extends Mailable
         // ];/Users/ziop/workspace/atlas/public/whatsapp.png
     }
 
+    protected function getDynamicFrom(): Address
+    {
+        if ($this->publishing->status === 'initiated') {
+            return new Address('car.test.atlas@gmail.com', 'Atlas');
+        } elseif ($this->publishing->status === 'submitted' || $this->publishing->status === 'to correct' || $this->publishing->status === 'completed') {
+            return new Address('opr.test.atlas@gmail.com', 'Atlas');
+        } elseif ($this->publishing->status === 'to verify' || $this->publishing->status === 'in progress' || $this->publishing->status === 'delivered') {
+            return new Address('support@ekemia.com', 'Atlas');
+        }
+        return new Address('support@ekemia.com', 'Atlas');
+    }
+
     protected function getDynamicSubject(): string
     {
         if ($this->publishing->status === 'initiated') {
-            return 'New Publishing Form Initiated' . ' - ' . $this->publishing->status;
-        } elseif ($this->publishing->status === 'submitted') {
-            return 'Publishing ' . $this->publishing->product_name . ' - ' . $this->publishing->sequence . ' - ' . $this->publishing->dossier_type['value'] . ' - ' . $this->publishing->status;
-        } elseif ($this->publishing->status === 'to verify') {
-            return 'Publishing Form Awaiting Verification' . ' - ' . $this->publishing->status;
+            return 'New Publishing Request' . ' - ' . $this->publishing->public_id . ' - ' . $this->publishing->status . ' - ' . $this->publishing->product_name . ' - ' . $this->publishing->country['code'] . ' - ' . $this->publishing->procedure;
+        } elseif ($this->publishing->status === 'submitted' && $this->publishing->oldstatus === 'initiated') {
+            return 'New Publishing Request' . ' - ' . $this->publishing->public_id . ' - ' . $this->publishing->status . ' - ' . $this->publishing->product_name . ' - ' . $this->publishing->country['code'] . ' - ' . $this->publishing->procedure;
+        } elseif ($this->publishing->status === 'submitted' && $this->publishing->oldstatus === 'to verify') {
+            return 'Publishing Request' . ' - ' . $this->publishing->public_id . ' - ' . $this->publishing->status . ' - ' . $this->publishing->product_name . ' - ' . $this->publishing->country['code'] . ' - ' . $this->publishing->procedure;
+        } elseif ($this->publishing->status === 'to verify' || $this->publishing->status === 'in progress' || $this->publishing->status === 'delivered' || $this->publishing->status === 'to correct' || $this->publishing->status === 'completed') {
+            return 'Publishing Request' . ' - ' . $this->publishing->public_id . ' - ' . $this->publishing->status . ' - ' . $this->publishing->product_name . ' - ' . $this->publishing->country['code'] . ' - ' . $this->publishing->procedure;
         }
 
         return 'Publishing Form Update' . ' - ' . $this->publishing->status;
@@ -92,19 +109,23 @@ class PublishingSubmitted extends Mailable
     {
         $emailveiw = "";
         if ($this->publishing->status === 'initiated') {
-            $emailveiw = 'emails.InitiatedForm';
-        } elseif ($this->publishing->status === 'submitted') {
-            $emailveiw = 'emails.NewPublishing';
+            $emailveiw = 'emails.publishing.InitiatedForm';
+        } elseif ($this->publishing->status === 'submitted' && $this->publishing->oldstatus === 'initiated') {
+            $emailveiw = 'emails.publishing.SubmittedForm';
         } elseif ($this->publishing->status === 'to verify') {
-            $emailveiw = 'emails.VerifyForm';
-        } elseif ($this->publishing->status === 'in progress') {
-            $emailveiw = 'emails.AcceptedForm';
-        } elseif ($this->publishing->status === 'delivered') {
-            $emailveiw = 'emails.DeliveredForm';
-        } elseif ($this->publishing->status === 'to correct') {
-            $emailveiw = 'emails.CorrectForm';
+            $emailveiw = 'emails.publishing.VerifyForm';
+        } elseif ($this->publishing->status === 'submitted' && $this->publishing->oldstatus === 'to verify') {
+            $emailveiw = 'emails.publishing.SubmitAfterVerify';
+        } else if ($this->publishing->status === 'in progress') {
+            $emailveiw = 'emails.publishing.ProgressForm';
+        } elseif ($this->publishing->status === 'delivered' && $this->publishing->oldstatus === 'in progress') {
+            $emailveiw = 'emails.publishing.DeliveredForm';
+        } elseif ($this->publishing->status === 'to correct' && $this->publishing->oldstatus === 'delivered') {
+            $emailveiw = 'emails.publishing.CorrectForm';
+        } elseif ($this->publishing->status === 'delivered' && $this->publishing->oldstatus === 'to correct') {
+            $emailveiw = 'emails.publishing.DeliverAfterCorrect';
         } elseif ($this->publishing->status === 'completed') {
-            $emailveiw = 'emails.CompletedForm';
+            $emailveiw = 'emails.publishing.CompletedForm';
         }
         return $emailveiw;
     }

@@ -17,6 +17,7 @@ use App\Notifications\InvoiceInitaitedForm;
 use App\Mail\PublishingSubmitted;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailJob;
+use Illuminate\Support\Facades\DB;
 
 class PublishingEuController extends Controller
 {
@@ -104,6 +105,33 @@ class PublishingEuController extends Controller
         $NewOrOldPub = Publishing::find($request->id);
         $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
+        // Generate the public ID
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('p_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('p_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('p_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+        $pub->public_id = $publicId;
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;
@@ -268,6 +296,7 @@ class PublishingEuController extends Controller
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
+        $pub->oldstatus = $pub->status;
         $pub->status = 'submitted';
 
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
@@ -318,6 +347,7 @@ class PublishingEuController extends Controller
         $publishing = Publishing::findOrfail($request->id);
 
         if ($currentUser->current_team_id == 3) {
+            $publishing->oldstatus = $publishing->status;
             $publishing->status = 'to verify';
             $publishing->save();
             if ($publishing->audit) {
@@ -327,6 +357,7 @@ class PublishingEuController extends Controller
             }
             $publishing->save();
             $user = User::where('current_team_id', 2)->get();
+            SendEmailJob::dispatch($publishing, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($publishing));
         } else {
 
@@ -391,8 +422,8 @@ class PublishingEuController extends Controller
             $publishing->invented_name = $request->invented_name;
             $publishing->request_date = $request->request_date;
             $publishing->deadline = $request->deadline;
+            $publishing->oldstatus = $publishing->status;
             $publishing->status = 'submitted';
-
             $publishing->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
             $publishing->adjustedDeadlineComments = $request->adjustedDeadlineComments;
             if ($publishing->audit) {
@@ -429,6 +460,7 @@ class PublishingEuController extends Controller
     public function acceptEuVerification(Request $request)
     {
         $publishing = Publishing::findOrfail($request->id);
+        $publishing->oldstatus = $publishing->status;
         $publishing->status = 'accepted';
         $publishing->save();
         $user = User::where('current_team_id', 2)->get();
@@ -440,6 +472,7 @@ class PublishingEuController extends Controller
     public function completeEuPublishing(Request $request)
     {
         $publishing = Publishing::findOrfail($request->id);
+        $publishing->oldstatus = $publishing->status;
         $publishing->status = 'completed';
         $publishing->save();
 
@@ -455,8 +488,10 @@ class PublishingEuController extends Controller
         $pub = Publishing::findOrfail($request->id);
 
         if ($user->current_team_id == 1) {
+            $pub->oldstatus = $pub->status;
             $pub->status = 'Correction Required';
         } else {
+            $pub->oldstatus = $pub->status;
             $pub->status = 'to correct';
         }
 
@@ -482,6 +517,7 @@ class PublishingEuController extends Controller
     public function closeEuPublishing(Request $request)
     {
         $publishing = Publishing::findOrfail($request->id);
+        $publishing->oldstatus = $publishing->status;
         $publishing->status = 'closed';
         $publishing->save();
         $user = User::whereIn('current_team_id', [1, 3])->get();

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Notifications\InvoiceInitaitedForm;
+use Illuminate\Support\Facades\DB;
 
 class PublishingChController extends Controller
 {
@@ -91,6 +92,33 @@ class PublishingChController extends Controller
         $NewOrOldPub = Publishing::find($request->id);
         $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
 
+        // Generate the public ID
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('p_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('p_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('p_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+        $pub->public_id = $publicId;
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;
@@ -268,6 +296,7 @@ class PublishingChController extends Controller
 
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+        $pub->oldstatus = $pub->status;
         $pub->status = 'submitted';
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
@@ -310,6 +339,7 @@ class PublishingChController extends Controller
         $currentUser = auth()->user();
         $pub = Publishing::findOrfail($request->id);
         if ($currentUser->current_team_id == 3) {
+            $pub->oldstatus = $pub->status;
             $pub->status = 'to verify';
             if ($pub->audit) {
                 $pub->audit = [...$pub->audit, $request->audit];
@@ -318,6 +348,7 @@ class PublishingChController extends Controller
             }
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
+            SendEmailJob::dispatch($pub, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         } else {
             $docs = $request->doc;
@@ -394,7 +425,7 @@ class PublishingChController extends Controller
             $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
             $pub->docremarks = $request->docremarks;
             $pub->invented_name = $request->invented_name;
-
+            $pub->oldstatus = $pub->status;
             $pub->status = 'submitted';
 
             if ($pub->audit) {
@@ -424,6 +455,7 @@ class PublishingChController extends Controller
     public function acceptChVerification(Request $request)
     {
         $publishing = Publishing::findOrfail($request->id);
+        $publishing->oldstatus = $publishing->status;
         $publishing->status = 'accepted';
         $publishing->save();
         $user = User::where('current_team_id', 2)->get();
@@ -438,8 +470,10 @@ class PublishingChController extends Controller
         $pub = Publishing::findOrfail($request->id);
 
         if ($user->current_team_id == 1) {
+            $pub->oldstatus = $pub->status;
             $pub->status = 'Correction Required';
         } else {
+            $pub->oldstatus = $pub->status;
             $pub->status = 'to correct';
         }
 
@@ -465,6 +499,7 @@ class PublishingChController extends Controller
     public function completeChPublishing(Request $request)
     {
         $pub = Publishing::findOrfail($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'completed';
         $pub->save();
         $user = User::where('current_team_id', 1)->get();
@@ -476,6 +511,7 @@ class PublishingChController extends Controller
     {
 
         $pub = Publishing::findOrfail($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'closed';
         $pub->save();
         $user = User::whereIn('current_team_id', [1, 3])->get();

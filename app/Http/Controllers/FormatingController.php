@@ -14,6 +14,7 @@ use App\Notifications\InvoiceInitaitedForm;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class FormatingController extends Controller
 {
@@ -122,6 +123,33 @@ class FormatingController extends Controller
         $NewOrOldFor = Formating::find($request->id);
         $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
 
+        // Generate the public ID
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('f_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('f_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('f_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'FOR' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+        $formatting->public_id = $publicId;
         $formatting->form = $request->form;
         $formatting->region = $request->region;
         $formatting->coredoc = $request->coredoc;
@@ -331,6 +359,7 @@ class FormatingController extends Controller
         $formatting->docremarks = $request->docremarks;
         //$formatting->request_date = date('Y-m-d H:i:s', strtotime(Carbon::now()));
         // $formatting->deadline = date('Y-m-d H:i:s', $request->deadline);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'submitted';
         $formatting->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $formatting->adjustedDeadlineComments = $request->adjustedDeadlineComments;
@@ -347,6 +376,7 @@ class FormatingController extends Controller
     public function QuickpostConfirm(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'submitted';
         $formatting->save();
         $user = User::where('current_team_id', 3)->get();
@@ -389,8 +419,10 @@ class FormatingController extends Controller
 
         $formatting = Formating::findOrfail($request->id);
         if ($user->current_team_id == 3) {
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'to verify';
         } else {
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'submitted';
         }
 
@@ -409,6 +441,7 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
 
         if ($currentUser->current_team_id == 3) {
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'to verify';
             if ($formatting->audit) {
                 $formatting->audit = [...$formatting->audit, $request->audit];
@@ -461,6 +494,7 @@ class FormatingController extends Controller
                 $formatting->document = $docs;
             }
             $formatting->docremarks = $request->docremarks;
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'submitted';
             $formatting->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
             $formatting->adjustedDeadlineComments = $request->adjustedDeadlineComments;
@@ -482,6 +516,7 @@ class FormatingController extends Controller
     {
         $user = auth()->user();
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'delivered';
         if ($formatting->deliveryComment) {
             $formatting->deliveryComment = [...$formatting->deliveryComment, ['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment]];
@@ -528,8 +563,10 @@ class FormatingController extends Controller
         $formatting = Formating::findOrfail($request->id);
 
         if ($user->current_team_id == 1) {
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'Correction Required';
         } else {
+            $formatting->oldstatus = $formatting->status;
             $formatting->status = 'to correct';
         }
 
@@ -558,6 +595,7 @@ class FormatingController extends Controller
     public function accept(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'accepted';
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();
@@ -569,6 +607,7 @@ class FormatingController extends Controller
     public function complete(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'completed';
         $formatting->save();
         $user = User::where('current_team_id', 1)->get();
@@ -581,6 +620,7 @@ class FormatingController extends Controller
     {
 
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'closed';
         $formatting->save();
         $user = User::whereIn('current_team_id', [1, 3])->get();
@@ -592,6 +632,7 @@ class FormatingController extends Controller
     public function setProgress(Request $request)
     {
         $formatting = Formating::findOrfail($request->id);
+        $formatting->oldstatus = $formatting->status;
         $formatting->status = 'in progress';
         $formatting->save();
         $user = User::where('current_team_id', 2)->get();

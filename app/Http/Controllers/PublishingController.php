@@ -20,6 +20,7 @@ use App\Mail\PublishingSubmitted;
 use App\Models\Product;
 use App\Models\Region;
 use App\Models\Procedure;
+use Illuminate\Support\Facades\DB;
 
 class PublishingController extends Controller
 {
@@ -350,6 +351,34 @@ class PublishingController extends Controller
 
         $NewOrOldPub = Publishing::find($request->id);
         $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
+
+        // Generate the public ID
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('p_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('p_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('p_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+        $pub->public_id = $publicId;
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -796,6 +825,7 @@ class PublishingController extends Controller
         $pub->invented_name = $request->invented_name;
         $pub->request_date = $request->request_date;
         $pub->deadline = $request->deadline;
+        $pub->oldstatus = $pub->status;
         $pub->status = 'submitted';
 
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
@@ -851,6 +881,7 @@ class PublishingController extends Controller
         $currentUser = auth()->user();
         $ublishing = Publishing::findOrfail($request->id);
         if ($currentUser->current_team_id == 3) {
+            $ublishing->oldstatus = $ublishing->status;
             $ublishing->status = 'to verify';
             if ($ublishing->audit) {
                 $ublishing->audit = [...$ublishing->audit, $request->audit];
@@ -931,6 +962,7 @@ class PublishingController extends Controller
             $pub->invented_name = $request->invented_name;
             $pub->request_date = $request->request_date;
             $pub->deadline = $request->deadline;
+            $pub->oldstatus = $pub->status;
             $pub->status = 'submitted';
 
             $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
@@ -953,6 +985,7 @@ class PublishingController extends Controller
     {
 
         $pub = Publishing::findOrfail($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'submitted';
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
@@ -968,6 +1001,7 @@ class PublishingController extends Controller
         if (!$pub) {
             $pub = PublishingMrp::find($request->id);
         }
+        $pub->oldstatus = $pub->status;
         $pub->status = 'in progress';
         $pub->save();
         $user = User::where('current_team_id', 2)->get();
@@ -980,6 +1014,7 @@ class PublishingController extends Controller
     {
         $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'to verify';
         // $formatting->audit->push((object));
         if ($pub->audit) {
@@ -999,6 +1034,7 @@ class PublishingController extends Controller
         if (!$pub) {
             $pub = PublishingMrp::find($request->id);
         }
+        $pub->oldstatus = $pub->status;
         $pub->status = 'delivered';
         if ($pub->deliveryComment) {
             $pub->deliveryComment = [['user' => $user->id, 'date' => date('Y-m-d H:i:s'), 'message' => $request->comment], ...$pub->deliveryComment];
@@ -1024,7 +1060,7 @@ class PublishingController extends Controller
     {
         $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
-
+        $pub->oldstatus = $pub->status;
         $pub->status = 'to correct';
         if (is_array($pub->correction)) {
             $pub->correction = [...$pub->correction, $request->correction];
@@ -1047,6 +1083,7 @@ class PublishingController extends Controller
     {
 
         $pub = PublishingMrp::find($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'completed';
         $pub->save();
         $user = User::where('current_team_id', 1)->get();
@@ -1066,6 +1103,7 @@ class PublishingController extends Controller
     {
         $user = auth()->user();
         $pub = Publishing::findOrfail($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'to correct';
         if (is_array($pub->correction)) {
             $pub->correction = [
@@ -1101,6 +1139,7 @@ class PublishingController extends Controller
     {
 
         $pub = PublishingMrp::find($request->id);
+        $pub->oldstatus = $pub->status;
         $pub->status = 'closed';
         $pub->save();
         $user = User::whereIn('current_team_id', [2, 3])->get();
@@ -2123,6 +2162,7 @@ class PublishingController extends Controller
             }
             $pub->save();
             $user = User::where('current_team_id', 2)->get();
+            SendEmailJob::dispatch($pub, $user);
             Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         } else {
             $docs = $request->doc;

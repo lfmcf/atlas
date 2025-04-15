@@ -10,4 +10,10 @@ class PublishingMrp extends Model
     protected $connection = 'mongodb';
     protected $collection = 'publishingMrp';
     use HasFactory;
+
+    protected $casts = [
+        'request_date' => 'datetime',
+        'deadline' => 'datetime',
+        'adjusted_deadline' => 'datetime',
+    ];
 }

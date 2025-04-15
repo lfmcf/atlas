@@ -22,7 +22,7 @@ type Props = {
 
 const FormattingTable: React.FC<Props> = ({ data, handleconsultdate }) => {
 
-    const [show, setShow] = useState({ 'status': false, id: '', form: '' });
+    const [showF, setShowF] = useState({ 'status': false, id: '', form: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const [tb, setTb] = useState();
     const [pageNumbers, setpageNumbers] = useState([]);
@@ -57,7 +57,7 @@ const FormattingTable: React.FC<Props> = ({ data, handleconsultdate }) => {
 
     const handleDilivred = (id, form) => {
 
-        setShow({ 'status': !show.status, id: id, form: form })
+        setShowF({ 'status': !showF.status, id: id, form: form })
         //router.post(route('deliver'), { id: id })
     }
 
@@ -489,13 +489,13 @@ const FormattingTable: React.FC<Props> = ({ data, handleconsultdate }) => {
                         </div>
                     </div>
                 </div>
-                {/* <DeliveryMessage show={show.status} id={show.id} form={show.form} />
-                <DateConsultation
+                <DeliveryMessage show={showF.status} id={showF.id} form={showF.form} />
+                {/* <DateConsultation
                     show={showDate.status}
                     request_date={showDate.requestDate}
                     delivery_deadline={showDate.deliveryDeadline}
                     adjusted_deadline={showDate.adjustedDeadline}
-                /> */}
+                />  */}
             </div>
 
         </>
