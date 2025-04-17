@@ -172,28 +172,6 @@ const EditTwo = (props: any) => {
                                     </div>
                                 </div>
                             </div>
-                            {/* <div className='tab-content'>
-                                <div className='tab-pane fade' id='kt_aside_tab_2' role='tabpanel'>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Documents</label>
-                                        <div className="col-lg-8">
-                                            <ul>
-                                                {folder.document ? folder.document.map((doc, i) => (
-                                                    <li key={i}>
-                                                        <a href={doc.link} target='blank' className='text-primary fw-semibold fs-6 me-2'>{doc.name}</a>
-                                                    </li>
-                                                )) : ''}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Documents Remarks</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{folder.docremarks}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
                             <div className='tab-content'>
                                 <div className='tab-pane fade' id='kt_aside_tab_3' role='tabpanel'>
                                     <div className="row mb-7">
@@ -214,6 +192,14 @@ const EditTwo = (props: any) => {
                                             <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
                                         </div>
                                     </div>
+                                    {folder.car_deadline &&
+                                        <div className="row mb-7">
+                                            <label className="col-lg-4 fw-semibold text-muted">Adjusted deadline (Car)</label>
+                                            <div className="col-lg-8">
+                                                <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline_car).format("DD-MMM-YYYY H:m")}</span>
+                                            </div>
+                                        </div>
+                                    }
                                     <div className="row mb-7">
                                         <label className="col-lg-4 fw-semibold text-muted">Comments</label>
                                         <div className="col-lg-8">

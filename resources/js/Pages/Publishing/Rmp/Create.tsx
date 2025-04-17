@@ -49,19 +49,13 @@ const Create = (props: any) => {
         drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
-        // pt: metadata.map(() => ({
-        //     indication: '',
-        //     excipient: [],
-        //     dosage_form: '',
-        //     drug_substance: [{ 'drug_substance': '', 'manufacturer': '' }],
-        //     drug_product: [{ 'drug_product': '', 'manufacturer': '' }],
-        // })),
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         deadline: new Date(),
         request_date: new Date(),
         status: folder ? folder.status : '',
-        created_by: props.auth.user.id
+        created_by: props.auth.user.id,
+        car_deadline: folder ? folder.car_deadline : false,
     })
 
     if (!metadata) {
@@ -294,6 +288,10 @@ const Create = (props: any) => {
             setIsCheck([]);
         }
     };
+
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
+    }
 
     const handleSubmitMulti = () => {
         let perdata = { ...data }
@@ -1005,9 +1003,15 @@ const Create = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            {/* <div className="mb-10">
+                            <div className="mb-10">
+                                <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                    <label className='form-check form-switch form-check-custom form-check-solid'>
+                                        <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
+                                    </label>
 
-                            </div> */}
+                                </div>
+                            </div>
                         </div>
                     </div>
 

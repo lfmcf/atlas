@@ -60,7 +60,8 @@ const Initiate = (props: any) => {
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date(),
         deadline: new Date(),
-        created_by: props.auth.user.id
+        created_by: props.auth.user.id,
+        car_deadline: folder ? folder.car_deadline : false,
     })
 
     useEffect(() => {
@@ -165,6 +166,10 @@ const Initiate = (props: any) => {
             })
         }
         setData(e.target.name, e.target.value)
+    }
+
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
     }
 
     const handleSelectChange = (e, name) => {
@@ -732,7 +737,13 @@ const Initiate = (props: any) => {
                                 </div>
                             </div>
                             <div className="mb-10">
+                                <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                    <label className='form-check form-switch form-check-custom form-check-solid'>
+                                        <input className='form-check-input' name='car_deadline' type='checkbox' value='1' onChange={handleCheckBoxChange} />
+                                    </label>
 
+                                </div>
                             </div>
                         </div>
                     </div>

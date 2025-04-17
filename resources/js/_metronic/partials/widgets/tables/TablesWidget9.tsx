@@ -176,6 +176,8 @@ const TablesWidget9: React.FC<Props> = (props) => {
 				id: row._id
 			}));
 			//setShowDup({ show: true, data: row.mt })
+		} else if (row.form == 'Publishing' && row.region == "CH") {
+			router.get('duplicate_ch_publishing', { "id": row._id })
 		}
 		else if (row.form == 'Publishing' && row.procedure == "Nationale") {
 			router.get('duplicate_eu_publishing', { "id": row._id })

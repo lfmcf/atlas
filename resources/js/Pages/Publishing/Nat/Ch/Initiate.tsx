@@ -67,7 +67,8 @@ const Initiate = (props: any) => {
         request_date: new Date,
         deadline: new Date,
         status: folder ? folder.status : '',
-        created_by: props.auth.user.id
+        created_by: props.auth.user.id,
+        car_deadline: folder ? folder.car_deadline : false,
     });
 
     if (!metadata) {
@@ -160,6 +161,11 @@ const Initiate = (props: any) => {
         stepper.current.goPrev()
     }
 
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
+    }
+
+
     const handleChange = (e) => {
         if (e.target.name == 'dossier_count') {
             setMyErroes((preveState) => {
@@ -212,9 +218,7 @@ const Initiate = (props: any) => {
                 post(route('publishing_ch_store', { type: type }));
             }
         })
-        // setModalOpen(true);
-        // setActionType(type);
-        //post(route('publishing_ch_store', { type: type }));
+
     }
 
     const handleCancel = () => {
@@ -536,17 +540,7 @@ const Initiate = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Application number</label>
                                     <input type="text" className="form-control form-control-solid" name="tracking" defaultValue={data.tracking} onChange={handleChange} />
-                                    {/* <Select options={tnoptions ? tnoptions : ''}
-                                        name='tracking'
-                                        onChange={(e) => handleSelectChange(e, 'tracking')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    /> */}
+
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Submission description</label>
@@ -561,17 +555,7 @@ const Initiate = (props: any) => {
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Galenic form</label>
                                     <input type="text" className="form-control form-control-solid" name="galenic_form" defaultValue={data.galenic_form} onChange={handleChange} />
-                                    {/* <Select options={[]}
-                                        name='galenic_form'
-                                        onChange={(e) => handleSelectChange(e, 'galenic_form')}
-                                        className="react-select-container"
-                                        classNamePrefix="react-select"
-                                        placeholder=''
-                                        isClearable
-                                        value={data.galenic_form}
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    /> */}
+
                                 </div>
                                 <div className='col-md-4 col-sm-12'>
                                     <label className="form-label">Authorization number (Swissmedic)</label>
@@ -714,7 +698,13 @@ const Initiate = (props: any) => {
                                 </div>
                             </div>
                             <div className="mb-10">
+                                <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                    <label className='form-check form-switch form-check-custom form-check-solid'>
+                                        <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
+                                    </label>
 
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -121,35 +121,39 @@ class FormatingController extends Controller
         }
 
         $NewOrOldFor = Formating::find($request->id);
-        $formatting = $NewOrOldFor ? $NewOrOldFor : new Formating();
+        $formatting = $NewOrOldFor ?: new Formating();
 
-        // Generate the public ID
-        $currentYear = date('Y');
-        $publicId = DB::transaction(function () use ($currentYear) {
-            $counter = DB::table('f_sequence_counters')
-                ->where('year', $currentYear)
-                ->lockForUpdate()
-                ->first();
-
-            if ($counter) {
-                $nextNumber = $counter->last_number + 1;
-                DB::table('f_sequence_counters')
+        if (!$NewOrOldFor) {
+            // Generate the public ID
+            $currentYear = date('Y');
+            $publicId = DB::transaction(function () use ($currentYear) {
+                $counter = DB::table('f_sequence_counters')
                     ->where('year', $currentYear)
-                    ->update(['last_number' => $nextNumber]);
-            } else {
-                $nextNumber = 1;
-                DB::table('f_sequence_counters')->insert([
-                    'year' => $currentYear,
-                    'last_number' => $nextNumber,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+                    ->lockForUpdate()
+                    ->first();
 
-            return 'FOR' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
-        });
+                if ($counter) {
+                    $nextNumber = $counter->last_number + 1;
+                    DB::table('f_sequence_counters')
+                        ->where('year', $currentYear)
+                        ->update(['last_number' => $nextNumber]);
+                } else {
+                    $nextNumber = 1;
+                    DB::table('f_sequence_counters')->insert([
+                        'year' => $currentYear,
+                        'last_number' => $nextNumber,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
 
-        $formatting->public_id = $publicId;
+                return 'FOR' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+            });
+
+            $formatting->public_id = $publicId;
+        }
+
+
         $formatting->form = $request->form;
         $formatting->region = $request->region;
         $formatting->coredoc = $request->coredoc;
@@ -172,8 +176,8 @@ class FormatingController extends Controller
         $formatting->docremarks = $request->docremarks;
         $formatting->request_date = $request->request_date;
         $formatting->deadline = $request->deadline;
-
         $formatting->created_by = $request->created_by;
+        $formatting->car_deadline = $request->car_deadline;
 
         if ($request->query('type') == 'save') {
             $formatting->status = 'draft';
@@ -244,6 +248,7 @@ class FormatingController extends Controller
         $formatting->deadline = $request->deadline;
 
         $formatting->created_by = $request->created_by;
+        $formatting->car_deadline = $request->car_deadline;
 
         if ($request->query('type') == 'save') {
             $formatting->status = 'draft';
@@ -357,12 +362,15 @@ class FormatingController extends Controller
         }
 
         $formatting->docremarks = $request->docremarks;
-        //$formatting->request_date = date('Y-m-d H:i:s', strtotime(Carbon::now()));
-        // $formatting->deadline = date('Y-m-d H:i:s', $request->deadline);
+
         $formatting->oldstatus = $formatting->status;
         $formatting->status = 'submitted';
         $formatting->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $formatting->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+        $formatting->car_deadline = $request->car_deadline;
+        if ($request->car_deadline) {
+            $formatting->adjusted_deadline_car = is_array($request->adjusted_deadline_car) ? $request->adjusted_deadline_car[0] : $request->adjusted_deadline_car;
+        }
 
         $formatting->save();
 
@@ -610,7 +618,7 @@ class FormatingController extends Controller
         $formatting->oldstatus = $formatting->status;
         $formatting->status = 'completed';
         $formatting->save();
-        $user = User::where('current_team_id', 1)->get();
+        $user = User::where('id', $formatting->created_by)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($formatting));
         SendEmailJob::dispatch($formatting, $user);
         return redirect('/list')->with('message', 'Formatting Request has been successfully completed');

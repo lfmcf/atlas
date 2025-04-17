@@ -71,6 +71,8 @@ const Confirm = (props: any) => {
         adjusted_deadline: new Date,
         adjustedDeadlineComments: '',
         status: folder ? folder.status : '',
+        car_deadline: folder ? folder.car_deadline : false,
+        adjusted_deadline_car: new Date,
     });
 
     useEffect(() => {
@@ -146,6 +148,10 @@ const Confirm = (props: any) => {
         }
 
         stepper.current.goPrev()
+    }
+
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
     }
 
     const handleChange = (e) => {
@@ -708,6 +714,31 @@ const Confirm = (props: any) => {
                                     />
                                 </div>
 
+
+                            </div>
+                            <div className="row  mb-10">
+                                <div className='col-6'>
+                                    <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+
+                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                        <label className='form-check form-switch form-check-custom form-check-solid'>
+                                            <input className='form-check-input' name='car_deadline' type='checkbox' checked={data.car_deadline} onChange={handleCheckBoxChange} />
+                                        </label>
+
+                                    </div>
+
+                                </div>
+                                {data.car_deadline &&
+                                    <div className='col-6'>
+                                        <label htmlFor="" className="form-label">Adjusted deadline CAR</label>
+                                        <Flatpickr
+                                            data-enable-time
+                                            value={data.adjusted_deadline_car}
+                                            className="form-control"
+                                            options={{ dateFormat: "d-M-Y H:i" }}
+                                            onChange={(date) => setData('adjusted_deadline_car', date)}
+                                        />
+                                    </div>}
                             </div>
                             <div className="row mb-10">
                                 <div className='col-12'>

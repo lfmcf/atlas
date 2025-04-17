@@ -10,7 +10,6 @@ import $ from 'jquery';
 import "datatables.net-dt/js/dataTables.dataTables";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { DateConsultation } from '../../modals/date-consultation/DateConsultation';
 
 const MySwal = withReactContent(Swal)
 
@@ -490,12 +489,7 @@ const FormattingTable: React.FC<Props> = ({ data, handleconsultdate }) => {
                     </div>
                 </div>
                 <DeliveryMessage show={showF.status} id={showF.id} form={showF.form} />
-                {/* <DateConsultation
-                    show={showDate.status}
-                    request_date={showDate.requestDate}
-                    delivery_deadline={showDate.deliveryDeadline}
-                    adjusted_deadline={showDate.adjustedDeadline}
-                />  */}
+
             </div>
 
         </>

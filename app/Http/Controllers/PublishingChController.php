@@ -90,35 +90,40 @@ class PublishingChController extends Controller
         }
 
         $NewOrOldPub = Publishing::find($request->id);
-        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
+        $pub = $NewOrOldPub ?: new Publishing();
 
         // Generate the public ID
-        $currentYear = date('Y');
-        $publicId = DB::transaction(function () use ($currentYear) {
-            $counter = DB::table('p_sequence_counters')
-                ->where('year', $currentYear)
-                ->lockForUpdate()
-                ->first();
-
-            if ($counter) {
-                $nextNumber = $counter->last_number + 1;
-                DB::table('p_sequence_counters')
+        if (!$NewOrOldPub) {
+            $currentYear = date('Y');
+            $publicId = DB::transaction(function () use ($currentYear) {
+                $counter = DB::table('p_sequence_counters')
                     ->where('year', $currentYear)
-                    ->update(['last_number' => $nextNumber]);
-            } else {
-                $nextNumber = 1;
-                DB::table('p_sequence_counters')->insert([
-                    'year' => $currentYear,
-                    'last_number' => $nextNumber,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+                    ->lockForUpdate()
+                    ->first();
 
-            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
-        });
+                if ($counter) {
+                    $nextNumber = $counter->last_number + 1;
+                    DB::table('p_sequence_counters')
+                        ->where('year', $currentYear)
+                        ->update(['last_number' => $nextNumber]);
+                } else {
+                    $nextNumber = 1;
+                    DB::table('p_sequence_counters')->insert([
+                        'year' => $currentYear,
+                        'last_number' => $nextNumber,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
 
-        $pub->public_id = $publicId;
+                return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+            });
+
+            $pub->public_id = $publicId;
+        }
+
+
+
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;
@@ -179,6 +184,38 @@ class PublishingChController extends Controller
             SendEmailJob::dispatch($pub, $user);
             return redirect('/dashboard')->with('message', 'Form has been successfully submitted');
         }
+    }
+
+    public function createChDuplication(Request $request)
+    {
+        $pub = Publishing::find($request->id);
+        $procedure = $pub->procedure;
+        $country = $pub->country;
+        $product = $pub->product_name;
+        $country = is_array($country) ? $country['value'] : $country;
+        $md = MetaData::where([
+            ['invented_name', '=', $product],
+            ['procedure', '=', $procedure],
+            ['country', '=', $country]
+        ])
+            ->with([
+                'trackingNumbers',
+                'dosageForm',
+                'excipients',
+                'drugProduct.dp_manufacturers',
+                'drugSubstance.ds_manufacturers',
+                'indications',
+                'swissMetaData'
+            ])
+            ->first();
+
+        return Inertia::render('Publishing/Nat/Ch/InitiateDuplicate', [
+            'metadata' => $md,
+            'countries' => $country,
+            'products' => $product,
+            'folder' => $pub,
+            // 'metapro' => $metaPro
+        ]);
     }
 
     public function createConfirm(Request $request)
@@ -298,6 +335,10 @@ class PublishingChController extends Controller
         $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
         $pub->oldstatus = $pub->status;
         $pub->status = 'submitted';
+        $pub->car_deadline = $request->car_deadline;
+        if ($request->car_deadline) {
+            $pub->adjusted_deadline_car = is_array($request->adjusted_deadline_car) ? $request->adjusted_deadline_car[0] : $request->adjusted_deadline_car;
+        }
         $pub->save();
         $user = User::where('current_team_id', 3)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
@@ -502,7 +543,7 @@ class PublishingChController extends Controller
         $pub->oldstatus = $pub->status;
         $pub->status = 'completed';
         $pub->save();
-        $user = User::where('current_team_id', 1)->get();
+        $user = User::where('id', $pub->created_by)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         return redirect('/list')->with('message', 'Publishing Request has been successfully completed');
     }

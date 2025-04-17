@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Authenticated from "../../../../Layouts/AuthenticatedLayout";
 import { StepperComponent } from "../../../../_metronic/assets/ts/components";
 import { useForm } from "@inertiajs/react";
@@ -6,12 +6,13 @@ import Flatpickr from "react-flatpickr";
 import 'flatpickr/dist/flatpickr.css';
 import Select from 'react-select';
 import DropZone from '../../../../Components/Dropzone';
+import ProductMetaData from '../../../../Components/ProductMetaData';
 
 const InitiateDuplicate = (props: any) => {
     const stepperRef = useRef<HTMLDivElement | null>(null)
     const stepper = useRef<StepperComponent | null>(null)
 
-    const { folder, metapro } = props
+    const { folder, metadata } = props
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         id: folder ? folder._id : '',
@@ -25,19 +26,19 @@ const InitiateDuplicate = (props: any) => {
         dossier_type: folder ? folder.dossier_type : '',
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
-        tracking: folder.trackingNumber,
+        tracking: folder.tracking,
         submission_description: folder ? folder.submission_description : '',
         invented_name: folder ? folder.invented_name : '',
         galenic_form: folder.galenic_form,
         swissmedic: folder.swissmedic,
-        galenic_name: folder.gemran,
-        dmf: folder.dmf_number,
+        galenic_name: folder.galenic_name,
+        dmf: folder.dmf,
         pmf: folder ? folder.pmf : '',
         inn: folder.inn,
         applicant: folder.applicant,
         dmf_holder: folder ? folder.dmf_holder : '',
         pmf_holder: folder ? folder.pmf_holder : '',
-        agency_code: folder.agencyCode,
+        agency_code: folder.agency_code,
         tpa: folder.tpa,
         sequence: folder ? folder.sequence : '',
         r_sequence: folder ? folder.r_sequence : '',
@@ -56,6 +57,7 @@ const InitiateDuplicate = (props: any) => {
         request_date: new Date,
         deadline: new Date,
         status: folder ? folder.status : '',
+        car_deadline: folder ? folder.car_deadline : false,
     });
 
     useEffect(() => {
@@ -110,6 +112,10 @@ const InitiateDuplicate = (props: any) => {
         setData(e.target.name, e.target.value)
     }
 
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
+    }
+
     const handleSelectChange = (e, name) => {
         setData(name, e)
     }
@@ -122,7 +128,7 @@ const InitiateDuplicate = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        post(route('store-publishing-nat-ch', { type: type }));
+        post(route('publishing_ch_store', { type: type }));
     }
 
     const removeAll = () => {
@@ -150,6 +156,117 @@ const InitiateDuplicate = (props: any) => {
         arr.doc.splice(index, 1)
         setData(arr)
     }
+
+    const addDrugSubstanceFields = () => {
+        setData('drug_substance', [...data.drug_substance, { 'drug_substance': '', 'manufacturer': '' }])
+    }
+
+    const addDrugProductFields = () => {
+        setData('drug_product', [...data.drug_product, { 'drug_product': '', 'manufacturer': '' }])
+    }
+
+    const removeDrugProductFields = (i) => {
+        let instData = { ...data }
+        instData.drug_product.splice(i, 1)
+        setData(instData)
+    }
+
+    const removeDrugSubstanceFields = (i) => {
+        let instData = { ...data }
+        instData.drug_substance.splice(i, 1)
+        setData(instData)
+    }
+
+    const [manufacturerOptions, setManufacturerOptions] = useState({});
+    const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
+
+    const handleDrugSubstanceChange = (index, selectedOption) => {
+        console.log(selectedOption)
+        let newFormValues = { ...data };
+        newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+        const relatedManufacturers = metadata.drug_substance.find(
+            substance => substance.substance === substanceId
+        )?.ds_manufacturers.map(manufacturer => ({
+            label: manufacturer.substance_manufacturer,
+            value: manufacturer.substance_manufacturer
+        })) || [];
+
+
+        setManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Drug Product Change
+    const handleDrugProductChange = (index, selectedOption) => {
+        let newFormValues = { ...data };
+        newFormValues.drug_product[index]['drug_product'] = selectedOption ? selectedOption.value : '';
+        setData(newFormValues);
+
+        const substanceId = selectedOption?.value;
+
+        const relatedManufacturers = metadata.drug_product.find(
+            drug_product => drug_product.drug_product === substanceId
+        )?.dp_manufacturers.map(manufacturer => ({
+            label: manufacturer.product_manufacturer,
+            value: manufacturer.product_manufacturer
+        })) || [];
+
+
+        setDpManufacturerOptions(prev => ({
+            ...prev,
+            [substanceId]: relatedManufacturers
+        }));
+    };
+
+    // Handle Manufacturer Change
+    const handleManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_substance];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_substance: updatedDrugProducts };
+        });
+    };
+
+
+    // Handle Manufacturer Change
+    const handleDpManufacturerChange = (index, selectedOptions) => {
+
+        setData((prevData) => {
+            // Create a copy of the drug_product array
+            const updatedDrugProducts = [...prevData.drug_product];
+
+            // Append the new value to the manufacturer array at the specific index
+            updatedDrugProducts[index] = {
+                ...updatedDrugProducts[index],
+                // manufacturer: [
+                //     //...updatedDrugProducts[index].manufacturer,  Keep the existing manufacturers
+                //     selectedOptions // Add the new manufacturer value
+                // ]
+                manufacturer: selectedOptions
+            };
+
+            // Return the updated data object with the modified drug_product array
+            return { ...prevData, drug_product: updatedDrugProducts };
+        });
+    };
 
     return (
         <div className="stepper stepper-pills" id="kt_stepper_example_basic" ref={stepperRef}>
@@ -306,7 +423,8 @@ const InitiateDuplicate = (props: any) => {
                         <div className="row mb-10">
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Application number</label>
-                                <Select options={[]}
+                                <input type="text" className="form-control form-control-solid" name="tracking" defaultValue={data.tracking} onChange={handleChange} />
+                                {/* <Select options={[]}
                                     name='tracking'
                                     onChange={(e) => handleSelectChange(e, 'tracking')}
                                     className="react-select-container"
@@ -316,7 +434,7 @@ const InitiateDuplicate = (props: any) => {
                                     defaultValue={data.tracking ? { value: data.tracking, label: data.tracking } : ''}
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
+                                /> */}
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Submission description</label>
@@ -330,7 +448,8 @@ const InitiateDuplicate = (props: any) => {
                         <div className="row mb-10">
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Galenic form</label>
-                                <Select options={[]}
+                                <input type="text" className="form-control form-control-solid" name="galenic_form" defaultValue={data.galenic_form} onChange={handleChange} />
+                                {/* <Select options={[]}
                                     name='galenic_form'
                                     onChange={(e) => handleSelectChange(e, 'galenic_form')}
                                     className="react-select-container"
@@ -340,7 +459,7 @@ const InitiateDuplicate = (props: any) => {
                                     value={data.galenic_form}
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                />
+                                /> */}
                             </div>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Authorization number (Swissmedic)</label>
@@ -428,7 +547,7 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex-column" data-kt-stepper-element="content">
+                    {/* <div className="flex-column" data-kt-stepper-element="content">
                         <div className='row mb-10'>
                             <div className='col-md-4 col-sm-12'>
                                 <label className="form-label">Indication</label>
@@ -538,7 +657,22 @@ const InitiateDuplicate = (props: any) => {
                                 />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
+                    <ProductMetaData
+                        metadata={metadata}
+                        data={data}
+                        handleSelectChange={handleSelectChange}
+                        handleDrugSubstanceChange={handleDrugSubstanceChange}
+                        handleManufacturerChange={handleManufacturerChange}
+                        handleDrugProductChange={handleDrugProductChange}
+                        handleDpManufacturerChange={handleDpManufacturerChange}
+                        manufacturerOptions={manufacturerOptions}
+                        dpmanufacturerOptions={dpmanufacturerOptions}
+                        addDrugSubstanceFields={addDrugSubstanceFields}
+                        addDrugProductFields={addDrugProductFields}
+                        removeDrugProductFields={removeDrugProductFields}
+                        removeDrugSubstanceFields={removeDrugSubstanceFields}
+                    />
                     <div className="flex-column" data-kt-stepper-element="content">
                         <div className='row mb-10'>
                             <div className='col-md-2 col-lg-2 col-sm-12'>
@@ -579,7 +713,13 @@ const InitiateDuplicate = (props: any) => {
                             </div>
                         </div>
                         <div className="mb-10">
+                            <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+                                <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                <label className='form-check form-switch form-check-custom form-check-solid'>
+                                    <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
+                                </label>
 
+                            </div>
                         </div>
                     </div>
                 </div>

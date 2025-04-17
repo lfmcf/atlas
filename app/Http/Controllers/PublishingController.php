@@ -86,10 +86,6 @@ class PublishingController extends Controller
     public function createDuplication(Request $request)
     {
         $pub = Publishing::find($request->id);
-        // if (!$pub) {
-        //     $pub = PublishingMrp::find($request->id);
-        // }
-
 
         $region = $pub->region;
         $procedure = $pub->procedure;
@@ -98,17 +94,6 @@ class PublishingController extends Controller
 
         $regionId = Region::where('region_name', $region)->firstOrFail()->id;
         $procedureId = Procedure::where('procedure_name', $procedure)->firstOrFail()->id;
-
-
-        // $product = Product::whereHas('regions', function ($query) use ($regionId) {
-        //     $query->where('regions.id', $regionId);
-        // })
-        //     ->whereHas('procedures', function ($query) use ($procedureId) {
-        //         $query->where('procedures.id', $procedureId);
-        //     })
-        //     ->pluck('name');
-
-
 
         if ($region == "EU") {
 
@@ -139,12 +124,6 @@ class PublishingController extends Controller
                     'folder' => $pub
                 ]);
             }
-            // else {
-            //     return Inertia::render('Publishing/Rmp/InitiateDuplicate', [
-
-            //         'folder' => $pub
-            //     ]);
-            // }
         } else if ($region == "CH") {
             return Inertia::render('Publishing/Nat/Ch/InitiateDuplicate', [
                 'folder' => $pub
@@ -350,35 +329,38 @@ class PublishingController extends Controller
         }
 
         $NewOrOldPub = Publishing::find($request->id);
-        $pub = $NewOrOldPub ? $NewOrOldPub : new Publishing();
+        $pub = $NewOrOldPub ?: new Publishing();
 
         // Generate the public ID
-        $currentYear = date('Y');
-        $publicId = DB::transaction(function () use ($currentYear) {
-            $counter = DB::table('p_sequence_counters')
-                ->where('year', $currentYear)
-                ->lockForUpdate()
-                ->first();
-
-            if ($counter) {
-                $nextNumber = $counter->last_number + 1;
-                DB::table('p_sequence_counters')
+        if (!$NewOrOldPub) {
+            $currentYear = date('Y');
+            $publicId = DB::transaction(function () use ($currentYear) {
+                $counter = DB::table('p_sequence_counters')
                     ->where('year', $currentYear)
-                    ->update(['last_number' => $nextNumber]);
-            } else {
-                $nextNumber = 1;
-                DB::table('p_sequence_counters')->insert([
-                    'year' => $currentYear,
-                    'last_number' => $nextNumber,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+                    ->lockForUpdate()
+                    ->first();
 
-            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
-        });
+                if ($counter) {
+                    $nextNumber = $counter->last_number + 1;
+                    DB::table('p_sequence_counters')
+                        ->where('year', $currentYear)
+                        ->update(['last_number' => $nextNumber]);
+                } else {
+                    $nextNumber = 1;
+                    DB::table('p_sequence_counters')->insert([
+                        'year' => $currentYear,
+                        'last_number' => $nextNumber,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
 
-        $pub->public_id = $publicId;
+                return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+            });
+
+            $pub->public_id = $publicId;
+        }
+
 
         $pub->form = $request->form;
         $pub->region = $request->region;
@@ -430,6 +412,7 @@ class PublishingController extends Controller
         $pub->deadline = $request->deadline;
         $pub->type = $request->query('type');
         $pub->created_by = $request->created_by;
+        $pub->car_deadline = $request->car_deadline;
 
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
@@ -1086,7 +1069,7 @@ class PublishingController extends Controller
         $pub->oldstatus = $pub->status;
         $pub->status = 'completed';
         $pub->save();
-        $user = User::where('current_team_id', 1)->get();
+        $user = User::where('id', $pub->created_by)->get();
         Notification::sendNow($user, new InvoiceInitaitedForm($pub));
         return redirect('/list')->with('message', 'Publishing Request has been successfully completed');
     }
@@ -1203,6 +1186,7 @@ class PublishingController extends Controller
         $pub->request_date = $request->request_date;
         $pub->type = $request->query('type');
         $pub->created_by = $request->created_by;
+        $pub->car_deadline = $request->car_deadline;
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
             $pub->save();
@@ -1427,7 +1411,7 @@ class PublishingController extends Controller
         $pub->request_date = $request->request_date;
         $pub->type = $request->query('type');
         $pub->created_by = $request->created_by;
-
+        $pub->car_deadline = $request->car_deadline;
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
             $pub->save();
@@ -2140,6 +2124,10 @@ class PublishingController extends Controller
         }
         $pub->adjusted_deadline = is_array($request->adjusted_deadline) ? $request->adjusted_deadline[0] : $request->adjusted_deadline;
         $pub->adjustedDeadlineComments = $request->adjustedDeadlineComments;
+        $pub->car_deadline = $request->car_deadline;
+        if ($request->car_deadline) {
+            $pub->adjusted_deadline_car = is_array($request->adjusted_deadline_car) ? $request->adjusted_deadline_car[0] : $request->adjusted_deadline_car;
+        }
         $pub->status = 'submitted';
         $pub->save();
         $user = User::where('current_team_id', 3)->get();

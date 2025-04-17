@@ -53,6 +53,14 @@ const DateConsultation = (props) => {
                                             {moment(props.adjusted_deadline).format('DD MMM YYYY, hh:mm A')}
                                         </span>
                                     </div>
+                                    {props.adjusted_deadline_car && (
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <span className="fw-semibold text-muted fs-6">Adjusted deadline (Car):</span>
+                                            <span className="fw-bold fs-6 text-gray-800">
+                                                {moment(props.adjusted_deadline_car).format('DD MMM YYYY, hh:mm A')}
+                                            </span>
+                                        </div>
+                                    )}
 
 
                                 </div>

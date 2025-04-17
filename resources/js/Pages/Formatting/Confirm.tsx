@@ -57,6 +57,8 @@ const Confirm = (props: any) => {
         correction_origin: '',
         status: folder.status,
         deadlineComments: '',
+        car_deadline: folder.car_deadline,
+        adjusted_deadline_car: new Date,
     });
 
     let contries = props.countries.map(function (country) {
@@ -118,6 +120,10 @@ const Confirm = (props: any) => {
             })
         }
         setData(name, e)
+    }
+
+    const handleCheckBoxChange = (e) => {
+        setData(e.target.name, e.target.checked)
     }
 
     const handleChange = (e) => {
@@ -533,14 +539,38 @@ const Confirm = (props: any) => {
                                         onChange={(date) => setData('adjusted_deadline', date)}
                                     />
                                 </div>
-                                <div className='col-12'>
-                                    <label htmlFor="" className="form-label">Comments</label>
-                                    <textarea className="form-control form-control-solid" rows={3} name="adjustedDeadlineComments" placeholder="" onChange={handleChange} />
+                            </div>
+                            <div className="row  mb-10">
+                                <div className='col-6'>
+                                    <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
+                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                        <label className='form-check form-switch form-check-custom form-check-solid'>
+                                            <input className='form-check-input' name='car_deadline' type='checkbox' checked={data.car_deadline} onChange={handleCheckBoxChange} />
+                                        </label>
+
+                                    </div>
                                 </div>
+                                {data.car_deadline &&
+                                    <div className='col-6'>
+                                        <label htmlFor="" className="form-label">Adjusted deadline CAR</label>
+                                        <Flatpickr
+                                            data-enable-time
+                                            value={data.adjusted_deadline_car}
+                                            className="form-control"
+                                            options={{ dateFormat: "d-M-Y H:i" }}
+                                            onChange={(date) => setData('adjusted_deadline_car', date)}
+                                        />
+                                    </div>}
+                            </div>
+                            <div className='col-12'>
+                                <label htmlFor="" className="form-label">Comments</label>
+                                <textarea className="form-control form-control-solid" rows={3} name="adjustedDeadlineComments" placeholder="" onChange={handleChange} />
                             </div>
                         </div>
-
                     </div>
+
+
+
                     {/* <!--begin::Actions--> */}
                     <div className="d-flex flex-stack">
                         {/* <!--begin::Wrapper--> */}
@@ -569,8 +599,8 @@ const Confirm = (props: any) => {
                         {/* <!--end::Wrapper--> */}
                     </div>
                     {/* <!--end::Actions--> */}
-                </form>
-            </div>
+                </form >
+            </div >
             <ConfirmationMessage show={isModalOpen} onCancel={handleCancel} actionType={actionType} onConfirm={handleConfirm} />
         </>
     )

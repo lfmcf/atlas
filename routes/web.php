@@ -111,7 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ** publishing CH management ** //
     Route::get('/publishing_ch_initiate', [PublishingChController::class, 'create'])->name('publishing_ch_initiate');
-    Route::post('publishing_ch_store', [PublishingController::class, 'store'])->name('publishing_ch_store');
+    Route::post('publishing_ch_store', [PublishingChController::class, 'store'])->name('publishing_ch_store');
     Route::get('/publishing_ch_confirm', [PublishingChController::class, 'createConfirm'])->name('publishing_ch_confirm');
     Route::post('/publishing_ch_post_confirm', [PublishingChController::class, 'postConfirm'])->name('publishing_ch_post_confirm');
     Route::get('/publishing_ch_audit', [PublishingChController::class, 'createAudit'])->name('publishing_ch_audit');
@@ -123,6 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/publishing_ch_new_request', [PublishingChController::class, 'postNewRequest'])->name('publishing_ch_new_request');
     Route::post('complete_ch_publishing', [PublishingChController::class, 'completeChPublishing'])->name('complete_ch_publishing');
     Route::post('close_ch_publishing', [PublishingChController::class, 'closeChPublishing'])->name('close_ch_publishing');
+    Route::get('/duplicate_ch_publishing', [PublishingChController::class, 'createChDuplication'])->name('duplicate_ch_publishing');
 
 
     // ** publishing GCC management ** //
@@ -213,7 +214,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/show-publishing-rmp', [PublishingController::class, 'showmrp'])->name('show-publishing-rmp');
 
     // ** iniatiate and submit form publishing nationale ch ** //
-    Route::post('store-publishing-nat-ch', [PublishingController::class, 'storeNatCh'])->name('store-publishing-nat-ch');
+    Route::post('store-publishing-nat-ch', [PublishingChController::class, 'storeNatCh'])->name('store-publishing-nat-ch');
     Route::post('store-publishing-nat-ch_', [PublishingController::class, 'storeNatCh_'])->name('store-publishing-nat-ch_');
 
     // ** confirm form publishing nationale ch ** //

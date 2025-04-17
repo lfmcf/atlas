@@ -14,7 +14,7 @@ const MySwal = withReactContent(Swal)
 const Task = (props: any) => {
 
     const { formatting, publishing } = props
-    const [showDate, setShowDate] = useState({ 'status': false, requestDate: '', deliveryDeadline: '', adjustedDeadline: '' });
+    const [showDate, setShowDate] = useState({ 'status': false, requestDate: '', deliveryDeadline: '', adjustedDeadline: '', adjustedDeadlineCar: '', car_deadline: '' });
 
     useEffect(() => {
         if (props.flash.message) {
@@ -27,7 +27,15 @@ const Task = (props: any) => {
     })
 
     const handleconsultdate = (row) => {
-        setShowDate({ 'status': !showDate.status, requestDate: row.request_date, deliveryDeadline: row.delivery_deadline, adjustedDeadline: row.adjusted_deadline })
+        setShowDate({
+            'status': !showDate.status,
+            requestDate: row.request_date,
+            deliveryDeadline: row.delivery_deadline,
+            adjustedDeadline: row.adjusted_deadline,
+            adjustedDeadlineCar: row.adjusted_deadline_car,
+            car_deadline: row.car_deadline
+        })
+
     }
 
     return (
@@ -72,6 +80,7 @@ const Task = (props: any) => {
                 request_date={showDate.requestDate}
                 delivery_deadline={showDate.deliveryDeadline}
                 adjusted_deadline={showDate.adjustedDeadline}
+                adjusted_deadline_car={showDate.car_deadline ? showDate.adjustedDeadlineCar : ''}
             />
         </>
     )
