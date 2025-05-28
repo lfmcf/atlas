@@ -51,15 +51,22 @@ class PublishingEuController extends Controller
                 'trackingNumbers',
                 'dosageForm',
                 'excipients',
-                'drugProduct.dp_manufacturers' => function ($query) {
-                    $query->distinct('product_manufacturer');
-                },
-                'drugSubstance.ds_manufacturers' => function ($query) {
-                    $query->distinct('substance_manufacturer');
-                },
+                'drugProduct.dp_manufacturers',
+                'drugSubstance.ds_manufacturers',
                 'indications'
             ])
             ->first();
+        if ($meta_data && $meta_data->drugProduct) {
+            // Process each drug product in the collection
+            $meta_data->drugProduct->each(function ($product) {
+                if ($product->dp_manufacturers) {
+                    $product->dp_manufacturers = $product->dp_manufacturers
+                        ->unique('substance_manufacturer')
+                        ->values();
+                }
+            });
+        }
+        // $uniqueDsManufacturers = $meta_data->drugSubstance->ds_manufacturers->unique('substance_manufacturer');
 
         return Inertia::render('Publishing/Nat/Eu/CreateN', [
             'metadata' => $meta_data,

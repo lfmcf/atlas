@@ -60,19 +60,19 @@ const Confirm = (props: any) => {
         application_type: folder ? folder.application_type : '',
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
-        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
-        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        drug_substance: folder ? folder.drug_substance : [],
+        drug_product: folder ? folder.drug_product : [],
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
         doc: folder && folder.doc !== null ? folder.doc : [],
         docremarks: folder ? folder.docremarks : '',
         request_date: new Date,
         deadline: new Date,
-        adjusted_deadline: new Date,
+        adjusted_deadline: '',
         adjustedDeadlineComments: '',
         status: folder ? folder.status : '',
         car_deadline: folder ? folder.car_deadline : false,
-        adjusted_deadline_car: new Date,
+        adjusted_deadline_car: '',
     });
 
     useEffect(() => {
@@ -651,17 +651,18 @@ const Confirm = (props: any) => {
                         <ProductMetaData
                             metadata={metadata}
                             data={data}
-                            handleSelectChange={handleSelectChange}
-                            handleDrugSubstanceChange={handleDrugSubstanceChange}
-                            handleManufacturerChange={handleManufacturerChange}
-                            handleDrugProductChange={handleDrugProductChange}
-                            handleDpManufacturerChange={handleDpManufacturerChange}
-                            manufacturerOptions={manufacturerOptions}
-                            dpmanufacturerOptions={dpmanufacturerOptions}
-                            addDrugSubstanceFields={addDrugSubstanceFields}
-                            addDrugProductFields={addDrugProductFields}
-                            removeDrugProductFields={removeDrugProductFields}
-                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            setData={setData}
+                        // handleSelectChange={handleSelectChange}
+                        // handleDrugSubstanceChange={handleDrugSubstanceChange}
+                        // handleManufacturerChange={handleManufacturerChange}
+                        // handleDrugProductChange={handleDrugProductChange}
+                        // handleDpManufacturerChange={handleDpManufacturerChange}
+                        // manufacturerOptions={manufacturerOptions}
+                        // dpmanufacturerOptions={dpmanufacturerOptions}
+                        // addDrugSubstanceFields={addDrugSubstanceFields}
+                        // addDrugProductFields={addDrugProductFields}
+                        // removeDrugProductFields={removeDrugProductFields}
+                        // removeDrugSubstanceFields={removeDrugSubstanceFields}
                         />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
@@ -720,7 +721,7 @@ const Confirm = (props: any) => {
                                 <div className='col-6'>
                                     <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
 
-                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
                                         <label className='form-check form-switch form-check-custom form-check-solid'>
                                             <input className='form-check-input' name='car_deadline' type='checkbox' checked={data.car_deadline} onChange={handleCheckBoxChange} />
                                         </label>
@@ -730,13 +731,14 @@ const Confirm = (props: any) => {
                                 </div>
                                 {data.car_deadline &&
                                     <div className='col-6'>
-                                        <label htmlFor="" className="form-label">Adjusted deadline CAR</label>
+                                        <label htmlFor="" className="form-label">Urgent Request Date</label>
                                         <Flatpickr
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
                                             className="form-control"
                                             options={{ dateFormat: "d-M-Y H:i" }}
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
+                                            placeholder="Select date and time"
                                         />
                                     </div>}
                             </div>

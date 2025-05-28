@@ -59,9 +59,9 @@ const Confirm = (props: any) => {
         mtremarks: folder.mtremarks,
         indication: folder.indication,
         // manufacturer: folder.manufacturer,
-        drug_substance: folder.drug_substance,
+        drug_substance: folder.drug_substance ? folder.drug_substance : [],
         // drug_substance_manufacturer: folder.drug_substance_manufacturer,
-        drug_product: folder.drug_product,
+        drug_product: folder.drug_product ? folder.drug_product : [],
         // drug_product_manufacturer: folder.drug_product_manufacturer,
         dosage_form: folder.dosage_form,
         excipient: folder.excipient,
@@ -791,19 +791,20 @@ const Confirm = (props: any) => {
                         <ProductMetaData
                             metadata={metadata}
                             data={data}
-                            // drugSubstanceOptions={drugSubstanceOptions}
-                            //drugProductOptions={drugProductOptions}
-                            handleSelectChange={handleSelectChange}
-                            handleDrugSubstanceChange={handleDrugSubstanceChange}
-                            handleManufacturerChange={handleManufacturerChange}
-                            handleDrugProductChange={handleDrugProductChange}
-                            handleDpManufacturerChange={handleDpManufacturerChange}
-                            manufacturerOptions={manufacturerOptions}
-                            dpmanufacturerOptions={dpmanufacturerOptions}
-                            addDrugSubstanceFields={addDrugSubstanceFields}
-                            addDrugProductFields={addDrugProductFields}
-                            removeDrugProductFields={removeDrugProductFields}
-                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            setData={setData}
+                        // drugSubstanceOptions={drugSubstanceOptions}
+                        //drugProductOptions={drugProductOptions}
+                        // handleSelectChange={handleSelectChange}
+                        // handleDrugSubstanceChange={handleDrugSubstanceChange}
+                        // handleManufacturerChange={handleManufacturerChange}
+                        // handleDrugProductChange={handleDrugProductChange}
+                        // handleDpManufacturerChange={handleDpManufacturerChange}
+                        // manufacturerOptions={manufacturerOptions}
+                        // dpmanufacturerOptions={dpmanufacturerOptions}
+                        // addDrugSubstanceFields={addDrugSubstanceFields}
+                        // addDrugProductFields={addDrugProductFields}
+                        // removeDrugProductFields={removeDrugProductFields}
+                        // removeDrugSubstanceFields={removeDrugSubstanceFields}
                         />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>

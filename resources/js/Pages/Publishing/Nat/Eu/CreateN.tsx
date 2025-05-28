@@ -60,9 +60,9 @@ const CreateN = (props: any) => {
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
         // manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
+        drug_substance: folder ? folder.drug_substance : [],
         // drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        drug_product: folder ? folder.drug_product : [],
         // drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
@@ -269,18 +269,19 @@ const CreateN = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        MySwal.fire({
-            title: type == 'save' ? 'Click on "Yes" to save your request or click on "No, return" to return to the form.' :
-                'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, proceed!',
-            cancelButtonText: 'No, return',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                post(route('store_eu_publishing', { type: type }));
-            }
-        })
+        console.log(data);
+        // MySwal.fire({
+        //     title: type == 'save' ? 'Click on "Yes" to save your request or click on "No, return" to return to the form.' :
+        //         'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonText: 'Yes, proceed!',
+        //     cancelButtonText: 'No, return',
+        // }).then((result) => {
+        //     if (result.isConfirmed) {
+        //         post(route('store_eu_publishing', { type: type }));
+        //     }
+        // })
 
     }
 
@@ -418,7 +419,7 @@ const CreateN = (props: any) => {
 
 
 
-    const [manufacturerOptions, setManufacturerOptions] = useState({});
+
     const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
 
     // Handle Drug Substance Change
@@ -437,10 +438,10 @@ const CreateN = (props: any) => {
         })) || [];
 
 
-        setManufacturerOptions(prev => ({
-            ...prev,
-            [substanceId]: relatedManufacturers
-        }));
+        // setManufacturerOptions(prev => ({
+        //     ...prev,
+        //     [substanceId]: relatedManufacturers
+        // }));
     };
 
     // Handle Drug Product Change
@@ -801,19 +802,20 @@ const CreateN = (props: any) => {
                         <ProductMetaData
                             metadata={metadata}
                             data={data}
-                            // drugSubstanceOptions={drugSubstanceOptions}
-                            //drugProductOptions={drugProductOptions}
-                            handleSelectChange={handleSelectChange}
-                            handleDrugSubstanceChange={handleDrugSubstanceChange}
-                            handleManufacturerChange={handleManufacturerChange}
-                            handleDrugProductChange={handleDrugProductChange}
-                            handleDpManufacturerChange={handleDpManufacturerChange}
-                            manufacturerOptions={manufacturerOptions}
-                            dpmanufacturerOptions={dpmanufacturerOptions}
-                            addDrugSubstanceFields={addDrugSubstanceFields}
-                            addDrugProductFields={addDrugProductFields}
-                            removeDrugProductFields={removeDrugProductFields}
-                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            setData={setData}
+                        // drugSubstanceOptions={drugSubstanceOptions}
+                        //drugProductOptions={drugProductOptions}
+                        //handleSelectChange={handleSelectChange}
+                        // handleDrugSubstanceChange={handleDrugSubstanceChange}
+                        // handleManufacturerChange={handleManufacturerChange}
+                        // handleDrugProductChange={handleDrugProductChange}
+                        // handleDpManufacturerChange={handleDpManufacturerChange}
+
+                        // dpmanufacturerOptions={dpmanufacturerOptions}
+                        // addDrugSubstanceFields={addDrugSubstanceFields}
+                        // addDrugProductFields={addDrugProductFields}
+                        // removeDrugProductFields={removeDrugProductFields}
+                        // removeDrugSubstanceFields={removeDrugSubstanceFields}
                         />
                         <div className="flex-column" data-kt-stepper-element="content">
                             <div className='row mb-10'>
@@ -856,7 +858,7 @@ const CreateN = (props: any) => {
                             </div>
                             <div className="mb-10">
                                 <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
                                     <label className='form-check form-switch form-check-custom form-check-solid'>
                                         <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
                                     </label>

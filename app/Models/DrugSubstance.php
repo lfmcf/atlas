@@ -16,6 +16,6 @@ class DrugSubstance extends Model
 
     public function ds_manufacturers()
     {
-        return $this->hasMany(DrugSubstanceManufacturer::class);
+        return $this->hasMany(DrugSubstanceManufacturer::class, 'drug_substance_id')->distinct();
     }
 }

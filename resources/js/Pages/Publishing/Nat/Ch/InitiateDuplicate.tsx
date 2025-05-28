@@ -46,9 +46,9 @@ const InitiateDuplicate = (props: any) => {
         mtremarks: folder ? folder.mtremarks : '',
         indication: folder ? folder.indication : '',
         manufacturer: folder ? folder.manufacturer : '',
-        drug_substance: folder ? folder.drug_substance : '',
+        drug_substance: folder ? folder.drug_substance : [],
         drug_substance_manufacturer: folder ? folder.drug_substance_manufacturer : '',
-        drug_product: folder ? folder.drug_product : '',
+        drug_product: folder ? folder.drug_product : [],
         drug_product_manufacturer: folder ? folder.drug_product_manufacturer : '',
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
@@ -661,17 +661,18 @@ const InitiateDuplicate = (props: any) => {
                     <ProductMetaData
                         metadata={metadata}
                         data={data}
-                        handleSelectChange={handleSelectChange}
-                        handleDrugSubstanceChange={handleDrugSubstanceChange}
-                        handleManufacturerChange={handleManufacturerChange}
-                        handleDrugProductChange={handleDrugProductChange}
-                        handleDpManufacturerChange={handleDpManufacturerChange}
-                        manufacturerOptions={manufacturerOptions}
-                        dpmanufacturerOptions={dpmanufacturerOptions}
-                        addDrugSubstanceFields={addDrugSubstanceFields}
-                        addDrugProductFields={addDrugProductFields}
-                        removeDrugProductFields={removeDrugProductFields}
-                        removeDrugSubstanceFields={removeDrugSubstanceFields}
+                        setData={setData}
+                    // handleSelectChange={handleSelectChange}
+                    // handleDrugSubstanceChange={handleDrugSubstanceChange}
+                    // handleManufacturerChange={handleManufacturerChange}
+                    // handleDrugProductChange={handleDrugProductChange}
+                    // handleDpManufacturerChange={handleDpManufacturerChange}
+                    // manufacturerOptions={manufacturerOptions}
+                    // dpmanufacturerOptions={dpmanufacturerOptions}
+                    // addDrugSubstanceFields={addDrugSubstanceFields}
+                    // addDrugProductFields={addDrugProductFields}
+                    // removeDrugProductFields={removeDrugProductFields}
+                    // removeDrugSubstanceFields={removeDrugSubstanceFields}
                     />
                     <div className="flex-column" data-kt-stepper-element="content">
                         <div className='row mb-10'>

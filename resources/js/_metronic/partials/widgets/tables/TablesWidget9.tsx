@@ -184,6 +184,23 @@ const TablesWidget9: React.FC<Props> = (props) => {
 		}
 	}
 
+	const handleNavigate = (row) => {
+		if (row.form == 'Formatting') {
+			router.get('show-formatting', { id: row._id })
+		}
+		else if (row.form == 'Publishing' && row.procedure == "Mutual Recognition" || row.procedure == "Decentralized") {
+			router.get('show-publishing-rmp', { id: row._id })
+		} else if (row.form == 'Publishing' && row.region == "CH") {
+			router.get('show-publishing-nat-ch', { id: row._id })
+		}
+		else if (row.form == 'Publishing' && row.procedure == "Nationale") {
+			router.get('show-publishing', { id: row._id })
+		}
+		else {
+			router.get('show-publishing', { id: row._id })
+		}
+	}
+
 	return (
 		<>
 			<div className={`card mb-5`}>
@@ -362,13 +379,18 @@ const TablesWidget9: React.FC<Props> = (props) => {
 												{row.updated_at ? moment(row.updated_at).format("DD-MMM-YYYY") : ''}
 											</span>
 										</td>
-										{props.user.current_team_id != 3 ?
-											<td>
-												<button className='btn btn-xm' title='Duplicate the current form' onClick={() => handleDupliacte(row)}>
+										<td>
+											<button className='btn btn-icon' title='View the current form' onClick={() => handleNavigate(row)}>
+
+												<i className="bi bi-eye-fill fs-5"></i>
+
+											</button>
+											{props.user.current_team_id != 3 ?
+												<button className='btn btn-icon' title='Duplicate the current form' onClick={() => handleDupliacte(row)}>
 													<i className="ki-duotone ki-copy fs-1"></i>
 												</button>
-											</td>
-											: ''}
+												: ''}
+										</td>
 									</tr>
 								)) : ''}
 							</tbody>
@@ -416,7 +438,7 @@ const TablesWidget9: React.FC<Props> = (props) => {
 					</div>
 					{/* end::Table container */}
 				</div>
-			</div>
+			</div >
 			<InviteUsers
 				show={show}
 				setShow={setShow}

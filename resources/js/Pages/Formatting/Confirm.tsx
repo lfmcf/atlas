@@ -47,7 +47,7 @@ const Confirm = (props: any) => {
         docremarks: folder.docremarks,
         request_date: folder.request_date,
         deadline: folder.deadline,
-        adjusted_deadline: new Date,
+        adjusted_deadline: '',
         adjustedDeadlineComments: '',
         review_request_date: moment(new Date),
         review_deadline: moment(new Date),
@@ -58,7 +58,7 @@ const Confirm = (props: any) => {
         status: folder.status,
         deadlineComments: '',
         car_deadline: folder.car_deadline,
-        adjusted_deadline_car: new Date,
+        adjusted_deadline_car: '',
     });
 
     let contries = props.countries.map(function (country) {
@@ -537,13 +537,14 @@ const Confirm = (props: any) => {
                                         className="form-control"
                                         options={{ dateFormat: "d-M-Y H:i" }}
                                         onChange={(date) => setData('adjusted_deadline', date)}
+                                        placeholder="Select date and time"
                                     />
                                 </div>
                             </div>
                             <div className="row  mb-10">
                                 <div className='col-6'>
                                     <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
-                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                        <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
                                         <label className='form-check form-switch form-check-custom form-check-solid'>
                                             <input className='form-check-input' name='car_deadline' type='checkbox' checked={data.car_deadline} onChange={handleCheckBoxChange} />
                                         </label>
@@ -552,13 +553,14 @@ const Confirm = (props: any) => {
                                 </div>
                                 {data.car_deadline &&
                                     <div className='col-6'>
-                                        <label htmlFor="" className="form-label">Adjusted deadline CAR</label>
+                                        <label htmlFor="" className="form-label">Urgent Request Date</label>
                                         <Flatpickr
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
                                             className="form-control"
                                             options={{ dateFormat: "d-M-Y H:i" }}
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
+                                            placeholder="Select date and time"
                                         />
                                     </div>}
                             </div>

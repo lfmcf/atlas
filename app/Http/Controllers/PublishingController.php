@@ -1382,8 +1382,36 @@ class PublishingController extends Controller
             $docs = $arr;
         }
 
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('p_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('p_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('p_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'PUB' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+
+
         $OldFolder = PublishingMrp::find($request->id);
         $pub = new PublishingMrp();
+        $pub->public_id = $publicId;
         $pub->form = $request->form;
         $pub->region = $request->region;
         $pub->procedure = $request->procedure;

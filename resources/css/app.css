@@ -143,6 +143,14 @@ legend {
     padding: 0 1.4em 1.4em !important;
 }
 
+.form-control.form-control-solid {
+    border: 1px solid #f1f1f2 !important;
+}
+
+.react-select__control {
+    border: 1px solid #f1f1f2 !important;
+}
+
 @media (min-width: 1200px) {
     legend {
         font-size: 1.5rem;
@@ -151,4 +159,9 @@ legend {
 
 legend+* {
     clear: left;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: #000 !important;
 }

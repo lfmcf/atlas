@@ -222,8 +222,36 @@ class FormatingController extends Controller
             $docs = $arr;
         }
 
+        $currentYear = date('Y');
+        $publicId = DB::transaction(function () use ($currentYear) {
+            $counter = DB::table('f_sequence_counters')
+                ->where('year', $currentYear)
+                ->lockForUpdate()
+                ->first();
+
+            if ($counter) {
+                $nextNumber = $counter->last_number + 1;
+                DB::table('f_sequence_counters')
+                    ->where('year', $currentYear)
+                    ->update(['last_number' => $nextNumber]);
+            } else {
+                $nextNumber = 1;
+                DB::table('f_sequence_counters')->insert([
+                    'year' => $currentYear,
+                    'last_number' => $nextNumber,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return 'FOR' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) . '/' . $currentYear;
+        });
+
+
+
         $OldFolder = Formating::find($request->id);
         $formatting = new Formating();
+        $formatting->public_id = $publicId;
         $formatting->form = $request->form;
         $formatting->region = $request->region;
         $formatting->coredoc = $request->coredoc;

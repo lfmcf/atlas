@@ -45,8 +45,8 @@ const Create = (props: any) => {
         dossier_count: folder ? folder.dossier_count : '',
         remarks: folder ? folder.remarks : '',
         mt: folder ? folder.mt : [],
-        drug_substance: folder ? folder.drug_substance : [{ 'drug_substance': '', 'manufacturer': '' }],
-        drug_product: folder ? folder.drug_product : [{ 'drug_product': '', 'manufacturer': '' }],
+        drug_substance: folder ? folder.drug_substance : [],
+        drug_product: folder ? folder.drug_product : [],
         dosage_form: folder ? folder.dosage_form : '',
         excipient: folder ? folder.excipient : '',
         doc: folder && folder.doc !== null ? folder.doc : [],
@@ -950,19 +950,20 @@ const Create = (props: any) => {
                         <ProductMetaData
                             metadata={metadata[0]}
                             data={data}
-                            // drugSubstanceOptions={drugSubstanceOptions}
-                            //drugProductOptions={drugProductOptions}
-                            handleSelectChange={handleSelectChange}
-                            handleDrugSubstanceChange={handleDrugSubstanceChange}
-                            handleManufacturerChange={handleManufacturerChange}
-                            handleDrugProductChange={handleDrugProductChange}
-                            handleDpManufacturerChange={handleDpManufacturerChange}
-                            manufacturerOptions={manufacturerOptions}
-                            dpmanufacturerOptions={dpmanufacturerOptions}
-                            addDrugSubstanceFields={addDrugSubstanceFields}
-                            addDrugProductFields={addDrugProductFields}
-                            removeDrugProductFields={removeDrugProductFields}
-                            removeDrugSubstanceFields={removeDrugSubstanceFields}
+                            setData={setData}
+                        // drugSubstanceOptions={drugSubstanceOptions}
+                        //drugProductOptions={drugProductOptions}
+                        // handleSelectChange={handleSelectChange}
+                        // handleDrugSubstanceChange={handleDrugSubstanceChange}
+                        // handleManufacturerChange={handleManufacturerChange}
+                        // handleDrugProductChange={handleDrugProductChange}
+                        // handleDpManufacturerChange={handleDpManufacturerChange}
+                        // manufacturerOptions={manufacturerOptions}
+                        // dpmanufacturerOptions={dpmanufacturerOptions}
+                        // addDrugSubstanceFields={addDrugSubstanceFields}
+                        // addDrugProductFields={addDrugProductFields}
+                        // removeDrugProductFields={removeDrugProductFields}
+                        // removeDrugSubstanceFields={removeDrugSubstanceFields}
                         />
 
 
@@ -1005,7 +1006,7 @@ const Create = (props: any) => {
                             </div>
                             <div className="mb-10">
                                 <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                    <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
                                     <label className='form-check form-switch form-check-custom form-check-solid'>
                                         <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
                                     </label>
