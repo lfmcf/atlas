@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { KTIcon, toAbsoluteUrl } from '../../../helpers'
 import moment from 'moment';
@@ -282,9 +281,10 @@ const TablesWidget9: React.FC<Props> = (props) => {
 									<th className='min-w-130px'>Dossier type</th>
 									<th className='min-w-130px'>Request date</th>
 									<th className='min-w-130px'>Last update</th>
-									{props.user.current_team_id != 3 ?
+									<th className='min-w-130px'>Actions</th>
+									{/* {props.user.current_team_id != 3 ?
 										<th className='min-w-130px'>Actions</th> : ''
-									}
+									} */}
 								</tr>
 							</thead>
 							<tbody>

@@ -269,19 +269,19 @@ const CreateN = (props: any) => {
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
-        console.log(data);
-        // MySwal.fire({
-        //     title: type == 'save' ? 'Click on "Yes" to save your request or click on "No, return" to return to the form.' :
-        //         'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
-        //     icon: 'warning',
-        //     showCancelButton: true,
-        //     confirmButtonText: 'Yes, proceed!',
-        //     cancelButtonText: 'No, return',
-        // }).then((result) => {
-        //     if (result.isConfirmed) {
-        //         post(route('store_eu_publishing', { type: type }));
-        //     }
-        // })
+
+        MySwal.fire({
+            title: type == 'save' ? 'Click on "Yes" to save your request or click on "No, return" to return to the form.' :
+                'Click on "Yes" to submit your request or click on "No, return" to return to the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'No, return',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(route('store_eu_publishing', { type: type }));
+            }
+        })
 
     }
 
