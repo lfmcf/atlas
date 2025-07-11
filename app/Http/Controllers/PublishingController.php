@@ -631,46 +631,44 @@ class PublishingController extends Controller
             return $this->createConfirmrmp($request);
         }
 
-        // $region = $pub->region;
-        // $country = $pub->country;
-        // $product = $pub->product_name;
-        // $procedure = $pub->procedure;
-        // $country = is_array($country) ? $country['value'] : $country;
+        $region = $pub->region;
+        $country = $pub->country;
+        $product = $pub->product_name;
+        $procedure = $pub->procedure;
+        $country = is_array($country) ? $country['value'] : $country;
 
-        // $findstring = explode(' ', $product);
-        // $metaPro = MetaData::where(function ($q) use ($findstring) {
-        //     foreach ($findstring as $value) {
-        //         $rvalue = rtrim($value, ",");
-        //         $q->orWhere('invented_name', 'like', "%{$rvalue}%");
-        //     }
-        // })->first();
+        $findstring = explode(' ', $product);
+        $metaPro = MetaData::where(function ($q) use ($findstring) {
+            foreach ($findstring as $value) {
+                $rvalue = rtrim($value, ",");
+                $q->orWhere('invented_name', 'like', "%{$rvalue}%");
+            }
+        })->first();
 
-        // if ($region == "EU") {
+        if ($region == "EU") {
 
-        //     $md = MetaData::where([
-        //         ['invented_name', '=', $product],
-        //         ['procedure', '=', $procedure],
-        //         ['country', '=', $country]
-        //     ])
-        //         ->with([
-        //             'trackingNumbers',
-        //             'dosageForm',
-        //             'drugProduct',
-        //             'drugProductManufacturer',
-        //             'drugSubstanceManufacturer',
-        //             'excipients',
-        //             'drugSubstance',
-        //             'indications'
-        //         ])->first();
+            $md = MetaData::where([
+                ['invented_name', '=', $product],
+                ['procedure', '=', $procedure],
+                ['country', '=', $country]
+            ])->with([
+                'trackingNumbers',
+                'dosageForm',
+                'excipients',
+                'drugProduct.dp_manufacturers',
+                'drugSubstance.ds_manufacturers',
+                'indications'
+            ])->first();
 
-        //     if ($md) {
-        //         return Inertia::render('Publishing/Nat/Confirm', [
-        //             'metadata' => $md,
-        //             'countries' => $country,
-        //             'products' => $product,
-        //             'folder' => $pub,
-        //         ]);
-        //     }
+            if ($md) {
+                return Inertia::render('Publishing/Nat/Eu/Confirm', [
+                    'metadata' => $md,
+                    'countries' => $country,
+                    'products' => $product,
+                    'folder' => $pub,
+                ]);
+            }
+        }
         // if ($region == "CH") {
         //     $md = MetaData::where([
         //         ['invented_name', '=', $product],

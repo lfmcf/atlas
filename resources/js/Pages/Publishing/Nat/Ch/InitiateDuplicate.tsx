@@ -715,7 +715,7 @@ const InitiateDuplicate = (props: any) => {
                         </div>
                         <div className="mb-10">
                             <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
-                                <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>(CAR) Adjusted deadline</label>
+                                <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Operational deadline</label>
                                 <label className='form-check form-switch form-check-custom form-check-solid'>
                                     <input className='form-check-input' name='car_deadline' type='checkbox' value={data.car_deadline} onChange={handleCheckBoxChange} />
                                 </label>

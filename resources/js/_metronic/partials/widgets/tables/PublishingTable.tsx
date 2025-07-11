@@ -73,7 +73,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
             cancelButtonText: 'No, return',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (row.region == 'EU' && row.procedure == "Nationale") {
+                if (row.region == 'EU' && row.procedure == "Nationale" || row.region == 'EU' && row.procedure == "Centralized") {
                     router.post(route('close_eu_publishing'), { id: row._id })
                 } else if (row.region == 'CH') {
                     router.post(route('close_ch_publishing'), { id: row._id })
@@ -96,13 +96,13 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
             cancelButtonText: 'No, return',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (row.region == 'EU' && row.procedure == "Nationale") {
+                if (row.region == 'EU' && row.procedure == "Nationale" || row.region == 'EU' && row.procedure == "Centralized") {
                     router.post(route('accept_eu_verification'), { id: row._id })
                 } else if (row.region == 'CH') {
                     router.post(route('accept_ch_verification'), { id: row._id })
                 } else if (row.region == 'GCC') {
                     router.post(route('accept_gcc_verification'), { id: row._id })
-                } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
+                } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
                     router.post(route('accept-publishing'), { id: row._id })
                 }
             }
@@ -112,13 +112,13 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
 
 
     const handleCorrect = (row) => {
-        if (row.region == 'EU' && row.procedure == "Nationale") {
+        if (row.region == 'EU' && row.procedure == "Nationale" || row.region == 'EU' && row.procedure == "Centralized") {
             router.get(route('publishing_eu_verification'), { id: row._id })
         } else if (row.region == 'CH') {
             router.get(route('publishing_ch_verify'), { id: row._id })
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_verify'), { id: row._id })
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
             router.get(route('publishing_rmp_verify'), { id: row._id })
         }
         // router.get(route('publishing-verification'), { id: id })
@@ -176,7 +176,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
             cancelButtonText: 'No, return',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (row.region == 'EU' && row.procedure == "Nationale") {
+                if (row.region == 'EU' && row.procedure == "Nationale" || row.region == 'EU' && row.procedure == "Centralized") {
                     router.post(route('complete_eu_publishing'), { id: row._id })
                 } else if (row.region == 'CH') {
                     router.post(route('complete_ch_publishing'), { id: row._id })
@@ -239,19 +239,20 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_confirm', { id: row._id }))
         } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
+
             router.get(route('publishing_confirm', { id: row._id }))
         }
 
     }
 
     const handleAuditNavigation = (row) => {
-        if (row.region == 'EU' && row.procedure == "Nationale") {
+        if (row.region == 'EU' && row.procedure == "Nationale" || row.region == 'EU' && row.procedure == "Centralized") {
             router.get(route('publishing_eu_audit', { id: row._id }))
         } else if (row.region == 'CH') {
             router.get(route('publishing_ch_audit', { id: row._id }))
         } else if (row.region == 'GCC') {
             router.get(route('publishing_gcc_audit', { id: row._id }))
-        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized" || row.region == 'EU' && row.procedure == "Centralized") {
+        } else if (row.region == 'EU' && row.procedure == "Mutual Recognition" || row.region == 'EU' && row.procedure == "Decentralized") {
             router.get(route('publishing_audit', { id: row._id }))
         }
     }

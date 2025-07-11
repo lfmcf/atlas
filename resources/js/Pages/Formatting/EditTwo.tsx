@@ -187,7 +187,7 @@ const EditTwo = (props: any) => {
                                         </div>
                                     </div>
                                     <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Adjusted deadline</label>
+                                        <label className="col-lg-4 fw-semibold text-muted">Operational deadline</label>
                                         <div className="col-lg-8">
                                             <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
                                         </div>

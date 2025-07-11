@@ -577,7 +577,7 @@ const Correct = (props: any) => {
                             </div>
                             <div className="row  mb-10">
                                 <div className='col-6 mb-10'>
-                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
+                                    <label htmlFor="" className="form-label">Operational deadline</label>
                                     <Flatpickr
                                         data-enable-time
                                         value={data.adjusted_deadline}
