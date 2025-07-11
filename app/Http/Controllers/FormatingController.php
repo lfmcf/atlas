@@ -178,6 +178,7 @@ class FormatingController extends Controller
         $formatting->deadline = $request->deadline;
         $formatting->created_by = $request->created_by;
         $formatting->car_deadline = $request->car_deadline;
+        $formatting->car_remarks = $request->car_remarks;
 
         if ($request->query('type') == 'save') {
             $formatting->status = 'draft';

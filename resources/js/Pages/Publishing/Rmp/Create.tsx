@@ -56,6 +56,7 @@ const Create = (props: any) => {
         status: folder ? folder.status : '',
         created_by: props.auth.user.id,
         car_deadline: folder ? folder.car_deadline : false,
+        car_remarks: folder ? folder.car_remarks : '',
     })
 
     if (!metadata) {
@@ -1013,6 +1014,12 @@ const Create = (props: any) => {
 
                                 </div>
                             </div>
+                            {data.car_deadline &&
+                                <div>
+                                    <label className="form-label">Urgency Details</label>
+                                    <textarea className="form-control form-control-solid" rows={3} name="car_remarks" defaultValue={data.car_remarks} placeholder="" onChange={handleChange} />
+                                </div>
+                            }
                         </div>
                     </div>
 

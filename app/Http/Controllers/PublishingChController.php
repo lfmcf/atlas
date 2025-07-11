@@ -171,6 +171,8 @@ class PublishingChController extends Controller
         $pub->application_type = $request->application_type;
         $pub->type = $request->query('type');
         $pub->created_by = $request->created_by;
+        $pub->car_deadline = $request->car_deadline;
+        $pub->car_remarks = $request->car_remarks;
         if ($request->query('type') == 'save') {
             $pub->status = 'draft';
             $pub->save();

@@ -262,20 +262,21 @@ const Show = (props) => {
                                             <span className="fw-bold fs-6 text-gray-800">{moment(folder.deadline).format("DD-MMM-YYYY H:m")}</span>
                                         </div>
                                     </div>
-                                    <div className="row mb-7">
-                                        <label className="col-lg-4 fw-semibold text-muted">Adjusted deadline</label>
-                                        <div className="col-lg-8">
-                                            <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
-                                        </div>
-                                    </div>
                                     {folder.car_deadline &&
                                         <div className="row mb-7">
-                                            <label className="col-lg-4 fw-semibold text-muted">Adjusted deadline (Car)</label>
+                                            <label className="col-lg-4 fw-semibold text-muted">Urgent request deadline</label>
                                             <div className="col-lg-8">
                                                 <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline_car).format("DD-MMM-YYYY H:m")}</span>
                                             </div>
                                         </div>
                                     }
+                                    <div className="row mb-7">
+                                        <label className="col-lg-4 fw-semibold text-muted">Operational deadline</label>
+                                        <div className="col-lg-8">
+                                            <span className="fw-bold fs-6 text-gray-800">{moment(folder.adjusted_deadline).format("DD-MMM-YYYY H:m")}</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <div className='tab-content'>

@@ -59,6 +59,7 @@ const Confirm = (props: any) => {
         deadlineComments: '',
         car_deadline: folder.car_deadline,
         adjusted_deadline_car: '',
+        car_remarks: folder ? folder.car_remarks : '',
     });
 
     let contries = props.countries.map(function (country) {
@@ -528,20 +529,7 @@ const Confirm = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            <div className="row  mb-10">
-                                <div className='col-6 mb-10'>
-                                    <label htmlFor="" className="form-label">Adjusted deadline</label>
-                                    <Flatpickr
-                                        data-enable-time
-                                        value={data.adjusted_deadline}
-                                        className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
-                                        onChange={(date) => setData('adjusted_deadline', date)}
-                                        placeholder="Select date and time"
-                                    />
-                                </div>
-                            </div>
-                            <div className="row  mb-10">
+                            <div className="row mb-10 border border-gray-300 rounded p-5" >
                                 <div className='col-6'>
                                     <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
                                         <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
@@ -553,7 +541,7 @@ const Confirm = (props: any) => {
                                 </div>
                                 {data.car_deadline &&
                                     <div className='col-6'>
-                                        <label htmlFor="" className="form-label">Urgent Request Date</label>
+                                        <label htmlFor="" className="form-label">Urgent Request Deadline</label>
                                         <Flatpickr
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
@@ -562,11 +550,30 @@ const Confirm = (props: any) => {
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
                                             placeholder="Select date and time"
                                         />
-                                    </div>}
+                                    </div>
+                                }
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Urgency Details</label>
+                                    <textarea className="form-control form-control-solid" rows={3} name="deadlineComments" placeholder="" value={data.car_remarks} disabled style={{ color: '#99a1b7' }} />
+                                </div>
                             </div>
-                            <div className='col-12'>
-                                <label htmlFor="" className="form-label">Comments</label>
-                                <textarea className="form-control form-control-solid" rows={3} name="adjustedDeadlineComments" placeholder="" onChange={handleChange} />
+
+                            <div className="row border border-gray-300 rounded p-5">
+                                <div className='col-6 mb-10'>
+                                    <label htmlFor="" className="form-label">Opertional Deadline</label>
+                                    <Flatpickr
+                                        data-enable-time
+                                        value={data.adjusted_deadline}
+                                        className="form-control"
+                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        onChange={(date) => setData('adjusted_deadline', date)}
+                                        placeholder="Select date and time"
+                                    />
+                                </div>
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Comments</label>
+                                    <textarea className="form-control form-control-solid" rows={3} name="adjustedDeadlineComments" placeholder="" onChange={handleChange} />
+                                </div>
                             </div>
                         </div>
                     </div>

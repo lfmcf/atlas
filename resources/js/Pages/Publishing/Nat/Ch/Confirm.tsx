@@ -73,6 +73,7 @@ const Confirm = (props: any) => {
         status: folder ? folder.status : '',
         car_deadline: folder ? folder.car_deadline : false,
         adjusted_deadline_car: '',
+        car_remarks: folder ? folder.car_remarks : '',
     });
 
     useEffect(() => {
@@ -684,6 +685,7 @@ const Confirm = (props: any) => {
                             <div className='row mb-10'>
                                 <div className='col-6'>
                                     <label htmlFor="" className="form-label">Request date</label>
+                                    {/* <input className="form-control" ref={inputRef} id="kt_datepicker_1" name='request_date' /> */}
                                     <Flatpickr
                                         data-enable-time
                                         value={data.request_date}
@@ -694,6 +696,7 @@ const Confirm = (props: any) => {
                                 </div>
                                 <div className='col-6'>
                                     <label htmlFor="" className="form-label">Delivery deadline</label>
+                                    {/* <input className="form-control" ref={inputRef} id="kt_datepicker_2" name='deadline' disabled /> */}
                                     <Flatpickr
                                         data-enable-time
                                         value={data.deadline}
@@ -703,35 +706,19 @@ const Confirm = (props: any) => {
                                     />
                                 </div>
                             </div>
-                            <div className="row mb-10">
-                                <div className='col-6'>
-                                    <label htmlFor="" className="form-label" title="Provider's actual deadline">Operational deadline</label>
-                                    <Flatpickr
-                                        data-enable-time
-                                        value={data.adjusted_deadline}
-                                        className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
-                                        onChange={(date) => setData('adjusted_deadline', date)}
-                                    />
-                                </div>
-
-
-                            </div>
-                            <div className="row  mb-10">
+                            <div className="row mb-10 border border-gray-300 rounded p-5" >
                                 <div className='col-6'>
                                     <div className='my-4' style={{ display: 'flex', alignItems: 'center' }}>
-
                                         <label className='form-label my-0 me-4' data-toggle='tooltip' title='Field for the CAR adjusted deadline'>Urgent Request</label>
                                         <label className='form-check form-switch form-check-custom form-check-solid'>
                                             <input className='form-check-input' name='car_deadline' type='checkbox' checked={data.car_deadline} onChange={handleCheckBoxChange} />
                                         </label>
 
                                     </div>
-
                                 </div>
                                 {data.car_deadline &&
                                     <div className='col-6'>
-                                        <label htmlFor="" className="form-label">Urgent Request Date</label>
+                                        <label htmlFor="" className="form-label">Urgent Request Deadline</label>
                                         <Flatpickr
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
@@ -740,12 +727,29 @@ const Confirm = (props: any) => {
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
                                             placeholder="Select date and time"
                                         />
-                                    </div>}
+                                    </div>
+                                }
+                                <div className='col-12'>
+                                    <label htmlFor="" className="form-label">Urgency Details</label>
+                                    <textarea className="form-control form-control-solid" rows={3} name="deadlineComments" placeholder="" value={data.car_remarks} disabled style={{ color: '#99a1b7' }} />
+                                </div>
                             </div>
-                            <div className="row mb-10">
+
+                            <div className="row border border-gray-300 rounded p-5">
+                                <div className='col-6 mb-10'>
+                                    <label htmlFor="" className="form-label">Opertional Deadline</label>
+                                    <Flatpickr
+                                        data-enable-time
+                                        value={data.adjusted_deadline}
+                                        className="form-control"
+                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        onChange={(date) => setData('adjusted_deadline', date)}
+                                        placeholder="Select date and time"
+                                    />
+                                </div>
                                 <div className='col-12'>
                                     <label htmlFor="" className="form-label">Comments</label>
-                                    <textarea className="form-control form-control-solid" cols={3} name="adjustedDeadlineComments" onChange={handleChange} />
+                                    <textarea className="form-control form-control-solid" rows={3} name="adjustedDeadlineComments" placeholder="" onChange={handleChange} />
                                 </div>
                             </div>
                         </div>

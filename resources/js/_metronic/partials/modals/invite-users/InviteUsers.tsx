@@ -281,7 +281,7 @@ const InviteUsers = ({ show, setShow, setShowSec, initialState, setState, region
                 { label: 'UK', value: 'UK' },
                 { label: 'Switzerland', value: 'Switzerland' },
             ])
-            // setCompselect(true)
+            setCompselect(false)
         }
     }, [data.procedure])
 
