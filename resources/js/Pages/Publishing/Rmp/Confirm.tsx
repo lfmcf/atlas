@@ -1047,7 +1047,7 @@ const Create = (props: any) => {
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
                                             className="form-control"
-                                            options={{ dateFormat: "d-M-Y H:i" }}
+                                            options={{ dateFormat: "d-M-Y H:i", minDate: data.request_date, maxDate: data.deadline }}
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
                                             placeholder="Select date and time"
                                         />
@@ -1066,7 +1066,7 @@ const Create = (props: any) => {
                                         data-enable-time
                                         value={data.adjusted_deadline}
                                         className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        options={{ dateFormat: "d-M-Y H:i", minDate: data.request_date, maxDate: data.deadline }}
                                         onChange={(date) => setData('adjusted_deadline', date)}
                                         placeholder="Select date and time"
                                     />

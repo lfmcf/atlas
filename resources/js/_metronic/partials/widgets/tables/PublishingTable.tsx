@@ -142,7 +142,7 @@ const PublishingTable: React.FC<Props> = ({ data, currentUser, handleconsultdate
     const handleShow = (id, region, procedure) => {
         if (region === 'CH') {
             router.get(route('show-publishing-nat-ch'), { id: id })
-        } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized" || region == "EU" && procedure == "Centralized")) {
+        } else if ((region == "EU" && procedure == "Mutual Recognition") || (region == "EU" && procedure == "Decentralized")) {
             router.get(route('show-publishing-rmp'), { id: id })
         } else {
             router.get(route('show_eu_publishing'), { id: id })

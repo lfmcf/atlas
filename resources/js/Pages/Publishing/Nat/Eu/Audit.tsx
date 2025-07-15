@@ -885,7 +885,7 @@ const Confirm = (props: any) => {
                                         data-enable-time
                                         value={data.adjusted_deadline}
                                         className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        options={{ dateFormat: "d-M-Y H:i", minDate: data.request_date, maxDate: data.deadline }}
                                         onChange={(date) => setData('adjusted_deadline', date)}
                                     />
                                 </div>

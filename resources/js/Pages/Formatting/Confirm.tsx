@@ -2,7 +2,7 @@ import { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from '
 import Authenticated from '../../Layouts/AuthenticatedLayout'
 import { StepperComponent } from '../../_metronic/assets/ts/components'
 import { useForm } from '@inertiajs/react';
-import moment from 'moment'
+import moment, { max } from 'moment'
 import Select from 'react-select';
 import { formattingDossierType, formattingProduct, substanceFormattingList } from '../Lab/MetaDataList';
 import Flatpickr from "react-flatpickr";
@@ -546,9 +546,10 @@ const Confirm = (props: any) => {
                                             data-enable-time
                                             value={data.adjusted_deadline_car}
                                             className="form-control"
-                                            options={{ dateFormat: "d-M-Y H:i" }}
+                                            options={{ dateFormat: "d-M-Y H:i", minDate: data.request_date, maxDate: data.deadline }}
                                             onChange={(date) => setData('adjusted_deadline_car', date)}
                                             placeholder="Select date and time"
+
                                         />
                                     </div>
                                 }
@@ -565,7 +566,7 @@ const Confirm = (props: any) => {
                                         data-enable-time
                                         value={data.adjusted_deadline}
                                         className="form-control"
-                                        options={{ dateFormat: "d-M-Y H:i" }}
+                                        options={{ dateFormat: "d-M-Y H:i", minDate: data.request_date, maxDate: data.deadline }}
                                         onChange={(date) => setData('adjusted_deadline', date)}
                                         placeholder="Select date and time"
                                     />
