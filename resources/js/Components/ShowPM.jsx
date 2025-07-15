@@ -13,10 +13,10 @@ const ShowPM = ({ folder }) => {
                 <div className="col-lg-8">
                     <span className="fw-bold fs-6 text-gray-800">{folder.drug_substance ? folder.drug_substance.map((sub) => (
                         <>
-                            <li>{sub.drug_substance}</li>
+                            <li>{sub.substance}</li>
                             <ul>
                                 {sub.manufacturer?.map((man) => (
-                                    <li>{man.value}</li>
+                                    <li>{man}</li>
                                 ))}
                             </ul>
                         </>
@@ -31,10 +31,10 @@ const ShowPM = ({ folder }) => {
                 <div className="col-lg-8">
                     <span className="fw-bold fs-6 text-gray-800">{folder.drug_product ? folder.drug_product.map((product) => (
                         <>
-                            <li>{product.drug_product}</li>
+                            <li>{product.product}</li>
                             <ul>
                                 {product.manufacturer?.map((man) => (
-                                    <li>{man.value}</li>
+                                    <li>{man}</li>
                                 ))}
                             </ul>
                         </>
