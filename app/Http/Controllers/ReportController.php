@@ -91,6 +91,30 @@ class ReportController extends Controller
         }
 
 
+        // Define the statuses we want to count
+        $statuses = ['initiated', 'submitted', 'in progress', 'completed', 'to verify', 'delivered', 'to correct'];
+
+        // Initialize an array to hold our counts
+        $counts = array_fill_keys($statuses, 0);
+        $countsformating = array_fill_keys($statuses, 0);
+
+        // Get counts from Formating model
+        foreach ($statuses as $status) {
+            $countsformating[$status] += Formating::where('status', $status)->count();
+        }
+
+        // Get counts from Publishing model
+        foreach ($statuses as $status) {
+            $counts[$status] += Publishing::where('status', $status)->count();
+        }
+
+        // Get counts from PublishingMrp model
+        foreach ($statuses as $status) {
+            $counts[$status] += PublishingMrp::where('status', $status)->count();
+        }
+
+
+
         if ($user->current_team_id == 1) {
             $totalFormattings = Formating::where('status', '!=', 'draft')
                 ->where('created_by', $user->id)
@@ -106,6 +130,8 @@ class ReportController extends Controller
             $totalPublishingNat = Publishing::where('status', '!=', 'draft')->count();
             $totalPublishingMrp = PublishingMrp::where('status', '!=', 'draft')->count();
         }
+
+
 
 
 
@@ -152,7 +178,8 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
+                        // 'status' => ['$nin' => ['draft', 'initiated']]
+                        'status' => 'submitted'
                     ]
                 ],
                 [
@@ -168,7 +195,8 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
+                        // 'status' => ['$nin' => ['draft', 'initiated']]
+                        'status' => 'submitted'
                     ]
                 ],
                 [
@@ -186,10 +214,11 @@ class ReportController extends Controller
             return $collection->aggregate([
                 [
                     '$match' => [
-                        'status' => ['$nin' => ['draft', 'initiated']]
+                        // 'status' => ['$nin' => ['draft', 'initiated']]
+                        'status' => 'submitted'
                     ]
                 ],
-                ['$unwind' => '$mt'],
+                // ['$unwind' => '$mt'],
                 [
                     '$group' => [
                         "_id" => ['product' => '$product_name'],
@@ -215,6 +244,7 @@ class ReportController extends Controller
         }
 
         $mypmarr = [];
+
         foreach ($pm as $key => $value) {
             $mypmarr[$key]['count'] = $value->count;
             $mypmarr[$key]['product'] = $value->_id['product'];
@@ -266,6 +296,9 @@ class ReportController extends Controller
             'totalclosed' => $totalclosed,
             'productCountry' => $myarr,
             'inprogress' => $inprogress,
+            'countsformating' => $countsformating,
+            'countspublishing' => $counts,
+
         ]);
     }
 
@@ -405,13 +438,7 @@ class ReportController extends Controller
                 ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            // $formattings = Formating::where('status', 'initiated')
-            //     ->orWhere('status', 'draft')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'to verify')
-            //     ->orWhere('status', 'delivered')
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
+
             $publishing = Publishing::where(function ($query) use ($user) {
                 $query->where('status', 'draft')->where('created_by', $user->id);
             })
@@ -422,13 +449,7 @@ class ReportController extends Controller
                 ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            // $publishing = Publishing::where('status', 'initiated')
-            //     ->orWhere('status', 'draft')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'to verify')
-            //     ->orWhere('status', 'delivered')
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
+
             $publishingmrp = PublishingMrp::where(function ($query) use ($user) {
                 $query->where('status', 'draft')->where('created_by', $user->id);
             })
@@ -439,13 +460,6 @@ class ReportController extends Controller
                 ->orWhere('status', 'Correction Required')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            // $publishingmrp = PublishingMrp::where('status', 'initiated')
-            //     ->where('created_by', $user->id)
-            //     ->orWhere('status', 'draft')
-            //     ->orWhere('status', 'to verify')
-            //     ->orWhere('status', 'delivered')
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
         } else if ($user->current_team_id == 3) {
             $formattings = Formating::where('status', 'submitted')
                 ->orWhere('status', 'in progress')
@@ -495,111 +509,6 @@ class ReportController extends Controller
         }
     }
 
-    // public function getFormByYear(Request $request)
-    // {
-    //     $year = $request->year;
-    //     $datey = date('Y', strtotime($year));
-    //     $stdate = new DateTime($datey . "-1-1");
-    //     $endate = new DateTime($datey . "-12-31");
-
-    //     $requestperMonthFor = Formating::raw(function ($collection) use ($stdate, $endate) {;
-
-    //         return $collection->aggregate([
-    //             [
-    //                 '$match' => [
-    //                     'created_at' =>
-    //                     [
-    //                         '$gt' =>  new MongoDate($stdate),
-    //                         '$lt' => new MongoDate($endate),
-    //                     ]
-    //                 ]
-    //             ],
-    //             [
-    //                 '$group' => [
-    //                     "_id" => ['$month' => '$created_at'],
-    //                     'Count' => ['$sum' => 1]
-    //                 ]
-    //             ],
-
-    //         ]);
-    //     });
-
-    //     $requestperMonthPub = Publishing::raw(function ($collection) use ($stdate, $endate) {;
-    //         return $collection->aggregate([
-    //             [
-    //                 '$match' => [
-    //                     'created_at' =>
-    //                     [
-    //                         '$gt' =>  new MongoDate($stdate),
-    //                         '$lt' => new MongoDate($endate),
-    //                     ]
-    //                 ]
-    //             ],
-    //             [
-    //                 '$group' => [
-    //                     "_id" => ['$month' => '$created_at'],
-    //                     'Count' => ['$sum' => 1]
-    //                 ]
-    //             ],
-
-    //         ]);
-    //     });
-
-    //     $requestperMonthPubMrp = PublishingMrp::raw(function ($collection) use ($stdate, $endate) {;
-    //         return $collection->aggregate([
-    //             [
-    //                 '$match' => [
-    //                     'created_at' =>
-    //                     [
-    //                         '$gt' =>  new MongoDate($stdate),
-    //                         '$lt' => new MongoDate($endate),
-    //                     ]
-    //                 ]
-    //             ],
-    //             [
-    //                 '$group' => [
-    //                     "_id" => ['$month' => '$created_at'],
-    //                     'Count' => ['$sum' => 1]
-    //                 ]
-    //             ],
-
-    //         ]);
-    //     });
-
-    //     $my_arr = [];
-    //     $my_sec_arr = [];
-
-    //     for ($i = 1; $i <= 12; $i++) {
-    //         foreach ($requestperMonthFor as $x) {
-    //             if ($x->_id == $i) {
-    //                 $my_arr[$i] = $x->Count;
-    //                 break;
-    //             } else {
-    //                 $my_arr[$i] = 0;
-    //             }
-    //         }
-    //         foreach ($requestperMonthPub as $y) {
-    //             if ($y->_id == $i) {
-    //                 $my_sec_arr[$i] = $y->Count;
-    //                 break;
-    //             } else {
-    //                 $my_sec_arr[$i] = 0;
-    //             }
-    //         }
-    //         foreach ($requestperMonthPubMrp as $z) {
-    //             if ($z->_id == $i) {
-
-    //                 $my_sec_arr[$i] = $my_sec_arr[$i] + $z->Count;
-    //                 break;
-    //             } else {
-    //                 $my_sec_arr[$i] = 0;
-    //             }
-    //         }
-    //     }
-
-    //     return response()->json(['perMonthFor' => array_values($my_arr), 'perMonthPub' => array_values($my_sec_arr)]);
-    // }
-
     public function allnotif()
     {
         return Inertia::render('Lab/AllNotif');
@@ -616,14 +525,15 @@ class ReportController extends Controller
     public function getRequestPerType(Request $request)
     {
         $selectedYear = $request->selecedYear;
+        $status = $request->status;
 
-        $tpt = Formating::raw(function ($collection) use ($selectedYear) {
+        $tpt = Formating::raw(function ($collection) use ($selectedYear, $status) {
 
             return $collection->aggregate(
                 [
                     [
                         '$match' => [
-                            'status' => 'closed',
+                            'status' => $status,
                             '$expr' => [
                                 '$eq' => [
                                     ['$year' => '$created_at'],
@@ -637,14 +547,14 @@ class ReportController extends Controller
             );
         });
 
-        $tptp = Publishing::raw(function ($collection) use ($selectedYear) {
+        $tptp = Publishing::raw(function ($collection) use ($selectedYear, $status) {
 
 
             return $collection->aggregate(
                 [
                     [
                         '$match' => [
-                            'status' => 'closed',
+                            'status' => $status,
                             '$expr' => [
                                 '$eq' => [
                                     ['$year' => '$created_at'],
@@ -658,12 +568,12 @@ class ReportController extends Controller
             );
         });
 
-        $tptpm = PublishingMrp::raw(function ($collection) use ($selectedYear) {
+        $tptpm = PublishingMrp::raw(function ($collection) use ($selectedYear, $status) {
             return $collection->aggregate(
                 [
                     [
                         '$match' => [
-                            'status' => 'closed',
+                            'status' => $status,
                             '$expr' => [
                                 '$eq' => [
                                     ['$year' => '$created_at'],
@@ -724,6 +634,7 @@ class ReportController extends Controller
                                 (int)$selectedYear
                             ],
                         ],
+                        'status' => 'submitted'
                     ]
                 ],
                 [
@@ -747,7 +658,8 @@ class ReportController extends Controller
                                 (int)$selectedYear
                             ],
                         ],
-                        'status' => ['$not' => ['$eq' => 'draft']]
+                        // 'status' => ['$not' => ['$eq' => 'draft']]
+                        'status' => 'submitted'
                     ]
                 ],
                 [
@@ -771,7 +683,8 @@ class ReportController extends Controller
                                 (int)$selectedYear
                             ],
                         ],
-                        'status' => ['$not' => ['$eq' => 'draft']]
+                        // 'status' => ['$not' => ['$eq' => 'draft']]
+                        'status' => 'submitted'
                     ]
                 ],
                 [

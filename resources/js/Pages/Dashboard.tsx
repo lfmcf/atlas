@@ -433,11 +433,33 @@ const coptions = {
     }
 }
 
-const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingCount, acceptance, correction, update, totalclosed, productCountry, inprogress, currentUser }) => {
+const DashboardPage = ({
+    RequetNumber,
+    totalRequet,
+    PublishingCount,
+    formattingCount,
+    acceptance,
+    correction,
+    update,
+    totalclosed,
+    productCountry,
+    inprogress,
+    currentUser,
+    countsformating,
+    countspublishing,
+    teamId,
+    notifications,
+}) => {
 
     const [startDate, setStartDate] = useState(new Date());
+    const [typeStatus, setTypeStatus] = useState('initiated');
     const [monthReq, setMnthReq] = useState(new Date());
     const [cumulativeDate, setCumulativeDate] = useState(new Date());
+    const [datePerCountry, setDatePerCountry] = useState(() => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1);
+    });
+    const [datePerCountry2, setDatePerCountry2] = useState(new Date());
     const [currentPage, setCurrentPage] = useState(1);
     const [pageNumbers, setpageNumbers] = useState([]);
     const [nombrePages, setnombrePages] = useState(0);
@@ -450,16 +472,88 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
     const productTableRef = useRef()
     const firstRender = useRef(true);
-
-    const data = {
-        labels: ['Formatting', 'Publishing', 'Submission'],
-        datasets: [
-            {
-                data: [formattingCount, PublishingCount, 0],
-                backgroundColor: ['#00A3FF', '#50CD89', '#E4E6EF']
-            },
-        ],
+    var data = {}
+    var datapub = {}
+    if (teamId === 2) {
+        data = {
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'To verify', 'Delivered', 'To correct'],
+            datasets: [
+                {
+                    data: [
+                        countsformating['initiated'],
+                        countsformating['submitted'],
+                        countsformating['in progress'],
+                        countsformating['completed'],
+                        countsformating['to verify'],
+                        countsformating['delivered'],
+                        countsformating['to correct']
+                    ],
+                    backgroundColor: [
+                        '#00A3FF',  // initiated - blue (neutral starting state)
+                        '#50CD89',  // submitted - green (positive submission)
+                        '#FFC700',  // inprogress - yellow (active work in progress)
+                        '#00B4D8',  // completed - teal (distinct from submitted)
+                        '#7239EA',  // toverify - purple (needs attention)
+                        '#009EF7',  // delivered - different blue (finalized state)
+                        '#F1416C'   // tocorrect - red (needs correction)
+                    ]
+                },
+            ],
+        }
+        datapub = {
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'To verify', 'Delivered', 'To correct'],
+            datasets: [
+                {
+                    data: [
+                        countspublishing['initiated'],
+                        countspublishing['submitted'],
+                        countspublishing['in progress'],
+                        countspublishing['completed'],
+                        countspublishing['to verify'],
+                        countspublishing['delivered'],
+                        countspublishing['to correct']
+                    ],
+                    backgroundColor: [
+                        '#00A3FF',  // initiated - blue (neutral starting state)
+                        '#50CD89',  // submitted - green (positive submission)
+                        '#FFC700',  // inprogress - yellow (active work in progress)
+                        '#00B4D8',  // completed - teal (distinct from submitted)
+                        '#7239EA',  // toverify - purple (needs attention)
+                        '#009EF7',  // delivered - different blue (finalized state)
+                        '#F1416C'   // tocorrect - red (needs correction)
+                    ]
+                },
+            ],
+        }
+    } else {
+        data = {
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed'],
+            datasets: [
+                {
+                    data: [countsformating['initiated'], countsformating['submitted'], countsformating['in progress'], countsformating['completed']],
+                    backgroundColor: ['#00A3FF', '#50CD89', '#FFC700', '#00B4D8']
+                },
+            ],
+        }
+        datapub = {
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'To verify', 'Delivered', 'To correct'],
+            datasets: [
+                {
+                    data: [countspublishing['initiated'], countspublishing['submitted'], countspublishing['in progress'], countspublishing['completed']],
+                    backgroundColor: [
+                        '#00A3FF',  // initiated - blue (neutral starting state)
+                        '#50CD89',  // submitted - green (positive submission)
+                        '#FFC700',  // inprogress - yellow (active work in progress)
+                        '#00B4D8',  // completed - teal (distinct from submitted)
+                        '#7239EA',  // toverify - purple (needs attention)
+                        '#009EF7',  // delivered - different blue (finalized state)
+                        '#F1416C'   // tocorrect - red (needs correction)
+                    ]
+                },
+            ],
+        }
     }
+
 
     useEffect(() => {
         if (firstRender.current) {
@@ -469,7 +563,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
         }
 
         callGetRequestPerType()
-    }, [startDate])
+    }, [startDate, typeStatus])
 
     useEffect(() => {
         if (firstRender.current) {
@@ -493,7 +587,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
     const callGetRequestPerType = () => {
         const yearSelected = moment(startDate).year()
-        axios.post('getRequestPerType', { selecedYear: yearSelected }).then(res => {
+        axios.post('getRequestPerType', { selecedYear: yearSelected, status: typeStatus }).then(res => {
             setRequetPerType(prevState => ({
                 formattingRT: res.data.formattingRT.data ? res.data.formattingRT.data : [],
                 publishingRT: res.data.publishingRT.data ? res.data.publishingRT.data : [],
@@ -539,7 +633,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
 
 
     useEffect(() => {
-
+        if (teamId === 1) {
+            return
+        }
         const table = $(productTableRef.current).DataTable({
             "info": false,
             'order': [],
@@ -782,20 +878,6 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
             </div>        
             `;
         },
-
-        // Remove block ui on initial draw
-        // onInitialDrawComplete: function () {
-        //     handleAvatarPath();
-
-        //     const target = element.closest('[data-kt-timeline-widget-4-blockui="true"]');
-        //     const blockUI = KTBlockUI.getInstance(target);
-
-        //     if (blockUI.isBlocked()) {
-        //         setTimeout(() => {
-        //             blockUI.release();
-        //         }, 1000);      
-        //     }
-        // }
     };
 
     return (
@@ -870,7 +952,9 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-3">
+
+
+                <div className="col-lg-8">
                     <div className="card card-flush h-100">
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
@@ -878,38 +962,198 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                             </div>
                         </div>
                         <div className="card-body p-9 pt-5">
-                            <div className="d-flex flex-wrap justify-content-center">
-                                <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
-                                    <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
-                                        <span className="fs-2qx fw-bold">{formattingCount + PublishingCount}</span>
-                                        <span className="fs-6 fw-semibold text-gray-400">Total Req</span>
+                            <div className='row'>
+                                <div className='col-lg-6 border-end'>
+                                    <div className="d-flex flex-wrap justify-content-center">
+                                        <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
+                                            <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
+                                                {teamId === 2 ?
+                                                    <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed'] + countsformating['delivered'] + countsformating['to correct'] + countsformating['to verify']}</span>
+                                                    :
+                                                    <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed']}</span>
+                                                }
+                                                {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
+                                                <span className="fs-6 fw-semibold text-gray-400">Formatting</span>
+                                            </div>
+                                            <Doughnut data={data} options={choptions} />
+                                        </div>
+
+                                        <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
+                                            {countsformating['initiated'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }}></div>
+                                                    <div className="text-gray-400">Intiated</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['initiated']} </div>
+                                                </div>
+                                                : ''}
+                                            {countsformating['submitted'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
+                                                    <div className="text-gray-400">Submitted</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['submitted']} </div>
+                                                </div>
+                                                : ''}
+                                            {countsformating['in progress'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
+                                                    <div className="text-gray-400">In progress</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['in progress']}</div>
+                                                </div>
+                                                : ''}
+                                            {countsformating['completed'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
+                                                    <div className="text-gray-400">Completed</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['completed']} </div>
+                                                </div>
+                                                : ''}
+                                            {teamId === 2 ?
+                                                <>
+                                                    {countsformating['to verify'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
+                                                            <div className="text-gray-400">To verify</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['to verify']}</div>
+                                                        </div>
+                                                        : ''}
+                                                    {countsformating['delivered'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
+                                                            <div className="text-gray-400">Delivred</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['delivered']}</div>
+                                                        </div>
+                                                        : ''}
+                                                    {countsformating['to correct'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
+                                                            <div className="text-gray-400">To correct</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['to correct']}</div>
+                                                        </div>
+                                                        : ''}
+                                                </>
+                                                :
+                                                ''}
+                                        </div>
+
                                     </div>
-                                    <Doughnut data={data} options={choptions} />
                                 </div>
-                                <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
-                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                        <div className="bullet bg-primary me-3"></div>
-                                        <div className="text-gray-400">Formatting</div>
-                                        <div className="ms-auto fw-bold text-gray-700">{formattingCount}</div>
+
+
+                                <div className='col-lg-6 col-md-6'>
+
+                                    <div className="d-flex flex-wrap justify-content-center">
+
+                                        <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
+                                            <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
+                                                {teamId === 2 ?
+                                                    <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['to verify'] + countspublishing['delivered'] + countspublishing['to correct']}</span>
+                                                    :
+                                                    <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed']}</span>
+                                                }
+                                                {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
+                                                <span className="fs-6 fw-semibold text-gray-400">Publishing</span>
+                                            </div>
+                                            <Doughnut data={datapub} options={choptions} />
+                                        </div>
+                                        <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
+                                            {countspublishing['initiated'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }} ></div>
+                                                    <div className="text-gray-400">Intiated</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['initiated']}</div>
+                                                </div>
+                                                : ''}
+                                            {countspublishing['submitted'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
+                                                    <div className="text-gray-400">Submitted</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['submitted']}</div>
+                                                </div>
+                                                : ''}
+                                            {countspublishing['in progress'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
+                                                    <div className="text-gray-400">In progress</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['in progress']}</div>
+                                                </div>
+                                                : ''}
+                                            {countspublishing['completed'] ?
+                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                    <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
+                                                    <div className="text-gray-400">Completed</div>
+                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['completed']}</div>
+                                                </div>
+                                                : ''}
+                                            {teamId === 2 ?
+                                                <>
+                                                    {countspublishing['to verify'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
+                                                            <div className="text-gray-400">To verify</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['to verify']}</div>
+                                                        </div>
+                                                        : ''}
+                                                    {countspublishing['delivered'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
+                                                            <div className="text-gray-400">Delivred</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['delivered']}</div>
+                                                        </div>
+                                                        : ''}
+                                                    {countspublishing['to correct'] ?
+                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                            <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
+                                                            <div className="text-gray-400">To correct</div>
+                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['to correct']}</div>
+                                                        </div>
+                                                        : ''}
+                                                </>
+                                                :
+                                                ''}
+                                        </div>
+
                                     </div>
-                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                        <div className="bullet bg-success me-3"></div>
-                                        <div className="text-gray-400">Publishing</div>
-                                        <div className="ms-auto fw-bold text-gray-700">{PublishingCount}</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div className='col-4'>
+                    <div className='card card-flush h-lg-100'>
+                        <div className="card-header mt-6">
+                            <div className="card-title flex-column">
+                                <h3 className="fw-bold mb-1">Latest updates</h3>
+                            </div>
+                        </div>
+                        <div className='card-body py-0 ps-6 mt-2'>
+                            <div className="timeline-label">
+                                {notifications?.map((notification, index) => (
+                                    <div className="timeline-item">
+                                        <div className="timeline-line w-40px"></div>
+                                        <div className="timeline-icon symbol symbol-40px me-4">
+                                            <span className="svg-icon svg-icon-2 svg-icon-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <path opacity="0.3" d="M21 19H3C2.4 19 2 18.6 2 18V6C2 5.4 2.4 5 3 5H21C21.6 5 22 5.4 22 6V18C22 18.6 21.6 19 21 19Z" fill="currentColor"></path>
+                                                    <path d="M21 19H3C2.4 19 2 18.6 2 18V6C2 5.4 2.4 5 3 5H21C21.6 5 22 5.4 22 6V18C22 18.6 21.6 19 21 19Z" fill="currentColor" className="primary"></path>
+                                                    <path d="M9 8C10.3 8 11 7.3 11 6C11 4.7 10.3 4 9 4C7.7 4 7 4.7 7 6C7 7.3 7.7 8 9 8Z" fill="currentColor"></path>
+                                                    <path opacity="0.3" d="M17 8C18.3 8 19 7.3 19 6C19 4.7 18.3 4 17 4C15.7 4 15 4.7 15 6C15 7.3 15.7 8 17 8Z" fill="currentColor"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div className="timeline-content mb-10">
+                                            <span className="fw-semibold text-gray-800 text-hover-primary fs-6">{notification.data.title} - {notification.data.status}</span>
+                                            <span className="text-muted fw-semibold d-block">{notification.data.country?.value} - {notification.data.country?.code}</span>
+                                            <span className="text-muted fw-semibold d-block">{moment(notification.created_at).format('YYYY-MM-DD HH:mm')}</span>
+                                        </div>
                                     </div>
 
-                                    <div className="d-flex fs-6 fw-semibold align-items-center">
-                                        <div className="bullet bg-gray-300 me-3"></div>
-                                        <div className="text-gray-400">Submission</div>
-                                        <div className="ms-auto fw-bold text-gray-700">0</div>
-                                    </div>
-                                </div>
-
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className='col-5'>
+                <div className='col-8'>
                     <div className='card card-flush h-lg-100'>
                         <div className='card-header py-7 mb-3'>
                             <h3 className='card-title align-items-start flex-column'>
@@ -951,6 +1195,22 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     </li>
 
                                 </ul>
+                                <select
+                                    className='form-select form-select-solid form-select-sm fw-bold w-100px me-3'
+                                    data-kt-select2='true'
+                                    data-allow-clear='true'
+                                    onChange={(e) => setTypeStatus(e.target.value)}
+                                >
+                                    <option value='initiated'>Initiated</option>
+                                    <option value='delivered'>Delivred</option>
+                                    <option value='submitted'>Submitted</option>
+                                    <option value='completed'>Completed</option>
+                                    <option value='to verify'>To verify</option>
+                                    <option value='to correct'>To correct</option>
+                                    <option value='in progress'>In progress</option>
+                                    <option value='completed'>Completed</option>
+                                    <option value='closed'>Closed</option>
+                                </select>
                                 <DatePicker
                                     dateFormat="yyyy"
                                     showYearPicker selected={startDate}
@@ -958,6 +1218,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                                     className="form-select form-select-solid form-select-sm fw-bold w-100px"
                                     yearItemNumber={6}
                                 />
+
                             </div>
                         </div>
                         <div className='card-body py-0 ps-6 mt-2'>
@@ -980,6 +1241,7 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
+
                 <div className='col-lg-6 col-md-6 mb-5 mb-xl-10'>
                     <div className='card card-flush h-xxl-100 h-lg-100'>
                         <div className="card-header pt-7">
@@ -1102,236 +1364,247 @@ const DashboardPage = ({ RequetNumber, totalRequet, PublishingCount, formattingC
                         </div>
                     </div>
                 </div>
+                {teamId !== 1 ?
+                    <>
+                        <div className="col-lg-6">
+                            <div className='card card-flush h-lg-100'>
+                                <div className='card-header pt-7 mb-5'>
+                                    <h3 className='card-title align-items-start flex-column'>
+                                        <span className='card-label fw-bold text-gray-800'>Requests Per Product-Country</span>
 
-                <div className="col-lg-6">
-                    <div className='card card-flush h-lg-100'>
-                        <div className='card-header pt-7 mb-5'>
-                            <h3 className='card-title align-items-start flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Requests per Product-Country</span>
-                                {/* <span className='text-gray-400 mt-1 fw-semibold fs-6'>...</span> */}
-                            </h3>
-                        </div>
-                        <div className='card-body pt-0'>
-                            <div className='table-responsive'>
-                                <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
-                                    <thead >
-                                        <tr>
-                                            <th >Country</th>
-                                            <th >Produit</th>
-                                            <th >Formatting</th>
-                                            <th >Publishing</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {productCountry.map((val, i) => (
-                                            <tr key={i}>
-                                                <td>
-                                                    <div className='d-flex align-items-center'>
-                                                        <div className='symbol symbol-45px me-2'>
-                                                            {/* <ReactCountryFlag
-                                                                countryCode={countries.getAlpha2Code(val.cnt, "en")}
-                                                                svg
-                                                                style={{
-                                                                    width: '2em',
-                                                                    height: '2em',
-                                                                }}
-                                                            /> */}
-                                                            {val.cnt == "KSA" ?
-                                                                <ReactCountryFlag
-                                                                    countryCode={countries.getAlpha2Code("Saudi arabia", "en")}
-                                                                    svg
-                                                                    style={{
-                                                                        width: '2em',
-                                                                        height: '2em',
-                                                                    }}
-                                                                /> :
-                                                                val.cnt == "EU" ? <ReactCountryFlag countryCode="EU"
-                                                                    aria-label="Europe"
-                                                                    title="Europe"
-                                                                    svg
-                                                                    style={{
-                                                                        width: '2em',
-                                                                        height: '2em',
-                                                                    }} />
-                                                                    : <ReactCountryFlag
-                                                                        countryCode={countries.getAlpha2Code(val.cnt, "en")}
-                                                                        svg
-                                                                        style={{
-                                                                            width: '2em',
-                                                                            height: '2em',
-                                                                        }}
-                                                                    />}
-                                                        </div>
-                                                        <div className='d-flex justify-content-start flex-column'>
-                                                            <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt == "EU" ? "Europe" : val.cnt}</span>
-                                                            <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                                                                {val.cnt == "EU" ? "EU" : countries.getAlpha2Code(val.cnt, "en")}
+                                    </h3>
+                                    <div className="card-toolbar">
+                                        <span className="me-3">From</span>
+                                        <DatePicker
+                                            dateFormat="d/M/yy"
+                                            className="form-select form-select-solid form-select-sm fw-bold w-100px"
+                                            selected={datePerCountry}
+                                            onChange={setDatePerCountry}
+
+                                        />
+                                        <span className='ms-3 me-3'>To</span>
+                                        <DatePicker
+                                            dateFormat="d/M/yy"
+                                            className="form-select form-select-solid form-select-sm fw-bold w-100px"
+                                            selected={datePerCountry2}
+                                            onChange={setDatePerCountry2}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='card-body pt-0'>
+
+                                    <div className='table-responsive'>
+                                        <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4' ref={productTableRef}>
+                                            <thead >
+                                                <tr>
+                                                    <th >Country</th>
+                                                    <th >Produit</th>
+                                                    <th >Formatting</th>
+                                                    <th >Publishing</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {productCountry.map((val, i) => (
+                                                    <tr key={i}>
+                                                        <td>
+                                                            <div className='d-flex align-items-center'>
+                                                                <div className='symbol symbol-45px me-2'>
+
+                                                                    {val.cnt == "KSA" ?
+                                                                        <ReactCountryFlag
+                                                                            countryCode={countries.getAlpha2Code("Saudi arabia", "en")}
+                                                                            svg
+                                                                            style={{
+                                                                                width: '2em',
+                                                                                height: '2em',
+                                                                            }}
+                                                                        /> :
+                                                                        val.cnt == "EU" ? <ReactCountryFlag countryCode="EU"
+                                                                            aria-label="Europe"
+                                                                            title="Europe"
+                                                                            svg
+                                                                            style={{
+                                                                                width: '2em',
+                                                                                height: '2em',
+                                                                            }} />
+                                                                            : <ReactCountryFlag
+                                                                                countryCode={countries.getAlpha2Code(val.cnt, "en")}
+                                                                                svg
+                                                                                style={{
+                                                                                    width: '2em',
+                                                                                    height: '2em',
+                                                                                }}
+                                                                            />}
+                                                                </div>
+                                                                <div className='d-flex justify-content-start flex-column'>
+                                                                    <span className='text-dark fw-bold text-hover-primary fs-6'>{val.cnt == "EU" ? "Europe" : val.cnt}</span>
+                                                                    <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                                                                        {val.cnt == "EU" ? "EU" : countries.getAlpha2Code(val.cnt, "en")}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
+                                                                {val.pr}
                                                             </span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-700 fw-bold fs-6 me-3 d-block'>
-                                                        {val.pr}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.formatting}</span>
-                                                </td>
-                                                <td>
-                                                    <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.publishing}</span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <div className="row paginate_row">
-                                    <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
-                                        <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
-                                            <ul className="pagination">
-                                                <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
-                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
-                                                        <i className="previous"></i></button>
-                                                </li>
-
-                                                {
-                                                    pageNumbers.map(number => (
-
-                                                        <li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
-                                                            <button onClick={() => pagination(number)} className="page-link"> {number} </button>
+                                                        </td>
+                                                        <td>
+                                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.formatting}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span className='text-gray-500 fw-bold fs-6 me-3 d-block'>{val.publishing}</span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        <div className="row paginate_row">
+                                            <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
+                                                <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
+                                                    <ul className="pagination">
+                                                        <li className={clsx("paginate_button page-item previous", currentPage === 1 ? 'disabled' : '')} id="kt_profile_overview_table_previous">
+                                                            <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handleprevious}>
+                                                                <i className="previous"></i></button>
                                                         </li>
-                                                    ))
-                                                }
-                                                <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
-                                                    <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
-                                                        <i className="next"></i>
-                                                    </button>
-                                                </li>
-                                            </ul>
+
+                                                        {
+                                                            pageNumbers.map(number => (
+
+                                                                <li key={number} className={currentPage === number ? 'page-item active' : 'paginate_button page-item'}>
+                                                                    <button onClick={() => pagination(number)} className="page-link"> {number} </button>
+                                                                </li>
+                                                            ))
+                                                        }
+                                                        <li className={clsx('paginate_button page-item next', currentPage === nombrePages ? 'disabled' : '')} id="kt_profile_overview_table_next">
+                                                            <button aria-controls="kt_profile_overview_table" className="page-link" onClick={handlenext}>
+                                                                <i className="next"></i>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="col-lg-6">
-                    <div className="card card-flush h-lg-100">
-                        <div className='card-header pt-7 mb-5'>
-                            <h3 className='card-title align-items-center flex-column'>
-                                <span className='card-label fw-bold text-gray-800'>Request review</span>
-                            </h3>
-                        </div>
-
-                        <div className="card-body pt-0">
-                            <div className="d-flex flex-wrap flex-md-nowrap">
-                                <div className="me-md-5 w-100">
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield-tick fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Approved</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span> */}
-                                        </div>
-                                    </div>
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Change</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{update}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span> */}
-                                        </div>
-                                    </div>
-                                    <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
-                                        <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
-                                            <div className="symbol symbol-50px me-4">
-                                                <span className="symbol-label">
-                                                    <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
-                                                        <span className="path1"></span>
-                                                        <span className="path2"></span>
-                                                        <span className="path3"></span>
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <div className="me-2">
-                                                <span className="text-gray-800 fs-6 fw-bold">Correction</span>
-                                                {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
-                                            </div>
-                                        </div>
-                                        <div className="d-flex align-items-center">
-                                            <span className="text-dark fw-bolder fs-2x">{correction}</span>
-                                            <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
-                                            <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
-                                            {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
-                                        </div>
-                                    </div>
+                        <div className="col-lg-6">
+                            <div className="card card-flush h-lg-100">
+                                <div className='card-header pt-7 mb-5'>
+                                    <h3 className='card-title align-items-center flex-column'>
+                                        <span className='card-label fw-bold text-gray-800'>Request review</span>
+                                    </h3>
                                 </div>
-                                <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
-                                    {/* <div className="fs-4 fw-bold text-gray-900 text-center mb-5">
-                                        Session Attendance
-                                        <br />for Current Academic Year
-                                    </div> */}
-                                    <Chart options={doptions as ApexCharts.ApexOptions} series={[acceptance, update, correction]} type='donut' />
-                                    <div className="mx-auto">
 
-                                        <div className="d-flex align-items-center mb-2">
+                                <div className="card-body pt-0">
+                                    <div className="d-flex flex-wrap flex-md-nowrap">
+                                        <div className="me-md-5 w-100">
+                                            <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                                <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                                    <div className="symbol symbol-50px me-4">
+                                                        <span className="symbol-label">
+                                                            <i className="ki-duotone ki-shield-tick fs-2qx text-primary">
+                                                                <span className="path1"></span>
+                                                                <span className="path2"></span>
+                                                            </i>
+                                                        </span>
+                                                    </div>
+                                                    <div className="me-2">
+                                                        <span className="text-gray-800 fs-6 fw-bold">Approved</span>
+                                                        {/* <span className="text-gray-400 fw-bold d-block fs-7">Great, you always attending class. keep it up</span> */}
+                                                    </div>
+                                                </div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="text-dark fw-bolder fs-2x">{acceptance}</span>
+                                                    <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                                    <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                                    {/* <span className="badge badge-lg badge-light-success align-self-center px-2">95%</span> */}
+                                                </div>
+                                            </div>
+                                            <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                                <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                                    <div className="symbol symbol-50px me-4">
+                                                        <span className="symbol-label">
+                                                            <i className="ki-duotone ki-shield fs-2qx text-primary">
+                                                                <span className="path1"></span>
+                                                                <span className="path2"></span>
 
-                                            <div className="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
-
-                                            <div className="fs-8 fw-semibold text-muted">Change</div>
-
+                                                            </i>
+                                                        </span>
+                                                    </div>
+                                                    <div className="me-2">
+                                                        <span className="text-gray-800 fs-6 fw-bold">Change</span>
+                                                        {/* <span className="text-gray-400 fw-bold d-block fs-7">Don’t forget to turn in your task</span> */}
+                                                    </div>
+                                                </div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="text-dark fw-bolder fs-2x">{update}</span>
+                                                    <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                                    <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                                    {/* <span className="badge badge-lg badge-light-success align-self-center px-2">92%</span> */}
+                                                </div>
+                                            </div>
+                                            <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                                <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                                    <div className="symbol symbol-50px me-4">
+                                                        <span className="symbol-label">
+                                                            <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
+                                                                <span className="path1"></span>
+                                                                <span className="path2"></span>
+                                                                <span className="path3"></span>
+                                                            </i>
+                                                        </span>
+                                                    </div>
+                                                    <div className="me-2">
+                                                        <span className="text-gray-800 fs-6 fw-bold">Correction</span>
+                                                        {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
+                                                    </div>
+                                                </div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="text-dark fw-bolder fs-2x">{correction}</span>
+                                                    <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                                    <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                                    {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
 
-                                        <div className="d-flex align-items-center mb-2">
+                                            <Chart options={doptions as ApexCharts.ApexOptions} series={[acceptance, update, correction]} type='donut' />
+                                            <div className="mx-auto">
 
-                                            <div className="bullet bullet-dot w-8px h-7px bg-primary me-2"></div>
+                                                <div className="d-flex align-items-center mb-2">
 
-                                            <div className="fs-8 fw-semibold text-muted">Correction</div>
+                                                    <div className="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
 
-                                        </div>
+                                                    <div className="fs-8 fw-semibold text-muted">Change</div>
 
-                                        <div className="d-flex align-items-center mb-2">
+                                                </div>
 
-                                            <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
+                                                <div className="d-flex align-items-center mb-2">
 
-                                            <div className="fs-8 fw-semibold text-muted">Approved</div>
+                                                    <div className="bullet bullet-dot w-8px h-7px bg-primary me-2"></div>
 
+                                                    <div className="fs-8 fw-semibold text-muted">Correction</div>
+
+                                                </div>
+
+                                                <div className="d-flex align-items-center mb-2">
+
+                                                    <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
+
+                                                    <div className="fs-8 fw-semibold text-muted">Approved</div>
+
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                    : ''}
                 {currentUser == 3 ?
                     <div className='col-12'>
                         <div className='card h-md-100'>
@@ -1387,6 +1660,10 @@ const Dashboard = (props: any) => {
     const productCountry = props.productCountry
     const inprogress = props.inprogress
 
+    const teamId = props.auth.user.current_team_id
+    console.log(props.auth.user.notifications)
+    const notifications = props.auth.user.notifications?.slice(0, 3);
+
     useEffect(() => {
         if (props.flash.message) {
             MySwal.fire({
@@ -1402,49 +1679,13 @@ const Dashboard = (props: any) => {
         return null
     }
 
-    // const isPageTitleVisible = showPageTitle(
-    //     config.app?.toolbar?.layout,
-    //     config.app?.pageTitle?.display
-    // )
-
 
     return (
         <>
             <PageTitle breadcrumbs={[]}>
                 Dashboard
             </PageTitle>
-            {/* <div
-                id='kt_app_toolbar'
-                className={clsx('app-toolbar', classes.toolbar.join(' '), config?.app?.toolbar?.class)}
-            >
-                <div
-                    id='kt_app_toolbar_container'
-                    className={clsx(
 
-                        classes.toolbarContainer.join(' '),
-                        config.app?.toolbar?.containerClass,
-                        config.app?.toolbar?.minimize?.enabled ? 'app-toolbar-minimize' : '',
-                        {
-                            'container-fluid': config.app?.toolbar?.container === 'fluid',
-                            'container-xxl': config.app?.toolbar?.container === 'fixed',
-                        }
-                    )}
-                >
-                    {isPageTitleVisible && <PageTitleWrapper />}
-                    <div className='page-title d-flex flex-column justify-content-center flex-wrap me-3'>
-                        <h1 className='page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0'>
-                            Dashboard
-                        </h1>
-                    </div>
-                    <div className='d-flex align-items-center gap-2 gap-lg-3'>
-                        <a className='btn btn-sm fw-bold btn-secondary'>List</a>
-                        <a className='btn btn-sm fw-bold btn-primary'>
-                            New Request
-                        </a>
-                    </div>
-                    <Toolbar />
-                </div>
-            </div> */}
             <DashboardPage
                 RequetNumber={RequetNumber}
                 totalRequet={totalRequet}
@@ -1457,6 +1698,11 @@ const Dashboard = (props: any) => {
                 productCountry={productCountry}
                 inprogress={inprogress}
                 currentUser={props.auth.user.current_team_id}
+                countsformating={props.countsformating}
+                countspublishing={props.countspublishing}
+                teamId={teamId}
+                notifications={notifications}
+
             />
 
         </>
