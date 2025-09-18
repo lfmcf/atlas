@@ -442,7 +442,7 @@ const DashboardPage = ({
     correction,
     update,
     totalclosed,
-    productCountry,
+    // productCountry,
     inprogress,
     currentUser,
     countsformating,
@@ -462,13 +462,15 @@ const DashboardPage = ({
     const [datePerCountry2, setDatePerCountry2] = useState(new Date());
     const [currentPage, setCurrentPage] = useState(1);
     const [pageNumbers, setpageNumbers] = useState([]);
-    const [nombrePages, setnombrePages] = useState(0);
+    const [nombrePages, setnombrePages] = useState(5);
     const [requestPerType, setRequetPerType] = useState({ formattingRT: [], publishingRT: [], labelsf: '', labelsp: '' });
     const [requestPetMont, setRequestPerMonth] = useState({ formattingR: [], publishingR: [] })
     const [cumulativeReq, setCumulativeReq] = useState({ formattingCR: [], publishingCR: [] })
     const [loading, setLoading] = useState(false);
     const [timelineItems, setTimelineItems] = useState([])
+    const [RequestPerCountry, setRequestPerCountry] = useState([]);
     const [tb, setTb] = useState();
+
 
     const productTableRef = useRef()
     const firstRender = useRef(true);
@@ -601,6 +603,58 @@ const DashboardPage = ({
         });
     }
 
+    useEffect(() => {
+        axios.post('getRequestPerCountry', { from: datePerCountry, to: datePerCountry2 }).then(res => {
+            setRequestPerCountry(res.data.productCountry);
+            console.log(res.data);
+            setCurrentPage(1); // Reset to first page when data changes
+        });
+    }, [datePerCountry, datePerCountry2]);
+
+    // Calculate pagination details
+    const paginationDetails = useMemo(() => {
+        const totalItems = RequestPerCountry?.length || 0;
+        const totalPages = Math.ceil(totalItems / nombrePages);
+        const startIndex = (currentPage - 1) * nombrePages;
+        const endIndex = Math.min(startIndex + nombrePages, totalItems);
+        const currentItems = RequestPerCountry?.slice(startIndex, endIndex) || [];
+
+        return {
+            totalItems,
+            totalPages,
+            startIndex,
+            endIndex,
+            currentItems
+        };
+    }, [RequestPerCountry, currentPage, nombrePages]);
+
+    // Handle page change
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= paginationDetails.totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    // Generate page numbers for pagination controls
+    const getPageNumbers = () => {
+        const pages = [];
+        const totalPages = paginationDetails.totalPages;
+        const maxVisiblePages = 5;
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return pages;
+    };
+
     const callGetRequestsPerMonth = () => {
 
         const yearSelected = moment(monthReq).year()
@@ -636,13 +690,14 @@ const DashboardPage = ({
         if (teamId === 1) {
             return
         }
-        const table = $(productTableRef.current).DataTable({
-            "info": false,
-            'order': [],
-            'pageLength': 5,
-        })
-        setnombrePages(table.page.info().pages);
-        setTb(table)
+        // const table = $(productTableRef.current).DataTable({
+        //     "info": false,
+        //     'order': [],
+        //     'pageLength': 5,
+        // })
+        // setnombrePages(table.page.info().pages);
+        // setTb(table)
+
         const sitems = inprogress.map((item) => {
 
             return (
@@ -662,66 +717,66 @@ const DashboardPage = ({
 
         setTimelineItems(sitems)
 
-        return function () {
-            table.destroy()
-        }
+        // return function () {
+        //     table.destroy()
+        // }
 
     }, [])
 
-    useEffect(() => {
-        var numbers = [];
-        var buttons = 5;
-        var half = Math.floor(buttons / 2);
-        var _range = function (len, start) {
-            var end;
+    // useEffect(() => {
+    //     var numbers = [];
+    //     var buttons = 5;
+    //     var half = Math.floor(buttons / 2);
+    //     var _range = function (len, start) {
+    //         var end;
 
-            if (typeof start === "undefined") {
-                start = 0;
-                end = len;
+    //         if (typeof start === "undefined") {
+    //             start = 0;
+    //             end = len;
 
-            } else {
-                end = start;
-                start = len;
-            }
+    //         } else {
+    //             end = start;
+    //             start = len;
+    //         }
 
-            var out = [];
-            for (var i = start; i < end; i++) { out.push(i); }
+    //         var out = [];
+    //         for (var i = start; i < end; i++) { out.push(i); }
 
-            return out;
-        };
-        if (nombrePages <= buttons) {
-            numbers = _range(0, nombrePages);
+    //         return out;
+    //     };
+    //     if (nombrePages <= buttons) {
+    //         numbers = _range(0, nombrePages);
 
-        } else if (currentPage <= half) {
-            numbers = _range(0, buttons);
+    //     } else if (currentPage <= half) {
+    //         numbers = _range(0, buttons);
 
-        } else if (currentPage >= nombrePages - 1 - half) {
-            numbers = _range(nombrePages - buttons, nombrePages);
+    //     } else if (currentPage >= nombrePages - 1 - half) {
+    //         numbers = _range(nombrePages - buttons, nombrePages);
 
-        } else {
-            numbers = _range(currentPage - half, currentPage + half + 1);
-        }
-        numbers = Array.from(numbers, (i) => i + 1)
-        setpageNumbers(numbers)
-    }, [nombrePages, currentPage])
+    //     } else {
+    //         numbers = _range(currentPage - half, currentPage + half + 1);
+    //     }
+    //     numbers = Array.from(numbers, (i) => i + 1)
+    //     setpageNumbers(numbers)
+    // }, [nombrePages, currentPage])
 
-    const pagination = (number) => {
+    // const pagination = (number) => {
 
-        setCurrentPage(number)
-        tb.page(number - 1).draw('page')
-    }
+    //     setCurrentPage(number)
+    //     tb.page(number - 1).draw('page')
+    // }
 
-    const handleprevious = () => {
-        let number = tb.page.info().page
-        setCurrentPage(number)
-        tb.page(number - 1).draw('page')
-    }
+    // const handleprevious = () => {
+    //     let number = tb.page.info().page
+    //     setCurrentPage(number)
+    //     tb.page(number - 1).draw('page')
+    // }
 
-    const handlenext = () => {
-        let number = tb.page.info().page + 1
-        setCurrentPage(number + 1)
-        tb.page(number).draw('page')
-    }
+    // const handlenext = () => {
+    //     let number = tb.page.info().page + 1
+    //     setCurrentPage(number + 1)
+    //     tb.page(number).draw('page')
+    // }
 
     const dossier_type_options = {
         chart: {
@@ -1404,7 +1459,7 @@ const DashboardPage = ({
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {productCountry.map((val, i) => (
+                                                {RequestPerCountry?.map((val, i) => (
                                                     <tr key={i}>
                                                         <td>
                                                             <div className='d-flex align-items-center'>
@@ -1459,7 +1514,39 @@ const DashboardPage = ({
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className="row paginate_row">
+                                        {/* Pagination Controls */}
+                                        {paginationDetails.totalPages > 0 && (
+                                            <div className="d-flex justify-content-between align-items-center flex-wrap mt-4">
+                                                <div className="d-flex align-items-center text-muted fs-7">
+                                                    Showing <span className="fw-bold mx-1">{paginationDetails.startIndex + 1}</span> to
+                                                    <span className="fw-bold mx-1">{paginationDetails.endIndex}</span> of
+                                                    <span className="fw-bold mx-1">{paginationDetails.totalItems}</span> entries
+                                                </div>
+
+                                                <ul className="pagination">
+                                                    <li className={`page-item previous ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+                                                            <i className="previous"></i>
+                                                        </button>
+                                                    </li>
+
+                                                    {getPageNumbers().map(page => (
+                                                        <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
+                                                            <button className="page-link" onClick={() => handlePageChange(page)}>
+                                                                {page}
+                                                            </button>
+                                                        </li>
+                                                    ))}
+
+                                                    <li className={`page-item next ${currentPage === paginationDetails.totalPages ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                                                            <i className="next"></i>
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {/* <div className="row paginate_row">
                                             <div className="col-12 col-md-12 d-flex align-items-center justify-content-end justify-content-md-end">
                                                 <div className="dataTables_paginate paging_simple_numbers" id="kt_profile_overview_table_paginate">
                                                     <ul className="pagination">
@@ -1484,7 +1571,7 @@ const DashboardPage = ({
                                                     </ul>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -1661,7 +1748,7 @@ const Dashboard = (props: any) => {
     const inprogress = props.inprogress
 
     const teamId = props.auth.user.current_team_id
-    console.log(props.auth.user.notifications)
+
     const notifications = props.auth.user.notifications?.slice(0, 3);
 
     useEffect(() => {
@@ -1695,7 +1782,7 @@ const Dashboard = (props: any) => {
                 correction={correction}
                 update={update}
                 totalclosed={totalclosed}
-                productCountry={productCountry}
+                // productCountry={productCountry}
                 inprogress={inprogress}
                 currentUser={props.auth.user.current_team_id}
                 countsformating={props.countsformating}

@@ -10,10 +10,11 @@ use App\Models\Publishing;
 use App\Models\PublishingMrp;
 use App\Models\MetaData;
 use DateTime;
-use Illuminate\Support\Carbon;
+// use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use MongoDB\BSON\UTCDateTime as MongoDate;
+use MongoDB\BSON\UTCDateTime;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -165,120 +166,16 @@ class ReportController extends Controller
         $correction = $corrFormatting +  $corrPublishing + $corrPublishingMrp;
         $update = $upFormatting + $upPublishing + $upPublishingMrp;
 
-        $totalFclosed = Formating::where('status', 'completed')->orWhere('status', 'closed')
+        $totalFclosed = Formating::where('status', 'closed')
             ->count();
-        $totalPclosed = Publishing::where('status', 'completed')->orWhere('status', 'closed')
+        $totalPclosed = Publishing::where('status', 'closed')
             ->count();
-        $totalPMclosed = PublishingMrp::where('status', 'completed')->orWhere('status', 'closed')
+        $totalPMclosed = PublishingMrp::where('status', 'closed')
             ->count();
 
         $totalclosed = $totalFclosed + $totalPclosed + $totalPMclosed;
 
-        $f = Formating::raw(function ($collection) {
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        // 'status' => ['$nin' => ['draft', 'initiated']]
-                        'status' => 'submitted'
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['product' => '$product_name.label', 'country' => '$country.value'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
 
-            ]);
-        });
-        $p = Publishing::raw(function ($collection) {
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        // 'status' => ['$nin' => ['draft', 'initiated']]
-                        'status' => 'submitted'
-                    ]
-                ],
-                [
-                    '$group' => [
-                        "_id" => ['product' => '$product_name', 'country' => '$country.value'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-        // dd($p);
-        $pm = PublishingMrp::raw(function ($collection) {
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        // 'status' => ['$nin' => ['draft', 'initiated']]
-                        'status' => 'submitted'
-                    ]
-                ],
-                // ['$unwind' => '$mt'],
-                [
-                    '$group' => [
-                        "_id" => ['product' => '$product_name'],
-                        'count' => ['$sum' => 1]
-                    ]
-                ],
-
-            ]);
-        });
-
-        $myfarr = [];
-        foreach ($f as $key => $value) {
-            $myfarr[$key]['count'] = $value->count;
-            $myfarr[$key]['product'] = $value->_id['product'];
-            $myfarr[$key]['country'] = $value->_id['country'] ?? '';
-        }
-
-        $myparr = [];
-        foreach ($p as $key => $value) {
-            $myparr[$key]['count'] = $value->count;
-            $myparr[$key]['product'] = $value->_id['product'];
-            $myparr[$key]['country'] = $value->_id['country'];
-        }
-
-        $mypmarr = [];
-
-        foreach ($pm as $key => $value) {
-            $mypmarr[$key]['count'] = $value->count;
-            $mypmarr[$key]['product'] = $value->_id['product'];
-            $mypmarr[$key]['country'] = "EU";
-        }
-
-        $myparr = array_merge($myparr, $mypmarr);
-
-        $myarr = [];
-
-        foreach ($myfarr as $ke => $value) {
-            foreach ($myparr as $k => $v) {
-                $name = strtok($value['product'], " ");
-                $name = rtrim($name, ',');
-                $fname = strtok($v['product'], " ");
-                if ($name == $fname && $value['country'] === $v['country']) {
-                    array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => $v['count']]);
-                    unset($myfarr[$ke]);
-                    unset($myparr[$k]);
-                }
-            }
-        }
-
-        foreach ($myfarr as $key => $value) {
-            $name = strtok($value['product'], " ");
-            $name = rtrim($name, ',');
-            array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => 0]);
-        }
-
-        foreach ($myparr as $k => $v) {
-            $name = strtok($v['product'], " ");
-            $name = rtrim($name, ',');
-            array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
-        }
 
         // get all requests with status in progress
         $inprogressFormatting = Formating::where('status', 'in progress')->get();
@@ -294,7 +191,7 @@ class ReportController extends Controller
             'correction' => $correction,
             'update' => $update,
             'totalclosed' => $totalclosed,
-            'productCountry' => $myarr,
+
             'inprogress' => $inprogress,
             'countsformating' => $countsformating,
             'countspublishing' => $counts,
@@ -732,5 +629,129 @@ class ReportController extends Controller
         ksort($my_sec_arr);
 
         return response()->json(['formattingReq' => array_values($my_arr), 'publishingReq' => array_values($my_sec_arr)]);
+    }
+
+    public function requestPerCountry(Request $request)
+    {
+
+        $startIso = new UTCDateTime(Carbon::parse($request->from)->startOfDay()->getTimestampMs());
+        $endIso = new UTCDateTime(Carbon::parse($request->to)->endOfDay()->getTimestampMs());
+        $f = Formating::raw(function ($collection) use ($startIso, $endIso) {
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'status' => 'submitted',
+                        'created_at' => [
+                            '$gte' => $startIso,
+                            '$lte' => $endIso
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name.label', 'country' => '$country.value'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+        $p = Publishing::raw(function ($collection) use ($startIso, $endIso) {
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        // 'status' => ['$nin' => ['draft', 'initiated']]
+                        'status' => 'submitted',
+                        'created_at' => [
+                            '$gte' => $startIso,
+                            '$lte' => $endIso
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name', 'country' => '$country.value'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+
+        $pm = PublishingMrp::raw(function ($collection) use ($startIso, $endIso) {
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        // 'status' => ['$nin' => ['draft', 'initiated']]
+                        'status' => 'submitted',
+                        'created_at' => [
+                            '$gte' => $startIso,
+                            '$lte' => $endIso
+                        ]
+                    ]
+                ],
+                // ['$unwind' => '$mt'],
+                [
+                    '$group' => [
+                        "_id" => ['product' => '$product_name'],
+                        'count' => ['$sum' => 1]
+                    ]
+                ],
+
+            ]);
+        });
+
+        $myfarr = [];
+        foreach ($f as $key => $value) {
+            $myfarr[$key]['count'] = $value->count;
+            $myfarr[$key]['product'] = $value->_id['product'];
+            $myfarr[$key]['country'] = $value->_id['country'] ?? '';
+        }
+
+        $myparr = [];
+        foreach ($p as $key => $value) {
+            $myparr[$key]['count'] = $value->count;
+            $myparr[$key]['product'] = $value->_id['product'];
+            $myparr[$key]['country'] = $value->_id['country'];
+        }
+
+        $mypmarr = [];
+
+        foreach ($pm as $key => $value) {
+            $mypmarr[$key]['count'] = $value->count;
+            $mypmarr[$key]['product'] = $value->_id['product'];
+            $mypmarr[$key]['country'] = "EU";
+        }
+
+        $myparr = array_merge($myparr, $mypmarr);
+
+        $myarr = [];
+
+        foreach ($myfarr as $ke => $value) {
+            foreach ($myparr as $k => $v) {
+                $name = strtok($value['product'], " ");
+                $name = rtrim($name, ',');
+                $fname = strtok($v['product'], " ");
+                if ($name == $fname && $value['country'] === $v['country']) {
+                    array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => $v['count']]);
+                    unset($myfarr[$ke]);
+                    unset($myparr[$k]);
+                }
+            }
+        }
+
+        foreach ($myfarr as $key => $value) {
+            $name = strtok($value['product'], " ");
+            $name = rtrim($name, ',');
+            array_push($myarr, ['pr' => $name, 'cnt' => $value['country'], 'formatting' => $value['count'], 'publishing' => 0]);
+        }
+
+        foreach ($myparr as $k => $v) {
+            $name = strtok($v['product'], " ");
+            $name = rtrim($name, ',');
+            array_push($myarr, ['pr' => $name, 'cnt' => $v['country'], 'formatting' => 0, 'publishing' => $v['count']]);
+        }
+
+        return response()->json(['productCountry' => $myarr, 'start' => $startIso, 'end' => $endIso]);
     }
 }
