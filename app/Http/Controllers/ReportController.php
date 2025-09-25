@@ -144,27 +144,47 @@ class ReportController extends Controller
         $accepublishingmrp = PublishingMrp::where('status', 'closed')->whereNull('correction')->count();
 
         $corrFormatting = Formating::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->where('correction.source', '!=', 'stg')
             ->count('source');
 
         $corrPublishing = Publishing::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->where('correction.source', '!=', 'stg')
             ->count('source');
 
         $corrPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'ekemia')
+            ->where('correction.source', '!=', 'stg')
             ->count('source');
 
 
         $upFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', '!=', 'ekemia')
             ->count('source');
 
         $upPublishing =   Publishing::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', '!=', 'ekemia')
             ->count('source');
 
         $upPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', '!=', 'ekemia')
+            ->count('source');
+
+        $upandcorrFormatting = Formating::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', 'ekemia')
+            ->count('source');
+
+        $upandcorrPublishing =   Publishing::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', 'ekemia')
+            ->count('source');
+
+        $upandcorrPublishingMrp = PublishingMrp::where('status', 'closed')->where('correction.source', 'stg')
+            ->where('correction.source', 'ekemia')
             ->count('source');
 
         $acceptance = $acceformatting + $accepublishing + $accepublishingmrp;
         $correction = $corrFormatting +  $corrPublishing + $corrPublishingMrp;
         $update = $upFormatting + $upPublishing + $upPublishingMrp;
+        $updateandcorrection = $upandcorrFormatting + $upandcorrPublishing + $upandcorrPublishingMrp;
+
 
         $totalFclosed = Formating::where('status', 'closed')
             ->count();
@@ -190,6 +210,7 @@ class ReportController extends Controller
             'acceptance' => $acceptance,
             'correction' => $correction,
             'update' => $update,
+            'updateandcorrection' => $updateandcorrection,
             'totalclosed' => $totalclosed,
 
             'inprogress' => $inprogress,

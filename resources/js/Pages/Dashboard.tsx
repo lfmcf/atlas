@@ -307,7 +307,7 @@ const doptions = {
     stroke: {
         width: 0
     },
-    labels: ['Approved', 'Change', 'Correction'],
+    labels: ['Approved', 'Change', 'Correction', 'Update & correction'],
     legend: {
         show: false,
     },
@@ -449,6 +449,7 @@ const DashboardPage = ({
     countspublishing,
     teamId,
     notifications,
+    updateandcorrection
 }) => {
 
     const [startDate, setStartDate] = useState(new Date());
@@ -469,6 +470,7 @@ const DashboardPage = ({
     const [loading, setLoading] = useState(false);
     const [timelineItems, setTimelineItems] = useState([])
     const [RequestPerCountry, setRequestPerCountry] = useState([]);
+    const [activeCard, setActiveCard] = useState(1);
     const [tb, setTb] = useState();
 
 
@@ -1007,173 +1009,374 @@ const DashboardPage = ({
                         </div>
                     </div>
                 </div>
+                <div className='col-8'>
 
-
-                <div className="col-lg-8">
-                    <div className="card card-flush h-100">
+                    <div className='card card-flush h-lg-100'>
                         <div className="card-header mt-6">
                             <div className="card-title flex-column">
                                 <h3 className="fw-bold mb-1">Total requests</h3>
                             </div>
+                            <div className='card-toolbar'>
+                                <button
+                                    className={`btn me-2 ${activeCard === 1 ? "btn-primary" : "btn-outline-primary"}`}
+                                    onClick={() => setActiveCard(1)}
+                                >
+                                    Graph view
+                                </button>
+                                <button
+                                    className={`btn ${activeCard === 2 ? "btn-primary" : "btn-outline-primary"}`}
+                                    onClick={() => setActiveCard(2)}
+                                >
+                                    Table view
+                                </button>
+                            </div>
                         </div>
-                        <div className="card-body p-9 pt-5">
-                            <div className='row'>
-                                <div className='col-lg-6 border-end'>
-                                    <div className="d-flex flex-wrap justify-content-center">
-                                        <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
-                                            <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
-                                                {teamId === 2 ?
-                                                    <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed'] + countsformating['delivered'] + countsformating['to correct'] + countsformating['to verify']}</span>
-                                                    :
-                                                    <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed']}</span>
-                                                }
-                                                {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
-                                                <span className="fs-6 fw-semibold text-gray-400">Formatting</span>
+                        {activeCard === 1 && (
+
+                            <div className="card-body p-9 pt-5">
+                                <div className='row'>
+                                    <div className='col-lg-6 border-end'>
+                                        <div className="d-flex flex-wrap justify-content-center">
+                                            <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
+                                                <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
+                                                    {teamId === 2 ?
+                                                        <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed'] + countsformating['delivered'] + countsformating['to correct'] + countsformating['to verify']}</span>
+                                                        :
+                                                        <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed']}</span>
+                                                    }
+                                                    {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
+                                                    <span className="fs-6 fw-semibold text-gray-400">Formatting</span>
+                                                </div>
+                                                <Doughnut data={data} options={choptions} />
                                             </div>
-                                            <Doughnut data={data} options={choptions} />
-                                        </div>
 
-                                        <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
-                                            {countsformating['initiated'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }}></div>
-                                                    <div className="text-gray-400">Intiated</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['initiated']} </div>
-                                                </div>
-                                                : ''}
-                                            {countsformating['submitted'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
-                                                    <div className="text-gray-400">Submitted</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['submitted']} </div>
-                                                </div>
-                                                : ''}
-                                            {countsformating['in progress'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
-                                                    <div className="text-gray-400">In progress</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['in progress']}</div>
-                                                </div>
-                                                : ''}
-                                            {countsformating['completed'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
-                                                    <div className="text-gray-400">Completed</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countsformating['completed']} </div>
-                                                </div>
-                                                : ''}
-                                            {teamId === 2 ?
-                                                <>
-                                                    {countsformating['to verify'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
-                                                            <div className="text-gray-400">To verify</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['to verify']}</div>
-                                                        </div>
-                                                        : ''}
-                                                    {countsformating['delivered'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
-                                                            <div className="text-gray-400">Delivred</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['delivered']}</div>
-                                                        </div>
-                                                        : ''}
-                                                    {countsformating['to correct'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
-                                                            <div className="text-gray-400">To correct</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countsformating['to correct']}</div>
-                                                        </div>
-                                                        : ''}
-                                                </>
-                                                :
-                                                ''}
-                                        </div>
+                                            <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
+                                                {countsformating['initiated'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }}></div>
+                                                        <div className="text-gray-400">Intiated</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countsformating['initiated']} </div>
+                                                    </div>
+                                                    : ''}
+                                                {countsformating['submitted'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
+                                                        <div className="text-gray-400">Submitted</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countsformating['submitted']} </div>
+                                                    </div>
+                                                    : ''}
+                                                {countsformating['in progress'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
+                                                        <div className="text-gray-400">In progress</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countsformating['in progress']}</div>
+                                                    </div>
+                                                    : ''}
+                                                {countsformating['completed'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
+                                                        <div className="text-gray-400">Completed</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countsformating['completed']} </div>
+                                                    </div>
+                                                    : ''}
+                                                {teamId === 2 ?
+                                                    <>
+                                                        {countsformating['to verify'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
+                                                                <div className="text-gray-400">To verify</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countsformating['to verify']}</div>
+                                                            </div>
+                                                            : ''}
+                                                        {countsformating['delivered'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
+                                                                <div className="text-gray-400">Delivred</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countsformating['delivered']}</div>
+                                                            </div>
+                                                            : ''}
+                                                        {countsformating['to correct'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
+                                                                <div className="text-gray-400">To correct</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countsformating['to correct']}</div>
+                                                            </div>
+                                                            : ''}
+                                                    </>
+                                                    :
+                                                    ''}
+                                            </div>
 
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-6 col-md-6'>
+
+                                        <div className="d-flex flex-wrap justify-content-center">
+
+                                            <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
+                                                <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
+                                                    {teamId === 2 ?
+                                                        <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['to verify'] + countspublishing['delivered'] + countspublishing['to correct']}</span>
+                                                        :
+                                                        <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed']}</span>
+                                                    }
+                                                    {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
+                                                    <span className="fs-6 fw-semibold text-gray-400">Publishing</span>
+                                                </div>
+                                                <Doughnut data={datapub} options={choptions} />
+                                            </div>
+                                            <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
+                                                {countspublishing['initiated'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }} ></div>
+                                                        <div className="text-gray-400">Intiated</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countspublishing['initiated']}</div>
+                                                    </div>
+                                                    : ''}
+                                                {countspublishing['submitted'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
+                                                        <div className="text-gray-400">Submitted</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countspublishing['submitted']}</div>
+                                                    </div>
+                                                    : ''}
+                                                {countspublishing['in progress'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
+                                                        <div className="text-gray-400">In progress</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countspublishing['in progress']}</div>
+                                                    </div>
+                                                    : ''}
+                                                {countspublishing['completed'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
+                                                        <div className="text-gray-400">Completed</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countspublishing['completed']}</div>
+                                                    </div>
+                                                    : ''}
+                                                {teamId === 2 ?
+                                                    <>
+                                                        {countspublishing['to verify'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
+                                                                <div className="text-gray-400">To verify</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countspublishing['to verify']}</div>
+                                                            </div>
+                                                            : ''}
+                                                        {countspublishing['delivered'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
+                                                                <div className="text-gray-400">Delivred</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countspublishing['delivered']}</div>
+                                                            </div>
+                                                            : ''}
+                                                        {countspublishing['to correct'] ?
+                                                            <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                                <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
+                                                                <div className="text-gray-400">To correct</div>
+                                                                <div className="ms-auto fw-bold text-gray-700">{countspublishing['to correct']}</div>
+                                                            </div>
+                                                            : ''}
+                                                    </>
+                                                    :
+                                                    ''}
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
 
+                            </div>
 
-                                <div className='col-lg-6 col-md-6'>
+                        )}
+                        {activeCard === 2 && (
+                            <div className='card-body py-0 ps-6 mt-2 '>
+                                <div className='d-flex'>
+                                    <div className="flex-fill border-end pe-3">
+                                        <span>Formatting</span>
+                                        <table className="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th >Status</th>
+                                                    <th className="text-end">Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
-                                    <div className="d-flex flex-wrap justify-content-center">
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#00A3FF' }}></span>
+                                                        Initiated
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countsformating['initiated']}</td>
+                                                </tr>
 
-                                        <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
-                                            <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
-                                                {teamId === 2 ?
-                                                    <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['to verify'] + countspublishing['delivered'] + countspublishing['to correct']}</span>
-                                                    :
-                                                    <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed']}</span>
-                                                }
-                                                {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
-                                                <span className="fs-6 fw-semibold text-gray-400">Publishing</span>
-                                            </div>
-                                            <Doughnut data={datapub} options={choptions} />
-                                        </div>
-                                        <div className="d-flex flex-column justify-content-center flex-row-fluid pe-11 mb-5 ms-4">
-                                            {countspublishing['initiated'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#00A3FF' }} ></div>
-                                                    <div className="text-gray-400">Intiated</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['initiated']}</div>
-                                                </div>
-                                                : ''}
-                                            {countspublishing['submitted'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#50CD89' }}></div>
-                                                    <div className="text-gray-400">Submitted</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['submitted']}</div>
-                                                </div>
-                                                : ''}
-                                            {countspublishing['in progress'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#FFC700' }}></div>
-                                                    <div className="text-gray-400">In progress</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['in progress']}</div>
-                                                </div>
-                                                : ''}
-                                            {countspublishing['completed'] ?
-                                                <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                    <div className="bullet me-3" style={{ backgroundColor: '#00B4D8' }}></div>
-                                                    <div className="text-gray-400">Completed</div>
-                                                    <div className="ms-auto fw-bold text-gray-700">{countspublishing['completed']}</div>
-                                                </div>
-                                                : ''}
-                                            {teamId === 2 ?
-                                                <>
-                                                    {countspublishing['to verify'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#7239EA' }}></div>
-                                                            <div className="text-gray-400">To verify</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['to verify']}</div>
-                                                        </div>
-                                                        : ''}
-                                                    {countspublishing['delivered'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#009EF7' }}></div>
-                                                            <div className="text-gray-400">Delivred</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['delivered']}</div>
-                                                        </div>
-                                                        : ''}
-                                                    {countspublishing['to correct'] ?
-                                                        <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
-                                                            <div className="bullet me-3" style={{ backgroundColor: '#F1416C' }}></div>
-                                                            <div className="text-gray-400">To correct</div>
-                                                            <div className="ms-auto fw-bold text-gray-700">{countspublishing['to correct']}</div>
-                                                        </div>
-                                                        : ''}
-                                                </>
-                                                :
-                                                ''}
-                                        </div>
 
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#50CD89' }}></span>
+                                                        Submitted
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countsformating['submitted']}</td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#FFC700' }}></span>
+                                                        In progress
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countsformating['in progress']}</td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#00B4D8' }}></span>
+                                                        Completed
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countsformating['completed']}</td>
+                                                </tr>
+
+
+                                                {teamId === 2 && (
+                                                    <>
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#7239EA' }}></span>
+                                                                To verify
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countsformating['to verify']}</td>
+                                                        </tr>
+
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#009EF7' }}></span>
+                                                                Delivered
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countsformating['delivered']}</td>
+                                                        </tr>
+
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#F1416C' }}></span>
+                                                                To correct
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countsformating['to correct']}</td>
+                                                        </tr>
+
+                                                    </>
+                                                )}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Total</th>
+                                                    <th className="text-end fw-bold">
+                                                        {Object.values(countsformating).reduce((sum, val) => sum + (val || 0), 0)}
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+
+                                    <div className="flex-fill ps-3">
+                                        <span>Publishing</span>
+                                        <table className="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th >Status</th>
+                                                    <th className="text-end">Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#00A3FF' }}></span>
+                                                        Initiated
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countspublishing['initiated']}</td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#50CD89' }}></span>
+                                                        Submitted
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countspublishing['submitted']}</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#FFC700' }}></span>
+                                                        In progress
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countspublishing['in progress']}</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#00B4D8' }}></span>
+                                                        Completed
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countspublishing['completed']}</td>
+                                                </tr>
+
+
+                                                {teamId === 2 && (
+                                                    <>
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#7239EA' }}></span>
+                                                                To verify
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countspublishing['to verify']}</td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#009EF7' }}></span>
+                                                                Delivered
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countspublishing['delivered']}</td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td>
+                                                                <span className="bullet me-2" style={{ backgroundColor: '#F1416C' }}></span>
+                                                                To correct
+                                                            </td>
+                                                            <td className="text-end fw-bold">{countspublishing['to correct']}</td>
+                                                        </tr>
+
+                                                    </>
+                                                )}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Total</th>
+                                                    <th className="text-end fw-bold">
+                                                        {Object.values(countspublishing).reduce((sum, val) => sum + (val || 0), 0)}
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
+                        )}
                     </div>
                 </div>
+
+
+
                 <div className='col-4'>
                     <div className='card card-flush h-lg-100'>
                         <div className="card-header mt-6">
@@ -1655,10 +1858,33 @@ const DashboardPage = ({
                                                     {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
                                                 </div>
                                             </div>
+                                            <div className="d-flex border border-gray-300 border-dashed rounded p-6 mb-6">
+                                                <div className="d-flex align-items-center flex-grow-1 me-2 me-sm-5">
+                                                    <div className="symbol symbol-50px me-4">
+                                                        <span className="symbol-label">
+                                                            <i className="ki-duotone ki-shield-cross fs-2qx text-primary">
+                                                                <span className="path1"></span>
+                                                                <span className="path2"></span>
+                                                                <span className="path3"></span>
+                                                            </i>
+                                                        </span>
+                                                    </div>
+                                                    <div className="me-2">
+                                                        <span className="text-gray-800 fs-6 fw-bold">Update & Correction</span>
+                                                        {/* <span className="text-gray-400 fw-bold d-block fs-7">You take 12 subjects at this semester</span> */}
+                                                    </div>
+                                                </div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="text-dark fw-bolder fs-2x">{updateandcorrection}</span>
+                                                    <span className="fw-semibold fs-2 text-gray-600 mx-1 pt-1">/</span>
+                                                    <span className="text-gray-600 fw-semibold fs-2 me-3 pt-2">{totalclosed}</span>
+                                                    {/* <span className="badge badge-lg badge-light-warning align-self-center px-2">80%</span> */}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="d-flex justify-content-between flex-column w-225px w-md-600px mx-auto mx-md-0 pt-3 pb-10">
 
-                                            <Chart options={doptions as ApexCharts.ApexOptions} series={[acceptance, update, correction]} type='donut' />
+                                            <Chart options={doptions as ApexCharts.ApexOptions} series={[acceptance, update, correction, updateandcorrection]} type='donut' />
                                             <div className="mx-auto">
 
                                                 <div className="d-flex align-items-center mb-2">
@@ -1682,6 +1908,13 @@ const DashboardPage = ({
                                                     <div className="bullet bullet-dot w-8px h-7px bg-info me-2"></div>
 
                                                     <div className="fs-8 fw-semibold text-muted">Approved</div>
+
+                                                </div>
+                                                <div className="d-flex align-items-center mb-2">
+
+                                                    <div className="bullet bullet-dot w-8px h-7px bg-danger me-2"></div>
+
+                                                    <div className="fs-8 fw-semibold text-muted">Update & Correction</div>
 
                                                 </div>
                                             </div>
@@ -1713,21 +1946,23 @@ const DashboardPage = ({
                 {/* <div className='col-md-5'>
                     <ListsWidget6 className='' acceptance={acceptance} correction={correction} update={update} />
                 </div> */}
-            </div>
+            </div >
             {/* <div className='row'> */}
 
             {/* </div> */}
-            {loading && (
-                <div className="overlay">
-                    <PropagateLoader
-                        color="#009ef7"
-                        loading={loading}
-                        // cssOverride={override}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                    />
-                </div>
-            )}
+            {
+                loading && (
+                    <div className="overlay">
+                        <PropagateLoader
+                            color="#009ef7"
+                            loading={loading}
+                            // cssOverride={override}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                        />
+                    </div>
+                )
+            }
         </>
     )
 }
@@ -1746,6 +1981,7 @@ const Dashboard = (props: any) => {
     const totalclosed = props.totalclosed
     const productCountry = props.productCountry
     const inprogress = props.inprogress
+    const updateandcorrection = props.updateandcorrection
 
     const teamId = props.auth.user.current_team_id
 
@@ -1789,6 +2025,7 @@ const Dashboard = (props: any) => {
                 countspublishing={props.countspublishing}
                 teamId={teamId}
                 notifications={notifications}
+                updateandcorrection={updateandcorrection}
 
             />
 
