@@ -552,7 +552,9 @@ class ReportController extends Controller
                                 (int)$selectedYear
                             ],
                         ],
-                        'status' => 'submitted'
+                        'status' => [
+                            '$nin' => ['draft', 'initiated'] // exclude completed
+                        ]
                     ]
                 ],
                 [
@@ -576,8 +578,9 @@ class ReportController extends Controller
                                 (int)$selectedYear
                             ],
                         ],
-                        // 'status' => ['$not' => ['$eq' => 'draft']]
-                        'status' => 'submitted'
+                        'status' => [
+                            '$nin' => ['draft', 'initiated'] // exclude completed
+                        ]
                     ]
                 ],
                 [
@@ -602,7 +605,9 @@ class ReportController extends Controller
                             ],
                         ],
                         // 'status' => ['$not' => ['$eq' => 'draft']]
-                        'status' => 'submitted'
+                        'status' => [
+                            '$nin' => ['draft', 'initiated'] // exclude completed
+                        ]
                     ]
                 ],
                 [
@@ -631,7 +636,9 @@ class ReportController extends Controller
 
         foreach ($requestperMonthPubMrp as $record) {
             $month = Carbon::createFromDate(null, $record['_id'], null)->format('m');
-            $my_sec_arr[$month] = $record['Count'] + $my_sec_arr[$month];
+            if (array_key_exists($record['_id'], $my_sec_arr)) {
+                $my_sec_arr[$record['_id']] = $record['Count'] + $my_sec_arr[$record['_id']];
+            }
         }
 
         // Fill in missing months with zero counts
