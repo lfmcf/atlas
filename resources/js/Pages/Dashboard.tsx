@@ -28,6 +28,7 @@ import Timeline from 'react-vis-timeline-3';
 import PropagateLoader from "react-spinners/PropagateLoader";
 import ContentLoader from 'react-content-loader'
 import { Head } from '@inertiajs/react';
+import { count } from 'console'
 
 countries.registerLocale(enLocale)
 
@@ -490,7 +491,8 @@ const DashboardPage = ({
                         countsformating['completed'],
                         countsformating['to verify'],
                         countsformating['delivered'],
-                        countsformating['to correct']
+                        countsformating['to correct'],
+
                     ],
                     backgroundColor: [
                         '#00A3FF',  // initiated - blue (neutral starting state)
@@ -499,7 +501,8 @@ const DashboardPage = ({
                         '#00B4D8',  // completed - teal (distinct from submitted)
                         '#7239EA',  // toverify - purple (needs attention)
                         '#009EF7',  // delivered - different blue (finalized state)
-                        '#F1416C'   // tocorrect - red (needs correction)
+                        '#F1416C',   // tocorrect - red (needs correction)
+
                     ]
                 },
             ],
@@ -515,7 +518,8 @@ const DashboardPage = ({
                         countspublishing['completed'],
                         countspublishing['to verify'],
                         countspublishing['delivered'],
-                        countspublishing['to correct']
+                        countspublishing['to correct'],
+
                     ],
                     backgroundColor: [
                         '#00A3FF',  // initiated - blue (neutral starting state)
@@ -524,35 +528,28 @@ const DashboardPage = ({
                         '#00B4D8',  // completed - teal (distinct from submitted)
                         '#7239EA',  // toverify - purple (needs attention)
                         '#009EF7',  // delivered - different blue (finalized state)
-                        '#F1416C'   // tocorrect - red (needs correction)
+                        '#F1416C',   // tocorrect - red (needs correction)
+
                     ]
                 },
             ],
         }
     } else {
         data = {
-            labels: ['Initiated', 'Submitted', 'In progress', 'Completed'],
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'Closed'],
             datasets: [
                 {
-                    data: [countsformating['initiated'], countsformating['submitted'], countsformating['in progress'], countsformating['completed']],
-                    backgroundColor: ['#00A3FF', '#50CD89', '#FFC700', '#00B4D8']
+                    data: [countsformating['initiated'], countsformating['submitted'], countsformating['in progress'], countsformating['completed'], countsformating['closed']],
+                    backgroundColor: ['#00A3FF', '#50CD89', '#FFC700', '#00B4D8', '#f1f1f2']
                 },
             ],
         }
         datapub = {
-            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'To verify', 'Delivered', 'To correct'],
+            labels: ['Initiated', 'Submitted', 'In progress', 'Completed', 'Closed', 'To verify', 'Delivered', 'To correct',],
             datasets: [
                 {
-                    data: [countspublishing['initiated'], countspublishing['submitted'], countspublishing['in progress'], countspublishing['completed']],
-                    backgroundColor: [
-                        '#00A3FF',  // initiated - blue (neutral starting state)
-                        '#50CD89',  // submitted - green (positive submission)
-                        '#FFC700',  // inprogress - yellow (active work in progress)
-                        '#00B4D8',  // completed - teal (distinct from submitted)
-                        '#7239EA',  // toverify - purple (needs attention)
-                        '#009EF7',  // delivered - different blue (finalized state)
-                        '#F1416C'   // tocorrect - red (needs correction)
-                    ]
+                    data: [countspublishing['initiated'], countspublishing['submitted'], countspublishing['in progress'], countspublishing['completed'], countspublishing['closed']],
+                    backgroundColor: ['#00A3FF', '#50CD89', '#FFC700', '#00B4D8', '#f1f1f2']
                 },
             ],
         }
@@ -1042,7 +1039,7 @@ const DashboardPage = ({
                                                     {teamId === 2 ?
                                                         <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed'] + countsformating['delivered'] + countsformating['to correct'] + countsformating['to verify']}</span>
                                                         :
-                                                        <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed']}</span>
+                                                        <span className="fs-2qx fw-bold">{countsformating['initiated'] + countsformating['submitted'] + countsformating['in progress'] + countsformating['completed'] + countsformating['closed']}</span>
                                                     }
                                                     {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
                                                     <span className="fs-6 fw-semibold text-gray-400">Formatting</span>
@@ -1079,6 +1076,13 @@ const DashboardPage = ({
                                                         <div className="ms-auto fw-bold text-gray-700">{countsformating['completed']} </div>
                                                     </div>
                                                     : ''}
+                                                {countsformating['closed'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#f1f1f2' }}></div>
+                                                        <div className="text-gray-400">Closed</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countsformating['closed']}</div>
+                                                    </div>
+                                                    : ''}
                                                 {teamId === 2 ?
                                                     <>
                                                         {countsformating['to verify'] ?
@@ -1102,6 +1106,7 @@ const DashboardPage = ({
                                                                 <div className="ms-auto fw-bold text-gray-700">{countsformating['to correct']}</div>
                                                             </div>
                                                             : ''}
+
                                                     </>
                                                     :
                                                     ''}
@@ -1118,9 +1123,11 @@ const DashboardPage = ({
                                             <div className="position-relative d-flex flex-center h-175px w-175px mb-7">
                                                 <div className="position-absolute translate-middle start-50 top-50 d-flex flex-column flex-center">
                                                     {teamId === 2 ?
-                                                        <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['to verify'] + countspublishing['delivered'] + countspublishing['to correct']}</span>
+                                                        <span className="fs-2qx fw-bold">
+                                                            {countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['to verify'] + countspublishing['delivered'] + countspublishing['to correct']}
+                                                        </span>
                                                         :
-                                                        <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed']}</span>
+                                                        <span className="fs-2qx fw-bold">{countspublishing['initiated'] + countspublishing['submitted'] + countspublishing['in progress'] + countspublishing['completed'] + countspublishing['closed']}</span>
                                                     }
                                                     {/* <span className="fs-2qx fw-bold">{totalInitiatedFor + totalsubmitFor + totalInprogressFor + totalCompletedFor}</span> */}
                                                     <span className="fs-6 fw-semibold text-gray-400">Publishing</span>
@@ -1156,6 +1163,13 @@ const DashboardPage = ({
                                                         <div className="ms-auto fw-bold text-gray-700">{countspublishing['completed']}</div>
                                                     </div>
                                                     : ''}
+                                                {countspublishing['closed'] ?
+                                                    <div className="d-flex fs-6 fw-semibold align-items-center mb-3">
+                                                        <div className="bullet me-3" style={{ backgroundColor: '#f1f1f2' }}></div>
+                                                        <div className="text-gray-400">Closed</div>
+                                                        <div className="ms-auto fw-bold text-gray-700">{countspublishing['closed']}</div>
+                                                    </div>
+                                                    : ''}
                                                 {teamId === 2 ?
                                                     <>
                                                         {countspublishing['to verify'] ?
@@ -1179,6 +1193,7 @@ const DashboardPage = ({
                                                                 <div className="ms-auto fw-bold text-gray-700">{countspublishing['to correct']}</div>
                                                             </div>
                                                             : ''}
+
                                                     </>
                                                     :
                                                     ''}
@@ -1239,6 +1254,13 @@ const DashboardPage = ({
                                                     </td>
                                                     <td className="text-end fw-bold">{countsformating['completed']}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#f1f1f2' }}></span>
+                                                        Closed
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countsformating['closed']}</td>
+                                                </tr>
 
 
                                                 {teamId === 2 && (
@@ -1270,6 +1292,7 @@ const DashboardPage = ({
                                                             <td className="text-end fw-bold">{countsformating['to correct']}</td>
                                                         </tr>
 
+
                                                     </>
                                                 )}
                                             </tbody>
@@ -1277,7 +1300,17 @@ const DashboardPage = ({
                                                 <tr>
                                                     <th>Total</th>
                                                     <th className="text-end fw-bold">
-                                                        {Object.values(countsformating).reduce((sum, val) => sum + (val || 0), 0)}
+                                                        {(() => {
+                                                            const visibleStatuses =
+                                                                teamId === 2
+                                                                    ? ['initiated', 'submitted', 'in progress', 'completed', 'closed', 'to verify', 'delivered', 'to correct']
+                                                                    : ['initiated', 'submitted', 'in progress', 'completed', 'closed'];
+
+                                                            return visibleStatuses.reduce(
+                                                                (sum, key) => sum + (countsformating[key] || 0),
+                                                                0
+                                                            );
+                                                        })()}
                                                     </th>
                                                 </tr>
                                             </tfoot>
@@ -1327,6 +1360,13 @@ const DashboardPage = ({
                                                     </td>
                                                     <td className="text-end fw-bold">{countspublishing['completed']}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span className="bullet me-2" style={{ backgroundColor: '#f1f1f2' }}></span>
+                                                        Closed
+                                                    </td>
+                                                    <td className="text-end fw-bold">{countspublishing['closed']}</td>
+                                                </tr>
 
 
                                                 {teamId === 2 && (
@@ -1363,7 +1403,17 @@ const DashboardPage = ({
                                                 <tr>
                                                     <th>Total</th>
                                                     <th className="text-end fw-bold">
-                                                        {Object.values(countspublishing).reduce((sum, val) => sum + (val || 0), 0)}
+                                                        {(() => {
+                                                            const visibleStatuses =
+                                                                teamId === 2
+                                                                    ? ['initiated', 'submitted', 'in progress', 'completed', 'closed', 'to verify', 'delivered', 'to correct']
+                                                                    : ['initiated', 'submitted', 'in progress', 'completed', 'closed'];
+
+                                                            return visibleStatuses.reduce(
+                                                                (sum, key) => sum + (countspublishing[key] || 0),
+                                                                0
+                                                            );
+                                                        })()}
                                                     </th>
                                                 </tr>
                                             </tfoot>

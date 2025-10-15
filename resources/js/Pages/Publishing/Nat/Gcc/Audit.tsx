@@ -800,67 +800,67 @@ const Audit = (props: any) => {
                         </div>
                         <div className="flex-column current" data-kt-stepper-element="content">
                             <div className="accordion accordion-icon-toggle bg-body" id="kt_accordion_2">
-                                <div className="mb-5">
-                                    <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
-                                        <span className="accordion-icon">
-                                            <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
-                                        </span>
-                                        <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
-                                    </div>
-                                    <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
-                                        <div className='scroll-y me-n5 pe-5'
-                                            data-kt-element="messages"
-                                            data-kt-scroll="true"
-                                            data-kt-scroll-activate="{default: false, lg: true}"
-                                            data-kt-scroll-max-height="auto">
-                                            {
-                                                folder.audit ? folder.audit.map((msg, i) => (
-                                                    msg.message && msg.user.id !== props.auth.user.id ?
-                                                        <div key={i} className='d-flex justify-content-start mb-10'>
-                                                            <div className='d-flex flex-column align-items-start'>
-                                                                <div className='d-flex align-items-center mb-2'>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
-                                                                    </div>
-                                                                    <div className='ms-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div> :
-                                                        <div key={i} className='d-flex justify-content-end mb-10'>
-                                                            <div className='d-flex flex-column align-items-end'>
-                                                                <div className='d-flex align-items-center mb-2'>
-
-                                                                    <div className='me-3'>
-                                                                        <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
-
-                                                                    </div>
-                                                                    <div className='symbol symbol-35px bg-secondary symbol-circle'>
-                                                                        <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
-                                                                    {msg.message}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                )
-                                                ) : ''
-                                            }
+                                {props.auth.user.current_team_id !== 1 ?
+                                    <div className="mb-5">
+                                        <div className="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_2_item_1">
+                                            <span className="accordion-icon">
+                                                <i className="ki-duotone ki-arrow-right fs-4"><span className="path1"></span><span className="path2"></span></i>
+                                            </span>
+                                            <h3 className="fs-4 fw-semibold mb-0 ms-4">Dossier audit</h3>
                                         </div>
-                                        <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
+                                        <div id="kt_accordion_2_item_1" className="fs-6 collapse show p-10" data-bs-parent="#kt_accordion_2">
+                                            <div className='scroll-y me-n5 pe-5'
+                                                data-kt-element="messages"
+                                                data-kt-scroll="true"
+                                                data-kt-scroll-activate="{default: false, lg: true}"
+                                                data-kt-scroll-max-height="auto">
+                                                {
+                                                    folder.audit ? folder.audit.map((msg, i) => (
+                                                        msg.message && msg.user.id !== props.auth.user.id ?
+                                                            <div key={i} className='d-flex justify-content-start mb-10'>
+                                                                <div className='d-flex flex-column align-items-start'>
+                                                                    <div className='d-flex align-items-center mb-2'>
+                                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                            <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
+                                                                        </div>
+                                                                        <div className='ms-3'>
+                                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+                                                                        </div>
 
-                                        {/* <div className="d-flex flex-stack">
-                                            <button className="btn btn-primary btn-sm" type="button" data-kt-element="send" onClick={handleMessageSend} >Send</button>
-                                        </div> */}
+                                                                    </div>
+                                                                    <div className='p-5 rounded bg-light-info text-dark fw-semibold mw-lg-300px text-end' data-kt-element="message-text">
+                                                                        {msg.message}
+                                                                    </div>
+                                                                </div>
+                                                            </div> :
+                                                            <div key={i} className='d-flex justify-content-end mb-10'>
+                                                                <div className='d-flex flex-column align-items-end'>
+                                                                    <div className='d-flex align-items-center mb-2'>
+
+                                                                        <div className='me-3'>
+                                                                            <span className='text-muted fs-8 mb-1'>{moment(msg.date).format('MM/DD/YYYY H:s')}</span>
+
+                                                                        </div>
+                                                                        <div className='symbol symbol-35px bg-secondary symbol-circle'>
+                                                                            <span className="symbol-label bg-info text-inverse-primary fw-bold text-uppercase">{msg.user ? msg.user.name.slice(0, 2) : ''}</span>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div className='p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end' data-kt-element="message-text">
+                                                                        {msg.message}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    )
+                                                    ) : ''
+                                                }
+                                            </div>
+                                            <textarea className="form-control form-control-flush mb-3" rows={1} data-kt-element="input" onChange={handleCommentChange} placeholder="Type a message"></textarea>
+
+
+                                        </div>
                                     </div>
-                                </div>
+                                    : ''}
                             </div>
                         </div>
                     </div>
