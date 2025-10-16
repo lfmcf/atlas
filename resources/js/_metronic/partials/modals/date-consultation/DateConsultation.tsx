@@ -47,12 +47,14 @@ const DateConsultation = (props) => {
                                             {moment(props.delivery_deadline).format('DD MMM YYYY, hh:mm A')}
                                         </span>
                                     </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="fw-semibold text-muted fs-6">Operational Deadline:</span>
-                                        <span className="fw-bold fs-6 text-gray-800">
-                                            {moment(props.adjusted_deadline).format('DD MMM YYYY, hh:mm A')}
-                                        </span>
-                                    </div>
+                                    {props.teamId !== 1 && props.adjusted_deadline && (
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <span className="fw-semibold text-muted fs-6">Operational Deadline:</span>
+                                            <span className="fw-bold fs-6 text-gray-800">
+                                                {moment(props.adjusted_deadline).format('DD MMM YYYY, hh:mm A')}
+                                            </span>
+                                        </div>
+                                    )}
                                     {props.adjusted_deadline_car && (
                                         <div className="d-flex justify-content-between align-items-center">
                                             <span className="fw-semibold text-muted fs-6">Urgent Request Deadline:</span>

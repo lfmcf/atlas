@@ -27,10 +27,11 @@ const Task = (props: any) => {
     })
 
     const handleconsultdate = (row) => {
+
         setShowDate({
             'status': !showDate.status,
             requestDate: row.request_date,
-            deliveryDeadline: row.delivery_deadline,
+            deliveryDeadline: row.deadline,
             adjustedDeadline: row.adjusted_deadline,
             adjustedDeadlineCar: row.adjusted_deadline_car,
             car_deadline: row.car_deadline
@@ -81,6 +82,7 @@ const Task = (props: any) => {
                 delivery_deadline={showDate.deliveryDeadline}
                 adjusted_deadline={showDate.adjustedDeadline}
                 adjusted_deadline_car={showDate.car_deadline ? showDate.adjustedDeadlineCar : ''}
+                teamId={props.auth.user.current_team_id}
             />
         </>
     )
