@@ -246,11 +246,12 @@ const InitiateDuplicate = (props: any) => {
         setData(prevData)
     }
 
-    const handleMultipleSelectChange = (e, name) => {
-        const perdata = { ...multiData }
-        console.log(perdata[name], e)
-        perdata[name] = e
-        setMultiData(perdata)
+    const handleMultipleSelectChange = (e, champ_name) => {
+        const predata = { ...multiData }
+
+        predata[champ_name] = e
+        console.log(predata[champ_name])
+        setMultiData(predata)
     }
 
     const handleMultipleChange = (e) => {
@@ -333,8 +334,6 @@ const InitiateDuplicate = (props: any) => {
     //     })
     //     setData(arr)
     // }, [])
-
-    console.log(data.mt)
 
     const handleSubmit = (e, type) => {
         e.preventDefault();
@@ -492,7 +491,7 @@ const InitiateDuplicate = (props: any) => {
     const [dpmanufacturerOptions, setDpManufacturerOptions] = useState({});
 
     const handleDrugSubstanceChange = (index, selectedOption) => {
-        console.log(selectedOption)
+
         let newFormValues = { ...data };
         newFormValues.drug_substance[index]['drug_substance'] = selectedOption ? selectedOption.value : '';
         setData(newFormValues);
@@ -1087,7 +1086,7 @@ const InitiateDuplicate = (props: any) => {
                                                         classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
-                                                        value={data.mt[0].submission_type}
+                                                        value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_type)}
                                                         menuPortalTarget={document.body}
                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                     />
@@ -1105,7 +1104,7 @@ const InitiateDuplicate = (props: any) => {
                                                         classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
-                                                        value={data.mt[0].submission_mode}
+                                                        value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_mode)}
                                                         menuPortalTarget={document.body}
                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                     />
@@ -1132,7 +1131,7 @@ const InitiateDuplicate = (props: any) => {
                                                         classNamePrefix="react-select"
                                                         placeholder=''
                                                         isClearable
-                                                        value={data.mt[0].submission_unit}
+                                                        value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_unit)}
                                                         menuPortalTarget={document.body}
                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                     />
