@@ -1226,7 +1226,7 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={data.mt[0].submission_type}
+                                                            value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_type)}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -1244,7 +1244,7 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={data.mt[0].submission_mode}
+                                                            value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_mode)}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
@@ -1271,7 +1271,7 @@ const Audit = (props: any) => {
                                                             classNamePrefix="react-select"
                                                             placeholder=''
                                                             isClearable
-                                                            value={data.mt[0].submission_unit}
+                                                            value={publishingMrpSubmissionType.find(o => o.value === multiData.submission_unit)}
                                                             menuPortalTarget={document.body}
                                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }), container: base => ({ width: '100%' }) }}
                                                         />
